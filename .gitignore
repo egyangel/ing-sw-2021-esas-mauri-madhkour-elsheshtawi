@@ -217,5 +217,5 @@ $RECYCLE.BIN/
 # SonarLint working directories, configuration files (including credentials)
 .sonarlint/
 
-
-JavaDocPSP05/
+#Javadoc
+JavaDocPSP05/*
