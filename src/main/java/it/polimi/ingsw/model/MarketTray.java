@@ -60,7 +60,7 @@ public class MarketTray {
                 System.out.println(" ");
             }
         }catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("The push of the marble into the tray brought an IndexOut");
+            System.out.println("The push of the marbles into the tray brought an IndexOut");
         }
 
     }
