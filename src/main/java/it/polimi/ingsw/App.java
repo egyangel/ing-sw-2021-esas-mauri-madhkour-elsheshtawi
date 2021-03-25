@@ -13,11 +13,11 @@ import java.util.ArrayList;
 public class App 
 {
 
+
     public static void main( String[] args )
     {
 
-        MarketTray test;
-        test = new MarketTray();
+        MarketTray test = new MarketTray();
 
 
         /*This block here I have to ask to the tutor, so don't change it

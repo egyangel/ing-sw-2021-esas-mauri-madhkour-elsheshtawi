@@ -8,7 +8,7 @@ import java.util.*;
 public class MarketTray {
     private final int row=3;
     private final int column=4;
-    private Marble[] marbles=new Marble[13];
+    private Marble[] marbles =new Marble[13];
     private Marble[][] marketTray=new Marble[3][4];
 
 
@@ -67,10 +67,10 @@ public class MarketTray {
     private static int randomPos(ArrayList<Integer> temp_position){
         int temp=-1;
 
-        temp_position.add((int)((Math.random() * ((13) + 1)) + 0));
+        temp_position.add((int)((Math.random() * ((12) + 1)) + 0));
 
         while(temp_position.size()<13) {
-            temp=(int)((Math.random() * ((13) + 1)) + 0);
+            temp=(int)((Math.random() * ((12) + 1)) + 0);
             if (!temp_position.contains(temp))
                 temp_position.add((temp));
         }return temp;
