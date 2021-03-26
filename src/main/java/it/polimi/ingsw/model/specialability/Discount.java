@@ -1,7 +1,6 @@
-package it.polimi.ingsw.model.SpecialAbility;
+package it.polimi.ingsw.model.specialability;
 
-import it.polimi.ingsw.model.EnumClasses.AbilityType;
-import it.polimi.ingsw.model.SpecialAbility.SpecialAbility;
+import it.polimi.ingsw.model.enumclasses.AbilityType;
 
 public class Discount implements SpecialAbility {
     @Override

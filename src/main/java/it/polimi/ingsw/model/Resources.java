@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.EnumClasses.ResType;
+import it.polimi.ingsw.model.enumclasses.ResType;
 
 import java.util.Map;
 

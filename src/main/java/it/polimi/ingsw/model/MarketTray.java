@@ -1,57 +1,51 @@
 package it.polimi.ingsw.model;
 
 
-import it.polimi.ingsw.model.EnumClasses.MarbleColor;
+import it.polimi.ingsw.model.enumclasses.MarbleColor;
 
 import java.util.*;
 
 public class MarketTray {
     private final int row=3;
     private final int column=4;
-    private Marble[] marbles =new Marble[13];
-    private Marble[][] marketTray=new Marble[3][4];
+    private MarbleColor OutMarble;
+    private MarbleColor[] marbles =new MarbleColor[13];
+    private MarbleColor[][] marketTray=new MarbleColor[3][4];
 
 
     public MarketTray(){
-       /*
-        marbles[0] = new Marble(MarbleColor.WHITE);
-        marbles[1] = new Marble(MarbleColor.WHITE);
-        marbles[2] = new Marble(MarbleColor.WHITE);
-        marbles[3] = new Marble(MarbleColor.WHITE);
-        marbles[4] = new Marble(MarbleColor.BLUE);
-        marbles[5] = new Marble(MarbleColor.BLUE);
-        marbles[6] = new Marble(MarbleColor.GREY);
-        marbles[7] = new Marble(MarbleColor.GREY);
-        marbles[8] = new Marble(MarbleColor.YELLOW);
-        marbles[9] = new Marble(MarbleColor.YELLOW);
-        marbles[10] = new Marble(MarbleColor.PURPLE);
-        marbles[11] = new Marble(MarbleColor.PURPLE);
-        marbles[12] = new Marble(MarbleColor.RED);
-        */
 
-        //initialization of the marbles
-        for(int i=0;i<13;i++){
-            if(i<4)marbles[i]=new Marble(MarbleColor.WHITE);
-            if(i==4 || i==5)marbles[i]=new Marble(MarbleColor.BLUE);
-            if(i==6 || i==7)marbles[i]=new Marble(MarbleColor.GREY);
-            if(i==8 || i==9)marbles[i]=new Marble(MarbleColor.YELLOW);
-            if(i==10 || i==11)marbles[i]=new Marble(MarbleColor.PURPLE);
-            if(i==12)marbles[i]=new Marble(MarbleColor.RED);
-        }
+        marbles[0]  = MarbleColor.WHITE;
+        marbles[1]  = MarbleColor.WHITE;
+        marbles[2]  = MarbleColor.WHITE;
+        marbles[3]  = MarbleColor.WHITE;
+        marbles[4]  = MarbleColor.BLUE;
+        marbles[5]  = MarbleColor.BLUE;
+        marbles[6]  = MarbleColor.GREY;
+        marbles[7]  = MarbleColor.GREY;
+        marbles[8]  = MarbleColor.YELLOW;
+        marbles[9]  = MarbleColor.YELLOW;
+        marbles[10] = MarbleColor.PURPLE;
+        marbles[11] = MarbleColor.PURPLE;
+        marbles[12] = MarbleColor.RED;
+
+
         MarblePositioning();
 
     }
     //positioning the murbles in a random way at the beginning of the game
     private void MarblePositioning() {
         int k=0;
-        int out=-1;
         ArrayList<Integer> temp_position = new ArrayList<>();
+
+        for(int i=0;i<13;i++)temp_position.add(i);
+        Collections.shuffle(temp_position);
+
+        OutMarble=marbles[temp_position.get(temp_position.size()-1)];
 
         try
         {
-            out=randomPos(temp_position);
-
-            for(int i=0;i<row;i++){
+              for(int i=0;i<row;i++){
                 for(int j=0;j<column;j++){
                     marketTray[i][j]=marbles[temp_position.get(k)];
                     k++;
@@ -64,22 +58,6 @@ public class MarketTray {
         }
 
     }
-    private static int randomPos(ArrayList<Integer> temp_position){
-        int temp=-1;
-
-        temp_position.add((int)((Math.random() * ((12) + 1)) + 0));
-
-        while(temp_position.size()<13) {
-            temp=(int)((Math.random() * ((12) + 1)) + 0);
-            if (!temp_position.contains(temp))
-                temp_position.add((temp));
-        }return temp;
-        /*for (Integer integer : temp_position) {
-
-            System.out.println(integer);
-        }*/
-    }
-
 
     public Resources selectRow(int row){
 

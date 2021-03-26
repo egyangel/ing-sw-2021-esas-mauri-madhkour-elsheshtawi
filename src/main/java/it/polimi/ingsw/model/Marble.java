@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.EnumClasses.Direction;
-import it.polimi.ingsw.model.EnumClasses.MarbleColor;
+import it.polimi.ingsw.model.enumclasses.Direction;
+import it.polimi.ingsw.model.enumclasses.MarbleColor;
 
 public class Marble {
     private MarbleColor color;
