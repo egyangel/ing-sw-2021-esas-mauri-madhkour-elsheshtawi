@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 
 import it.polimi.ingsw.model.enumclasses.MarbleColor;
+import it.polimi.ingsw.model.enumclasses.ResType;
 
 import java.util.*;
 
@@ -11,7 +12,7 @@ public class MarketTray {
     private MarbleColor OutMarble;
     private MarbleColor[] marbles =new MarbleColor[13];
     private MarbleColor[][] marketTray=new MarbleColor[3][4];
-
+    private ArrayList<ResType> resources = new ArrayList<>();
 
     public MarketTray(){
 
@@ -49,23 +50,60 @@ public class MarketTray {
                 for(int j=0;j<column;j++){
                     marketTray[i][j]=marbles[temp_position.get(k)];
                     k++;
-                    System.out.print(String.format("%-16s",marketTray[i][j].getColor()));
-                  }
-                System.out.println(" ");
-            }
+                }
+              }
         }catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("The push of the marbles into the tray brought an IndexOut");
         }
 
     }
 
-    public Resources selectRow(int row){
 
-        return null;
+    /* @require row >=1 && row <=3
+    @ ensure markettray.lenght().equals(\old(markettray.lenght())
+    @ && !\result.equals(NULL)   */
+    public ArrayList<ResType> selectRow(int row){
+
+        MarbleColor temp;
+        temp=marketTray[row-1][0];
+        for(int j=0;j<column;j++)resources.add(marketTray[row-1][j].ResourceType());
+        for(int j=0;j<column-1;j++)marketTray[row-1][j]=  marketTray[row-1][j+1];
+
+        marketTray[row-1][column-1]= OutMarble;
+        OutMarble=temp;
+
+
+        return resources;
     }
-    public Resources selectColumn(int column){
+    /* @require column >=1&& column <=4 */
 
-        return null;
+    public ArrayList<ResType> selectColumn(int column){
+        MarbleColor temp;
+        temp=marketTray[row-1][column-1];
+        for(int j=0;j<row;j++)resources.add(marketTray[j][column-1].ResourceType());
+        for(int i=row-1;i>0;i--)marketTray[i][column-1]=  marketTray[i-1][column-1];
+        marketTray[0][column-1]= OutMarble;
+        OutMarble=temp;
+
+        return resources;
+    }
+    public void MarketTrayDraw(){
+        System.out.println(String.format("%70s",OutMarble.getColor()));
+        for(int i=0;i<row;i++){
+            for(int j=0;j<column;j++){
+                System.out.print(String.format("%-16s",marketTray[i][j].getColor()));
+            }
+            System.out.println(" ");
+        }System.out.println("");
+
+    }
+    public void ResourceDraw(){
+        System.out.println("Resources that you have to take from the market are:");
+        for(int i=0;i< resources.size();i++){
+
+                System.out.print(String.format("%-16s",resources.get(i)));
+            }
+            System.out.println(" ");
     }
 
 }
