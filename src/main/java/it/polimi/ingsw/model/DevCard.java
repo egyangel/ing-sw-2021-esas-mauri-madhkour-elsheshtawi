@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.EnumClasses.DevCardColor;
+import it.polimi.ingsw.model.enumclasses.DevCardColor;
 
 public class DevCard {
 
@@ -48,9 +48,9 @@ public class DevCard {
 
 
     public Resources produce(){
-        if (Resources>=LHS) LHS=RHS;
-        else return 0;
-
+//        if (Resources>=LHS) LHS=RHS;
+//        else return 0;
+        return null;
 
     }
 

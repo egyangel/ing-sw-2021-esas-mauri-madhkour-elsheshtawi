@@ -11,6 +11,6 @@ public class ConvertWhiteMarble implements SpecialAbility {
 
     @Override
     public AbilityType getType() {
-        return null;
+        return AbilityType.CONVERTWHITE;
     }
 }

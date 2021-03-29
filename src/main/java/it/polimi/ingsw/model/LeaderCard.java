@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.EnumClasses.DevCardColor;
-import it.polimi.ingsw.model.SpecialAbility.SpecialAbility;
+import it.polimi.ingsw.model.enumclasses.DevCardColor;
+import it.polimi.ingsw.model.specialability.SpecialAbility;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class LeaderCard {
     private boolean ready;
 
     public boolean isReady(){
-
+        return true;
     }
 
 

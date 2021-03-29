@@ -1,18 +1,14 @@
 package it.polimi.ingsw.model.enumclasses;
 
-
-
 public enum MarbleColor {
     WHITE,BLUE,GREY,YELLOW,PURPLE,RED;
   //  private EnumMap<MarbleColor,ResType> type;
-
 
     public String getColor() {
         return (this.name());
     }
 
-    public ResType ResourceType(){
-
+    public ResType ResourceType() {
 
         if(this.equals(BLUE))
             return ResType.SHIELD;

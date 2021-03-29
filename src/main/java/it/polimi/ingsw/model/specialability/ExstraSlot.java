@@ -12,6 +12,6 @@ public class ExstraSlot implements SpecialAbility {
 
     @Override
     public AbilityType getType() {
-        return null;
+        return AbilityType.EXSTRASLOT;
     }
 }
