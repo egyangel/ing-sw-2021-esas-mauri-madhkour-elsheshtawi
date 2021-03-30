@@ -13,6 +13,7 @@ public class LeaderCard {
     private boolean ready;
 
     public boolean isReady(){
+        return false;
 
     }
 
