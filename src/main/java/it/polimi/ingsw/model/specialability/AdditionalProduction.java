@@ -10,6 +10,6 @@ public class AdditionalProduction implements SpecialAbility{
 
     @Override
     public AbilityType getType() {
-        return null;
+        return AbilityType.ADDPROD;
     }
 }

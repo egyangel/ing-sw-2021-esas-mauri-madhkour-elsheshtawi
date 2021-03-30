@@ -4,6 +4,6 @@ import it.polimi.ingsw.model.enumclasses.AbilityType;
 
 public interface SpecialAbility {
 
-     void activate();
+    void activate();
     AbilityType getType();
 }

@@ -10,6 +10,6 @@ public class Discount implements SpecialAbility {
 
     @Override
     public AbilityType getType() {
-        return null;
+        return AbilityType.DISCOUNT;
     }
 }
