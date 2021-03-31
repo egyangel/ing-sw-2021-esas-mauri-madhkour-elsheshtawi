@@ -15,12 +15,24 @@ public class Resources {
         }
     }
 
+//    Over-loading constructor
+    public Resources(int stone, int shield, int servant, int coin, int faith){
+        this.values = new HashMap<>();
+        this.values.put(ResType.STONE, stone);
+        this.values.put(ResType.SHIELD, shield);
+        this.values.put(ResType.SERVANT, servant);
+        this.values.put(ResType.COIN, coin);
+        this.values.put(ResType.FAITH, faith);
+    }
+
     public void add(ResType res,Integer val){
+//        System.out.println("Adding " + val + " " + res.toString());
         this.values.put(res, this.values.get(res) + val);
     }
 
     public void subtract(ResType res,Integer val){
-        if (this.values.get(res) > val){
+//        System.out.println("Subtracting " + val + " " + res.toString());
+        if (this.values.get(res) >= val){
             this.values.put(res, this.values.get(res) - val);
         }
     }

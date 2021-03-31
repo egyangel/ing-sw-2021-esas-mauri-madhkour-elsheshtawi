@@ -62,7 +62,7 @@ public class MarketTray {
     public ArrayList<ResType> selectRow (int row) {
         MarbleColor temp;
         temp = marketTray[row-1][0];
-        for (int j = 0; j < column; j++) resources.add(marketTray[row-1][j].ResourceType());
+        for (int j = 0; j < column; j++) resources.add(marketTray[row-1][j].getResourceType());
         for (int j = 0; j < column-1; j++) marketTray[row-1][j] = marketTray[row-1][j+1];
         marketTray[row-1][column-1] = OutMarble;
         OutMarble = temp;
@@ -73,7 +73,7 @@ public class MarketTray {
     public ArrayList<ResType> selectColumn (int column){
         MarbleColor temp;
         temp = marketTray[0][column-1];
-        for (int i = 0; i < row; i++) resources.add(marketTray[i][column-1].ResourceType());
+        for (int i = 0; i < row; i++) resources.add(marketTray[i][column-1].getResourceType());
         for (int i = 0; i < row-1; i++) marketTray[i][column-1] = marketTray[i+1][column-1];
         marketTray[row-1][column-1] = OutMarble;
         OutMarble = temp;

@@ -8,7 +8,7 @@ public enum MarbleColor {
         return (this.name());
     }
 
-    public ResType ResourceType() {
+    public ResType getResourceType() {
 
         if(this.equals(BLUE))
             return ResType.SHIELD;
@@ -25,7 +25,7 @@ public enum MarbleColor {
         if(this.equals(RED))
             return ResType.FAITH;
 
-        return ResType.NOTHING;
+        return null;
     }
 /*
     private void set() {
