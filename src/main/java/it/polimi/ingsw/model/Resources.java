@@ -15,7 +15,7 @@ public class Resources {
         }
     }
 
-//    Over-loading constructor
+    //    Over-loading constructor
     public Resources(int stone, int shield, int servant, int coin, int faith){
         this.values = new HashMap<>();
         this.values.put(ResType.STONE, stone);
@@ -28,12 +28,16 @@ public class Resources {
     public void add(ResType res,Integer val){
 //        System.out.println("Adding " + val + " " + res.toString());
         this.values.put(res, this.values.get(res) + val);
+
+        //if(!values.putIfAbsent(res, val).equals(null) )values.computeIfPresent(res , (key, oldValue) -> oldValue + val);;
     }
 
     public void subtract(ResType res,Integer val){
 //        System.out.println("Subtracting " + val + " " + res.toString());
-        if (this.values.get(res) >= val){
+        if (values.containsKey(res) && this.values.get(res) >= val){
             this.values.put(res, this.values.get(res) - val);
+
+            //if (values.containsKey(res) && this.values.get(res) >= val)
         }
     }
 

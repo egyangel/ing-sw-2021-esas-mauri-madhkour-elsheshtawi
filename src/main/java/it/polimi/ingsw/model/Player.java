@@ -11,17 +11,20 @@ public class Player {
     private PersonalBoard personalBoard;
     private boolean inkwell;
 
-    public Player(){
+    public Player()throws InputMismatchException{
         personalBoard = new PersonalBoard();
         Scanner input = new Scanner(System.in);
 
-        System.out.print("inserts nickname: ");
-        nickname = input.nextLine();
-        System.out.println();
+        try
+        {
+            System.out.print("inserts nickname: ");
+            nickname = input.nextLine();
+            System.out.println();
 
-        System.out.print("inserts playerId: ");
-        playerId = input.nextInt();
-        System.out.println();
+            System.out.print("inserts playerId: ");
+            playerId = input.nextInt();
+            System.out.println();
+        }catch (java.util.InputMismatchException e) { System.out.println( "InputMismatchException  " ); }
 
         victoryPoints = 0;
         inkwell = false;
@@ -30,9 +33,7 @@ public class Player {
     public void setInkwell(boolean inkwell){
         this.inkwell=inkwell;
     }
-    public boolean hasInkwell() {
-        return inkwell;
-    }
+    public boolean hasInkwell() { return inkwell; }
     public void countVictoryPoints(int point){
         victoryPoints+=point;
     }
@@ -40,10 +41,8 @@ public class Player {
         return victoryPoints;
     }
 
-//    to simulate the environment, not to be used in actual game
-    public void giveInitialStrongboxResources(int stone, int shield, int servant, int coin, int faith){
-        this.personalBoard.setStrongbox(new Resources(stone, shield, servant, coin, faith));
-    }
+    //    to simulate the environment, not to be used in actual game
+    public void giveInitialStrongboxResources(int stone, int shield, int servant, int coin, int faith){ this.personalBoard.setStrongbox(new Resources(stone, shield, servant, coin, faith)); }
 
     public void useDefProd(ResType L1, ResType L2, ResType R){
         this.personalBoard.useDefProd(L1, L2, R);

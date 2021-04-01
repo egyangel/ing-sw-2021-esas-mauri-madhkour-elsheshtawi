@@ -44,12 +44,12 @@ public class MarketTray {
         OutMarble = marbles[temp_position.get(temp_position.size() - 1)];
 
         try {
-              for (int i = 0; i < row; i++) {
+            for (int i = 0; i < row; i++) {
                 for (int j = 0; j < column; j++) {
                     marketTray[i][j] = marbles[temp_position.get(k)];
                     k++;
                 }
-              }
+            }
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("The push of the marbles into the tray brought an IndexOut");
         }
@@ -92,8 +92,8 @@ public class MarketTray {
 
     public void ResourceDraw(){
         System.out.println("Resources that you have to take from the market are:");
-        for (int i = 0; i < resources.size(); i++) {
-                System.out.print(String.format("%-16s",resources.get(i)));
+        for (ResType resource : resources) {
+            System.out.print(String.format("%-16s", resource));
         }
         System.out.println(" ");
     }

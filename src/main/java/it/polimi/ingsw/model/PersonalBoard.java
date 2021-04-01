@@ -2,12 +2,17 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enumclasses.ResType;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class PersonalBoard {
     private DefaultProd defProd;
     private DevSlot[] devSlots = new DevSlot[3];
     private Shelf[] warehouse = new Shelf[3];
     private Resources strongbox;
     private int faithPoints;
+    private List<LeaderCard> leadersCards;
 
     public PersonalBoard(){
         defProd = new DefaultProd();
@@ -21,6 +26,11 @@ public class PersonalBoard {
         warehouse[2] = new Shelf(3);
         strongbox = new Resources();
         faithPoints = 0;
+    }
+    public void setLeadersCards(List<LeaderCard> cardList){
+        leadersCards = new ArrayList<>(cardList);
+
+       // leadersCards  = cardList.stream().collect(Collectors.toList());
     }
 
     public void setStrongbox(Resources strongbox) {
