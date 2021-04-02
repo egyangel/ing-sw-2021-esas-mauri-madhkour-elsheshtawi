@@ -34,10 +34,8 @@ public class Resources {
 
     public void subtract(ResType res,Integer val){
 //        System.out.println("Subtracting " + val + " " + res.toString());
-        if (values.containsKey(res) && this.values.get(res) >= val){
+        if (this.values.get(res) >= val){
             this.values.put(res, this.values.get(res) - val);
-
-            //if (values.containsKey(res) && this.values.get(res) >= val)
         }
     }
 
