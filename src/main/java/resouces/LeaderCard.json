@@ -1,31 +1,39 @@
-[{"requierment":[ ],"points": "2", "ability":[{"effect":"DISCOUNT","material":"SHIELD","number":"-1"}]},
+ [
+   {
+     "requirements": [
+       {
+         "req1":"COIN",
+         "number": 5
+       }
+     ],
+     "points": "2",
+     "ability":
+       {
+         "effect": "CONVERTWHITE",
+         "material": "SHIELD",
+         "number": "-1"
+       }
 
+   },
+   {
+     "requirements": [
+       {
+       "req2":"BLUE",
+       "number": 1
+      },
+       {
+         "req2":"PURPLE",
+         "number": 1
+       }
+     ],
+     "points": "2",
+     "ability":
+       {
+         "effect": "DISCOUNT",
+         "material": "STONE",
+         "number": "-1"
+       }
 
-{"requierment":[],"points": "2", "ability":[{"effect":"DISCOUNT","material":"STONE","number":"-1"}]},
+   }
 
-{"requierment":[],"points": "2", "ability":[{"effect":"DISCOUNT","material":"COIN","number":"-1"}]},
-
-{"requierment":[],"points": "3", "ability":[{"effect":"EXSTRASLOT","material":"SHIELD","number":"2"}]},
-
-{"requierment":[],"points": "3", "ability":[{"effect":"EXSTRASLOT","material":"SERVANT","number":"2"}]},
-
-{"requierment":[],"points": "3", "ability":[{"effect":"EXSTRASLOT","material":"STONE","number":"2"}]},
-
-{"requierment":[],"points": "3", "ability":[{"effect":"EXSTRASLOT","material":"COIN","number":"2"}]},
-
-
-{"requierment":[],"points": "5", "ability":[{"effect":"CONVERTWHITE","material":"SHIELD","number":"1"}]},
-
-{"requierment":[],"points": "5", "ability":[{"effect":"CONVERTWHITE","material":"SERVANT","number":"1"}]},
-
-{"requierment":[],"points": "5", "ability":[{"effect":"CONVERTWHITE","material":"STONE","number":"1"}]},
-
-{"requierment":[],"points": "5", "ability":[{"effect":"CONVERTWHITE","material":"COIN","number":"1"}]},
-
-{"requierment":[],"points": "4", "ability":[{"effect":"ADDPROD","material":"SHIELD","number":"1"}]},
-
-{"requierment":[],"points": "4", "ability":[{"effect":"ADDPROD","material":"SERVANT","number":"1"}]},
-
-{"requierment":[],"points": "4", "ability":[{"effect":"ADDPROD","material":"STONE","number":"1"}]},
-
-{"requierment":[],"points": "4", "ability":[{"effect":"ADDPROD","material":"COIN","number":"1"}]}]
+ ]
