@@ -31,4 +31,7 @@ public class DevDeck {
 
         }
     }
+    public boolean isEmpty(){
+        return cardsInDeck==0;
+    }
 }
