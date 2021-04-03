@@ -1,0 +1,32 @@
+{
+  "level": 1,
+  "color": "BLUE",
+  "LHS": {
+    "values": {
+      "COIN": 1,
+      "STONE": 0,
+      "SHIELD": 0,
+      "SERVANT": 0,
+      "FAITH": 0
+    }
+  },
+  "RHS": {
+    "values": {
+      "COIN": 0,
+      "STONE": 0,
+      "SHIELD": 0,
+      "SERVANT": 0,
+      "FAITH": 1
+    }
+  },
+  "cost": {
+    "values": {
+      "COIN": 0,
+      "STONE": 0,
+      "SHIELD": 2,
+      "SERVANT": 0,
+      "FAITH": 0
+    }
+  },
+  "victoryPoints": 1
+}
