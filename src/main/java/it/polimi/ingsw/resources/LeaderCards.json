@@ -1,0 +1,39 @@
+[
+  {
+    "requirements": [
+      {
+        "req1":"COIN",
+        "number": 5
+      }
+    ],
+    "points": "2",
+    "ability":
+    {
+      "effect": "CONVERTWHITE",
+      "material": "SHIELD",
+      "number": "-1"
+    }
+
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "2",
+    "ability":
+    {
+      "effect": "DISCOUNT",
+      "material": "STONE",
+      "number": "-1"
+    }
+
+  }
+
+]
