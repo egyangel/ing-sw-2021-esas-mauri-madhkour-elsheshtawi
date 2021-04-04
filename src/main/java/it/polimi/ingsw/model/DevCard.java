@@ -56,12 +56,9 @@ public class DevCard {
 
 
 
-    public Resources produce(){
-/*        if (Resources>=LHS) LHS=RHS;
-        else return 0;
+    public Resources produce(Resources LHS, Resources RHS, Resources strongbox,Shelf[] warehouse){
 
 
-        */
         return null;
 
     }
