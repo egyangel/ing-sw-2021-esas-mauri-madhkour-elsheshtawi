@@ -1,12 +1,18 @@
 package it.polimi.ingsw;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import com.sun.jdi.event.VMDisconnectEvent;
 import it.polimi.ingsw.model.DevCard;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Resources;
 import it.polimi.ingsw.model.enumclasses.DevCardColor;
 import it.polimi.ingsw.model.enumclasses.ResType;
+import it.polimi.ingsw.model.specialability.*;
+import org.w3c.dom.events.Event;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import com.google.gson.*;
 public class App {
 
     public static void main(String[] args) throws IOException {
@@ -37,7 +44,7 @@ public class App {
 //        playerOne.printStrongBox();
 //        playerOne.useDefProd(ResType.COIN, ResType.SERVANT, ResType.SHIELD);
 //        playerOne.printStrongBox();
-        myFunction();
+        myFunction2();
         Resources devCardOneLHS = new Resources(0, 0, 0, 1, 0);
         Resources devCardOneRHS = new Resources(0, 0, 0, 0, 1);
         Resources devCardOneCost = new Resources(0, 2, 0, 0, 0);
@@ -74,4 +81,24 @@ public class App {
             // System.out.println(extractedJson[i].getAbility().getType());
         }
     }
+
+    static void myFunction2() throws FileNotFoundException {
+
+        Gson g = (new GsonBuilder()).registerTypeAdapterFactory(
+                RuntimeTypeAdapterFactory
+                        .of(SpecialAbility.class, "type")
+                        .registerSubtype(Discount.class, "Discount")
+                        .registerSubtype(AdditionalProduction.class, "AdditionalProduction")
+                        .registerSubtype(ConvertWhiteMarble.class, "ConvertWhiteMarble")
+                        .registerSubtype(ExstraSlot.class, "ExstraSlot")
+        ).create();
+
+        try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/resources/LeaderCards.json")) {
+            LeaderCard[] extractedJson = g.fromJson(reader, LeaderCard[].class);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

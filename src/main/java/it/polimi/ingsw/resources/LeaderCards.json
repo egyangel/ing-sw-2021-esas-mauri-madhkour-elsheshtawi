@@ -7,13 +7,52 @@
       }
     ],
     "points": "2",
-    "ability":
-    {
-      "effect": "CONVERTWHITE",
-      "material": "SHIELD",
-      "number": "-1"
-    }
-
+    "ability": [
+      {
+        "type": "Discount",
+        "effect": "DISCOUNT",
+        "material": "SHIELD",
+        "number": "-1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "3",
+    "ability": [
+      {
+        "type": "Discount",
+        "effect": "DISCOUNT",
+        "material": "SERVANT",
+        "number": "2"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req1":"COIN",
+        "number": 5
+      }
+    ],
+    "points": "2",
+    "ability": [
+      {
+        "type": "Discount",
+        "effect": "DISCOUNT",
+        "material": "STONE",
+        "number": "-1"
+      }
+    ]
   },
   {
     "requirements": [
@@ -27,13 +66,265 @@
       }
     ],
     "points": "2",
-    "ability":
-    {
-      "effect": "DISCOUNT",
-      "material": "STONE",
-      "number": "-1"
-    }
-
+    "ability": [
+      {
+        "type": "Discount",
+        "effect": "DISCOUNT",
+        "material": "COIN",
+        "number": "-1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "3",
+    "ability": [
+      {
+        "type": "ExstraSlot",
+        "effect": "EXSTRASLOT",
+        "material": "SHIELD",
+        "number": "2"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "3",
+    "ability": [
+      {
+        "type": "ExstraSlot",
+        "effect": "EXSTRASLOT",
+        "material": "SERVANT",
+        "number": "2"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "3",
+    "ability": [
+      {
+        "type": "ExstraSlot",
+        "effect": "EXSTRASLOT",
+        "material": "STONE",
+        "number": "2"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "3",
+    "ability": [
+      {
+        "type": "ExstraSlot",
+        "effect": "EXSTRASLOT",
+        "material": "COIN",
+        "number": "2"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "5",
+    "ability": [
+      {
+        "type": "ConvertWhiteMarble",
+        "effect": "CONVERTWHITE",
+        "material": "SHIELD",
+        "number": "1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "5",
+    "ability": [
+      {
+        "type": "ConvertWhiteMarble",
+        "effect": "CONVERTWHITE",
+        "material": "SERVANT",
+        "number": "1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "5",
+    "ability": [
+      {
+        "type": "ConvertWhiteMarble",
+        "effect": "CONVERTWHITE",
+        "material": "STONE",
+        "number": "1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "5",
+    "ability": [
+      {
+        "type": "ConvertWhiteMarble",
+        "effect": "CONVERTWHITE",
+        "material": "COIN",
+        "number": "1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "4",
+    "ability": [
+      {
+        "type": "AdditionalProduction",
+        "effect": "ADDPROD",
+        "material": "SHIELD",
+        "number": "1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "4",
+    "ability": [
+      {
+        "type": "AdditionalProduction",
+        "effect": "ADDPROD",
+        "material": "SERVANT",
+        "number": "1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "4",
+    "ability": [
+      {
+        "type": "AdditionalProduction",
+        "effect": "ADDPROD",
+        "material": "STONE",
+        "number": "1"
+      }
+    ]
+  },
+  {
+    "requirements": [
+      {
+        "req2":"BLUE",
+        "number": 1
+      },
+      {
+        "req2":"PURPLE",
+        "number": 1
+      }
+    ],
+    "points": "4",
+    "ability": [
+      {
+        "type": "AdditionalProduction",
+        "effect": "ADDPROD",
+        "material": "COIN",
+        "number": "1"
+      }
+    ]
   }
-
 ]

@@ -7,7 +7,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
+/*
 @interface JsonSubtype {
     Class<?> clazz();
 
@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
                 @JsonSubtype(clazz = ExstraSlot.class, name = "EXSTRASLOT"),
                 @JsonSubtype(clazz = AdditionalProduction.class, name = "ADDPROD")
         }
-)
+)*/
 public abstract class SpecialAbility {
     protected AbilityType effect;
     protected ResType material;
