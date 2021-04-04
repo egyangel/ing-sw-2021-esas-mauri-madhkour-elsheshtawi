@@ -1,9 +1,17 @@
 package it.polimi.ingsw.model.specialability;
 
 import it.polimi.ingsw.model.enumclasses.AbilityType;
+import it.polimi.ingsw.model.enumclasses.ResType;
 
-public class ExstraSlot implements SpecialAbility {
+public class ExstraSlot extends SpecialAbility {
 
+
+    public ExstraSlot(SpecialAbility ability) {
+        effect = ability.getEffect();
+        material = ability.getMaterial();
+        number = ability.getNumber();
+
+    }
 
     @Override
     public void activate() {
@@ -11,7 +19,7 @@ public class ExstraSlot implements SpecialAbility {
     }
 
     @Override
-    public AbilityType getType() {
+    public AbilityType  getEffect() {
         return AbilityType.EXSTRASLOT;
     }
 }

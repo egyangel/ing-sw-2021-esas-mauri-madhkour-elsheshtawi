@@ -4,14 +4,12 @@ import it.polimi.ingsw.model.enumclasses.DevCardColor;
 
 public class DevCard {
 
-    private static int level;
+    private final int level;
     private final DevCardColor color;
     private final Resources LHS;
     private final Resources RHS;
     private final Resources cost;
-    private static int victoryPoints;
-
-    // Constructor
+    private final int victoryPoints;
 
     public DevCard (int level, final DevCardColor color, Resources LHS, Resources RHS, Resources cost, int victoryPoints) {
         this.color=color;
@@ -22,45 +20,31 @@ public class DevCard {
         this.victoryPoints=victoryPoints;
     }
 
-    //Getters
-
-    public static int getLevel() {
-        return level;
+    public int getLevel() {
+        return this.level;
     }
-    public static int getVictoryPoints() {
-        return victoryPoints;
+    public int getVictoryPoints() {
+        return this.victoryPoints;
     }
     public DevCardColor getColor() {
-        return color;
+        return this.color;
     }
     public Resources getLHS() {
-        return LHS;
+        return this.LHS;
     }
     public Resources getRHS() {
-        return RHS;
+        return this.RHS;
     }
     public Resources getCost() {
-        return cost;
+        return this.cost;
     }
 
-    // ToString Method
-
-    public String toString(){
+    public String toString() {
         return color +"_"+level+"_"+ RHS+"_"+LHS+"_"+"_"+cost+"_"+victoryPoints;
     }
 
-/*
-*
-*
-* */
-
-
-
-    public Resources produce(Resources LHS, Resources RHS, Resources strongbox,Shelf[] warehouse){
-
-
+    public Resources produce(){
         return null;
-
     }
 
 
