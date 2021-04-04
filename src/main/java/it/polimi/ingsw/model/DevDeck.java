@@ -1,4 +1,7 @@
-package it.polimi.ingsw.model;
+
+// Choosing to delete this class to implement attributes and methods inside Game class
+
+/*package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enumclasses.DevCardColor;
 
@@ -14,8 +17,8 @@ public class DevDeck {
         attributes to make a deck matrix ordered by level and color?*/
 
 
-    }
-
+   // }
+/*
     public void reset(){
         DevCardColor[] colors = DevCardColor.values();
         cardsInDeck=0;
@@ -34,4 +37,4 @@ public class DevDeck {
     public boolean isEmpty(){
         return cardsInDeck==0;
     }
-}
+}*/
