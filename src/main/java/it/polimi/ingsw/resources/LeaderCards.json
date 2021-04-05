@@ -7,14 +7,14 @@
       }
     ],
     "points": "2",
-    "ability": [
+    "ability":
       {
         "type": "Discount",
         "effect": "DISCOUNT",
         "material": "SHIELD",
         "number": "-1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -28,14 +28,14 @@
       }
     ],
     "points": "3",
-    "ability": [
+    "ability":
       {
         "type": "Discount",
         "effect": "DISCOUNT",
         "material": "SERVANT",
         "number": "2"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -45,14 +45,14 @@
       }
     ],
     "points": "2",
-    "ability": [
+    "ability":
       {
         "type": "Discount",
         "effect": "DISCOUNT",
         "material": "STONE",
         "number": "-1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -66,14 +66,14 @@
       }
     ],
     "points": "2",
-    "ability": [
+    "ability":
       {
         "type": "Discount",
         "effect": "DISCOUNT",
         "material": "COIN",
         "number": "-1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -87,14 +87,14 @@
       }
     ],
     "points": "3",
-    "ability": [
+    "ability":
       {
         "type": "ExstraSlot",
         "effect": "EXSTRASLOT",
         "material": "SHIELD",
         "number": "2"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -108,14 +108,14 @@
       }
     ],
     "points": "3",
-    "ability": [
+    "ability":
       {
         "type": "ExstraSlot",
         "effect": "EXSTRASLOT",
         "material": "SERVANT",
         "number": "2"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -129,14 +129,14 @@
       }
     ],
     "points": "3",
-    "ability": [
+    "ability":
       {
         "type": "ExstraSlot",
         "effect": "EXSTRASLOT",
         "material": "STONE",
         "number": "2"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -150,14 +150,14 @@
       }
     ],
     "points": "3",
-    "ability": [
+    "ability":
       {
         "type": "ExstraSlot",
         "effect": "EXSTRASLOT",
         "material": "COIN",
         "number": "2"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -171,14 +171,14 @@
       }
     ],
     "points": "5",
-    "ability": [
+    "ability":
       {
         "type": "ConvertWhiteMarble",
         "effect": "CONVERTWHITE",
         "material": "SHIELD",
         "number": "1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -192,14 +192,14 @@
       }
     ],
     "points": "5",
-    "ability": [
+    "ability":
       {
         "type": "ConvertWhiteMarble",
         "effect": "CONVERTWHITE",
         "material": "SERVANT",
         "number": "1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -213,14 +213,14 @@
       }
     ],
     "points": "5",
-    "ability": [
+    "ability":
       {
         "type": "ConvertWhiteMarble",
         "effect": "CONVERTWHITE",
         "material": "STONE",
         "number": "1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -234,14 +234,14 @@
       }
     ],
     "points": "5",
-    "ability": [
+    "ability":
       {
         "type": "ConvertWhiteMarble",
         "effect": "CONVERTWHITE",
         "material": "COIN",
         "number": "1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -255,14 +255,14 @@
       }
     ],
     "points": "4",
-    "ability": [
+    "ability":
       {
         "type": "AdditionalProduction",
         "effect": "ADDPROD",
         "material": "SHIELD",
         "number": "1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -276,14 +276,14 @@
       }
     ],
     "points": "4",
-    "ability": [
+    "ability":
       {
         "type": "AdditionalProduction",
         "effect": "ADDPROD",
         "material": "SERVANT",
         "number": "1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -297,14 +297,14 @@
       }
     ],
     "points": "4",
-    "ability": [
+    "ability":
       {
         "type": "AdditionalProduction",
         "effect": "ADDPROD",
         "material": "STONE",
         "number": "1"
       }
-    ]
+
   },
   {
     "requirements": [
@@ -318,13 +318,13 @@
       }
     ],
     "points": "4",
-    "ability": [
+    "ability":
       {
         "type": "AdditionalProduction",
         "effect": "ADDPROD",
         "material": "COIN",
         "number": "1"
       }
-    ]
+
   }
 ]
