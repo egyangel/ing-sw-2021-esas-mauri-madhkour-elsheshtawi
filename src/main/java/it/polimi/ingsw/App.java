@@ -3,7 +3,9 @@ package it.polimi.ingsw;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.DevCard;
+import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.Resources;
 import it.polimi.ingsw.model.enumclasses.DevCardColor;
@@ -39,6 +41,12 @@ public class App {
 //        playerOne.printStrongBox();
 //        playerOne.useDefProd(ResType.COIN, ResType.SERVANT, ResType.SHIELD);
 //        playerOne.printStrongBox();
+        Game theGame = new Game();
+        GameController theGameController = new GameController(theGame);
+
+        // this will be surrounded by proper exceptions
+        // theGameController.startGame();
+
         myFunction2();
         Resources devCardOneLHS = new Resources(0, 0, 0, 1, 0);
         Resources devCardOneRHS = new Resources(0, 0, 0, 0, 1);

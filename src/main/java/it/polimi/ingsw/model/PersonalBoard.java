@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PersonalBoard {
+    private Player player;
     private DefaultProd defProd;
     private DevSlot[] devSlots = new DevSlot[3];
     private Shelf[] warehouse = new Shelf[3];
@@ -14,7 +15,8 @@ public class PersonalBoard {
     private int faithPoints;
     private List<LeaderCard> leadersCards;
 
-    public PersonalBoard(){
+    public PersonalBoard(Player player){
+        player = player;
         defProd = new DefaultProd();
         // from left to right on personal board
         devSlots[0] = new DevSlot();

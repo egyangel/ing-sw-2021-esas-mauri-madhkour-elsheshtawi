@@ -5,29 +5,13 @@ import java.sql.SQLOutput;
 import java.util.*;
 
 public class Player {
-    private int playerId;
     private String nickname;
     private int victoryPoints;
     private PersonalBoard personalBoard;
     private boolean inkwell;
 
-    public Player()throws InputMismatchException{
-        personalBoard = new PersonalBoard();
-        Scanner input = new Scanner(System.in);
-
-        try
-        {
-            System.out.print("inserts nickname: ");
-            nickname = input.nextLine();
-            System.out.println();
-
-            System.out.print("inserts playerId: ");
-            playerId = input.nextInt();
-            System.out.println();
-        }catch (java.util.InputMismatchException e) { System.out.println( "InputMismatchException  " ); }
-
-        victoryPoints = 0;
-        inkwell = false;
+    public Player(String nickname) {
+        this.nickname = nickname;
     }
 
     public void setInkwell(boolean inkwell){
