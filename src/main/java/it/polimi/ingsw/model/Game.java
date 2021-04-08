@@ -31,6 +31,18 @@ public class Game {
 
     }
 
+    public void addBoard(PersonalBoard board){
+        {
+            this.boards.add(new PersonalBoard());
+        }
+
+
+    }
+
+    public void editBoard(PersonalBoard board){
+
+    }
+
 }
 
 
