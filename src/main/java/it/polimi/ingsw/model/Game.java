@@ -38,5 +38,3 @@ public class Game {
         this.boards.add(board);
     }
 }
-
-

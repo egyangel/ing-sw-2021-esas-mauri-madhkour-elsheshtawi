@@ -34,8 +34,8 @@ public class Shelf {
         this.maxSize = maxSize;
         resources = new ArrayList<>();
     }
-
-    public String PutResource(List<ResType> resources) {
+//adding a single element each time
+    public String PutResource(ResType resources) {
         if( this.isEmpty() )
             this.resources.add(resources);
         else
@@ -52,9 +52,34 @@ public class Shelf {
             return"Correct Action";
     }
 
+    //adding multiple elements each time
+    public Integer PutResource(List<ResType> resources) {
+        int i=this.resources.size();
+
+            if (this.isEmpty() && this.ShelfSize()>= resources.size())
+                this.resources.addAll(resources);
+            else
+                if (this.isFull())
+                     return  resources.size();
+                else
+                {
+                    if (!this.resources.get(0).equals(resources.get(0)))
+                        return  resources.size();
+                    else {
+                        while (this.resources.size() < maxSize) {
+                            this.resources.add(resources.get(i));
+                            i++;
+                        }
+                        return this.resources.size() - resources.size();
+                    }
+                }
+            return 0;
+    }
+
     public String SwapShelf(Shelf otherShelf){
         ResType temp = otherShelf.GetShelfResType();
         int numOfResTemp = otherShelf.GetNumberOfElements();
+
         if ( otherShelf.GetNumberOfElements() > this.maxSize || this.GetNumberOfElements() > otherShelf.ShelfSize() )
             return "Incorrect action";
         else{
@@ -67,7 +92,6 @@ public class Shelf {
                 this.PutResource(temp);
             }
         }
-
         return "Swap done";
 
     }
@@ -90,5 +114,8 @@ public class Shelf {
     }
     public void ClearShelf(){
         this.resources.clear();
+    }
+    public void GetShelfContent(){
+        System.out.println("There are => "+this.GetNumberOfElements()+" of "+ this.GetShelfResType());
     }
 }
