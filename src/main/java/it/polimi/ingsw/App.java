@@ -46,8 +46,7 @@ public class App {
 
         // this will be surrounded by proper exceptions
         // theGameController.startGame();
-
-        myFunction2();
+        DeserialLeaderCard();
         Resources devCardOneLHS = new Resources(0, 0, 0, 1, 0);
         Resources devCardOneRHS = new Resources(0, 0, 0, 0, 1);
         Resources devCardOneCost = new Resources(0, 2, 0, 0, 0);
@@ -62,12 +61,13 @@ public class App {
     }
 
 
-    static void myFunction2() {
-        List<LeaderCard> listOfCards = new ArrayList<>();
-        LeaderCard[] extractedJson = new LeaderCard[0];
+ //Method that desirialize the leader card from the json Leader cards file and instantiate the array of the cards.
+        private static void DeserialLeaderCard() {
+            List<LeaderCard> listOfCards = new ArrayList<>();
+            LeaderCard[] extractedJson = new LeaderCard[0];
 
-        try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/resources/LeaderCards.json")) {
-            
+            try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/resources/LeaderCards.json")) {
+
                 Gson g = (new GsonBuilder()).registerTypeAdapterFactory(
                         RuntimeTypeAdapterFactory
                                 .of(SpecialAbility.class, "type")
@@ -76,39 +76,27 @@ public class App {
                                 .registerSubtype(ConvertWhiteMarble.class, "ConvertWhiteMarble")
                                 .registerSubtype(ExstraSlot.class, "ExstraSlot")
                 ).create();
-                        
-                extractedJson = g.fromJson(reader, LeaderCard[].class);
-            for (int i = 0; i < extractedJson.length; i++) {
-                // System.out.println(extractedJson[i].getAbility().getType());
-                listOfCards.add(new LeaderCard(extractedJson[i].getRequirements(), extractedJson[i].getVictoryPoints(), extractedJson[i].getAbility()));
 
-            }
+                extractedJson = g.fromJson(reader, LeaderCard[].class);
+
+                for (int i = 0; i < extractedJson.length; i++) {
+                    // System.out.println(extractedJson[i].getAbility().getType());
+                    listOfCards.add(new LeaderCard(extractedJson[i].getRequirements(), extractedJson[i].getVictoryPoints(), extractedJson[i].getAbility()));
+
+                }
 
             } catch (FileNotFoundException e) {
-             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+                e.printStackTrace();
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+            for (int i = 0; i < listOfCards.size(); i++) {
+                System.out.println(listOfCards.get(i).getAbility());
+                System.out.println(listOfCards.get(i).getAbility().getEffect());
+            }
         }
-        for (int i = 0; i < listOfCards.size(); i++) {
-            System.out.println(listOfCards.get(i).getAbility());
-        }
-
 }
-        public static TypeAdapterFactory getUserTypeAdapter() {
-            return RuntimeTypeAdapterFactory
-                    .of(SpecialAbility.class, "type")
-                    .registerSubtype(Discount.class, "Discount")
-                    .registerSubtype(AdditionalProduction.class, "AdditionalProduction")
-                    .registerSubtype(ConvertWhiteMarble.class, "ConvertWhiteMarble")
-                    .registerSubtype(ExstraSlot.class, "ExstraSlot");
-        }
 
-        public static Gson getGsonWithTypeAdapters() {
-            GsonBuilder builder = new GsonBuilder();
-            builder.registerTypeAdapterFactory(getUserTypeAdapter());
-            return builder.create();
-        }
 
-    }
 
 
