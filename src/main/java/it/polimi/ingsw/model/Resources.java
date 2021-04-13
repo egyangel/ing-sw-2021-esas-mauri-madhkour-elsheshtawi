@@ -15,6 +15,11 @@ public class Resources {
         }
     }
 
+    public Resources(ResType resource, int number) {
+        this.values = new HashMap<>();
+        values.put(resource,number);
+    }
+
     //    Over-loading constructor
     public Resources(int stone, int shield, int servant, int coin, int faith){
         this.values = new HashMap<>();
@@ -26,7 +31,7 @@ public class Resources {
     }
 
     public void add(ResType res,Integer val){
-//        System.out.println("Adding " + val + " " + res.toString());
+        //    System.out.println("Adding " + val + " " + res.toString());
         this.values.put(res, this.values.get(res) + val);
 
         //if(!values.putIfAbsent(res, val).equals(null) )values.computeIfPresent(res , (key, oldValue) -> oldValue + val);;
@@ -55,7 +60,7 @@ public class Resources {
         return sum;
     }
 
-    public int howManyOfType(ResType type){
+    public int GetNumberOfType(ResType type){
         return values.get(type);
     }
 

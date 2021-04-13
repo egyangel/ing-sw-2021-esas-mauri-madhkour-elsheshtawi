@@ -8,7 +8,7 @@ public enum MarbleColor {
         return (this.name());
     }
 
-    public ResType getResourceType() {
+    public ResType getResourceType(){
 
         if(this.equals(BLUE))
             return ResType.SHIELD;

@@ -58,7 +58,9 @@ public class MarketTray {
 
     /* @require row >=1 && row <=3
     @ ensure markettray.lenght().equals(\old(markettray.lenght())
-    @ && !\result.equals(NULL)   */
+    @ && !\result.equals(NULL)
+    */
+
     public ArrayList<ResType> selectRow (int row) {
         MarbleColor temp;
         temp = marketTray[row-1][0];

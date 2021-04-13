@@ -31,8 +31,7 @@ public class PersonalBoard {
     }
     public void setLeadersCards(List<LeaderCard> cardList){
         leadersCards = new ArrayList<>(cardList);
-
-       // leadersCards  = cardList.stream().collect(Collectors.toList());
+        //leadersCards  = cardList.stream().collect(Collectors.toList());
     }
 
     public void setStrongbox(Resources strongbox) {
@@ -56,7 +55,7 @@ public class PersonalBoard {
             }
         }
         else {
-            if (this.strongbox.howManyOfType(L1) >= 2){
+            if (this.strongbox.GetNumberOfType(L1) >= 2){
                 this.strongbox.subtract(L1, 2);
                 this.strongbox.add(R, 1);
             }

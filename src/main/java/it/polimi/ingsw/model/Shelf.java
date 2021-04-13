@@ -34,32 +34,19 @@ public class Shelf {
         this.maxSize = maxSize;
         resources = new ArrayList<>();
     }
-//adding a single element each time
-    public String PutResource(ResType resources) {
-        if( this.isEmpty() )
-            this.resources.add(resources);
-        else
-            if( this.isFull() )
-                return "Full shelf";
-            else {
-                if ( !this.resources.get(0).equals(resources) )
-                {
-                   return "Incorrect action";
-                }else{
-                    this.resources.add(resources);
-                }
-            }
-            return"Correct Action";
-    }
+
+
 
     //adding multiple elements each time
     public Integer PutResource(List<ResType> resources) {
+
+
         int i=this.resources.size();
 
             if (this.isEmpty() && this.ShelfSize()>= resources.size())
                 this.resources.addAll(resources);
             else
-                if (this.isFull())
+                if (this.isFull() || this.ShelfSize()< resources.size())
                      return  resources.size();
                 else
                 {
@@ -77,21 +64,21 @@ public class Shelf {
     }
 
     public String SwapShelf(Shelf otherShelf){
-        ResType temp = otherShelf.GetShelfResType();
-        int numOfResTemp = otherShelf.GetNumberOfElements();
+      //  ResType temp = otherShelf.GetShelfResType();
+        //int numOfResTemp = otherShelf.GetNumberOfElements();
+            Shelf temp=otherShelf;
 
         if ( otherShelf.GetNumberOfElements() > this.maxSize || this.GetNumberOfElements() > otherShelf.ShelfSize() )
             return "Incorrect action";
         else{
             otherShelf.ClearShelf();
-            for(int i = 0; i < this.GetNumberOfElements() ; i++ ){
-                otherShelf.PutResource(this.GetShelfResType());
+
+                otherShelf= this;
+
+                this.ClearShelf();
+                this.PutResource(temp.shelf());
             }
 
-            for(int i = 0; i < numOfResTemp ; i++ ){
-                this.PutResource(temp);
-            }
-        }
         return "Swap done";
 
     }
@@ -102,6 +89,9 @@ public class Shelf {
 
     public boolean isFull(){
         return resources.size() == maxSize;
+    }
+    private List<ResType> shelf(){
+        return resources;
     }
     public int GetNumberOfElements(){
         return resources.size();
