@@ -12,7 +12,7 @@ public class PersonalBoard {
     private DevSlot[] devSlots = new DevSlot[3];
     private Shelf[] warehouse = new Shelf[3];
     private Resources strongbox;
-    private int faithPoints;
+    private int faithPoints;//Maybe it is better call it faithMarker
     private List<LeaderCard> leadersCards;
 
     public PersonalBoard(Player player){
@@ -61,4 +61,14 @@ public class PersonalBoard {
             }
         }
     }
+
+    public void moveFaitMarker(){ faithPoints++; }
+    public int getFaithpos(){ return faithPoints; }
+    //   check if the player satisfy the pos to turn the Pope's favor
+    public void check() {
+        if (faithPoints >= 5 && faithPoints <= 11) player.countVictoryPoints(2);
+        if (faithPoints >= 12 && faithPoints <= 18) player.countVictoryPoints(3);
+        if (faithPoints >= 5 && faithPoints <= 11) player.countVictoryPoints(4);
+    }
+
 }

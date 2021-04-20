@@ -39,4 +39,11 @@ public class Player {
         }
         System.out.println();
     }
+
+    public PersonalBoard getPersonalBoardl(){
+        return personalBoard;
+    }
+
+
 }
+

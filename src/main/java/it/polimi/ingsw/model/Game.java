@@ -18,23 +18,37 @@ public class Game {
     private GameMode gameMode;
     private List<Stack<DevCard>> devCardDecks;
 
-    public void addNewPlayer(String nickname){
+    public void addNewPlayer(String nickname) {
         players.add(new Player(nickname));
     }
 
-    public List<Player> getPlayers(){
+    public List<Player> getPlayers() {
         return players;
     }
 
-    public void setNextGameState(GameState nextGameState){
+    public void setNextGameState(GameState nextGameState) {
         this.gameState = nextGameState;
     }
 
-    public void enterNextState(){
+    public void enterNextState() {
         this.gameState.enter();
     }
 
-    public void addNewBoard(PersonalBoard board){
+    public void addNewBoard(PersonalBoard board) {
         this.boards.add(board);
+    }
+
+    public void activate() {
+        for (Player p : players) {
+            //I can put all the 3 if statement in a huge single instruction ,but in this it is more readable
+            if (p.getPersonalBoardl().getFaithpos() >= 8 && p.getPersonalBoardl().getFaithpos() <= 11)
+                p.getPersonalBoardl().check();
+            if (p.getPersonalBoardl().getFaithpos() >= 16 && p.getPersonalBoardl().getFaithpos() <= 18)
+                p.getPersonalBoardl().check();
+            if(p.getPersonalBoardl().getFaithpos() == 24)
+                p.getPersonalBoardl().check();
+
+
+        }
     }
 }
