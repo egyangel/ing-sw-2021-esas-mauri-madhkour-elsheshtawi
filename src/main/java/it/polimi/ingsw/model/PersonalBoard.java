@@ -65,10 +65,10 @@ public class PersonalBoard {
     public void moveFaitMarker(){ faithPoints++; }
     public int getFaithpos(){ return faithPoints; }
     //   check if the player satisfy the pos to turn the Pope's favor
-    public void check() {
-        if (faithPoints >= 5 && faithPoints <= 11) player.countVictoryPoints(2);
-        if (faithPoints >= 12 && faithPoints <= 18) player.countVictoryPoints(3);
-        if (faithPoints >= 5 && faithPoints <= 11) player.countVictoryPoints(4);
+    public void check(int currentPopeFavor) {
+        if (faithPoints >= 5 && faithPoints <= 11 && currentPopeFavor==1) player.countVictoryPoints(2);
+        if (faithPoints >= 12 && faithPoints <= 18 && currentPopeFavor==2) player.countVictoryPoints(3);
+        if (faithPoints >= 5 && faithPoints <= 11 && currentPopeFavor==3) player.countVictoryPoints(4);
     }
 
 }

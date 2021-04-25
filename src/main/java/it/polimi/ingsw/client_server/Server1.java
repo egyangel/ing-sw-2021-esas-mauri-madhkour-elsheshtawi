@@ -7,28 +7,40 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server1 {
-   // public static void main(String[] args) throws IOException {
-        ServerSocket s1 = new ServerSocket(9999);
+    public static void main(String[] args) throws IOException {
+        ServerSocket s1 = null;
+        try {
 
+            s1 = new ServerSocket(1010);
+            s1.setReuseAddress(true);
+            // running infinite loop for getting client request
+            while (true) {
 
-    public Server1() throws IOException {
+                // socket to receive incoming clients requests
+                Socket client = s1.accept();
 
-        while(true){
-            //receive a string
-            Socket s = null;
-            try {
-                s = s1.accept();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //Riceive the String
-            InputStreamReader is = new InputStreamReader(s.getInputStream());
-            BufferedReader in = new BufferedReader(is);
-             try {
-                System.out.println("il server riceve: " + in.readLine());
-            } catch (IOException e) {
-                e.printStackTrace();
+                // Displaying that new client is connectedto server
+                System.out.println("New client connected" + client.getInetAddress().getHostAddress());
+
+                // create a new thread object
+                ClientHandler clientSock = new ClientHandler(client);
+                //tread that handle each client separately
+                new Thread(clientSock).start();
             }
         }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (s1 != null) {
+                try {
+                    s1.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }

@@ -39,14 +39,15 @@ public class Game {
     }
 
     public void activate() {
+
         for (Player p : players) {
             //I can put all the 3 if statement in a huge single instruction ,but in this it is more readable
-            if (p.getPersonalBoardl().getFaithpos() >= 8 && p.getPersonalBoardl().getFaithpos() <= 11)
-                p.getPersonalBoardl().check();
+            if (p.getPersonalBoardl().getFaithpos() >= 8 && p.getPersonalBoardl().getFaithpos() <= 11 )
+                p.getPersonalBoardl().check(1);
             if (p.getPersonalBoardl().getFaithpos() >= 16 && p.getPersonalBoardl().getFaithpos() <= 18)
-                p.getPersonalBoardl().check();
+                p.getPersonalBoardl().check(2);
             if(p.getPersonalBoardl().getFaithpos() == 24)
-                p.getPersonalBoardl().check();
+                p.getPersonalBoardl().check(3);
 
 
         }

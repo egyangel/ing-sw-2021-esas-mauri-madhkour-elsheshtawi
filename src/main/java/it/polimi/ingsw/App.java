@@ -40,7 +40,7 @@ public class App {
        System.out.println(warehouse[1].SwapShelf(warehouse[2] ));
 
     }
-/*
+
     public static void main(String[] args) throws IOException {
 //        MarketTray test = new MarketTray();
 //        System.out.println("Initial MarketTray Position:, rows and columns start at 1");
@@ -77,7 +77,7 @@ public class App {
           DevCard devcardOne = new DevCard(1, DevCardColor.BLUE, devCardOneLHS, devCardOneRHS, devCardOneCost, 1);
           serializeDevCard(devcardOne);
 
-    }*/
+    }
 
 
     private static void serializeDevCard(DevCard devCardtoJson) {
