@@ -35,7 +35,7 @@ public class Player {
     public void printStrongBox(){
         Resources strongbox = this.personalBoard.getStrongBox();
         for(ResType type: ResType.values()) {
-            System.out.println("There is " + strongbox.GetNumberOfType(type) + " " + type.toString());
+            System.out.println("There is " + strongbox.getNumberOfType(type) + " " + type.toString());
         }
         System.out.println();
     }

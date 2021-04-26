@@ -14,15 +14,14 @@ public class SetupState implements GameState{
 
     @Override
     public void enter() {
+        createBoards();
         createDevCards();
-
-        for(Player player: game.getPlayers()){
-            createBoardFor(player);
-        }
     }
 
-    private void createBoardFor(Player player){
-        game.addNewBoard(new PersonalBoard(player));
+    private void createBoards(){
+        for(Player player: game.getPlayers()){
+            game.addNewBoardFor(player);
+        }
     }
 
     private void createDevCards(){

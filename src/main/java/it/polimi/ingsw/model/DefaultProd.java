@@ -26,7 +26,7 @@ public class DefaultProd {
     }
 
     public void produce(){
-        this.LHS.resetToZero();
-        this.RHS.resetToZero();
+        this.LHS.clear();
+        this.RHS.clear();
     }
 }

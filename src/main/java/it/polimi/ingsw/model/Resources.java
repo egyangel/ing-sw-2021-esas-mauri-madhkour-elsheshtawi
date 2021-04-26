@@ -30,26 +30,14 @@ public class Resources {
         this.values.put(ResType.FAITH, faith);
     }
 
-    public void add(ResType res,Integer val){
-        //    System.out.println("Adding " + val + " " + res.toString());
-        this.values.put(res, this.values.get(res) + val);
-
-        //if(!values.putIfAbsent(res, val).equals(null) )values.computeIfPresent(res , (key, oldValue) -> oldValue + val);;
+    public void add(ResType type,Integer val){
+        this.values.put(type, this.getNumberOfType(type) + val);
     }
 
-    public void subtract(ResType res,Integer val){
-//        System.out.println("Subtracting " + val + " " + res.toString());
-        if (this.values.get(res) >= val){
-            this.values.put(res, this.values.get(res) - val);
+    public void subtract(ResType type,Integer val){
+        if (this.getNumberOfType(type) >= val){
+            this.values.put(type, this.getNumberOfType(type) - val);
         }
-    }
-
-    public boolean isEmpty(){
-        int sum = 0;
-        for (int i: values.values()){
-            sum += i;
-        }
-        return sum == 0;
     }
 
     public int sumOfValues(){
@@ -60,17 +48,20 @@ public class Resources {
         return sum;
     }
 
-    public int GetNumberOfType(ResType type){
-        return values.get(type);
+    public int getNumberOfType(ResType type){
+        return values.getOrDefault(type, 0);
     }
 
     public boolean isThereType(ResType type){
-        return values.get(type) >= 1;
+        return values.containsKey(type);
     }
 
-    public void resetToZero(){
-        for(ResType type: ResType.values()){
-            this.values.replace(type, 0);
-        }
+    public void clear(){
+        this.values.clear();
+    }
+
+    @Override
+    public String toString() {
+        return values.toString();
     }
 }

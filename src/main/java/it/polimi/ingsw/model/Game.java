@@ -34,8 +34,8 @@ public class Game {
         this.gameState.enter();
     }
 
-    public void addNewBoard(PersonalBoard board) {
-        this.boards.add(board);
+    public void addNewBoardFor(Player player) {
+        this.boards.add(new PersonalBoard(player));
     }
 
     public void activate() {

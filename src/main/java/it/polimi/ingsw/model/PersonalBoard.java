@@ -55,7 +55,7 @@ public class PersonalBoard {
             }
         }
         else {
-            if (this.strongbox.GetNumberOfType(L1) >= 2){
+            if (this.strongbox.getNumberOfType(L1) >= 2){
                 this.strongbox.subtract(L1, 2);
                 this.strongbox.add(R, 1);
             }

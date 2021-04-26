@@ -62,20 +62,21 @@ public class App {
 //        playerOne.useDefProd(ResType.COIN, ResType.SERVANT, ResType.SHIELD);
 //        playerOne.printStrongBox();
 
-        MyFunc();
-          Game theGame = new Game();
-          GameController theGameController = new GameController(theGame);
+//        MyFunc();
+//          Game theGame = new Game();
+//          GameController theGameController = new GameController(theGame);
 
-         //this will be surrounded by proper exceptions
-         //theGameController.startGame();
+//         this will be surrounded by proper exceptions
+//         theGameController.startGame();
 
-          DeserialLeaderCard();
-
-          Resources devCardOneLHS = new Resources(0, 0, 0, 1, 0);
-          Resources devCardOneRHS = new Resources(0, 0, 0, 0, 1);
-          Resources devCardOneCost = new Resources(0, 2, 0, 0, 0);
-          DevCard devcardOne = new DevCard(1, DevCardColor.BLUE, devCardOneLHS, devCardOneRHS, devCardOneCost, 1);
-          serializeDevCard(devcardOne);
+        deserializeDevCards();
+//          DeserialLeaderCard();
+//
+//          Resources devCardOneLHS = new Resources(0, 0, 0, 1, 0);
+//          Resources devCardOneRHS = new Resources(0, 0, 0, 0, 1);
+//          Resources devCardOneCost = new Resources(0, 2, 0, 0, 0);
+//          DevCard devcardOne = new DevCard(1, DevCardColor.BLUE, devCardOneLHS, devCardOneRHS, devCardOneCost, 1);
+//          serializeDevCard(devcardOne);
 
     }
 
@@ -84,6 +85,22 @@ public class App {
         Gson gson = new Gson();
         String devCardString = gson.toJson(devCardtoJson);
         System.out.println(devCardString);
+    }
+
+    private static void deserializeDevCards(){
+        DevCard[] extractedCards;
+
+        try(FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/resources/DevCards.json")) {
+            Gson g = new Gson();
+            extractedCards = g.fromJson(reader, DevCard[].class);
+            for(int i=0; i < extractedCards.length;  i++){
+                System.out.println("Card " + i + "  " + extractedCards[i].toString());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

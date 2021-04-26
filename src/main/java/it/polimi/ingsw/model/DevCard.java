@@ -39,8 +39,8 @@ public class DevCard {
         return this.cost;
     }
 
-    public String toString() {
-        return color +"_"+level+"_"+ RHS+"_"+LHS+"_"+"_"+cost+"_"+victoryPoints;
+    public String toString(){
+        return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " Victory Points: " + victoryPoints;
     }
 
     public Resources produce(){
