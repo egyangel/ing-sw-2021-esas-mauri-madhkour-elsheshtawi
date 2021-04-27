@@ -13,8 +13,8 @@ public class Warehouse {
     }
     public static void shoWarehouse(char [][] warehouse){
         for (char[] row : warehouse){
-            for (char c:row){
-                System.out.println(c);
+            for (char col:row){
+                System.out.println(col);
             }
             System.out.println();
         } }
