@@ -90,7 +90,7 @@ public class App {
     private static void deserializeDevCards(){
         DevCard[] extractedCards;
 
-        try(FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/resources/DevCards.json")) {
+        try(FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/server/resources/DevCards.json")) {
             Gson g = new Gson();
             extractedCards = g.fromJson(reader, DevCard[].class);
             for(int i=0; i < extractedCards.length;  i++){
