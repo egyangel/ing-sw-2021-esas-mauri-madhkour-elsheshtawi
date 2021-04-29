@@ -1,47 +1,43 @@
-package it.polimi.ingsw.client_server;
+package it.polimi.ingsw.client;
 
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
-//CLient class
-public class Client {
-    public static void main(String[] args)  {
+public class Client implements Runnable{
+    private ServerHandler serverHandler;
+    final static int SOCKET_PORT = 3000;
 
-        //trying to estabilish a connection with the server
-        try(Socket socket = new Socket("localhost",1010)){
-            //read from the server
-            BufferedReader serverToClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            //reading from the input
-            Scanner scan = new Scanner(System.in);
-            String keyBoard = null;
-            //write to server
-            PrintWriter clientToServer = new PrintWriter(socket.getOutputStream(), true);
+    public static void main(String[] args){
+        Client client = new Client();
+        // note: this does not create a new thread
+        client.run();
+    }
 
-
-            while(!"exit".equals(keyBoard)) {
-                //read from input
-                keyBoard=scan.nextLine();
-
-                clientToServer.println(keyBoard);
-                clientToServer.flush();
-
-                System.out.println("Server replied " + serverToClient.readLine());
-
-            }
-
-            scan.close();
-
+    @Override
+    public void run() {
+        // getting localhost ip for now
+        InetAddress ip = null;
+        try {
+            ip = InetAddress.getByName("localhost");
         } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         }
 
+        Socket socket;
+        try {
+            socket = new Socket(ip, SOCKET_PORT);
+        } catch (IOException e) {
+            System.out.println("Server unreachable");
+            return;
+        }
+
+        serverHandler = new ServerHandler(socket, this);
+        Thread thread = new Thread(serverHandler);
+        thread.start();
+
+        //handle user-interaction...
+        //...
     }
 }
