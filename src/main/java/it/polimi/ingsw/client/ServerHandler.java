@@ -7,8 +7,8 @@ import java.net.Socket;
 
 public class ServerHandler implements Runnable{
     private Socket socket;
-    private ObjectInputStream ois;
     private ObjectOutputStream oos;
+    private ObjectInputStream ois;
     private Client client;
 
     public ServerHandler(Socket socket, Client client) {
@@ -19,13 +19,14 @@ public class ServerHandler implements Runnable{
     @Override
     public void run() {
         try {
-            ois = new ObjectInputStream(socket.getInputStream());
             oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             System.out.println("Can't connect to server at " + socket.getInetAddress());
             return;
         }
 
+        System.out.println("Connected to server at " + socket.getInetAddress());
         try {
             handleConnection();
         } catch (IOException e) {

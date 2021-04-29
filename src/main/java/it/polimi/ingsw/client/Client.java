@@ -29,7 +29,7 @@ public class Client implements Runnable{
         try {
             socket = new Socket(ip, SOCKET_PORT);
         } catch (IOException e) {
-            System.out.println("Server unreachable");
+            System.out.println("Server socket unreachable");
             return;
         }
 

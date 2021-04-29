@@ -34,10 +34,10 @@ public class Server {
                 System.out.println("Creating a new handler for this client...");
                 ClientHandler clientHandler = new ClientHandler("client " + id, socket);
 
-                Thread thread = new Thread(clientHandler);
-                System.out.println("Adding this client to active client list");
+                System.out.println("Adding this client to active client list...");
                 // add this client to active clients list
                 clientHandlerVector.add(clientHandler);
+                Thread thread = new Thread(clientHandler);
                 thread.start();
                 id++;
             } catch (IOException e) {

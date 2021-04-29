@@ -8,8 +8,8 @@ import java.net.Socket;
 public class ClientHandler implements Runnable{
     private String id;
     private Socket socket;
-    private ObjectInputStream ois;
     private ObjectOutputStream oos;
+    private ObjectInputStream ois;
 
 
     public ClientHandler(String id, Socket socket) {
@@ -21,8 +21,8 @@ public class ClientHandler implements Runnable{
     public void run() {
         try {
             // these are the channels which client handlers write/read message objects into/from
-            ois = new ObjectInputStream(socket.getInputStream());
             oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             System.out.println("Can't connect to client  " + id + " at " + socket.getInetAddress());
             return;
@@ -36,8 +36,8 @@ public class ClientHandler implements Runnable{
         }
 
         try {
-            ois.close();
             oos.close();
+            ois.close();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,9 +46,7 @@ public class ClientHandler implements Runnable{
 
     private void handleConnection() throws IOException {
         while(true) {
-            try {
-                // read messages
-            } catch (Exception e) {}
+            // handle messages
         }
     }
 }
