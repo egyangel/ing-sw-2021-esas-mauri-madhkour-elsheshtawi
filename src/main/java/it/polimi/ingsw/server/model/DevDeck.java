@@ -1,9 +1,9 @@
 
 // Choosing to delete this class to implement attributes and methods inside Game class
 
-/*package it.polimi.ingsw.model;
+/*package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.model.enumclasses.DevCardColor;
+import it.polimi.ingsw.server.model.enumclasses.DevCardColor;
 
 public class DevDeck {
     private DevCard[][][] cards;

@@ -1,7 +1,7 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.controller.GameState;
-import it.polimi.ingsw.model.enumclasses.GameMode;
+import it.polimi.ingsw.server.model.enumclasses.GameMode;
 
 import java.util.List;
 import java.util.Stack;

@@ -1,8 +1,8 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.server.model;
 
 
-import it.polimi.ingsw.model.enumclasses.MarbleColor;
-import it.polimi.ingsw.model.enumclasses.ResType;
+import it.polimi.ingsw.server.model.enumclasses.MarbleColor;
+import it.polimi.ingsw.server.model.enumclasses.ResType;
 
 import java.util.*;
 

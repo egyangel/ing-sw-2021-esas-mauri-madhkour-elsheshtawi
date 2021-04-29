@@ -1,8 +1,8 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.model.PersonalBoard;
-import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.server.model.Game;
+import it.polimi.ingsw.server.model.PersonalBoard;
+import it.polimi.ingsw.server.model.Player;
 
 // the second state, to initialize objects, creating boards, cards and shuffling them etc (setup + player's setup in pdf)
 public class SetupState implements GameState{

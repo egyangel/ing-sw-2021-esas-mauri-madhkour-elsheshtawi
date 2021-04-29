@@ -1,5 +1,5 @@
-package it.polimi.ingsw.model;
-import it.polimi.ingsw.model.enumclasses.ResType;
+package it.polimi.ingsw.server.model;
+import it.polimi.ingsw.server.model.enumclasses.ResType;
 
 import java.sql.SQLOutput;
 import java.util.*;

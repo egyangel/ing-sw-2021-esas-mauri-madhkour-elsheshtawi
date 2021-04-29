@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.enumclasses.DevCardColor;
-import it.polimi.ingsw.model.enumclasses.ResType;
-import it.polimi.ingsw.model.specialability.*;
+import it.polimi.ingsw.server.model.*;
+import it.polimi.ingsw.server.model.enumclasses.DevCardColor;
+import it.polimi.ingsw.server.model.enumclasses.ResType;
+import it.polimi.ingsw.server.model.specialability.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

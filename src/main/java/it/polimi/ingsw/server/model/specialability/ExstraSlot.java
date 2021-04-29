@@ -1,7 +1,7 @@
-package it.polimi.ingsw.model.specialability;
+package it.polimi.ingsw.server.model.specialability;
 
-import it.polimi.ingsw.model.enumclasses.AbilityType;
-import it.polimi.ingsw.model.enumclasses.ResType;
+import it.polimi.ingsw.server.model.enumclasses.AbilityType;
+import it.polimi.ingsw.server.model.enumclasses.ResType;
 
 public class ExstraSlot extends SpecialAbility {
 

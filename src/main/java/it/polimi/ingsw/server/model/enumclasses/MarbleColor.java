@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.enumclasses;
+package it.polimi.ingsw.server.model.enumclasses;
 
 public enum MarbleColor {
     WHITE,BLUE,GREY,YELLOW,PURPLE,RED;

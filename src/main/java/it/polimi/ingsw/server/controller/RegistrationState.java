@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.server.model.Game;
 
 import java.util.Scanner;
 
