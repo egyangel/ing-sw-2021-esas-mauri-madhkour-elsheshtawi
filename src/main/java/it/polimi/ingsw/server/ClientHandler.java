@@ -1,23 +1,23 @@
-package it.polimi.ingsw.server;
+package it.polimi.ingsw.client_server;
 
-import it.polimi.ingsw.server.controller.GameController;
-import it.polimi.ingsw.server.model.Game;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 //this class handle the multi-client connection to the server
 public class ClientHandler implements Runnable {
 
     private final Socket clientSocket;
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket)
+    {
         this.clientSocket = socket;
     }
 
-    public void run() {
+    public void run()
+    {
         PrintWriter out = null;
         BufferedReader in = null;
         try {
@@ -34,13 +34,14 @@ public class ClientHandler implements Runnable {
             while ((line = in.readLine()) != null) {
 
                 // writing the received message from client
-                System.out.printf(" Sent from the client: %s\n", line);
-                this.init();
+                System.out.printf(" Sent from the client: %s\n",line);
                 out.println(line);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             try {
                 if (out != null) {
                     out.close();
@@ -49,26 +50,11 @@ public class ClientHandler implements Runnable {
                     in.close();
                     clientSocket.close();
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * init the client and connect it to the game
-     */
-    public void init() throws IOException {
-        this.output = new ObjectOutputStream(this.clientSocket.getOutputStream());
-        // ObjectInputStream  input = new ObjectInputStream(this.clientSocket.getInputStream());
-        Game game = new Game();
-        GameController gameController = new GameController(game);
-        gameController.startGame();
-
-    }
-
-    public void sendMessage(String msg) throws IOException {
-        output.writeChars(msg);
     }
 }
 
