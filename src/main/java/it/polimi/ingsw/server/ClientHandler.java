@@ -1,60 +1,52 @@
 package it.polimi.ingsw.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-//this class handle the multi-client connection to the server
-public class ClientHandler implements Runnable {
+public class ClientHandler implements Runnable{
+    private String id;
+    private Socket socket;
+    private ObjectOutputStream oos;
+    private ObjectInputStream ois;
 
-    private final Socket clientSocket;
 
-    public ClientHandler(Socket socket)
-    {
-        this.clientSocket = socket;
+    public ClientHandler(String id, Socket socket) {
+        this.id = id;
+        this.socket = socket;
     }
 
-    public void run()
-    {
-        PrintWriter out = null;
-        BufferedReader in = null;
+    @Override
+    public void run() {
         try {
-
-            // get the outputstream of client
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-            // get the inputstream of client
-            in = new BufferedReader(
-                    new InputStreamReader(
-                            clientSocket.getInputStream()));
-
-            String line;
-            while ((line = in.readLine()) != null) {
-
-                // writing the received message from client
-                System.out.printf(" Sent from the client: %s\n",line);
-                out.println(line);
-            }
+            // these are the channels which client handlers write/read message objects into/from
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            System.out.println("Can't connect to client  " + id + " at " + socket.getInetAddress());
+            return;
         }
-        catch (IOException e) {
+        System.out.println("Connected to client  " + id + " at " + socket.getInetAddress());
+
+        try {
+            handleConnection();
+        } catch (IOException e) {
+            System.out.println("Client " + id + " dropped");
+        }
+
+        try {
+            oos.close();
+            ois.close();
+            socket.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-                if (in != null) {
-                    in.close();
-                    clientSocket.close();
-                }
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+    }
+
+    private void handleConnection() throws IOException {
+        while(true) {
+            // handle messages
         }
     }
 }
-
