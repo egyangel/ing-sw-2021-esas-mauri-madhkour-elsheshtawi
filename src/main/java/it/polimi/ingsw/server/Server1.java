@@ -23,7 +23,11 @@ public class Server1 {
                 System.out.println("New client connected" + client.getInetAddress().getHostAddress());
 
                 // create a new thread object
+
                 ClientHandler clientSock = new ClientHandler(client);
+                clientSock.run();
+                clientSock.init();
+
                 //tread that handle each client separately
                 new Thread(clientSock).start();
             }

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller.actions;
+package it.polimi.ingsw.server.controller.actions;
 
 public class TakeResourceAction extends BaseAction {
 

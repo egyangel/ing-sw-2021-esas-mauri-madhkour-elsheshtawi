@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.server.model.Game;
 import it.polimi.ingsw.server.model.PersonalBoard;

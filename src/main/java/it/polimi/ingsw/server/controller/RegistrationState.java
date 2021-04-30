@@ -1,10 +1,11 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.server.model.Game;
 
 import java.util.Scanner;
 
 // the first state, for registering player, setting up connection with server(this later)
+// TODO every comunication with client should pass by the networkMessege class
 public class RegistrationState implements GameState {
 
     Game game;

@@ -3,7 +3,7 @@ package it.polimi.ingsw;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.enumclasses.DevCardColor;
 import it.polimi.ingsw.server.model.enumclasses.ResType;
