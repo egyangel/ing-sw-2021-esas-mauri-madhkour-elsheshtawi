@@ -14,7 +14,7 @@ public class Server {
     // counter for clients (may not be needed but just not the forget)
     static int id = 0;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         ServerSocket serverSocket;
         try {
             serverSocket = new ServerSocket(SOCKET_PORT);
@@ -26,7 +26,7 @@ public class Server {
 
         Socket socket;
         // don't wait for 5th player and so on to be added later
-        while (true){
+        while (true) {
             try {
                 socket = serverSocket.accept();
                 System.out.println("New client request received : " + socket);

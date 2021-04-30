@@ -26,7 +26,7 @@ public class Server1 {
 
                 ClientHandler clientSock = new ClientHandler(client);
                 clientSock.run();
-                clientSock.init();
+              //  clientSock.init();
 
                 //tread that handle each client separately
                 new Thread(clientSock).start();
