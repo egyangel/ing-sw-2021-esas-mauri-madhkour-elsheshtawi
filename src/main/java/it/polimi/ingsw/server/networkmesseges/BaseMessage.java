@@ -7,11 +7,11 @@ public abstract class BaseMessage implements Serializable {
     UUID id = UUID.randomUUID();
 
     /**
-     * unique id for the commands over network
-     * allow match the recived commands and the response
+     * unique id for the messages over network
+     * allow match the received messages and the response
      * @return id
      */
-    public UUID getCommandId(){
+    public UUID getMessageId(){
         return id;
     }
 }
