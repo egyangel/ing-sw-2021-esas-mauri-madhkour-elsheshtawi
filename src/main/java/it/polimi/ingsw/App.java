@@ -3,18 +3,15 @@ package it.polimi.ingsw;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-import it.polimi.ingsw.server.controller.GameController;
-import it.polimi.ingsw.server.model.*;
-import it.polimi.ingsw.server.model.enumclasses.DevCardColor;
-import it.polimi.ingsw.server.model.enumclasses.ResType;
-import it.polimi.ingsw.server.model.specialability.*;
+import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.enumclasses.*;
+import it.polimi.ingsw.model.specialability.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class App {
@@ -90,7 +87,7 @@ public class App {
     private static void deserializeDevCards(){
         DevCard[] extractedCards;
 
-        try(FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/server/resources/DevCards.json")) {
+        try(FileReader reader = new FileReader("src/main/resources/DevCards.json")) {
             Gson g = new Gson();
             extractedCards = g.fromJson(reader, DevCard[].class);
             for(int i=0; i < extractedCards.length;  i++){
@@ -111,7 +108,7 @@ public class App {
           List<LeaderCard> listOfCards = new ArrayList<>();
           LeaderCard[] extractedJson = new LeaderCard[0];
 
-          try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/resources/LeaderCards.json")) {
+          try (FileReader reader = new FileReader("src/main/resources/LeaderCards.json")) {
 
                 Gson g = (new GsonBuilder()).registerTypeAdapterFactory(
                         RuntimeTypeAdapterFactory

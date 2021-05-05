@@ -1,8 +1,6 @@
-package it.polimi.ingsw.server.model;
+package it.polimi.ingsw.model;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class MarketTrayTest {
 
