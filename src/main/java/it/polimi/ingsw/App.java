@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import it.polimi.ingsw.utility.JsonConverter;
 
 
 public class App {
@@ -66,40 +67,8 @@ public class App {
 //         this will be surrounded by proper exceptions
 //         theGameController.startGame();
 
-        deserializeDevCards();
-//          DeserialLeaderCard();
-//
-//          Resources devCardOneLHS = new Resources(0, 0, 0, 1, 0);
-//          Resources devCardOneRHS = new Resources(0, 0, 0, 0, 1);
-//          Resources devCardOneCost = new Resources(0, 2, 0, 0, 0);
-//          DevCard devcardOne = new DevCard(1, DevCardColor.BLUE, devCardOneLHS, devCardOneRHS, devCardOneCost, 1);
-//          serializeDevCard(devcardOne);
 
     }
-
-
-    private static void serializeDevCard(DevCard devCardtoJson) {
-        Gson gson = new Gson();
-        String devCardString = gson.toJson(devCardtoJson);
-        System.out.println(devCardString);
-    }
-
-    private static void deserializeDevCards(){
-        DevCard[] extractedCards;
-
-        try(FileReader reader = new FileReader("src/main/resources/DevCards.json")) {
-            Gson g = new Gson();
-            extractedCards = g.fromJson(reader, DevCard[].class);
-            for(int i=0; i < extractedCards.length;  i++){
-                System.out.println("Card " + i + "  " + extractedCards[i].toString());
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     //Method that desirialize the leader card from the json Leader cards file and instantiate the array of the cards.
     private static void DeserialLeaderCard()
