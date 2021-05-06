@@ -6,7 +6,8 @@ import java.net.Socket;
 import java.util.Vector;
 
 public class Server {
-    public static final int SOCKET_PORT = 3000;
+    public static final int SERVER_MIN_PORT = 3000;
+    public static final int SERVER_MAX_PORT = 5000;
 
     // Vector to store active clients
     static Vector<ClientHandler> clientHandlerVector = new Vector<>();
@@ -17,7 +18,7 @@ public class Server {
     public static void main(String[] args) {
         ServerSocket serverSocket;
         try {
-            serverSocket = new ServerSocket(SOCKET_PORT);
+            serverSocket = new ServerSocket(3000);
         } catch (IOException e) {
             System.out.println("Can't open server socket");
             System.exit(1);
