@@ -1,5 +1,6 @@
 package it.polimi.ingsw.utility;
 
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import static it.polimi.ingsw.network.server.Server.SERVER_MIN_PORT;
@@ -40,5 +41,19 @@ public class InputConsumer {
 
     private static boolean isValidPort(int portNumber){
         return (portNumber >= SERVER_MIN_PORT && portNumber <= SERVER_MAX_PORT);
+    }
+
+    public static String getUserName(Scanner scanner){
+        String username;
+        username = scanner.nextLine();
+        while(!isValidUsername(username)){
+            System.out.println("Username must begin with letter and can be max 10 characters. Please try again:");
+            username = scanner.nextLine();
+        }
+        return username;
+    }
+
+    private static boolean isValidUsername(String name){
+        return (Character.isLetter(name.charAt(0))) && (name.length() <= 10);
     }
 }

@@ -18,6 +18,11 @@ public class GUI implements IView {
     }
 
     @Override
+    public void displayLogin() {
+
+    }
+
+    @Override
     public void startDisplay() {
 
     }

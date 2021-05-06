@@ -1,5 +1,7 @@
 package it.polimi.ingsw.network.client;
 
+import it.polimi.ingsw.utility.messages.Message;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,6 +33,16 @@ public class ServerHandler implements Runnable{
             handleConnection();
         } catch (IOException e) {
             System.out.println("Server connection dropped at " + socket.getInetAddress());
+        }
+    }
+
+    public void sendMessage(Message msg){
+        try {
+            oos.writeObject(msg);
+            oos.flush();
+            oos.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

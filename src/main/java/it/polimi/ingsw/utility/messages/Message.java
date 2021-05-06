@@ -8,5 +8,13 @@ public class Message implements Serializable {
     private MsgType msgtype;
     private String jsonContent;
 
+    public Message(UUID userID, MsgType msgtype, String jsonContent) {
+        this.userID = userID;
+        this.msgtype = msgtype;
+        this.jsonContent = jsonContent;
+    }
 
+    public void setUserID(UUID userID){
+        this.userID = userID;
+    }
 }

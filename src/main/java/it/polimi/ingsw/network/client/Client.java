@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.client;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.utility.messages.Message;
 import it.polimi.ingsw.view.IView;
 import it.polimi.ingsw.view.cli.CLI;
 import it.polimi.ingsw.view.gui.GUI;
@@ -15,7 +16,7 @@ import java.net.UnknownHostException;
 import java.util.UUID;
 
 public class Client implements Runnable{
-    private UUID userID;
+    private UUID userID = null;
     private String username;
     private ServerHandler serverHandler;
     private IView view;
@@ -53,9 +54,13 @@ public class Client implements Runnable{
             System.out.println("Server socket unreachable");
             return;
         }
-
         serverHandler = new ServerHandler(socket, this);
         Thread thread = new Thread(serverHandler);
         thread.start();
+    }
+
+    public void sendToServer(Message msg){
+        msg.setUserID(this.userID); //first message (login) uuid will be null, server will assign it
+        serverHandler.sendMessage(msg);
     }
 }
