@@ -16,4 +16,9 @@ public class GUI implements IView {
     public void displaySetup() {
 
     }
+
+    @Override
+    public void startDisplay() {
+
+    }
 }

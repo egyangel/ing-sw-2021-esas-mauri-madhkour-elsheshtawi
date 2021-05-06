@@ -27,9 +27,9 @@ public class Client implements Runnable{
     public static void main(String[] args){
         Client client = new Client();
 
-        if args[0].equals("--CLI")
+        if (args[0].equals("--CLI"))
             client.setView(new CLI(client));
-        else if args[0].equals("--GUI")
+        else if (args[0].equals("--GUI"))
             client.setView(new GUI(client));
         else System.exit(0);
 

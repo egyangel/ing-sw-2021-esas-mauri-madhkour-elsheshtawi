@@ -32,4 +32,9 @@ public class CLI implements IView {
         int portNumber = InputConsumer.getPortNumber(in);
         client.connectToServer(ip,portNumber);
     }
+
+    @Override
+    public void startDisplay() {
+
+    }
 }
