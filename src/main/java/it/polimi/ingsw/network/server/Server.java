@@ -1,24 +1,35 @@
 package it.polimi.ingsw.network.server;
 
+import it.polimi.ingsw.utility.InputConsumer;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Vector;
+import java.util.*;
 
-public class Server {
+public class Server implements Runnable{
     public static final int SERVER_MIN_PORT = 3000;
     public static final int SERVER_MAX_PORT = 5000;
+    private static final int MAX_NUM_OF_PLAYERS = 4;
+    private static int numberOfUsers = 0;
 
-    // Vector to store active clients
-    static Vector<ClientHandler> clientHandlerVector = new Vector<>();
-
-    // counter for clients (may not be needed but just not the forget)
-    static int id = 0;
+    Map<String, Map<Integer,String>> matchIDtoMatches = new HashMap<>();
+    Map<Integer,String> userIDtoUsernames = new HashMap<>();
+    Map<Integer,ClientHandler> userIDtoHandlers = new HashMap<>();
 
     public static void main(String[] args) {
+        Server server = new Server();
+        server.run();
+    }
+
+    @Override
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter server port number:");
+        int portNumber = InputConsumer.getPortNumber(scanner);
         ServerSocket serverSocket;
         try {
-            serverSocket = new ServerSocket(3000);
+            serverSocket = new ServerSocket(portNumber);
         } catch (IOException e) {
             System.out.println("Can't open server socket");
             System.exit(1);
@@ -26,21 +37,19 @@ public class Server {
         }
 
         Socket socket;
-        // don't wait for 5th player and so on to be added later
         while (true) {
             try {
                 socket = serverSocket.accept();
                 System.out.println("New client request received : " + socket);
 
                 System.out.println("Creating a new handler for this client...");
-                ClientHandler clientHandler = new ClientHandler("client " + id, socket);
+                Integer userID = numberOfUsers++;
+                ClientHandler clientHandler = new ClientHandler(userID, socket);
+                System.out.println("Adding to userID - client handler map...");
+                userIDtoHandlers.put(userID, clientHandler);
 
-                System.out.println("Adding this client to active client list...");
-                // add this client to active clients list
-                clientHandlerVector.add(clientHandler);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
-                id++;
             } catch (IOException e) {
                 e.printStackTrace();
             }

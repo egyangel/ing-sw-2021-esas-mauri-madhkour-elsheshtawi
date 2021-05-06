@@ -46,7 +46,7 @@ public class CLI implements IView {
     public void displayLogin() {
         out.println("Choose a username:");
         String username = InputConsumer.getUserName(in);
-        Message loginmsg = new Message(null, MsgType.LOGIN, username);
+        Message loginmsg = new Message(0, MsgType.LOGIN, username);
         client.sendToServer(loginmsg);
     }
 }

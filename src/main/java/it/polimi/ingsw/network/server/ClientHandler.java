@@ -6,14 +6,14 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable{
-    private String id;
+    private Integer userID;
     private Socket socket;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
 
 
-    public ClientHandler(String id, Socket socket) {
-        this.id = id;
+    public ClientHandler(Integer userID, Socket socket) {
+        this.userID = userID;
         this.socket = socket;
     }
 
@@ -24,15 +24,15 @@ public class ClientHandler implements Runnable{
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
-            System.out.println("Can't connect to client  " + id + " at " + socket.getInetAddress());
+            System.out.println("Can't connect to client  " + userID + " at " + socket.getInetAddress());
             return;
         }
-        System.out.println("Connected to client  " + id + " at " + socket.getInetAddress());
+        System.out.println("Connected to client  " + userID + " at " + socket.getInetAddress());
 
         try {
             handleConnection();
         } catch (IOException e) {
-            System.out.println("Client " + id + " dropped");
+            System.out.println("Client " + userID + " dropped");
         }
 
         try {

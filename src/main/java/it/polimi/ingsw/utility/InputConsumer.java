@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import static it.polimi.ingsw.network.server.Server.SERVER_MIN_PORT;
 import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
 
+// TODO modify this class later as to be usable for both CLI and GUI (dont do println(), instead abstract into view.showError())
 public class InputConsumer {
 
     public static String getIP(Scanner scanner){

@@ -16,7 +16,7 @@ import java.net.UnknownHostException;
 import java.util.UUID;
 
 public class Client implements Runnable{
-    private UUID userID = null;
+    private Integer userID;
     private String username;
     private ServerHandler serverHandler;
     private IView view;
@@ -60,7 +60,7 @@ public class Client implements Runnable{
     }
 
     public void sendToServer(Message msg){
-        msg.setUserID(this.userID); //first message (login) uuid will be null, server will assign it
+        msg.setUserID(this.userID); //first message (login) uuid will be zero, server will assign it
         serverHandler.sendMessage(msg);
     }
 }
