@@ -23,6 +23,21 @@ public class GUI implements IView {
     }
 
     @Override
+    public void displayIdle() {
+
+    }
+
+    @Override
+    public boolean shouldStopInteraction() {
+        return false;
+    }
+
+    @Override
+    public void stopInteraction() {
+
+    }
+
+    @Override
     public void startDisplay() {
 
     }

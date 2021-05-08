@@ -24,10 +24,10 @@ public class ClientHandler implements Runnable{
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
-            System.out.println("Can't connect to client  " + userID + " at " + socket.getInetAddress());
+            System.out.println("Can't connect to client " + userID + " at " + socket.getInetAddress());
             return;
         }
-        System.out.println("Connected to client  " + userID + " at " + socket.getInetAddress());
+        System.out.println("Connected to client " + userID + " at " + socket.getInetAddress());
 
         try {
             handleConnection();
