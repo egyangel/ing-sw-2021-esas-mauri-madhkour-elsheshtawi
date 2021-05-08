@@ -8,5 +8,11 @@ public interface IView {
     void displaySetup();
 
     void displayLogin();
+    // user interaction shows error on CLI & GUI
+    void displayIdle();
+
+    boolean shouldStopInteraction();
+
+    void stopInteraction();
 
 }

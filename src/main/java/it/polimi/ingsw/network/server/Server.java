@@ -25,8 +25,9 @@ public class Server implements Runnable{
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter server port number:");
-        int portNumber = InputConsumer.getPortNumber(scanner);
+//        System.out.println("Enter server port number:");
+//        int portNumber = InputConsumer.getPortNumber(scanner);
+        int portNumber = 3000; //for debug
         ServerSocket serverSocket;
         try {
             serverSocket = new ServerSocket(portNumber);
