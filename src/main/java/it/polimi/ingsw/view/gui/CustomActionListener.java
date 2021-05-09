@@ -10,9 +10,9 @@ class CustomActionListener implements ActionListener {
         System.out.println(e.getActionCommand());
         if(e.getActionCommand().equals("EXIT"))
             System.exit(1);
-        else
-          new  Thread((Runnable) (SecGui = new SecondGui())).run();
-            System.exit(1);
-
+        else {
+         SecGui = new SecondGui();
+            //System.exit(1);
+        }
     }
 }

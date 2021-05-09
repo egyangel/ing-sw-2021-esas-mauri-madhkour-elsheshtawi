@@ -48,6 +48,7 @@ public class SecondGui {
         //adding p1 to lpane,a.k.a the base
         lpane.add(p1, 0, 0);
 
+
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,47 +58,58 @@ public class SecondGui {
     private void showActionListenerDemo() {
         JPanel top = new JPanel();
         //setting the pos and dim of top
-        top.setBounds(50, 470, 400, 200);
+        top.setBounds(130, 160, 170, 60);
         top.setOpaque(false);
         //adding top to lpane,a.k.a the base
         lpane.add(top, 1, 0);
+        top.setLayout(new GridLayout(3,1));
 
-        JLabel lblFirstName = new JLabel("Nickname:");
-        lblFirstName.setFont(new java.awt.Font("Arial Black", 50, 14));
-        JTextField tfFirstName = new JTextField(15);
-        lblFirstName.setLabelFor(tfFirstName);
+        JLabel Nickname = new JLabel("Nickname");
+        Nickname.setForeground(Color.BLACK);
+        Nickname.setFont(new Font("Arial Black", 0, 14));
+        JTextField tfFirstName = new JTextField(12);
+        Nickname.setLabelFor(tfFirstName);
 
-        JLabel lblLastName = new JLabel("IP:");
-        lblLastName.setFont(new java.awt.Font("Arial Black", -100, 14));
-        JTextField tfLastName = new JTextField(15);
-        lblLastName.setLabelFor(tfLastName);
+        JLabel IP_Server = new JLabel("Server IP");
+        IP_Server.setForeground(Color.BLACK);
+        IP_Server.setFont(new Font("Arial Black", 0, 14));
+        JTextField tfLastName = new JTextField(12);
+        IP_Server.setLabelFor(tfLastName);
 
-        top.setLayout(new FlowLayout());
-        top.add(lblFirstName);
+        JLabel Port = new JLabel("Port ");
+        Port.setForeground(Color.BLACK);
+        Port.setFont(new Font("Arial Black", 0, 14));
+        JTextField PortName = new JTextField(12);
+        Nickname.setLabelFor(PortName);
+
+
+        top.add(Nickname);
         top.add(tfFirstName);
-        top.add(lblLastName);
+        top.add(IP_Server);
         top.add(tfLastName);
-        /*
+        top.add(Port);
+        top.add(PortName);
+
+        JPanel button = new JPanel();
+        //setting the pos and dim of top
+        button.setBounds(210, 480, 60, 60);
+        button.setOpaque(false);
+        //adding top to lpane,a.k.a the base
+        lpane.add(button, 1, 1);
         //creations of bottons
-        JText PlayButton = new JButton();
-        JButton ExitButton = new JButton();
+
+        JButton StartButton = new JButton();
 
         //setting the buttons font and text
-        PlayButton.setFont(new java.awt.Font("Arial Black", 0, 14));
-        PlayButton.setText("PLAY");
-        ExitButton.setFont(new java.awt.Font("Arial Black", 0, 14));
-        ExitButton.setText("EXIT");
+        StartButton.setFont(new Font("Arial Black", 0, 14));
+        StartButton.setText("START");
 
-        PlayButton.addActionListener(new CustomActionListener());
-        ExitButton.addActionListener(new CustomActionListener());
-        PlayButton.setActionCommand("go");
-        ExitButton.setActionCommand("exit");
+       // StartButton.addActionListener(new CustomActionListener());
 
-        //adding both buttons on top panel
-        top.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        top.add(PlayButton);
-        top.add(ExitButton);
-*/
+        StartButton.setActionCommand("start the game");
 
+
+        //top.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        button.add(StartButton);
     }
 }
