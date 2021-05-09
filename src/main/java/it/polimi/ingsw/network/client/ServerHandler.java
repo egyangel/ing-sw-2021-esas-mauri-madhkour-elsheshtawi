@@ -27,8 +27,8 @@ public class ServerHandler implements Runnable{
             System.out.println("Can't connect to server at " + socket.getInetAddress());
             return;
         }
-
-        System.out.println("Connected to server at " + socket.getInetAddress());
+        System.out.println("\nConnected to server at " + socket.getInetAddress());
+        client.transitionToView("displayLogin");
         try {
             handleConnection();
         } catch (IOException e) {

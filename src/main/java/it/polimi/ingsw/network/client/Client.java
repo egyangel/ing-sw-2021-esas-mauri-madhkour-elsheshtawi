@@ -6,6 +6,8 @@ import it.polimi.ingsw.view.IView;
 import it.polimi.ingsw.view.cli.CLI;
 import it.polimi.ingsw.view.gui.GUI;
 
+import javax.swing.*;
+
 import static it.polimi.ingsw.network.server.Server.SERVER_MIN_PORT;
 import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
 
@@ -39,6 +41,10 @@ public class Client implements Runnable{
 
     private void setView(IView view) {
         this.view = view;
+    }
+
+    public void transitionToView(String viewName){
+        view.transitionToDisplay(viewName);
     }
 
     @Override

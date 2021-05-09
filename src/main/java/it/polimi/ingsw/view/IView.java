@@ -11,8 +11,9 @@ public interface IView {
     // user interaction shows error on CLI & GUI
     void displayIdle();
 
-    boolean shouldStopInteraction();
+    boolean shouldStopDisplayIdle();
 
-    void stopInteraction();
+    void stopDisplayIdle();
 
+    void transitionToDisplay(String displayName);
 }

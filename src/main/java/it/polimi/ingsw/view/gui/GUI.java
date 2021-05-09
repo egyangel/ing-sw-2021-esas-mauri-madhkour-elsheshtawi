@@ -28,16 +28,20 @@ public class GUI implements IView {
     }
 
     @Override
-    public boolean shouldStopInteraction() {
+    public boolean shouldStopDisplayIdle() {
         return false;
     }
 
     @Override
-    public void stopInteraction() {
+    public void stopDisplayIdle() {
 
     }
 
     @Override
+    public void transitionToDisplay(String displayName) {
+
+    }
+
     public void startDisplay() {
 
     }

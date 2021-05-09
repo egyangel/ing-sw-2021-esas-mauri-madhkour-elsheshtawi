@@ -15,9 +15,10 @@ public class CLI implements IView {
     private final Client client;
     private final PrintWriter out;
     private final Scanner in;
-    private Map<String, Runnable> displayMap;
+    private Map<String, Runnable> displayTransitionMap;
+    private Map<String, Runnable> displayNameMap;
     private boolean shouldTerminateClient;
-    private boolean stopInteraction;
+    private boolean stopIdle;
 
     public CLI(Client client) {
         this.client = client;
@@ -28,28 +29,41 @@ public class CLI implements IView {
 
     @Override
     public void startDisplay() {
-        startViewTransition();
+        displayNameMap = new HashMap<>();
+        displayNameMap.put("displayGreet", this::displayGreet);
+        displayNameMap.put("displaySetup", this::displaySetup);
+        displayNameMap.put("displayIdle", this::displayIdle);
+        displayNameMap.put("displayLogin", this::displayLogin);
+        startDisplayTransition();
     }
 
-    public void startViewTransition(){
-        displayMap = new HashMap<>();
+    public void startDisplayTransition() {
+        displayTransitionMap = new HashMap<>();
         boolean stop;
         synchronized (this) {
             stop = shouldTerminateClient;
-            displayMap.put("current", this::displayGreet);
-            displayMap.put("next", null);
+            displayTransitionMap.put("current", displayNameMap.get("displayGreet"));
+            displayTransitionMap.put("next", null);
         }
         while(!stop){
-            if (displayMap.get("current") == null) {
-                displayMap.replace("current", this::displayIdle);
+            if (displayTransitionMap.get("current") == null) {
+                displayNameMap.get("displayIdle").run();
+            } else {
+                displayTransitionMap.get("current").run();
             }
-            displayMap.get("current").run();
             synchronized (this) {
                 stop = shouldTerminateClient;
-                displayMap.replace("current", displayMap.get("next"));
-                displayMap.replace("next", null);
+                displayTransitionMap.replace("current", displayTransitionMap.get("next"));
+                displayTransitionMap.replace("next", null);
             }
         }
+    }
+
+    @Override
+    public synchronized void transitionToDisplay(String displayName) {
+        if (displayTransitionMap.get("current") == null)
+            stopDisplayIdle();
+        displayTransitionMap.replace("next", displayNameMap.get(displayName));
     }
 
     @Override
@@ -59,10 +73,11 @@ public class CLI implements IView {
         StringBuilder idleSymbolBar = new StringBuilder();
         int symbolIndex = 0;
         boolean appendtoRight = true;
-        int lastBarSize;
+        int lastBarSize = 0;
         out.print("Please wait... ");
+        out.flush();
 
-        while(!shouldStopInteraction()){
+        while(!shouldStopDisplayIdle()){
             out.print(idleSymbolBar);
             out.flush();
             lastBarSize =  idleSymbolBar.length();
@@ -84,27 +99,21 @@ public class CLI implements IView {
                     idleSymbolBar.append(idleSymbols.charAt(symbolIndex));
                 }
             }
-            for (int i = 0; i< lastBarSize; i++)
+            for (int i = 0; i< lastBarSize; i++) {
                 out.print(backSpace);
+            }
         }
 
-
-    }
-
-    @Override
-    public synchronized boolean shouldStopInteraction(){
-        return stopInteraction;
-    }
-
-    @Override
-    public synchronized void stopInteraction() {
-        stopInteraction = true;
-        notifyAll();
+        stopIdle = false;
+        for (int i = 0; i< lastBarSize+15; i++)
+            out.print(backSpace);
+        out.flush();
     }
 
     @Override
     public void displayGreet() {
         out.println("Welcome to Masters of Renaissance!");
+        transitionToDisplay("displaySetup");
     }
 
     @Override
@@ -115,6 +124,7 @@ public class CLI implements IView {
 //        int portNumber = InputConsumer.getPortNumber(in);
         String ip = "localhost";
         int portNumber = 3000; //for debug
+        out.println("Connecting to server...");
         client.connectToServer(ip,portNumber);
     }
 
@@ -124,5 +134,16 @@ public class CLI implements IView {
         String username = InputConsumer.getUserName(in);
         Message loginmsg = new Message(0, MsgType.LOGIN, username);
         client.sendToServer(loginmsg);
+    }
+
+    @Override
+    public synchronized boolean shouldStopDisplayIdle(){
+        return stopIdle;
+    }
+
+    @Override
+    public synchronized void stopDisplayIdle() {
+        stopIdle = true;
+        notifyAll();
     }
 }
