@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.network.client.Client;
+import it.polimi.ingsw.utility.messages.Message;
 import it.polimi.ingsw.view.IView;
 
 public class GUI implements IView {
@@ -34,6 +35,11 @@ public class GUI implements IView {
 
     @Override
     public void stopDisplayIdle() {
+
+    }
+
+    @Override
+    public void displayGeneralMsg(Message msg) {
 
     }
 

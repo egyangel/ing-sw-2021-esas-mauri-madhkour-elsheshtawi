@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.server;
 
 import it.polimi.ingsw.utility.InputConsumer;
+import it.polimi.ingsw.utility.messages.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -44,8 +45,8 @@ public class Server implements Runnable{
                 System.out.println("New client request received : " + socket);
 
                 System.out.println("Creating a new handler for this client...");
-                Integer userID = numberOfUsers++;
-                ClientHandler clientHandler = new ClientHandler(userID, socket);
+                Integer userID = ++numberOfUsers;
+                ClientHandler clientHandler = new ClientHandler(userID, socket, this);
                 System.out.println("Adding to userID - client handler map...");
                 userIDtoHandlers.put(userID, clientHandler);
 
@@ -54,6 +55,21 @@ public class Server implements Runnable{
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void handleGameMessage(Message msg){
+        switch (msg.getMsgtype()) {
+            case TAKE_RES_ACTION:
+
+                break;
+            case BUY_DEV_CARD_ACTION:
+
+                break;
+
+            default:
+
+                break;
         }
     }
 }

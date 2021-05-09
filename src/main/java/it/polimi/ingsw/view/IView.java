@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.utility.messages.Message;
+
 public interface IView {
     void startDisplay();
     // show name of game etc
@@ -14,6 +16,8 @@ public interface IView {
     boolean shouldStopDisplayIdle();
 
     void stopDisplayIdle();
+
+    void displayGeneralMsg(Message msg);
 
     void transitionToDisplay(String displayName);
 }

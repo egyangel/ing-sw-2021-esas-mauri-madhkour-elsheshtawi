@@ -18,7 +18,6 @@ import java.net.UnknownHostException;
 import java.util.UUID;
 
 public class Client implements Runnable{
-    private Integer userID;
     private String username;
     private ServerHandler serverHandler;
     private IView view;
@@ -47,6 +46,10 @@ public class Client implements Runnable{
         view.transitionToDisplay(viewName);
     }
 
+    public void displayMessage(Message msg){
+        view.displayGeneralMsg(msg);
+    }
+
     @Override
     public void run() {
         view.startDisplay();
@@ -66,7 +69,9 @@ public class Client implements Runnable{
     }
 
     public void sendToServer(Message msg){
-        msg.setUserID(this.userID); //first message (login) uuid will be zero, server will assign it
         serverHandler.sendMessage(msg);
+    }
+
+    public void handleGameMessage(Message msg) {
     }
 }

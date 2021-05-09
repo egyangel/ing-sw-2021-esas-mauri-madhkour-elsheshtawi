@@ -34,6 +34,7 @@ public class CLI implements IView {
         displayNameMap.put("displaySetup", this::displaySetup);
         displayNameMap.put("displayIdle", this::displayIdle);
         displayNameMap.put("displayLogin", this::displayLogin);
+//        displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
         startDisplayTransition();
     }
 
@@ -68,6 +69,9 @@ public class CLI implements IView {
 
     @Override
     public synchronized void displayIdle(){
+        try {
+            this.wait(1000);
+        } catch (InterruptedException e) {}
         String idleSymbols = "✞⨎⌬☺⌺";
         String backSpace = "\b";
         StringBuilder idleSymbolBar = new StringBuilder();
@@ -134,6 +138,10 @@ public class CLI implements IView {
         String username = InputConsumer.getUserName(in);
         Message loginmsg = new Message(0, MsgType.LOGIN, username);
         client.sendToServer(loginmsg);
+    }
+
+    public synchronized void displayGeneralMsg(Message msg){
+        out.println(msg.getJsonContent());
     }
 
     @Override

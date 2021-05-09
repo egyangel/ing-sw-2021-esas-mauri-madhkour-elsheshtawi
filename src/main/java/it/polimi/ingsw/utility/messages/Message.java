@@ -13,7 +13,19 @@ public class Message implements Serializable {
         this.jsonContent = jsonContent;
     }
 
+    public Integer getUserID() {
+        return userID;
+    }
+
     public void setUserID(Integer userID){
         this.userID = userID;
+    }
+
+    public MsgType getMsgtype() {
+        return msgtype;
+    }
+
+    public String getJsonContent() {
+        return jsonContent;
     }
 }

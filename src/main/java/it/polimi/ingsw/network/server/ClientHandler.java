@@ -1,26 +1,32 @@
 package it.polimi.ingsw.network.server;
 
+import it.polimi.ingsw.utility.messages.Message;
+import it.polimi.ingsw.utility.messages.MsgType;
+import it.polimi.ingsw.utility.MsgPrinterToCLI;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ClientHandler implements Runnable{
     private Integer userID;
     private Socket socket;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
+    private Server server;
 
 
-    public ClientHandler(Integer userID, Socket socket) {
+    public ClientHandler(Integer userID, Socket socket, Server server) {
         this.userID = userID;
         this.socket = socket;
+        this.server = server;
     }
 
     @Override
     public void run() {
         try {
-            // these are the channels which client handlers write/read message objects into/from
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
@@ -46,7 +52,48 @@ public class ClientHandler implements Runnable{
 
     private void handleConnection() throws IOException {
         while(true) {
-            // handle messages
+            try {
+                Message msg = (Message)ois.readObject();
+                MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoSERVER, msg);
+                if(isConnectionMessage(msg)){
+                    handleConnectionMessage(msg);
+                }else {
+                    server.handleGameMessage(msg);
+                }
+            } catch (ClassNotFoundException | ClassCastException e) {
+                System.out.println("Unidentified message from client " + userID);
+            }
+        }
+    }
+
+    private boolean isConnectionMessage(Message msg){
+        return Arrays.asList(MsgType.LOGIN, MsgType.HEARTBEAT).contains(msg.getMsgtype());
+    }
+
+    private void handleConnectionMessage(Message msg){
+        Message msgToSend = null;
+        switch (msg.getMsgtype()) {
+            case LOGIN:
+                msgToSend = new Message(userID, MsgType.LOGIN, "UserID assigned as " + userID);
+                break;
+            case HEARTBEAT:
+                break;
+            default:
+                break;
+        }
+        if (msgToSend != null) {
+            sendMessage(msgToSend);
+        } else {
+            System.out.println("Cannot process connection message properly");
+        }
+    }
+
+    public void sendMessage(Message msg){
+        MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.OUTGOINGfromSERVER, msg);
+        try {
+            oos.writeObject((Object) msg);
+        } catch (IOException e) {
+            System.out.println("Cannot send message to client " + userID);
         }
     }
 }
