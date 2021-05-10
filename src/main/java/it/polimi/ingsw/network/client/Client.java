@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.client;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.utility.MsgPrinterToCLI;
 import it.polimi.ingsw.utility.messages.Message;
 import it.polimi.ingsw.view.IView;
 import it.polimi.ingsw.view.cli.CLI;
@@ -42,14 +43,6 @@ public class Client implements Runnable{
         this.view = view;
     }
 
-    public void transitionToView(String viewName){
-        view.transitionToDisplay(viewName);
-    }
-
-    public void displayMessage(Message msg){
-        view.displayGeneralMsg(msg);
-    }
-
     @Override
     public void run() {
         view.startDisplay();
@@ -73,5 +66,15 @@ public class Client implements Runnable{
     }
 
     public void handleGameMessage(Message msg) {
+    }
+
+    public void handleSetUpMessage(Message msg){
+        switch (msg.getMsgtype()) {
+            case LOGIN:
+                MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);
+        }
+    }
+
+    public void handleMessage(Message msg) {
     }
 }

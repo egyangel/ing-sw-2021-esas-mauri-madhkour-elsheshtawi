@@ -1,7 +1,6 @@
 package it.polimi.ingsw.network.server;
 
 import it.polimi.ingsw.utility.messages.Message;
-import it.polimi.ingsw.utility.messages.MsgType;
 import it.polimi.ingsw.utility.MsgPrinterToCLI;
 
 import java.io.IOException;
@@ -55,36 +54,14 @@ public class ClientHandler implements Runnable{
             try {
                 Message msg = (Message)ois.readObject();
                 MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoSERVER, msg);
-                if(isConnectionMessage(msg)){
-                    handleConnectionMessage(msg);
+                if(msg.getMsgtype() == Message.Type.HEARTBEAT){
+                    // do heartbeat thing
                 }else {
-                    server.handleGameMessage(msg);
+                    server.handleMessage(userID, msg);
                 }
             } catch (ClassNotFoundException | ClassCastException e) {
                 System.out.println("Unidentified message from client " + userID);
             }
-        }
-    }
-
-    private boolean isConnectionMessage(Message msg){
-        return Arrays.asList(MsgType.LOGIN, MsgType.HEARTBEAT).contains(msg.getMsgtype());
-    }
-
-    private void handleConnectionMessage(Message msg){
-        Message msgToSend = null;
-        switch (msg.getMsgtype()) {
-            case LOGIN:
-                msgToSend = new Message(userID, MsgType.LOGIN, "UserID assigned as " + userID);
-                break;
-            case HEARTBEAT:
-                break;
-            default:
-                break;
-        }
-        if (msgToSend != null) {
-            sendMessage(msgToSend);
-        } else {
-            System.out.println("Cannot process connection message properly");
         }
     }
 

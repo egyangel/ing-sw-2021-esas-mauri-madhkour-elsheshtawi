@@ -1,6 +1,5 @@
 package it.polimi.ingsw.network.server;
 
-import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
 
 import java.io.IOException;
@@ -14,9 +13,11 @@ public class Server implements Runnable{
     private static final int MAX_NUM_OF_PLAYERS = 4;
     private static int numberOfUsers = 0;
 
-    Map<String, Map<Integer,String>> matchIDtoMatches = new HashMap<>();
+//    Implementation for multiple simultaneous games can be added later
+//    Map<String, Map<Integer,String>> matchIDtoMatches = new HashMap<>();
     Map<Integer,String> userIDtoUsernames = new HashMap<>();
     Map<Integer,ClientHandler> userIDtoHandlers = new HashMap<>();
+    Map<Integer,VirtualView> userIDtoVirtualViews = new HashMap<>();
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -58,18 +59,26 @@ public class Server implements Runnable{
         }
     }
 
-    public void handleGameMessage(Message msg){
+    public void handleMessage(Integer userID, Message msg){
+        if (Arrays.asList(Message.Type.LOGIN).contains(msg.getMsgtype())){
+            handleSetUpMessage(userID, msg);
+        } else
+            handleGameMessage(userID, msg);
+    }
+
+    private void handleSetUpMessage(Integer userID, Message msg) {
+        Message msgToSend = null;
         switch (msg.getMsgtype()) {
-            case TAKE_RES_ACTION:
-
-                break;
-            case BUY_DEV_CARD_ACTION:
-
-                break;
-
-            default:
-
+            case LOGIN:
+                msgToSend = new Message(userID, Message.Type.LOGIN, "UserID assigned as " + userID);
                 break;
         }
+        if(msgToSend != null){
+            userIDtoHandlers.get(userID).sendMessage(msgToSend);
+        }
+    }
+
+    private void handleGameMessage(Integer userID, Message msg){
+        userIDtoVirtualViews.get(userID).handleGameMessage(msg);
     }
 }

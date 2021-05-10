@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.polimi.ingsw.model.DevCard;
-import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.specialability.*;
 
 import java.io.FileNotFoundException;
@@ -24,12 +23,12 @@ public class JsonConverter {
                                 .registerSubtype(ExstraSlot .class, "ExstraSlot")
                 ).create();
 
-    private static final Gson gsonForDevCard = new Gson();
+    private static final Gson gson = new Gson();
 
     public static List<DevCard> deserializeDevCards(){
         List<DevCard> cards = null;
         try(JsonReader reader = new JsonReader(new FileReader("src/main/resources/DevCards.json"))) {
-            cards = Arrays.asList(gsonForDevCard.fromJson(reader, DevCard[].class));
+            cards = Arrays.asList(gson.fromJson(reader, DevCard[].class));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -39,6 +38,10 @@ public class JsonConverter {
     }
 
     private static String serializeDevCard(DevCard devcard) {
-        return gsonForDevCard.toJson(devcard);
+        return gson.toJson(devcard);
+    }
+
+    public static String toJson(Object object){
+        return gson.toJson(object);
     }
 }

@@ -2,8 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
-import it.polimi.ingsw.utility.messages.Message;
-import it.polimi.ingsw.utility.messages.MsgType;
+import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
 
 import java.io.PrintWriter;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class CLI implements IView {
+public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private final Client client;
     private final PrintWriter out;
     private final Scanner in;
@@ -19,6 +18,7 @@ public class CLI implements IView {
     private Map<String, Runnable> displayNameMap;
     private boolean shouldTerminateClient;
     private boolean stopIdle;
+
 
     public CLI(Client client) {
         this.client = client;
@@ -34,11 +34,10 @@ public class CLI implements IView {
         displayNameMap.put("displaySetup", this::displaySetup);
         displayNameMap.put("displayIdle", this::displayIdle);
         displayNameMap.put("displayLogin", this::displayLogin);
-//        displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
         startDisplayTransition();
     }
 
-    public void startDisplayTransition() {
+    private void startDisplayTransition() {
         displayTransitionMap = new HashMap<>();
         boolean stop;
         synchronized (this) {
@@ -60,7 +59,6 @@ public class CLI implements IView {
         }
     }
 
-    @Override
     public synchronized void transitionToDisplay(String displayName) {
         if (displayTransitionMap.get("current") == null)
             stopDisplayIdle();
@@ -136,10 +134,12 @@ public class CLI implements IView {
     public void displayLogin() {
         out.println("Choose a username:");
         String username = InputConsumer.getUserName(in);
-        Message loginmsg = new Message(0, MsgType.LOGIN, username);
+        Message loginmsg = new Message(0, Message.Type.LOGIN, username);
         client.sendToServer(loginmsg);
     }
 
+    // this method displays general messages in somewhere separate, does not belong inside transition
+    @Override
     public synchronized void displayGeneralMsg(Message msg){
         out.println(msg.getJsonContent());
     }
@@ -153,5 +153,25 @@ public class CLI implements IView {
     public synchronized void stopDisplayIdle() {
         stopIdle = true;
         notifyAll();
+    }
+
+    @Override
+    public void update(Event event) {
+
+    }
+
+    @Override
+    public void subscribe(Listener<VCEvent> listener) {
+
+    }
+
+    @Override
+    public void unsubscribe(Listener<VCEvent> listener) {
+
+    }
+
+    @Override
+    public void publish(VCEvent event) {
+
     }
 }

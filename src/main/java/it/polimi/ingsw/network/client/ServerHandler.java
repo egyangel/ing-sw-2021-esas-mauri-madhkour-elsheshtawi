@@ -2,8 +2,7 @@ package it.polimi.ingsw.network.client;
 
 import it.polimi.ingsw.network.server.ClientHandler;
 import it.polimi.ingsw.utility.MsgPrinterToCLI;
-import it.polimi.ingsw.utility.messages.Message;
-import it.polimi.ingsw.utility.messages.MsgType;
+import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
 
 import java.io.IOException;
@@ -12,11 +11,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-public class ServerHandler implements Runnable{
+public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Event> {
     private Socket socket;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private Client client;
+    private IView view;
     private Integer userID;
 
     public ServerHandler(Socket socket, Client client) {
@@ -34,7 +34,7 @@ public class ServerHandler implements Runnable{
             return;
         }
         System.out.println("\nConnected to server at " + socket.getInetAddress());
-        client.transitionToView("displayLogin");
+        view.transitionToDisplay("displayLogin");
         try {
             handleConnection();
         } catch (IOException e) {
@@ -58,10 +58,10 @@ public class ServerHandler implements Runnable{
             try {
                 Message msg = (Message)ois.readObject();
                 MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);
-                if(isConnectionMessage(msg)){
-                    handleConnectionMessage(msg);
+                if(msg.getMsgtype() == Message.Type.HEARTBEAT){
+                    // do heartbeat thing
                 }else {
-                    client.handleGameMessage(msg);
+                    client.handleMessage(msg);
                 }
             } catch (ClassNotFoundException | ClassCastException e) {
                 System.out.println("Unidentified message from server");
@@ -69,18 +69,25 @@ public class ServerHandler implements Runnable{
         }
     }
 
-    private void handleConnectionMessage(Message msg){
-        switch (msg.getMsgtype()) {
-            case LOGIN:
-                userID = msg.getUserID();
-                client.displayMessage(msg);
-                break;
-            case HEARTBEAT:
-                break;
-        }
+
+
+    @Override
+    public void update(VCEvent event) {
+
     }
 
-    private boolean isConnectionMessage(Message msg){
-        return Arrays.asList(MsgType.LOGIN, MsgType.HEARTBEAT).contains(msg.getMsgtype());
+    @Override
+    public void subscribe(Listener<Event> listener) {
+
+    }
+
+    @Override
+    public void unsubscribe(Listener<Event> listener) {
+
+    }
+
+    @Override
+    public void publish(Event event) {
+
     }
 }
