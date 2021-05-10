@@ -10,11 +10,11 @@ public class WaitingRoomGui extends JFrame{
 
     public WaitingRoomGui() {
         super("Master of Renaissance");
-        prepareFirstGUI();
+        prepareWaitingRoomGUI();
         showAction();
     }
 
-    private void prepareFirstGUI() {
+    private void prepareWaitingRoomGUI() {
 
         //creation of the 3 panels,one ober the other,lpane is the base,
         // then p1 is the panel that contain the image and the last one contains te button
@@ -47,70 +47,19 @@ public class WaitingRoomGui extends JFrame{
     private void showAction() {
         JPanel top = new JPanel();
         //setting the pos and dim of top
-        top.setBounds(130, 160, 170, 60);
+        top.setBounds(100, 160, 300, 60);
         top.setOpaque(false);
         //adding top to lpane,a.k.a the base
         lpane.add(top, 1, 0);
         top.setLayout(new GridLayout(3,1));
 
-        JLabel Nickname = new JLabel("Nickname");
+        JLabel Nickname = new JLabel("Waiting Other Player....");
         Nickname.setForeground(Color.BLACK);
-        Nickname.setFont(new Font("Arial Black", 0, 14));
-        JTextField tfFirstName = new JTextField(12);
-        Nickname.setLabelFor(tfFirstName);
-
-        JLabel IP_Server = new JLabel("Server IP");
-        IP_Server.setForeground(Color.BLACK);
-        IP_Server.setFont(new Font("Arial Black", 0, 14));
-        JTextField tfLastName = new JTextField(12);
-        IP_Server.setLabelFor(tfLastName);
-
-        JLabel Port = new JLabel("Port ");
-        Port.setForeground(Color.BLACK);
-        Port.setFont(new Font("Arial Black", 0, 14));
-        JTextField PortName = new JTextField(12);
-        Nickname.setLabelFor(PortName);
+        Nickname.setFont(new Font("Arial Black", 0, 20));
 
 
         top.add(Nickname);
-        top.add(tfFirstName);
-        top.add(IP_Server);
-        top.add(tfLastName);
-        top.add(Port);
-        top.add(PortName);
 
 
-        JPanel button = new JPanel();
-        //setting the pos and dim of top
-        button.setBounds(210, 480, 60, 60);
-        button.setOpaque(false);
-        //adding top to lpane,a.k.a the base
-        lpane.add(button, 1, 1);
-        //creations of bottons
-
-        JButton StartButton = new JButton();
-
-        //setting the buttons font and text
-        StartButton.setFont(new Font("Arial Black", 0, 14));
-        StartButton.setText("START");
-
-        StartButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event){
-
-                Runnable init = new Runnable() {
-                    public void run() {
-                        new WaitingRoomGui();
-                    }
-                };
-                SwingUtilities.invokeLater(init);
-                dispose();
-
-            }});
-
-        StartButton.setActionCommand("start the game");
-
-
-        //top.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        button.add(StartButton);
     }
 }

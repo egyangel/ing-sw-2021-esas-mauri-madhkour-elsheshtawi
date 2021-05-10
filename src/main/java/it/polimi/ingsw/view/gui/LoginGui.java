@@ -12,11 +12,11 @@ public class LoginGui extends JFrame{
 
     public LoginGui() {
         super("Master of Renaissance");
-        prepareFirstGUI();
+        prepareSecondGUI();
         showAction();
     }
 
-    private void prepareFirstGUI() {
+    private void prepareSecondGUI() {
 
         //creation of the 3 panels,one ober the other,lpane is the base,
         // then p1 is the panel that contain the image and the last one contains te button
@@ -84,14 +84,15 @@ public class LoginGui extends JFrame{
 
         JPanel button = new JPanel();
         //setting the pos and dim of top
-        button.setBounds(210, 480, 60, 60);
+        button.setBounds(175, 480, 120
+                , 60);
         button.setOpaque(false);
         //adding top to lpane,a.k.a the base
         lpane.add(button, 1, 1);
         //creations of bottons
 
         JButton StartButton = new JButton();
-
+    StartButton.setSize(120,60);
         //setting the buttons font and text
         StartButton.setFont(new Font("Arial Black", 0, 14));
         StartButton.setText("START");
