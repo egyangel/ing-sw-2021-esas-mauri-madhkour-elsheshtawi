@@ -1,45 +1,36 @@
 package it.polimi.ingsw.view.gui;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class SecondGui {
+public class LoginGui extends JFrame{
 
-
-    static JFrame window;
     static JLayeredPane lpane = new JLayeredPane();
 
-    public SecondGui() {
+    public LoginGui() {
+        super("Master of Renaissance");
         prepareFirstGUI();
-
-        showActionListenerDemo();
+        showAction();
     }
 
     private void prepareFirstGUI() {
-        window = new JFrame("Master of Renaissance");
-
-        window.setDefaultLookAndFeelDecorated(true);
 
         //creation of the 3 panels,one ober the other,lpane is the base,
         // then p1 is the panel that contain the image and the last one contains te button
 
-        JPanelBackground p1 = null;
+        ImagePanel p1 = new ImagePanel("src/main/resources/Background.jpg");
 
         // dimension of the frame and setting layout
-        window.setSize(489, 666);
-        window.setLayout(new BorderLayout());
-        window.add(lpane, BorderLayout.CENTER);
+        setSize(489, 666);
+        setLayout(new BorderLayout());
+        add(lpane, BorderLayout.CENTER);
 
 
         //upload image on the p1 panel
-        try {
-            p1 = new JPanelBackground("src/main/resources/Background.jpg");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         //setting the pos and dim of p1
         p1.setBounds(0, 0, 489, 666);
         p1.setOpaque(true);
@@ -49,13 +40,13 @@ public class SecondGui {
         lpane.add(p1, 0, 0);
 
 
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     }
 
-    private void showActionListenerDemo() {
+    private void showAction() {
         JPanel top = new JPanel();
         //setting the pos and dim of top
         top.setBounds(130, 160, 170, 60);
@@ -90,6 +81,7 @@ public class SecondGui {
         top.add(Port);
         top.add(PortName);
 
+
         JPanel button = new JPanel();
         //setting the pos and dim of top
         button.setBounds(210, 480, 60, 60);
@@ -104,7 +96,18 @@ public class SecondGui {
         StartButton.setFont(new Font("Arial Black", 0, 14));
         StartButton.setText("START");
 
-       // StartButton.addActionListener(new CustomActionListener());
+       StartButton.addActionListener(new ActionListener(){
+           public void actionPerformed(ActionEvent event){
+
+               Runnable init = new Runnable() {
+                   public void run() {
+                       new WaitingRoomGui();
+                   }
+               };
+               SwingUtilities.invokeLater(init);
+               dispose();
+
+           }});
 
         StartButton.setActionCommand("start the game");
 
