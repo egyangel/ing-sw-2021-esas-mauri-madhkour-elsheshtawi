@@ -1,13 +1,14 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.GameState;
 import it.polimi.ingsw.model.enumclasses.GameMode;
+import it.polimi.ingsw.network.server.VirtualView;
 
 import java.util.List;
 import java.util.Stack;
 
-//Trying to implement attributes/methods of DevDeck class into this to delete DevDeck
-
+// MODEL CLASS
 public class Game {
 
     private GameState gameState;
@@ -51,5 +52,9 @@ public class Game {
 
 
         }
+    }
+
+    public void setController(Controller controller) {
+//        this.controller = controller;
     }
 }

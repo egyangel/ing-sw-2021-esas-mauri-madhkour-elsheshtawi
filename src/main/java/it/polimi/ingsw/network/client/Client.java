@@ -70,7 +70,7 @@ public class Client implements Runnable{
 
     public void handleSetUpMessage(Message msg){
         switch (msg.getMsgtype()) {
-            case LOGIN:
+            case LOGIN_ACCEPTED:
                 MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);
         }
     }

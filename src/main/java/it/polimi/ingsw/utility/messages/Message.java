@@ -4,20 +4,41 @@ import it.polimi.ingsw.utility.JsonConverter;
 
 import java.io.Serializable;
 
+// 4 kinds of messages in total
 public class Message implements Serializable {
     public enum Type {
-        LOGIN,
+        DISPLAY_LOGIN,
+        REQUEST_LOGIN,
+        LOGIN_ACCEPTED,
+        DISPLAY_LOBBY,
+        USER_JOINED_IN_LOBBY,
+        USER_DROPPED_IN_LOBBY,
+        VOTE_START,
+        RESET_VOTE,
+        START_MATCH,
+        ASSIGN_TURN,
+
+        BEGIN_TURN,
+
         HEARTBEAT,
-        TAKE_RES_ACTION,
-        BUY_DEV_CARD_ACTION,
-        MV_EVENT,
-        VC_EVENT,
+        MV_EVENT, // if something changes, new personal board will be sent to view of player
+        CV_EVENT, // from controller to view (alert warehouse full message)
+        VC_EVENT, // from view to controller
         DEBUG
     }
 
     private Integer userID;
     private Type msgtype;
-    private String jsonContent;
+    private String jsonContent; //jsonized MV_Event or CV_EVENT or VC_EVENT
+
+    public Message(Type msgtype){
+        this.msgtype = msgtype;
+    }
+
+    public Message(Type msgtype, String jsonContent) {
+        this.msgtype = msgtype;
+        this.jsonContent = jsonContent;
+    }
 
     public Message(Integer userID, Type msgtype, String simpleString) {
         this.userID = userID;
@@ -25,11 +46,6 @@ public class Message implements Serializable {
         this.jsonContent = simpleString;
     }
 
-    public Message(Integer userID, Type msgtype, Event event){
-        this.userID = userID;
-        this.msgtype = msgtype;
-        this.jsonContent = JsonConverter.toJson(event);
-    }
 
     public Integer getUserID() {
         return userID;

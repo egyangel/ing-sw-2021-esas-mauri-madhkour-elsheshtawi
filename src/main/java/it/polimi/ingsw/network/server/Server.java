@@ -1,8 +1,11 @@
 package it.polimi.ingsw.network.server;
 
+import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.utility.messages.*;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -12,12 +15,15 @@ public class Server implements Runnable{
     public static final int SERVER_MAX_PORT = 5000;
     private static final int MAX_NUM_OF_PLAYERS = 4;
     private static int numberOfUsers = 0;
+    private Map<Integer,ClientHandler> userIDtoHandlers;
+    private Controller controller;
+    private Game game;
 
 //    Implementation for multiple simultaneous games can be added later
 //    Map<String, Map<Integer,String>> matchIDtoMatches = new HashMap<>();
-    Map<Integer,String> userIDtoUsernames = new HashMap<>();
-    Map<Integer,ClientHandler> userIDtoHandlers = new HashMap<>();
-    Map<Integer,VirtualView> userIDtoVirtualViews = new HashMap<>();
+    private Map<Integer,String> userIDtoUsernames = new HashMap<>(); // should be in controller
+    private Map<Integer,VirtualView> userIDtoVirtualViews = new HashMap<>();
+
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -26,6 +32,11 @@ public class Server implements Runnable{
 
     @Override
     public void run() {
+        // one game and one controller per match
+        game = new Game();
+        controller = new Controller(game);
+        game.setController(controller);
+        userIDtoHandlers = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter server port number:");
 //        int portNumber = InputConsumer.getPortNumber(scanner);
@@ -45,14 +56,25 @@ public class Server implements Runnable{
                 socket = serverSocket.accept();
                 System.out.println("New client request received : " + socket);
 
-                System.out.println("Creating a new handler for this client...");
-                Integer userID = ++numberOfUsers;
-                ClientHandler clientHandler = new ClientHandler(userID, socket, this);
-                System.out.println("Adding to userID - client handler map...");
-                userIDtoHandlers.put(userID, clientHandler);
-
-                Thread thread = new Thread(clientHandler);
-                thread.start();
+                if (numberOfUsers < MAX_NUM_OF_PLAYERS) {
+                    System.out.println("Creating a new handler for this client...");
+                    Integer userID = ++numberOfUsers;
+                    ClientHandler clientHandler = new ClientHandler(userID, socket, this);
+                    System.out.println("Adding to userID - client handler map...");
+                    userIDtoHandlers.put(userID, clientHandler);
+                    Thread thread = new Thread(clientHandler);
+                    thread.start();
+                } else {
+                    System.out.println("Refusing the new request...");
+                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                    oos.writeObject((Object) "The game has already started...");
+                    try {
+                        oos.close();
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -60,25 +82,34 @@ public class Server implements Runnable{
     }
 
     public void handleMessage(Integer userID, Message msg){
-        if (Arrays.asList(Message.Type.LOGIN).contains(msg.getMsgtype())){
-            handleSetUpMessage(userID, msg);
-        } else
-            handleGameMessage(userID, msg);
+        if (msg.getMsgtype() == Message.Type.VC_EVENT) {
+            userIDtoVirtualViews.get(userID).handleGameMessage(msg);
+        } else if (Arrays.asList(Message.Type.CV_EVENT, Message.Type.MV_EVENT).contains(msg.getMsgtype())){
+            System.out.println("Unexpected server to server message");
+        } else {
+            handleSetUpMessage(userID,msg);
+        }
     }
 
-    private void handleSetUpMessage(Integer userID, Message msg) {
-        Message msgToSend = null;
-        switch (msg.getMsgtype()) {
-            case LOGIN:
-                msgToSend = new Message(userID, Message.Type.LOGIN, "UserID assigned as " + userID);
+    private void handleSetUpMessage(Integer userID, Message incomingmsg) {
+        Message respondmsg = null;
+        ClientHandler handler = userIDtoHandlers.get(userID);
+        List<ClientHandler> otherHandlers = (List<ClientHandler>) userIDtoHandlers.values();
+        otherHandlers.remove(handler);
+        switch (incomingmsg.getMsgtype()) {
+            case REQUEST_LOGIN:
+                String username = incomingmsg.getJsonContent();
+                VirtualView virtualView = new VirtualView(userID);
+                controller.addPlayer(userID, username, virtualView);
+                respondmsg = new Message(Message.Type.LOGIN_ACCEPTED); //connection
+                handler.sendMessage(respondmsg);
+                respondmsg = new Message(Message.Type.DISPLAY_LOBBY); //CV_EVENT
+                handler.sendMessage(respondmsg);
+                for(ClientHandler otherHandler: otherHandlers){
+                    respondmsg = new Message(Message.Type.USER_JOINED_IN_LOBBY, username);
+                    otherHandler.sendMessage(respondmsg);
+                }
                 break;
         }
-        if(msgToSend != null){
-            userIDtoHandlers.get(userID).sendMessage(msgToSend);
-        }
-    }
-
-    private void handleGameMessage(Integer userID, Message msg){
-        userIDtoVirtualViews.get(userID).handleGameMessage(msg);
     }
 }

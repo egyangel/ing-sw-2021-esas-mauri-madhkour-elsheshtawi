@@ -35,6 +35,7 @@ public class ClientHandler implements Runnable{
         System.out.println("Connected to client " + userID + " at " + socket.getInetAddress());
 
         try {
+            sendMessage(new Message(Message.Type.DISPLAY_LOGIN)); //connection msg
             handleConnection();
         } catch (IOException e) {
             System.out.println("Client " + userID + " dropped");
@@ -66,6 +67,7 @@ public class ClientHandler implements Runnable{
     }
 
     public void sendMessage(Message msg){
+        msg.setUserID(userID);
         MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.OUTGOINGfromSERVER, msg);
         try {
             oos.writeObject((Object) msg);

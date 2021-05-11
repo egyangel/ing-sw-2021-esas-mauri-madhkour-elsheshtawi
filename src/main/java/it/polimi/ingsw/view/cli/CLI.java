@@ -134,7 +134,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayLogin() {
         out.println("Choose a username:");
         String username = InputConsumer.getUserName(in);
-        Message loginmsg = new Message(0, Message.Type.LOGIN, username);
+        Message loginmsg = new Message(Message.Type.REQUEST_LOGIN, username);
         client.sendToServer(loginmsg);
     }
 
@@ -172,6 +172,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void publish(VCEvent event) {
-
+        client.sendToServer(new Message(Message.Type.VC_EVENT));
     }
 }

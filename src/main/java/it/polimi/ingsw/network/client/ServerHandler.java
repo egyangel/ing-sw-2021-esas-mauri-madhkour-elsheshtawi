@@ -34,7 +34,7 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
             return;
         }
         System.out.println("\nConnected to server at " + socket.getInetAddress());
-        view.transitionToDisplay("displayLogin");
+//        view.transitionToDisplay("displayLogin");
         try {
             handleConnection();
         } catch (IOException e) {
@@ -43,6 +43,7 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
     }
 
     public void sendMessage(Message msg){
+        msg.setUserID(userID);
         MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.OUTGOINGfromCLIENT, msg);
         try {
             oos.writeObject(msg);

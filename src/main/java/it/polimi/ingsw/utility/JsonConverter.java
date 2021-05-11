@@ -6,6 +6,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.polimi.ingsw.model.DevCard;
 import it.polimi.ingsw.model.specialability.*;
+import it.polimi.ingsw.utility.messages.VCEvent;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -43,5 +44,9 @@ public class JsonConverter {
 
     public static String toJson(Object object){
         return gson.toJson(object);
+    }
+
+    public static VCEvent fromJsonVCEvent(String jsonContent) {
+        return gson.fromJson(jsonContent, VCEvent.class);
     }
 }

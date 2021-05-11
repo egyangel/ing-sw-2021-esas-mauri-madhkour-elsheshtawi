@@ -1,22 +1,26 @@
 package it.polimi.ingsw.network.server;
 
+import it.polimi.ingsw.utility.JsonConverter;
 import it.polimi.ingsw.utility.messages.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VirtualView implements Publisher<VCEvent>, Listener<Event> {
+    // project can be implemented without PUBLISH - LISTEN but the tutors might want to see it implemented
     private Integer userID;
+    private List<Listener<VCEvent>> listenerList = new ArrayList<>();
+
+    public VirtualView(Integer userID) {
+        this.userID = userID;
+    }
 
     public void handleGameMessage(Message msg){
-        switch (msg.getMsgtype()) {
-            case TAKE_RES_ACTION:
-
-                break;
-            case BUY_DEV_CARD_ACTION:
-
-                break;
-
-            default:
-
-                break;
+        if (msg.getMsgtype() == Message.Type.VC_EVENT) {
+            VCEvent vcEvent = JsonConverter.fromJsonVCEvent(msg.getJsonContent());
+            publish(vcEvent);
+        } else {
+            System.out.println("Bad message in virtual view");
         }
     }
 
@@ -27,16 +31,18 @@ public class VirtualView implements Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void subscribe(Listener<VCEvent> listener) {
-
+        listenerList.add(listener);
     }
 
     @Override
     public void unsubscribe(Listener<VCEvent> listener) {
-
+        listenerList.remove(listener);
     }
 
     @Override
-    public void publish(VCEvent event) {
-
+    public void publish(VCEvent vcEvent) {
+        for(Listener<VCEvent> listener : listenerList){
+            listener.update(vcEvent);
+        }
     }
 }
