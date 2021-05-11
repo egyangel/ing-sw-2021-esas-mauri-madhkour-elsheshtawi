@@ -1,9 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.controller.GameState;
 import it.polimi.ingsw.model.enumclasses.GameMode;
-import it.polimi.ingsw.network.server.VirtualView;
 
 import java.util.List;
 import java.util.Stack;
@@ -11,7 +9,6 @@ import java.util.Stack;
 // MODEL CLASS
 public class Game {
 
-    private GameState gameState;
     private List<Player> players;
     private List<PersonalBoard> boards;
     private MarketTray market; //or can it be MarketTray marketTray??
@@ -25,14 +22,6 @@ public class Game {
 
     public List<Player> getPlayers() {
         return players;
-    }
-
-    public void setNextGameState(GameState nextGameState) {
-        this.gameState = nextGameState;
-    }
-
-    public void enterNextState() {
-        this.gameState.enter();
     }
 
     public void addNewBoardFor(Player player) {
