@@ -65,16 +65,16 @@ public class Client implements Runnable{
         serverHandler.sendMessage(msg);
     }
 
-    public void handleGameMessage(Message msg) {
-    }
-
     public void handleSetUpMessage(Message msg){
         switch (msg.getMsgtype()) {
             case LOGIN_ACCEPTED:
                 MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);
+                serverHandler.setUserId((Integer.parseInt(msg.getJsonContent())));
+                view.transitionToDisplay("displayLobby");
         }
     }
 
-    public void handleMessage(Message msg) {
+    public IView getView(){
+        return view;
     }
 }

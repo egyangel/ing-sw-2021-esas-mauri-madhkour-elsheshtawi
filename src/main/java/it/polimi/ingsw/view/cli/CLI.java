@@ -34,6 +34,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displaySetup", this::displaySetup);
         displayNameMap.put("displayIdle", this::displayIdle);
         displayNameMap.put("displayLogin", this::displayLogin);
+        displayNameMap.put("displayLobby", this::displayLobby);
         startDisplayTransition();
     }
 
@@ -142,6 +143,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public synchronized void displayGeneralMsg(Message msg){
         out.println(msg.getJsonContent());
+    }
+
+    public synchronized void displayLobby(){
+
     }
 
     @Override

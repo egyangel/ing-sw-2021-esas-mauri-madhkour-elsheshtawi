@@ -67,7 +67,7 @@ public class Server implements Runnable{
                 } else {
                     System.out.println("Refusing the new request...");
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                    oos.writeObject((Object) "The game has already started...");
+                    oos.writeObject("The game has already started...");
                     try {
                         oos.close();
                         socket.close();
@@ -100,10 +100,11 @@ public class Server implements Runnable{
             case REQUEST_LOGIN:
                 String username = incomingmsg.getJsonContent();
                 VirtualView virtualView = new VirtualView(userID);
+                virtualView.subscribe(controller);
                 controller.addPlayer(userID, username, virtualView);
-                respondmsg = new Message(Message.Type.LOGIN_ACCEPTED); //connection
+                respondmsg = new Message(Message.Type.LOGIN_ACCEPTED);
                 handler.sendMessage(respondmsg);
-                respondmsg = new Message(Message.Type.DISPLAY_LOBBY); //CV_EVENT
+                respondmsg = new Message(Message.Type.DISPLAY_LOBBY);
                 handler.sendMessage(respondmsg);
                 for(ClientHandler otherHandler: otherHandlers){
                     respondmsg = new Message(Message.Type.USER_JOINED_IN_LOBBY, username);

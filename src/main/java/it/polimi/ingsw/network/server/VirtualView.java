@@ -17,7 +17,7 @@ public class VirtualView implements Publisher<VCEvent>, Listener<Event> {
 
     public void handleGameMessage(Message msg){
         if (msg.getMsgtype() == Message.Type.VC_EVENT) {
-            VCEvent vcEvent = JsonConverter.fromJsonVCEvent(msg.getJsonContent());
+            VCEvent vcEvent = JsonConverter.fromMsgToVCEvent(msg);
             publish(vcEvent);
         } else {
             System.out.println("Bad message in virtual view");
