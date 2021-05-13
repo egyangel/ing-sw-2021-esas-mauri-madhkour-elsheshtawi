@@ -33,6 +33,11 @@ public class GUI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     @Override
+    public void displayLobby() {
+
+    }
+
+    @Override
     public boolean shouldStopDisplayIdle() {
         return false;
     }
@@ -43,12 +48,12 @@ public class GUI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     @Override
-    public void displayGeneralMsg(Message msg) {
+    public void displayGeneralMsg(String string) {
 
     }
 
     @Override
-    public void transitionToDisplay(String displayName) {
+    public void addNextDisplay(String displayA) {
 
     }
 

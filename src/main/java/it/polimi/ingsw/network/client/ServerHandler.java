@@ -70,18 +70,19 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
     private void handleConnection() throws IOException{
         while(true) {
             try {
+                // TODO: add refusing msg from server to client before closing socket so when socket closes it doesnt say unidentified message
                 Message msg = (Message)ois.readObject();
-                Message.Type msgType = msg.getMsgtype();
+                Message.MsgType msgType = msg.getMsgtype();
                 MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);
-                if(msgType == Message.Type.HEARTBEAT){
+                if(msgType == Message.MsgType.HEARTBEAT){
                     // do heartbeat thing
-                } else if(msgType == Message.Type.CV_EVENT){
-                    CVEvent cvEvent = JsonConverter.fromMsgToCVEvent(msg);
+                } else if(msgType == Message.MsgType.CV_EVENT){
+                    CVEvent cvEvent = (CVEvent) JsonConverter.fromMsgToObject(msg, CVEvent.class);
                     publish(cvEvent);
-                } else if(msgType == Message.Type.MV_EVENT){
-                    MVEvent mvEvent = JsonConverter.fromMsgToMVEvent(msg);
+                } else if(msgType == Message.MsgType.MV_EVENT){
+                    MVEvent mvEvent = (MVEvent) JsonConverter.fromMsgToObject(msg, MVEvent.class);
                     publish(mvEvent);
-                } else if(msgType == Message.Type.VC_EVENT) {
+                } else if(msgType == Message.MsgType.VC_EVENT) {
                     System.out.println("Unexpected client to client message");
                 } else {
                     client.handleSetUpMessage(msg);

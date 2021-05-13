@@ -9,21 +9,21 @@ import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
 // TODO modify this class later as to be usable for both CLI and GUI (dont do println(), instead abstract into view.showError())
 public class InputConsumer {
 
-    public static String getIP(Scanner scanner){
+    public static String getIP(Scanner scanner, PrintWriter out){
         String ip;
         ip = scanner.nextLine();
         while(!isValidIp(ip)){
-            System.out.println("This is not a valid IPv4 address. Please try again:");
+            out.println("This is not a valid IPv4 address. Please try again:");
             ip = scanner.nextLine();
         }
         return ip;
     }
 
-    public static int getPortNumber(Scanner scanner){
+    public static int getPortNumber(Scanner scanner, PrintWriter out){
         int portNumber;
         portNumber = scanner.nextInt();
         while(!isValidPort(portNumber)){
-            System.out.println("This is not a valid port number. Please try again:");
+            out.println("This is not a valid port number. Please try again:");
             portNumber = scanner.nextInt();
         }
         return portNumber;
@@ -44,11 +44,11 @@ public class InputConsumer {
         return (portNumber >= SERVER_MIN_PORT && portNumber <= SERVER_MAX_PORT);
     }
 
-    public static String getUserName(Scanner scanner){
+    public static String getUserName(Scanner scanner, PrintWriter out){
         String username;
         username = scanner.nextLine();
         while(!isValidUsername(username)){
-            System.out.println("Username must begin with letter and can be max 10 characters. Please try again:");
+            out.println("Username must begin with letter and can be max 10 characters. Please try again:");
             username = scanner.nextLine();
         }
         return username;
@@ -56,5 +56,15 @@ public class InputConsumer {
 
     private static boolean isValidUsername(String name){
         return (Character.isLetter(name.charAt(0))) && (name.length() <= 10);
+    }
+
+    public static String getStartOrCancel(Scanner scanner, PrintWriter out){
+        String input;
+        input = scanner.nextLine();
+        while(!input.equals("start") && !input.equals("exit")){
+            out.println("Invalid input, please enter 'start' or 'exit'");
+            input = scanner.nextLine();
+        }
+        return input;
     }
 }

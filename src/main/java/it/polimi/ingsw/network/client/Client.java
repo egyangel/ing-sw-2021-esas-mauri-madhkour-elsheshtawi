@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.client;
 
+import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.utility.MsgPrinterToCLI;
 import it.polimi.ingsw.utility.messages.Message;
@@ -16,16 +17,24 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Client implements Runnable{
     private String username;
+
     private ServerHandler serverHandler;
     private IView view;
     public static final int MIN_PORT = SERVER_MIN_PORT;
     public static final int MAX_PORT = SERVER_MAX_PORT;
 
     private PersonalBoard personalBoard;
+    private Map<Integer, String> userIDtoOtherUserNames;
+
+    public Map<Integer, String> getUserIDtoOtherUserNames() {
+        return userIDtoOtherUserNames;
+    }
 
     public static void main(String[] args){
         Client client = new Client();
@@ -67,10 +76,22 @@ public class Client implements Runnable{
 
     public void handleSetUpMessage(Message msg){
         switch (msg.getMsgtype()) {
+            case DISPLAY_LOGIN:
+                serverHandler.setUserId(msg.getUserID());
+                view.addNextDisplay("displayLogin");
+                break;
             case LOGIN_ACCEPTED:
-                MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);
-                serverHandler.setUserId((Integer.parseInt(msg.getJsonContent())));
-                view.transitionToDisplay("displayLobby");
+                break;
+            case DISPLAY_LOBBY:
+                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
+                view.addNextDisplay("displayLobby");
+                view.addNextDisplay("displayVoteToStart");
+                break;
+            case USER_JOINED_IN_LOBBY:
+                view.displayGeneralMsg("A new user has joined!");
+                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
+                view.addNextDisplay("displayLobby");
+                break;
         }
     }
 

@@ -35,7 +35,7 @@ public class ClientHandler implements Runnable{
         System.out.println("Connected to client " + userID + " at " + socket.getInetAddress());
 
         try {
-            sendMessage(new Message(Message.Type.DISPLAY_LOGIN)); //connection msg
+            sendMessage(new Message(Message.MsgType.DISPLAY_LOGIN)); //connection msg
             handleConnection();
         } catch (IOException e) {
             System.out.println("Client " + userID + " dropped");
@@ -55,13 +55,13 @@ public class ClientHandler implements Runnable{
             try {
                 Message msg = (Message)ois.readObject();
                 MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoSERVER, msg);
-                if(msg.getMsgtype() == Message.Type.HEARTBEAT){
+                if(msg.getMsgtype() == Message.MsgType.HEARTBEAT){
                     // do heartbeat thing
                 }else {
                     server.handleMessage(userID, msg);
                 }
             } catch (ClassNotFoundException | ClassCastException e) {
-                System.out.println("Unidentified message from client " + userID);
+                System.out.println("Unidentified message into client " + userID);
             }
         }
     }

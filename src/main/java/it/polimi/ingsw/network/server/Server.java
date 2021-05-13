@@ -2,6 +2,7 @@ package it.polimi.ingsw.network.server;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.utility.JsonConverter;
 import it.polimi.ingsw.utility.messages.*;
 
 import java.io.IOException;
@@ -15,13 +16,13 @@ public class Server implements Runnable{
     public static final int SERVER_MAX_PORT = 5000;
     private static final int MAX_NUM_OF_PLAYERS = 4;
     private static int numberOfUsers = 0;
+    private Map<Integer, String> userIDtoWaitingUserNames = new HashMap<>();
     private Map<Integer,ClientHandler> userIDtoHandlers;
     private Controller controller;
     private Game game;
 
 //    Implementation for multiple simultaneous games can be added later
 //    Map<String, Map<Integer,String>> matchIDtoMatches = new HashMap<>();
-    private Map<Integer,String> userIDtoUsernames = new HashMap<>(); // should be in controller
     private Map<Integer,VirtualView> userIDtoVirtualViews = new HashMap<>();
 
 
@@ -82,9 +83,9 @@ public class Server implements Runnable{
     }
 
     public void handleMessage(Integer userID, Message msg){
-        if (msg.getMsgtype() == Message.Type.VC_EVENT) {
+        if (msg.getMsgtype() == Message.MsgType.VC_EVENT) {
             userIDtoVirtualViews.get(userID).handleGameMessage(msg);
-        } else if (Arrays.asList(Message.Type.CV_EVENT, Message.Type.MV_EVENT).contains(msg.getMsgtype())){
+        } else if (Arrays.asList(Message.MsgType.CV_EVENT, Message.MsgType.MV_EVENT).contains(msg.getMsgtype())){
             System.out.println("Unexpected server to server message");
         } else {
             handleSetUpMessage(userID,msg);
@@ -94,20 +95,23 @@ public class Server implements Runnable{
     private void handleSetUpMessage(Integer userID, Message incomingmsg) {
         Message respondmsg = null;
         ClientHandler handler = userIDtoHandlers.get(userID);
-        List<ClientHandler> otherHandlers = (List<ClientHandler>) userIDtoHandlers.values();
-        otherHandlers.remove(handler);
+        List<ClientHandler> otherHandlers = new ArrayList<ClientHandler>();
+        for(Integer otherUserID: userIDtoWaitingUserNames.keySet()){
+            otherHandlers.add(userIDtoHandlers.get(otherUserID));
+        }
         switch (incomingmsg.getMsgtype()) {
             case REQUEST_LOGIN:
                 String username = incomingmsg.getJsonContent();
-                VirtualView virtualView = new VirtualView(userID);
-                virtualView.subscribe(controller);
-                controller.addPlayer(userID, username, virtualView);
-                respondmsg = new Message(Message.Type.LOGIN_ACCEPTED);
+//                VirtualView virtualView = new VirtualView(userID);
+//                virtualView.subscribe(controller);
+                userIDtoWaitingUserNames.put(userID, username);
+//                controller.addPlayer(userID, username, virtualView);
+                respondmsg = new Message(Message.MsgType.LOGIN_ACCEPTED);
                 handler.sendMessage(respondmsg);
-                respondmsg = new Message(Message.Type.DISPLAY_LOBBY);
+                respondmsg = new Message(Message.MsgType.DISPLAY_LOBBY, JsonConverter.toJson(userIDtoWaitingUserNames));
                 handler.sendMessage(respondmsg);
                 for(ClientHandler otherHandler: otherHandlers){
-                    respondmsg = new Message(Message.Type.USER_JOINED_IN_LOBBY, username);
+                    respondmsg = new Message(Message.MsgType.USER_JOINED_IN_LOBBY, JsonConverter.toJson(userIDtoWaitingUserNames));
                     otherHandler.sendMessage(respondmsg);
                 }
                 break;

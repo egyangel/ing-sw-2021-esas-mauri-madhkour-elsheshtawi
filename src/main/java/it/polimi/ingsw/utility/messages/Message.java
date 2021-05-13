@@ -3,10 +3,11 @@ package it.polimi.ingsw.utility.messages;
 import it.polimi.ingsw.utility.JsonConverter;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 
 // 4 kinds of messages in total
 public class Message implements Serializable {
-    public enum Type {
+    public enum MsgType {
         DISPLAY_LOGIN,
         REQUEST_LOGIN,
         LOGIN_ACCEPTED,
@@ -14,7 +15,6 @@ public class Message implements Serializable {
         USER_JOINED_IN_LOBBY,
         USER_DROPPED_IN_LOBBY,
         VOTE_START,
-        RESET_VOTE,
         START_MATCH,
         ASSIGN_TURN,
 
@@ -28,24 +28,17 @@ public class Message implements Serializable {
     }
 
     private Integer userID;
-    private Type msgtype;
+    private MsgType msgtype;
     private String jsonContent; //jsonized MV_Event or CV_EVENT or VC_EVENT
 
-    public Message(Type msgtype){
+    public Message(MsgType msgtype){
         this.msgtype = msgtype;
     }
 
-    public Message(Type msgtype, String jsonContent) {
+    public Message(MsgType msgtype, String jsonContent) {
         this.msgtype = msgtype;
         this.jsonContent = jsonContent;
     }
-
-    public Message(Integer userID, Type msgtype, String simpleString) {
-        this.userID = userID;
-        this.msgtype = msgtype;
-        this.jsonContent = simpleString;
-    }
-
 
     public Integer getUserID() {
         return userID;
@@ -55,11 +48,19 @@ public class Message implements Serializable {
         this.userID = userID;
     }
 
-    public Type getMsgtype() {
+    public MsgType getMsgtype() {
         return msgtype;
     }
 
     public String getJsonContent() {
         return jsonContent;
+    }
+
+    public Object getObjectContent(Class clazz){
+        return JsonConverter.fromMsgToObject(this, clazz);
+    }
+
+    public Object getObjectContent(Type type){
+        return JsonConverter.fromMsgToObject(this, type);
     }
 }

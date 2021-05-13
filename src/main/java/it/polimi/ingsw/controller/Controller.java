@@ -6,12 +6,12 @@ import it.polimi.ingsw.utility.messages.Listener;
 import it.polimi.ingsw.utility.messages.VCEvent;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Controller implements Listener<VCEvent> {
     // in case of multiple games, this should be list of games
     private Game game;
+    private Map<Integer,String> userIDtoUsernames = new HashMap<>();
     private Map<Integer,VirtualView> userIDtoVirtualViews = new HashMap<>();
 
     public Controller(Game game) {
@@ -23,7 +23,9 @@ public class Controller implements Listener<VCEvent> {
     }
 
     public void addPlayer(Integer userID, String username, VirtualView virtualView) {
-        game.addNewPlayer(username);
+        userIDtoUsernames.put(userID, username);
+        userIDtoVirtualViews.put(userID, virtualView);
+        game.addPlayer(userID, username);
     }
 
     @Override

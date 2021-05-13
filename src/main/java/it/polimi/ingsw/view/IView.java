@@ -13,11 +13,13 @@ public interface IView {
     // user interaction shows error on CLI & GUI
     void displayIdle();
 
+    void displayLobby();
+
     boolean shouldStopDisplayIdle();
 
     void stopDisplayIdle();
 
-    void displayGeneralMsg(Message msg);
+    void displayGeneralMsg(String string);
 
-    void transitionToDisplay(String displayName);
+    void addNextDisplay(String displayA);
 }

@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.lang.reflect.Type;
 
 public class JsonConverter {
     private static final Gson gsonForLeaderCard = (new GsonBuilder()).registerTypeAdapterFactory(
@@ -49,15 +50,11 @@ public class JsonConverter {
         return gson.toJson(object);
     }
 
-    public static VCEvent fromMsgToVCEvent(Message msg) {
-        return gson.fromJson(msg.getJsonContent(), VCEvent.class);
+    public static Object fromMsgToObject(Message msg, Class clazz) {
+        return gson.fromJson(msg.getJsonContent(), clazz);
     }
 
-    public static CVEvent fromMsgToCVEvent(Message msg) {
-        return gson.fromJson(msg.getJsonContent(), CVEvent.class);
-    }
-
-    public static MVEvent fromMsgToMVEvent(Message msg) {
-        return gson.fromJson(msg.getJsonContent(), MVEvent.class);
+    public static Object fromMsgToObject(Message msg, Type type) {
+        return gson.fromJson(msg.getJsonContent(), type);
     }
 }

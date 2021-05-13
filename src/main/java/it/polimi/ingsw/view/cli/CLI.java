@@ -6,16 +6,15 @@ import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private final Client client;
     private final PrintWriter out;
     private final Scanner in;
-    private Map<String, Runnable> displayTransitionMap;
-    private Map<String, Runnable> displayNameMap;
+    private Map<String, Runnable> displayTransitionMap = new HashMap<>();
+    private Map<String, Runnable> displayNameMap = new HashMap<>();
+    private Queue<Runnable> displayTransitionQueue = new ArrayDeque<>();
     private boolean shouldTerminateClient;
     private boolean stopIdle;
 
@@ -29,41 +28,38 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void startDisplay() {
-        displayNameMap = new HashMap<>();
         displayNameMap.put("displayGreet", this::displayGreet);
         displayNameMap.put("displaySetup", this::displaySetup);
         displayNameMap.put("displayIdle", this::displayIdle);
         displayNameMap.put("displayLogin", this::displayLogin);
         displayNameMap.put("displayLobby", this::displayLobby);
+        displayNameMap.put("displayVoteToStart", this::displayVoteToStart);
+        addNextDisplay("displayGreet");
+        addNextDisplay("displaySetup");
         startDisplayTransition();
     }
 
     private void startDisplayTransition() {
-        displayTransitionMap = new HashMap<>();
         boolean stop;
         synchronized (this) {
             stop = shouldTerminateClient;
-            displayTransitionMap.put("current", displayNameMap.get("displayGreet"));
-            displayTransitionMap.put("next", null);
         }
         while(!stop){
-            if (displayTransitionMap.get("current") == null) {
+            if (displayTransitionQueue.peek() == null){
                 displayNameMap.get("displayIdle").run();
             } else {
-                displayTransitionMap.get("current").run();
+                displayTransitionQueue.poll().run();
             }
             synchronized (this) {
                 stop = shouldTerminateClient;
-                displayTransitionMap.replace("current", displayTransitionMap.get("next"));
-                displayTransitionMap.replace("next", null);
             }
         }
     }
 
-    public synchronized void transitionToDisplay(String displayName) {
-        if (displayTransitionMap.get("current") == null)
+    public synchronized void addNextDisplay(String displayName){
+        if (displayTransitionQueue.peek() == null)
             stopDisplayIdle();
-        displayTransitionMap.replace("next", displayNameMap.get(displayName));
+        displayTransitionQueue.add(displayNameMap.get(displayName));
     }
 
     @Override
@@ -116,7 +112,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public void displayGreet() {
         out.println("Welcome to Masters of Renaissance!");
-        transitionToDisplay("displaySetup");
     }
 
     @Override
@@ -134,19 +129,34 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public void displayLogin() {
         out.println("Choose a username:");
-        String username = InputConsumer.getUserName(in);
-        Message loginmsg = new Message(Message.Type.REQUEST_LOGIN, username);
+        String username = InputConsumer.getUserName(in, out);
+        Message loginmsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
         client.sendToServer(loginmsg);
     }
 
     // this method displays general messages in somewhere separate, does not belong inside transition
     @Override
-    public synchronized void displayGeneralMsg(Message msg){
-        out.println(msg.getJsonContent());
+    public synchronized void displayGeneralMsg(String string){
+        out.println(string);
     }
 
+    @Override
     public synchronized void displayLobby(){
+        out.println("Waiting users in the lobby are:");
+        for(String username: client.getUserIDtoOtherUserNames().values())
+            out.println(username);
+    }
 
+    public synchronized void displayVoteToStart(){
+        out.println("When all players in the lobby sends a start vote, the game will start...");
+        out.println("Enter 'start' to vote for start, 'exit' to quit game:");
+        String inputString = InputConsumer.getStartOrCancel(in, out);
+        if (inputString.equals("start")){
+            client.sendToServer(new Message(Message.MsgType.VOTE_START));
+            out.println("Vote message is sent to server...");
+        } else {
+            //quit game
+        }
     }
 
     @Override
@@ -177,6 +187,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void publish(VCEvent event) {
-        client.sendToServer(new Message(Message.Type.VC_EVENT));
+        client.sendToServer(new Message(Message.MsgType.VC_EVENT));
     }
 }
