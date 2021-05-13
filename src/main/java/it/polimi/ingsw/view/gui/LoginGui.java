@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+//check if the nickaname is correct and choosing the mode of the game
 
 public class LoginGui extends JFrame{
 

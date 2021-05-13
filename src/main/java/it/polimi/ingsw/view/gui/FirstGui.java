@@ -3,7 +3,7 @@ package it.polimi.ingsw.view.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
+//greet the player and allow him to go in the connction frame
 public class FirstGui extends JFrame {
     static JFrame window;
     static JLayeredPane lpane = new JLayeredPane();

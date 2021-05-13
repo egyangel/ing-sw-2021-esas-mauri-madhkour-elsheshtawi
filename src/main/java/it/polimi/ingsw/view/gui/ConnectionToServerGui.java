@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+//ask th eplayer  the port and ip of the server and try the connection
 public class ConnectionToServerGui extends JFrame{
 
     private boolean SinglePlayer= false;

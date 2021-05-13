@@ -10,7 +10,7 @@ public class GUI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     public GUI() {
     }
-
+//the first gui have the role of greet and start dislay
     @Override
     public void displayGreet() {
         new FirstGui();
