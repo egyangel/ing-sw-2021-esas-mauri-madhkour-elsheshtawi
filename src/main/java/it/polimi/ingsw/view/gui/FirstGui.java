@@ -1,10 +1,8 @@
 package it.polimi.ingsw.view.gui;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 
 public class FirstGui extends JFrame {
     static JFrame window;
@@ -13,7 +11,7 @@ public class FirstGui extends JFrame {
     public FirstGui() {
         super("Master of Renaissance");
         prepareFirstGUI();
-        showAction();
+
 
     }
 
@@ -40,7 +38,7 @@ public class FirstGui extends JFrame {
 
         //adding p1 to lpane,a.k.a the base
         lpane.add(p1, 0, 0);
-
+        showAction();
         setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,14 +65,8 @@ public class FirstGui extends JFrame {
 
         PlayButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
-
-                Runnable init = new Runnable() {
-                    public void run() {
-                        new LoginGui();
-                    }
-                };
-                SwingUtilities.invokeLater(init);
-                dispose();
+                new GUI().displaySetup();
+                 dispose();
 
             }});
 

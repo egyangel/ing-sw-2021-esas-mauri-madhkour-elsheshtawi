@@ -8,19 +8,23 @@ public class GUI implements IView, Publisher<VCEvent>, Listener<Event> {
     public GUI(Client client) {
     }
 
+    public GUI() {
+    }
+
     @Override
     public void displayGreet() {
-
+        new FirstGui();
     }
 
     @Override
     public void displaySetup() {
+        new ConnectionToServerGui();
 
     }
 
     @Override
     public void displayLogin() {
-
+            new LoginGui();
     }
 
     @Override

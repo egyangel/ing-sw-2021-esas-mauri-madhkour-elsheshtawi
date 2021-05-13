@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class WaitingRoomGui extends JFrame{
+
     static JLayeredPane lpane = new JLayeredPane();
+    private String PlayerMode;
 
     public WaitingRoomGui() {
         super("Master of Renaissance");
@@ -47,7 +49,7 @@ public class WaitingRoomGui extends JFrame{
     private void showAction() {
         JPanel top = new JPanel();
         //setting the pos and dim of top
-        top.setBounds(100, 160, 300, 60);
+        top.setBounds(100, 160, 300, 80);
         top.setOpaque(false);
         //adding top to lpane,a.k.a the base
         lpane.add(top, 1, 0);
