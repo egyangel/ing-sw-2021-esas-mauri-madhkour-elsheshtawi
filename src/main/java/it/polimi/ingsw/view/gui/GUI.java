@@ -48,12 +48,22 @@ public class GUI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     @Override
-    public void displayGeneralMsg(String string) {
+    public void displayGeneralMsg() {
+
+    }
+
+    @Override
+    public void setGeneralMsg(String string) {
 
     }
 
     @Override
     public void addNextDisplay(String displayA) {
+
+    }
+
+    @Override
+    public void displayFirstLogin() {
 
     }
 

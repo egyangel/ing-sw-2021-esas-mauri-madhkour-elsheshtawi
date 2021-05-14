@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumclasses.GameMode;
 import it.polimi.ingsw.model.enumclasses.ResType;
 
 import java.util.ArrayList;
@@ -9,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 public class PersonalBoard {
+    public enum PopeArea{
+        FIRST,
+        SECOND,
+        THIRD
+    }
     private Integer userID;
     private Game game;
     private int victoryPoints;
@@ -17,7 +21,8 @@ public class PersonalBoard {
     private Shelf[] warehouse = new Shelf[3];
     private Resources strongbox;
     private int faithPoints = 0;
-    private List<LeaderCard> leadersCards;
+    private List<LeaderCard> inactiveLeaderCards;
+    private List<LeaderCard> activeLeaderCards;
     private int vaticanReportCallCounter = 0;
     private Map<PopeArea,Boolean> popeAreaMap;
 
@@ -37,13 +42,6 @@ public class PersonalBoard {
         popeAreaMap.put(PopeArea.FIRST, false);
         popeAreaMap.put(PopeArea.SECOND, false);
         popeAreaMap.put(PopeArea.THIRD, false);
-    }
-    public void setLeadersCards(List<LeaderCard> cardList){
-        leadersCards = new ArrayList<>(cardList);
-    }
-
-    public Resources getStrongBox(){
-        return this.strongbox;
     }
 
 //     for now, this considers strongbox only, the code will need to be improved.
@@ -79,12 +77,6 @@ public class PersonalBoard {
             turnPopeFavorTile(PopeArea.THIRD);
         }
         vaticanReportCallCounter++;
-    }
-
-    public enum PopeArea{
-        FIRST,
-        SECOND,
-        THIRD
     }
 
     private void turnPopeFavorTile(PopeArea area){

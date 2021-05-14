@@ -1,17 +1,19 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumclasses.DevCardColor;
-
 public class DevCard {
 
+    public enum CardColor{
+        GREEN,BLUE,YELLOW,PURPLE;
+    }
+
     private final int level;
-    private final DevCardColor color;
+    private final CardColor color;
     private final Resources LHS;
     private final Resources RHS;
     private final Resources cost;
     private final int victoryPoints;
 
-    public DevCard (int level, final DevCardColor color, Resources LHS, Resources RHS, Resources cost, int victoryPoints) {
+    public DevCard (int level, CardColor color, Resources LHS, Resources RHS, Resources cost, int victoryPoints) {
         this.color=color;
         this.level=level;
         this.LHS=LHS;
@@ -26,7 +28,7 @@ public class DevCard {
     public int getVictoryPoints() {
         return this.victoryPoints;
     }
-    public DevCardColor getColor() {
+    public CardColor getColor() {
         return this.color;
     }
     public Resources getLHS() {
@@ -39,6 +41,7 @@ public class DevCard {
         return this.cost;
     }
 
+    @Override
     public String toString(){
         return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " Victory Points: " + victoryPoints;
     }

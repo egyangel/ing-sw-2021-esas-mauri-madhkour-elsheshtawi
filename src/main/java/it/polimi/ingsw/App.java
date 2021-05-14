@@ -40,6 +40,9 @@ public class App {
     }
 
     public static void main(String[] args) throws IOException {
+        Game game = new Game();
+//        game.printDevCardMatrix();
+        game.printLeaderCards();
 //        MarketTray test = new MarketTray();
 //        System.out.println("Initial MarketTray Position:, rows and columns start at 1");
 //        test.MarketTrayDraw();
@@ -67,52 +70,6 @@ public class App {
 //         this will be surrounded by proper exceptions
 //         theGameController.startGame();
 
-
-    }
-
-    //Method that desirialize the leader card from the json Leader cards file and instantiate the array of the cards.
-    private static void DeserialLeaderCard()
-    {
-
-          List<LeaderCard> listOfCards = new ArrayList<>();
-          LeaderCard[] extractedJson = new LeaderCard[0];
-
-          try (FileReader reader = new FileReader("src/main/resources/LeaderCards.json")) {
-
-                Gson g = (new GsonBuilder()).registerTypeAdapterFactory(
-                        RuntimeTypeAdapterFactory
-                                .of(SpecialAbility.class, "type")
-                                .registerSubtype(Discount.class, "Discount")
-                                .registerSubtype(AdditionalProduction.class, "AdditionalProduction")
-                                .registerSubtype(ConvertWhiteMarble.class, "ConvertWhiteMarble")
-                                .registerSubtype(ExstraSlot.class, "ExstraSlot")
-                ).create();
-
-                extractedJson = g.fromJson(reader, LeaderCard[].class);
-
-                for (int i = 0; i < extractedJson.length; i++){
-                    // System.out.println(extractedJson[i].getAbility().getType());
-                    listOfCards.add(new LeaderCard(extractedJson[i].getRequirements(), extractedJson[i].getVictoryPoints(), extractedJson[i].getAbility()));
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }catch (IOException e) {
-                e.printStackTrace();
-            }
-
-          /*  for (int i = 0; i < listOfCards.size(); i++) {
-                //System.out.println(listOfCards.get(i).getAbility());
-                System.out.println(listOfCards.get(i).getAbility().getEffect());
-                for (int j = 0; j <  listOfCards.get(i).getRequirements().size(); j++) {
-                    try{
-                         System.out.println(listOfCards.get(i).getRequirements().get(j).getReq()+"  "+ listOfCards.get(i).getRequirements().get(j).getNumber());
-                    }catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                }
-                //listOfCards.get(i).getRequirementse();
-                System.out.println();
-            }*/
 
     }
 }

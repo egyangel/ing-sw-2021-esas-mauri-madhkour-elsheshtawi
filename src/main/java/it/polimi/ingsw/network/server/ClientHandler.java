@@ -35,7 +35,12 @@ public class ClientHandler implements Runnable{
         System.out.println("Connected to client " + userID + " at " + socket.getInetAddress());
 
         try {
-            sendMessage(new Message(Message.MsgType.DISPLAY_LOGIN)); //connection msg
+            if(server.isFirstPlayerConnected()){
+                sendMessage(new Message(Message.MsgType.DISPLAY_LOGIN));
+            } else {
+                sendMessage(new Message(Message.MsgType.DISPLAY_FIRST_LOGIN));
+            }
+
             handleConnection();
         } catch (IOException e) {
             System.out.println("Client " + userID + " dropped");
