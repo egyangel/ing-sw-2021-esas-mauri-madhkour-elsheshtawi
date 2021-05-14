@@ -18,14 +18,16 @@ public class Controller implements Listener<VCEvent> {
         this.game = game;
     }
 
-    public void startGame(){
+    public void createMatch(Map<Integer, String> userIDtoWaitingUserNames) {
+        userIDtoUsernames = userIDtoWaitingUserNames;
 
-    }
+        for(Integer userID: userIDtoUsernames.keySet()){
+            game.addPlayer(userID);
 
-    public void addPlayer(Integer userID, String username, VirtualView virtualView) {
-        userIDtoUsernames.put(userID, username);
-        userIDtoVirtualViews.put(userID, virtualView);
-        game.addPlayer(userID, username);
+            userIDtoVirtualViews.put(userID, new VirtualView(userID));
+        }
+
+        game.initGameObjects();
     }
 
     @Override

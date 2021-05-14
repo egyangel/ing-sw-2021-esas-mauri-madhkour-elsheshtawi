@@ -87,11 +87,13 @@ public class Client implements Runnable{
                 view.addNextDisplay("displayLobby");
                 view.addNextDisplay("displayVoteToStart");
                 break;
+                //TODO when a message such as user joined arrives, it should cancel waiting for user input (scanner), display lobby, redisplay asking for vote
             case USER_JOINED_IN_LOBBY:
                 view.displayGeneralMsg("A new user has joined!");
                 userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
                 view.addNextDisplay("displayLobby");
                 break;
+
         }
     }
 

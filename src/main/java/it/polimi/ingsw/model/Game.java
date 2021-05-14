@@ -13,15 +13,11 @@ public class Game {
     private MarketTray market; //or can it be MarketTray marketTray??
     private Resources resourceSupply; //or can it be Resources resource??
     private GameMode gameMode;
-    private List<Deque<DevCard>> devCardDecks = new ArrayList<>();;
+    private List<Deque<DevCard>> devCardDecks = new ArrayList<>();
 
-    public void addPlayer(Integer userID, String nickname) {
-        userIDtoPlayers.put(userID, new Player(nickname));
+    public void addPlayer(Integer userID) {
+        userIDtoPlayers.put(userID, new Player());
     }
-
-//    public void addNewBoardFor(Player player) {
-//        this.boards.add(new PersonalBoard(player));
-//    }
 
 //    public void activate() {
 //
@@ -38,7 +34,13 @@ public class Game {
 //        }
 //    }
 
-    public void setController(Controller controller) {
-//        this.controller = controller;
+    public void setGameMode(GameMode gameMode){
+        this.gameMode = gameMode;
+    }
+
+    public void initGameObjects(){
+        for(Map.Entry<Integer, Player> entry: userIDtoPlayers.entrySet()){
+            userIDtoBoards.put(entry.getKey(), new PersonalBoard(entry.getKey()));
+        }
     }
 }

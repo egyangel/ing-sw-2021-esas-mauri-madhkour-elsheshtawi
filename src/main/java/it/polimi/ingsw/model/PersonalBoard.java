@@ -1,21 +1,28 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.enumclasses.GameMode;
 import it.polimi.ingsw.model.enumclasses.ResType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PersonalBoard {
-    private Player player;
+    private Integer userID;
+    private Game game;
+    private int victoryPoints;
     private DefaultProd defProd;
     private DevSlot[] devSlots = new DevSlot[3];
     private Shelf[] warehouse = new Shelf[3];
     private Resources strongbox;
-    private int faithPoints;//Maybe it is better call it faithMarker
+    private int faithPoints = 0;
     private List<LeaderCard> leadersCards;
+    private int vaticanReportCallCounter = 0;
+    private Map<PopeArea,Boolean> popeAreaMap;
 
-    public PersonalBoard(Player player){
-        player = player;
+    public PersonalBoard(Integer userID){
+        this.userID = userID;
         defProd = new DefaultProd();
         // from left to right on personal board
         devSlots[0] = new DevSlot();
@@ -26,15 +33,13 @@ public class PersonalBoard {
         warehouse[1] = new Shelf(2);
         warehouse[2] = new Shelf(3);
         strongbox = new Resources();
-        faithPoints = 0;
+        popeAreaMap = new HashMap<>();
+        popeAreaMap.put(PopeArea.FIRST, false);
+        popeAreaMap.put(PopeArea.SECOND, false);
+        popeAreaMap.put(PopeArea.THIRD, false);
     }
     public void setLeadersCards(List<LeaderCard> cardList){
         leadersCards = new ArrayList<>(cardList);
-        //leadersCards  = cardList.stream().collect(Collectors.toList());
-    }
-
-    public void setStrongbox(Resources strongbox) {
-        this.strongbox = strongbox;
     }
 
     public Resources getStrongBox(){
@@ -61,13 +66,41 @@ public class PersonalBoard {
         }
     }
 
-    public void moveFaitMarker(){ faithPoints++; }
-    public int getFaithpos(){ return faithPoints; }
-    //   check if the player satisfy the pos to turn the Pope's favor
-    public void check(int currentPopeFavor) {
-        if (faithPoints >= 5 && faithPoints <= 11 && currentPopeFavor==1) player.countVictoryPoints(2);
-        if (faithPoints >= 12 && faithPoints <= 18 && currentPopeFavor==2) player.countVictoryPoints(3);
-        if (faithPoints >= 5 && faithPoints <= 11 && currentPopeFavor==3) player.countVictoryPoints(4);
+    public void increaseFaitPoint(){
+        faithPoints++;
     }
 
+    public void giveNextVaticanReport() {
+        if (vaticanReportCallCounter == 0 && faithPoints >= 5 && faithPoints <= 8){
+            turnPopeFavorTile(PopeArea.FIRST);
+        } else if (vaticanReportCallCounter == 1 && faithPoints >= 12 && faithPoints <= 16) {
+            turnPopeFavorTile(PopeArea.SECOND);
+        } else if (vaticanReportCallCounter == 2 && faithPoints >= 19 && faithPoints <= 24){
+            turnPopeFavorTile(PopeArea.THIRD);
+        }
+        vaticanReportCallCounter++;
+    }
+
+    public enum PopeArea{
+        FIRST,
+        SECOND,
+        THIRD
+    }
+
+    private void turnPopeFavorTile(PopeArea area){
+        popeAreaMap.replace(area, Boolean.TRUE);
+        // create a MV message inside Game
+    }
+
+    // DEBUG methods
+    public void setStrongbox(Resources strongbox) {
+        this.strongbox = strongbox;
+    }
+
+    public void printStrongBox() {
+        for (ResType type : ResType.values()) {
+            System.out.println("There is " + strongbox.getNumberOfType(type) + " " + type.toString());
+        }
+        System.out.println();
+    }
 }

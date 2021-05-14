@@ -16,6 +16,7 @@ public class Server implements Runnable{
     public static final int SERVER_MAX_PORT = 5000;
     private static final int MAX_NUM_OF_PLAYERS = 4;
     private static int numberOfUsers = 0;
+    private static int numberOfReadyUsers = 0;
     private Map<Integer, String> userIDtoWaitingUserNames = new HashMap<>();
     private Map<Integer,ClientHandler> userIDtoHandlers;
     private Controller controller;
@@ -36,7 +37,6 @@ public class Server implements Runnable{
         // one game and one controller per match
         game = new Game();
         controller = new Controller(game);
-        game.setController(controller);
         userIDtoHandlers = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter server port number:");
@@ -95,10 +95,8 @@ public class Server implements Runnable{
     private void handleSetUpMessage(Integer userID, Message incomingmsg) {
         Message respondmsg = null;
         ClientHandler handler = userIDtoHandlers.get(userID);
-        List<ClientHandler> otherHandlers = new ArrayList<ClientHandler>();
-        for(Integer otherUserID: userIDtoWaitingUserNames.keySet()){
-            otherHandlers.add(userIDtoHandlers.get(otherUserID));
-        }
+        List<ClientHandler> otherHandlers = new ArrayList<ClientHandler>(userIDtoHandlers.values());
+        otherHandlers.remove(handler);
         switch (incomingmsg.getMsgtype()) {
             case REQUEST_LOGIN:
                 String username = incomingmsg.getJsonContent();
@@ -115,6 +113,15 @@ public class Server implements Runnable{
                     otherHandler.sendMessage(respondmsg);
                 }
                 break;
+            case VOTE_START:
+                numberOfReadyUsers++;
+                if (numberOfUsers == numberOfReadyUsers){
+                    controller.createMatch(userIDtoWaitingUserNames);
+                    respondmsg = new Message(Message.MsgType.START_MATCH);
+                    for(ClientHandler handler1: userIDtoHandlers.values()){
+                        handler1.sendMessage(respondmsg);
+                    }
+                }
         }
     }
 }
