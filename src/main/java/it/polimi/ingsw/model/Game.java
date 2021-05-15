@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.model.enumclasses.GameMode;
+
+import it.polimi.ingsw.utility.JsonConverter;
 
 import java.util.*;
 
@@ -10,35 +10,66 @@ public class Game {
 
     private Map<Integer,Player> userIDtoPlayers = new HashMap<>();
     private Map<Integer,PersonalBoard> userIDtoBoards = new HashMap<>();
-    private MarketTray market; //or can it be MarketTray marketTray??
-    private Resources resourceSupply; //or can it be Resources resource??
-    private GameMode gameMode;
-    private List<Deque<DevCard>> devCardDecks = new ArrayList<>();;
+    private MarketTray market;
+    private Resources resourceSupply;
+    private List<LeaderCard> leaderCardList = new ArrayList<>();
+    private DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
 
-    public void addPlayer(Integer userID, String nickname) {
-        userIDtoPlayers.put(userID, new Player(nickname));
+    public void addPlayer(Integer userID) {
+        userIDtoPlayers.put(userID, new Player());
     }
 
-//    public void addNewBoardFor(Player player) {
-//        this.boards.add(new PersonalBoard(player));
-//    }
+    public void createGameObjects(){
+        createBoardForEachPlayer();
+        createDevCardDecks();
+        createMarketTray();
+        createLeaderCards();
+    }
 
-//    public void activate() {
-//
-//        for (Player p : players) {
-//            //I can put all the 3 if statement in a huge single instruction ,but in this it is more readable
-//            if (p.getPersonalBoardl().getFaithpos() >= 8 && p.getPersonalBoardl().getFaithpos() <= 11 )
-//                p.getPersonalBoardl().check(1);
-//            if (p.getPersonalBoardl().getFaithpos() >= 16 && p.getPersonalBoardl().getFaithpos() <= 18)
-//                p.getPersonalBoardl().check(2);
-//            if(p.getPersonalBoardl().getFaithpos() == 24)
-//                p.getPersonalBoardl().check(3);
-//
-//
-//        }
-//    }
+    private void createBoardForEachPlayer(){
+        for(Map.Entry<Integer, Player> entry: userIDtoPlayers.entrySet()){
+            userIDtoBoards.put(entry.getKey(), new PersonalBoard(entry.getKey()));
+        }
+    }
 
-    public void setController(Controller controller) {
-//        this.controller = controller;
+    private void createDevCardDecks(){
+        List<DevCard> allDevCards = JsonConverter.deserializeDevCards();
+        Iterator<DevCard> cardIterator = allDevCards.iterator();
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 4; j++){
+                DevCardDeck deck = new DevCardDeck();
+                for(int k = 0; k < 4; k++){
+                    deck.putCard(cardIterator.next());
+                }
+                deck.shuffleDeck();
+                devCardMatrix[i][j] = deck;
+            }
+        }
+    }
+
+    private void createMarketTray() {
+        this.market = new MarketTray();
+    }
+
+    private void createLeaderCards() {
+        leaderCardList = JsonConverter.deserializeLeaderCards();
+    }
+
+    // DEBUG METHODS
+    public void printDevCardMatrix(){
+        createDevCardDecks();
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 4; j++) {
+                System.out.println(devCardMatrix[i][j].peekTopCard());
+            }
+        }
+    }
+
+    public void printLeaderCards(){
+        createLeaderCards();
+        for(LeaderCard card: leaderCardList){
+            System.out.println(card);
+        }
+
     }
 }

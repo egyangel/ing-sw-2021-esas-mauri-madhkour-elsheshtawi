@@ -1,12 +1,13 @@
 package it.polimi.ingsw.network.server;
 
+import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.utility.JsonConverter;
 import it.polimi.ingsw.utility.messages.*;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -15,16 +16,13 @@ public class Server implements Runnable{
     public static final int SERVER_MIN_PORT = 3000;
     public static final int SERVER_MAX_PORT = 5000;
     private static final int MAX_NUM_OF_PLAYERS = 4;
+    private static int numberOfConnectedUsers = 0;
     private static int numberOfUsers = 0;
-    private Map<Integer, String> userIDtoWaitingUserNames = new HashMap<>();
+    private Map<Integer, String> userIDtoUserNames = new HashMap<>();
     private Map<Integer,ClientHandler> userIDtoHandlers;
     private Controller controller;
     private Game game;
-
-//    Implementation for multiple simultaneous games can be added later
-//    Map<String, Map<Integer,String>> matchIDtoMatches = new HashMap<>();
     private Map<Integer,VirtualView> userIDtoVirtualViews = new HashMap<>();
-
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -33,10 +31,8 @@ public class Server implements Runnable{
 
     @Override
     public void run() {
-        // one game and one controller per match
         game = new Game();
-        controller = new Controller(game);
-        game.setController(controller);
+        controller = new Controller(game, this);
         userIDtoHandlers = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter server port number:");
@@ -94,29 +90,36 @@ public class Server implements Runnable{
 
     private void handleSetUpMessage(Integer userID, Message incomingmsg) {
         Message respondmsg = null;
-        ClientHandler handler = userIDtoHandlers.get(userID);
-        List<ClientHandler> otherHandlers = new ArrayList<ClientHandler>();
-        for(Integer otherUserID: userIDtoWaitingUserNames.keySet()){
-            otherHandlers.add(userIDtoHandlers.get(otherUserID));
-        }
+        ClientHandler senderHandler = userIDtoHandlers.get(userID);
+        List<ClientHandler> otherHandlers = new ArrayList<>(userIDtoHandlers.values());
+        otherHandlers.remove(senderHandler);
         switch (incomingmsg.getMsgtype()) {
+            case REQUEST_FIRST_LOGIN:
+                Type type = new TypeToken<Map<String, String>>(){}.getType();
+                Map<String, String> firstLoginMap = (Map<String, String>) incomingmsg.getObject(type);
+                numberOfUsers = Integer.parseInt(firstLoginMap.get("numberOfPlayers"));
+                userIDtoUserNames.put(userID, firstLoginMap.get("username"));
+                numberOfConnectedUsers++;
+                respondmsg = new Message(Message.MsgType.FIRST_LOGIN_ACCEPTED);
+                senderHandler.sendMessage(respondmsg);
             case REQUEST_LOGIN:
                 String username = incomingmsg.getJsonContent();
-//                VirtualView virtualView = new VirtualView(userID);
-//                virtualView.subscribe(controller);
-                userIDtoWaitingUserNames.put(userID, username);
-//                controller.addPlayer(userID, username, virtualView);
+                userIDtoUserNames.put(userID, username);
+                numberOfConnectedUsers++;
                 respondmsg = new Message(Message.MsgType.LOGIN_ACCEPTED);
-                handler.sendMessage(respondmsg);
-                respondmsg = new Message(Message.MsgType.DISPLAY_LOBBY, JsonConverter.toJson(userIDtoWaitingUserNames));
-                handler.sendMessage(respondmsg);
-                for(ClientHandler otherHandler: otherHandlers){
-                    respondmsg = new Message(Message.MsgType.USER_JOINED_IN_LOBBY, JsonConverter.toJson(userIDtoWaitingUserNames));
-                    otherHandler.sendMessage(respondmsg);
+                senderHandler.sendMessage(respondmsg);
+                if(numberOfConnectedUsers == numberOfUsers){
+                    for(ClientHandler handler: userIDtoHandlers.values()){
+                        handler.sendMessage(new Message(Message.MsgType.START_MATCH));
+                        controller.createMatch(userIDtoUserNames);
+                    }
                 }
                 break;
         }
     }
 
-
+    public boolean isFirstPlayerConnected() {
+        if(numberOfUsers > 0) return true;
+        else return false;
+    }
 }

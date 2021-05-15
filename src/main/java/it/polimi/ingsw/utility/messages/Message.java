@@ -8,13 +8,12 @@ import java.lang.reflect.Type;
 // 4 kinds of messages in total
 public class Message implements Serializable {
     public enum MsgType {
+        DISPLAY_FIRST_LOGIN,
         DISPLAY_LOGIN,
+        REQUEST_FIRST_LOGIN,
         REQUEST_LOGIN,
-        LOGIN_ACCEPTED,
-        DISPLAY_LOBBY,
-        USER_JOINED_IN_LOBBY,
-        USER_DROPPED_IN_LOBBY,
-        VOTE_START,
+        FIRST_LOGIN_ACCEPTED,
+        LOGIN_ACCEPTED, //done until here
         START_MATCH,
         ASSIGN_TURN,
 
@@ -35,9 +34,19 @@ public class Message implements Serializable {
         this.msgtype = msgtype;
     }
 
-    public Message(MsgType msgtype, String jsonContent) {
+    public Message(MsgType msgtype, Object object){
         this.msgtype = msgtype;
-        this.jsonContent = jsonContent;
+        this.jsonContent = JsonConverter.toJson(object);
+    }
+
+    public Message(MsgType msgtype, String string) {
+        this.msgtype = msgtype;
+        this.jsonContent = string;
+    }
+
+    public Message(MsgType msgtype, Integer integer){
+        this.msgtype = msgtype;
+        this.jsonContent = integer.toString();
     }
 
     public Integer getUserID() {
@@ -56,11 +65,12 @@ public class Message implements Serializable {
         return jsonContent;
     }
 
-    public Object getObjectContent(Class clazz){
+    // use these two
+    public Object getObject(Class clazz){
         return JsonConverter.fromMsgToObject(this, clazz);
     }
 
-    public Object getObjectContent(Type type){
+    public Object getObject(Type type){
         return JsonConverter.fromMsgToObject(this, type);
     }
 }

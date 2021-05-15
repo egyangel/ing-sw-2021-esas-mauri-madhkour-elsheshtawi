@@ -15,8 +15,6 @@ public class LeaderCard {
     private int points;
     private SpecialAbility ability;
 
-    private boolean ready;
-
 
     public LeaderCard(List<Requirements> requierment, Integer vicPoints, SpecialAbility specialAbility ){
         this.requirements.addAll(requierment);
@@ -42,11 +40,9 @@ public class LeaderCard {
             System.out.println(this.requirements.get(i).getReq());
         }
     }
-/*
-    public boolean isReady(){
-        return false; //under construction
 
-    }
-*/
-
+//    @Override
+//    public String toString(){
+//        return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " Victory Points: " + victoryPoints;
+//    }
 }

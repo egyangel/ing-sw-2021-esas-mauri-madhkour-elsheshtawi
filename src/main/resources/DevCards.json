@@ -21,66 +21,6 @@
   },
   {
     "level": 1,
-    "color": "PURPLE",
-    "LHS": {
-      "values": {
-        "STONE": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "FAITH": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "SERVANT": 2
-      }
-    },
-    "victoryPoints": 1
-  },
-  {
-    "level": 1,
-    "color": "BLUE",
-    "LHS": {
-      "values": {
-        "SHIELD": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "FAITH": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "COIN": 2
-      }
-    },
-    "victoryPoints": 1
-  },
-  {
-    "level": 1,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "SERVANT": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "FAITH": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "STONE": 2
-      }
-    },
-    "victoryPoints": 1
-  },
-  {
-    "level": 1,
     "color": "GREEN",
     "LHS": {
       "values": {
@@ -95,72 +35,6 @@
     "cost": {
       "values": {
         "SERVANT": 1,
-        "SHIELD": 1,
-        "STONE": 1
-      }
-    },
-    "victoryPoints": 2
-  },
-  {
-    "level": 1,
-    "color": "PURPLE",
-    "LHS": {
-      "values": {
-        "COIN": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "SHIELD": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "SERVANT": 1,
-        "SHIELD": 1,
-        "COIN": 1
-      }
-    },
-    "victoryPoints": 2
-  },
-  {
-    "level": 1,
-    "color": "BLUE",
-    "LHS": {
-      "values": {
-        "SERVANT": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "STONE": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "SERVANT": 1,
-        "COIN": 1,
-        "STONE": 1
-      }
-    },
-    "victoryPoints": 2
-  },
-  {
-    "level": 1,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "SHIELD": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "COIN": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "COIN": 1,
         "SHIELD": 1,
         "STONE": 1
       }
@@ -191,25 +65,69 @@
   },
   {
     "level": 1,
-    "color": "PURPLE",
+    "color": "GREEN",
     "LHS": {
       "values": {
-        "COIN": 2
+        "SERVANT": 1,
+        "STONE": 1
       }
     },
     "RHS": {
       "values": {
-        "SERVANT": 1,
-        "SHIELD": 1,
+        "COIN": 2,
+        "FAITH": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "SHIELD": 2,
+        "COIN": 2
+      }
+    },
+    "victoryPoints": 4
+  },
+
+  {
+    "level": 1,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "SHIELD": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "FAITH": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "COIN": 2
+      }
+    },
+    "victoryPoints": 1
+  },
+  {
+    "level": 1,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "SERVANT": 1
+      }
+    },
+    "RHS": {
+      "values": {
         "STONE": 1
       }
     },
     "cost": {
       "values": {
-        "SERVANT": 3
+        "SERVANT": 1,
+        "COIN": 1,
+        "STONE": 1
       }
     },
-    "victoryPoints": 3
+    "victoryPoints": 2
   },
   {
     "level": 1,
@@ -232,6 +150,72 @@
       }
     },
     "victoryPoints": 3
+  },
+  {
+    "level": 1,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "SHIELD": 1,
+        "STONE": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "SERVANT": 2,
+        "FAITH": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "SERVANT": 2,
+        "COIN": 2
+      }
+    },
+    "victoryPoints": 4
+  },
+
+  {
+    "level": 1,
+    "color": "YELLOW",
+    "LHS": {
+      "values": {
+        "SERVANT": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "FAITH": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "STONE": 2
+      }
+    },
+    "victoryPoints": 1
+  },
+  {
+    "level": 1,
+    "color": "YELLOW",
+    "LHS": {
+      "values": {
+        "SHIELD": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "COIN": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "COIN": 1,
+        "SHIELD": 1,
+        "STONE": 1
+      }
+    },
+    "victoryPoints": 2
   },
   {
     "level": 1,
@@ -257,26 +241,91 @@
   },
   {
     "level": 1,
-    "color": "GREEN",
+    "color": "YELLOW",
     "LHS": {
       "values": {
         "SERVANT": 1,
-        "STONE": 1
+        "COIN": 1
       }
     },
     "RHS": {
       "values": {
-        "COIN": 2,
+        "SHIELD": 2,
         "FAITH": 1
       }
     },
     "cost": {
       "values": {
         "SHIELD": 2,
-        "COIN": 2
+        "STONE": 2
       }
     },
     "victoryPoints": 4
+  },
+
+  {
+    "level": 1,
+    "color": "PURPLE",
+    "LHS": {
+      "values": {
+        "STONE": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "FAITH": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "SERVANT": 2
+      }
+    },
+    "victoryPoints": 1
+  },
+  {
+    "level": 1,
+    "color": "PURPLE",
+    "LHS": {
+      "values": {
+        "COIN": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "SHIELD": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "SERVANT": 1,
+        "SHIELD": 1,
+        "COIN": 1
+      }
+    },
+    "victoryPoints": 2
+  },
+  {
+    "level": 1,
+    "color": "PURPLE",
+    "LHS": {
+      "values": {
+        "COIN": 2
+      }
+    },
+    "RHS": {
+      "values": {
+        "SERVANT": 1,
+        "SHIELD": 1,
+        "STONE": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "SERVANT": 3
+      }
+    },
+    "victoryPoints": 3
   },
   {
     "level": 1,
@@ -301,52 +350,7 @@
     },
     "victoryPoints": 4
   },
-  {
-    "level": 1,
-    "color": "BLUE",
-    "LHS": {
-      "values": {
-        "SHIELD": 1,
-        "STONE": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "SERVANT": 2,
-        "FAITH": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "SERVANT": 2,
-        "COIN": 2
-      }
-    },
-    "victoryPoints": 4
-  },
-  {
-    "level": 1,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "SERVANT": 1,
-        "COIN": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "SHIELD": 2,
-        "FAITH": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "SHIELD": 2,
-        "STONE": 2
-      }
-    },
-    "victoryPoints": 4
-  },
+
   {
     "level": 2,
     "color": "GREEN",
@@ -369,66 +373,6 @@
   },
   {
     "level": 2,
-    "color": "PURPLE",
-    "LHS": {
-      "values": {
-        "COIN": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "FAITH": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "SERVANT": 4
-      }
-    },
-    "victoryPoints": 5
-  },
-  {
-    "level": 2,
-    "color": "BLUE",
-    "LHS": {
-      "values": {
-        "SERVANT": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "FAITH": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "COIN": 4
-      }
-    },
-    "victoryPoints": 5
-  },
-  {
-    "level": 2,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "SHIELD": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "FAITH": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "STONE": 4
-      }
-    },
-    "victoryPoints": 5
-  },
-  {
-    "level": 2,
     "color": "GREEN",
     "LHS": {
       "values": {
@@ -445,72 +389,6 @@
       "values": {
         "SHIELD": 3,
         "SERVANT": 2
-      }
-    },
-    "victoryPoints": 6
-  },
-  {
-    "level": 2,
-    "color": "PURPLE",
-    "LHS": {
-      "values": {
-        "COIN": 1,
-        "SERVANT": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "SHIELD": 3
-      }
-    },
-    "cost": {
-      "values": {
-        "COIN": 2,
-        "SERVANT": 3
-      }
-    },
-    "victoryPoints": 6
-  },
-  {
-    "level": 2,
-    "color": "BLUE",
-    "LHS": {
-      "values": {
-        "COIN": 1,
-        "STONE": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "SERVANT": 3
-      }
-    },
-    "cost": {
-      "values": {
-        "COIN": 3,
-        "STONE": 2
-      }
-    },
-    "victoryPoints": 6
-  },
-  {
-    "level": 2,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "SHIELD": 1,
-        "STONE": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "COIN": 3
-      }
-    },
-    "cost": {
-      "values": {
-        "SHIELD": 2,
-        "STONE": 3
       }
     },
     "victoryPoints": 6
@@ -538,24 +416,68 @@
   },
   {
     "level": 2,
-    "color": "PURPLE",
+    "color": "GREEN",
     "LHS": {
       "values": {
-        "STONE": 2
+        "COIN": 1
       }
     },
     "RHS": {
       "values": {
-        "COIN": 2,
+        "SHIELD": 2,
+        "FAITH": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "SHIELD": 3,
+        "COIN": 3
+      }
+    },
+    "victoryPoints": 8
+  },
+
+  {
+    "level": 2,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "SERVANT": 1
+      }
+    },
+    "RHS": {
+      "values": {
         "FAITH": 2
       }
     },
     "cost": {
       "values": {
-        "SERVANT": 5
+        "COIN": 4
       }
     },
-    "victoryPoints": 7
+    "victoryPoints": 5
+  },
+  {
+    "level": 2,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "COIN": 1,
+        "STONE": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "SERVANT": 3
+      }
+    },
+    "cost": {
+      "values": {
+        "COIN": 3,
+        "STONE": 2
+      }
+    },
+    "victoryPoints": 6
   },
   {
     "level": 2,
@@ -580,6 +502,93 @@
   },
   {
     "level": 2,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "SERVANT": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "STONE": 2,
+        "FAITH": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "COIN": 3,
+        "STONE": 3
+      }
+    },
+    "victoryPoints": 8
+  },
+
+  {
+    "level": 2,
+    "color": "YELLOW",
+    "LHS": {
+      "values": {
+        "SHIELD": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "FAITH": 2
+      }
+    },
+    "cost": {
+      "values": {
+        "STONE": 4
+      }
+    },
+    "victoryPoints": 5
+  },
+  {
+    "level": 2,
+    "color": "YELLOW",
+    "LHS": {
+      "values": {
+        "SHIELD": 1,
+        "STONE": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "COIN": 3
+      }
+    },
+    "cost": {
+      "values": {
+        "SHIELD": 2,
+        "STONE": 3
+      }
+    },
+    "victoryPoints": 6
+  },
+  {
+    "level": 2,
+    "color": "YELLOW",
+    "LHS": {
+      "values": {
+        "SHIELD": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "COIN": 2,
+        "FAITH": 1
+      }
+    },
+    "cost": {
+      "values": {
+        "STONE": 3,
+        "SERVANT": 3
+      }
+    },
+    "victoryPoints": 8
+  },
+  {
+    "level": 2,
     "color": "YELLOW",
     "LHS": {
       "values": {
@@ -599,9 +608,10 @@
     },
     "victoryPoints": 7
   },
+
   {
     "level": 2,
-    "color": "GREEN",
+    "color": "PURPLE",
     "LHS": {
       "values": {
         "COIN": 1
@@ -609,17 +619,15 @@
     },
     "RHS": {
       "values": {
-        "SHIELD": 2,
-        "FAITH": 1
+        "FAITH": 2
       }
     },
     "cost": {
       "values": {
-        "SHIELD": 3,
-        "COIN": 3
+        "SERVANT": 4
       }
     },
-    "victoryPoints": 8
+    "victoryPoints": 5
   },
   {
     "level": 2,
@@ -645,71 +653,28 @@
   },
   {
     "level": 2,
-    "color": "BLUE",
+    "color": "PURPLE",
     "LHS": {
       "values": {
+        "COIN": 1,
         "SERVANT": 1
       }
     },
     "RHS": {
       "values": {
-        "STONE": 2,
-        "FAITH": 1
+        "SHIELD": 3
       }
     },
     "cost": {
-      "values": {
-        "COIN": 3,
-        "STONE": 3
-      }
-    },
-    "victoryPoints": 8
-  },
-  {
-    "level": 2,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "SHIELD": 1
-      }
-    },
-    "RHS": {
       "values": {
         "COIN": 2,
-        "FAITH": 1
-      }
-    },
-    "cost": {
-      "values": {
-        "STONE": 3,
         "SERVANT": 3
       }
     },
-    "victoryPoints": 8
+    "victoryPoints": 6
   },
   {
-    "level": 3,
-    "color": "GREEN",
-    "LHS": {
-      "values": {
-        "COIN": 2
-      }
-    },
-    "RHS": {
-      "values": {
-        "STONE": 3,
-        "FAITH": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "SHIELD": 6
-      }
-    },
-    "victoryPoints": 9
-  },
-  {
-    "level": 3,
+    "level": 2,
     "color": "PURPLE",
     "LHS": {
       "values": {
@@ -718,59 +683,18 @@
     },
     "RHS": {
       "values": {
-        "COIN": 3,
+        "COIN": 2,
         "FAITH": 2
       }
     },
     "cost": {
       "values": {
-        "SERVANT": 6
+        "SERVANT": 5
       }
     },
-    "victoryPoints": 9
+    "victoryPoints": 7
   },
-  {
-    "level": 3,
-    "color": "BLUE",
-    "LHS": {
-      "values": {
-        "SERVANT": 2
-      }
-    },
-    "RHS": {
-      "values": {
-        "SHIELD": 3,
-        "FAITH": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "COIN": 6
-      }
-    },
-    "victoryPoints": 9
-  },
-  {
-    "level": 3,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "SHIELD": 2
-      }
-    },
-    "RHS": {
-      "values": {
-        "SERVANT": 3,
-        "FAITH": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "STONE": 6
-      }
-    },
-    "victoryPoints": 9
-  },
+
   {
     "level": 3,
     "color": "GREEN",
@@ -790,78 +714,6 @@
     "cost": {
       "values": {
         "SHIELD": 5,
-        "SERVANT": 2
-      }
-    },
-    "victoryPoints": 10
-  },
-  {
-    "level": 3,
-    "color": "PURPLE",
-    "LHS": {
-      "values": {
-        "STONE": 1,
-        "SHIELD": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "COIN": 2,
-        "FAITH": 1,
-        "SERVANT": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "SERVANT": 5,
-        "COIN": 2
-      }
-    },
-    "victoryPoints": 10
-  },
-  {
-    "level": 3,
-    "color": "BLUE",
-    "LHS": {
-      "values": {
-        "COIN": 1,
-        "SHIELD": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "SERVANT": 2,
-        "FAITH": 1,
-        "STONE": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "COIN": 5,
-        "STONE": 2
-      }
-    },
-    "victoryPoints": 10
-  },
-  {
-    "level": 3,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "STONE": 1,
-        "SERVANT": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "COIN": 2,
-        "FAITH": 1,
-        "SHIELD": 2
-      }
-    },
-    "cost": {
-      "values": {
-        "STONE": 5,
         "SERVANT": 2
       }
     },
@@ -890,69 +742,6 @@
   },
   {
     "level": 3,
-    "color": "PURPLE",
-    "LHS": {
-      "values": {
-        "COIN": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "STONE": 1,
-        "FAITH": 3
-      }
-    },
-    "cost": {
-      "values": {
-        "SERVANT": 7
-      }
-    },
-    "victoryPoints": 11
-  },
-  {
-    "level": 3,
-    "color": "BLUE",
-    "LHS": {
-      "values": {
-        "STONE": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "SHIELD": 1,
-        "FAITH": 3
-      }
-    },
-    "cost": {
-      "values": {
-        "COIN": 7
-      }
-    },
-    "victoryPoints": 11
-  },
-  {
-    "level": 3,
-    "color": "YELLOW",
-    "LHS": {
-      "values": {
-        "SHIELD": 1
-      }
-    },
-    "RHS": {
-      "values": {
-        "SERVANT": 1,
-        "FAITH": 3
-      }
-    },
-    "cost": {
-      "values": {
-        "STONE": 7
-      }
-    },
-    "victoryPoints": 11
-  },
-  {
-    "level": 3,
     "color": "GREEN",
     "LHS": {
       "values": {
@@ -975,26 +764,26 @@
   },
   {
     "level": 3,
-    "color": "PURPLE",
+    "color": "GREEN",
     "LHS": {
       "values": {
-        "COIN": 1
+        "COIN": 2
       }
     },
     "RHS": {
       "values": {
-        "SERVANT": 1,
-        "STONE": 3
+        "STONE": 3,
+        "FAITH": 2
       }
     },
     "cost": {
       "values": {
-        "SERVANT": 4,
-        "SHIELD": 4
+        "SHIELD": 6
       }
     },
-    "victoryPoints": 12
+    "victoryPoints": 9
   },
+
   {
     "level": 3,
     "color": "BLUE",
@@ -1019,6 +808,139 @@
   },
   {
     "level": 3,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "STONE": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "SHIELD": 1,
+        "FAITH": 3
+      }
+    },
+    "cost": {
+      "values": {
+        "COIN": 7
+      }
+    },
+    "victoryPoints": 11
+  },
+  {
+    "level": 3,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "COIN": 1,
+        "SHIELD": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "SERVANT": 2,
+        "FAITH": 1,
+        "STONE": 2
+      }
+    },
+    "cost": {
+      "values": {
+        "COIN": 5,
+        "STONE": 2
+      }
+    },
+    "victoryPoints": 10
+  },
+  {
+    "level": 3,
+    "color": "BLUE",
+    "LHS": {
+      "values": {
+        "SERVANT": 2
+      }
+    },
+    "RHS": {
+      "values": {
+        "SHIELD": 3,
+        "FAITH": 2
+      }
+    },
+    "cost": {
+      "values": {
+        "COIN": 6
+      }
+    },
+    "victoryPoints": 9
+  },
+
+  {
+    "level": 3,
+    "color": "YELLOW",
+    "LHS": {
+      "values": {
+        "SHIELD": 2
+      }
+    },
+    "RHS": {
+      "values": {
+        "SERVANT": 3,
+        "FAITH": 2
+      }
+    },
+    "cost": {
+      "values": {
+        "STONE": 6
+      }
+    },
+    "victoryPoints": 9
+  },
+  {
+    "level": 3,
+    "color": "YELLOW",
+    "LHS": {
+      "values": {
+        "STONE": 1,
+        "SERVANT": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "COIN": 2,
+        "FAITH": 1,
+        "SHIELD": 2
+      }
+    },
+    "cost": {
+      "values": {
+        "STONE": 5,
+        "SERVANT": 2
+      }
+    },
+    "victoryPoints": 10
+  },
+  {
+    "level": 3,
+    "color": "YELLOW",
+    "LHS": {
+      "values": {
+        "SHIELD": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "SERVANT": 1,
+        "FAITH": 3
+      }
+    },
+    "cost": {
+      "values": {
+        "STONE": 7
+      }
+    },
+    "victoryPoints": 11
+  },
+  {
+    "level": 3,
     "color": "YELLOW",
     "LHS": {
       "values": {
@@ -1038,5 +960,94 @@
       }
     },
     "victoryPoints": 12
+  },
+
+  {
+    "level": 3,
+    "color": "PURPLE",
+    "LHS": {
+      "values": {
+        "COIN": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "SERVANT": 1,
+        "STONE": 3
+      }
+    },
+    "cost": {
+      "values": {
+        "SERVANT": 4,
+        "SHIELD": 4
+      }
+    },
+    "victoryPoints": 12
+  },
+  {
+    "level": 3,
+    "color": "PURPLE",
+    "LHS": {
+      "values": {
+        "STONE": 2
+      }
+    },
+    "RHS": {
+      "values": {
+        "COIN": 3,
+        "FAITH": 2
+      }
+    },
+    "cost": {
+      "values": {
+        "SERVANT": 6
+      }
+    },
+    "victoryPoints": 9
+  },
+  {
+    "level": 3,
+    "color": "PURPLE",
+    "LHS": {
+      "values": {
+        "COIN": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "STONE": 1,
+        "FAITH": 3
+      }
+    },
+    "cost": {
+      "values": {
+        "SERVANT": 7
+      }
+    },
+    "victoryPoints": 11
+  },
+  {
+    "level": 3,
+    "color": "PURPLE",
+    "LHS": {
+      "values": {
+        "STONE": 1,
+        "SHIELD": 1
+      }
+    },
+    "RHS": {
+      "values": {
+        "COIN": 2,
+        "FAITH": 1,
+        "SERVANT": 2
+      }
+    },
+    "cost": {
+      "values": {
+        "SERVANT": 5,
+        "COIN": 2
+      }
+    },
+    "victoryPoints": 10
   }
 ]

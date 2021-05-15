@@ -19,7 +19,11 @@ public interface IView {
 
     void stopDisplayIdle();
 
-    void displayGeneralMsg(String string);
+    void displayGeneralMsg();
 
-    void addNextDisplay(String displayA);
+    void setGeneralMsg(String string);
+
+    void addNextDisplay(String displayName);
+
+    void displayFirstLogin();
 }

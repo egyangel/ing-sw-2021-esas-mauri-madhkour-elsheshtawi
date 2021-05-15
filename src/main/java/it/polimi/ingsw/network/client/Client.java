@@ -19,7 +19,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class Client implements Runnable{
     private String username;
@@ -38,13 +37,8 @@ public class Client implements Runnable{
 
     public static void main(String[] args){
         Client client = new Client();
-
-        if (args[0].equals("--CLI"))
-            client.setView(new CLI(client));
-        else if (args[0].equals("--GUI"))
-            client.setView(new GUI(client));
-        else System.exit(0);
-
+//        checkIfCLI(args[0], client);
+        client.setView(new CLI(client));
         client.run();
     }
 
@@ -76,26 +70,47 @@ public class Client implements Runnable{
 
     public void handleSetUpMessage(Message msg){
         switch (msg.getMsgtype()) {
+            case DISPLAY_FIRST_LOGIN:
+                serverHandler.setUserId(msg.getUserID());
+                view.addNextDisplay("displayFirstLogin");
+                break;
             case DISPLAY_LOGIN:
                 serverHandler.setUserId(msg.getUserID());
                 view.addNextDisplay("displayLogin");
                 break;
+            case FIRST_LOGIN_ACCEPTED:
             case LOGIN_ACCEPTED:
+                view.setGeneralMsg("When other players connect the server, the game will start...");
+                view.addNextDisplay("displayGeneralMsg");
                 break;
-            case DISPLAY_LOBBY:
-                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
-                view.addNextDisplay("displayLobby");
-                view.addNextDisplay("displayVoteToStart");
-                break;
-            case USER_JOINED_IN_LOBBY:
-                view.displayGeneralMsg("A new user has joined!");
-                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
-                view.addNextDisplay("displayLobby");
-                break;
+            case START_MATCH:
+            case ASSIGN_TURN:
+//            case DISPLAY_LOBBY:
+//                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
+//                view.addNextDisplay("displayLobby");
+//                view.addNextDisplay("displayVoteToStart");
+//                break;
+                //TODO when a message such as user joined arrives, it should cancel waiting for user input (scanner), display lobby, redisplay asking for vote
+//            case USER_JOINED_IN_LOBBY:
+//                view.displayGeneralMsg("A new user has joined!");
+//                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
+//                view.addNextDisplay("displayLobby");
+//                break;
+
         }
     }
 
     public IView getView(){
         return view;
+    }
+
+    // METHODS THAT WON'T BE USED
+
+    private static void checkIfCLI(String arg, Client client){
+        if (arg.equals("--CLI"))
+            client.setView(new CLI(client));
+        else if (arg.equals("--GUI"))
+            client.setView(new GUI(client));
+        else System.exit(0);
     }
 }
