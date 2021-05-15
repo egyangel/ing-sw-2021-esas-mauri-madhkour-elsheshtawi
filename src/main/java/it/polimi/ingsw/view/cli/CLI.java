@@ -1,11 +1,14 @@
 package it.polimi.ingsw.view.cli;
 
+import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
@@ -85,8 +88,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String username = InputConsumer.getUserName(in, out);
         out.println("Choose number of players you would like to play with:");
         Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
-
-        Message loginmsg = new Message(Message.MsgType.REQUEST_FIRST_LOGIN, username);
+        Map<String, String> firstLoginMap = new HashMap<>();
+        firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
+        firstLoginMap.put("username", username);
+        Message loginmsg = new Message(Message.MsgType.REQUEST_FIRST_LOGIN, firstLoginMap);
         client.sendToServer(loginmsg);
     }
 
@@ -101,7 +106,38 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void update(Event event) {
+        if (event instanceof CVEvent){
+            CVEvent cvEvent = (CVEvent) event;
+            switch (cvEvent.getEventType()) {
+                case CHOOSE_TWO_LEADER_CARD:
+                    out.println("Here are the four leader card options...");
+                    Type type = new TypeToken<List<LeaderCard>>(){}.getType();
+                    List<LeaderCard> fourLeaderCards = (List<LeaderCard>) cvEvent.getEventPayload(type);
+                    for (int i = 0; i < fourLeaderCards.size(); i++){
+                        out.println(i);
+                        out.println(fourLeaderCards.get(i));
+                    }
+                    out.println("Enter the index of first leader card to keep:");
+                    Integer firstIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+                    out.println("Enter the index of second leader card to keep:");
+                    Integer secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+                    while (firstIndex == secondIndex) {
+                        out.println("Please enter a different index than first selection:");
+                        secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+                    }
+                    List<LeaderCard> twoLeaderCards = new ArrayList<>();
+                    twoLeaderCards.add(fourLeaderCards.get(firstIndex));
+                    twoLeaderCards.add(fourLeaderCards.get(secondIndex));
+                    VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEADER_CARDS_CHOOSEN, twoLeaderCards);
+                    Message leadercardmsg = new Message(Message.MsgType.VC_EVENT, vcEvent);
+                    client.sendToServer(leadercardmsg);
+                    break;
+            }
+        } else if (event instanceof MVEvent){
 
+        } else {
+            out.println("Unidentified MV or CV event");
+        }
     }
 
     @Override

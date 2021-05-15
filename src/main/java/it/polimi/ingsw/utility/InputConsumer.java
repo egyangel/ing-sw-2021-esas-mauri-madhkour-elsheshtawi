@@ -77,4 +77,14 @@ public class InputConsumer {
         }
         return input;
     }
+
+    public static Integer getANumberBetween(Scanner scanner, PrintWriter out, int min, int max) {
+        Integer input;
+        input = Integer.parseInt(scanner.nextLine());
+        while (input < min || input > max) {
+            out.println("Invalid input, please enter a number between " + min + " and " + max);
+            input = Integer.parseInt(scanner.nextLine());
+        }
+        return input;
+    }
 }

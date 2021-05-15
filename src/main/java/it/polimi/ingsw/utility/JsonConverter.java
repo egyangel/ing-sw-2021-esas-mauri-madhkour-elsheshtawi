@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.DevCard;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.Requirement;
 import it.polimi.ingsw.model.SpecialAbility;
+import it.polimi.ingsw.utility.messages.Event;
 import it.polimi.ingsw.utility.messages.Message;
 
 import java.io.FileNotFoundException;
@@ -60,6 +61,14 @@ public class JsonConverter {
 
     public static Object fromMsgToObject(Message msg, Type type) {
         return gson.fromJson(msg.getJsonContent(), type);
+    }
+
+    public static Object fromEventToObject(Event event, Class clazz){
+        return gson.fromJson(event.getJsonContent(), clazz);
+    }
+
+    public static Object fromEventToObject(Event event, Type type){
+        return gson.fromJson(event.getJsonContent(), type);
     }
 
     // DEBUG METHODS

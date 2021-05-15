@@ -2,12 +2,17 @@ package it.polimi.ingsw.model;
 
 
 import it.polimi.ingsw.utility.JsonConverter;
+import it.polimi.ingsw.utility.messages.Listener;
+import it.polimi.ingsw.utility.messages.MVEvent;
+import it.polimi.ingsw.utility.messages.Publisher;
+import it.polimi.ingsw.utility.messages.VCEvent;
 
 import java.util.*;
 
 // MODEL CLASS
-public class Game {
+public class Game implements Publisher<MVEvent> {
 
+    private List<Listener<MVEvent>> listenerList = new ArrayList<>();
     private Map<Integer,Player> userIDtoPlayers = new HashMap<>();
     private Map<Integer,PersonalBoard> userIDtoBoards = new HashMap<>();
     private MarketTray market;
@@ -53,6 +58,37 @@ public class Game {
 
     private void createLeaderCards() {
         leaderCardList = JsonConverter.deserializeLeaderCards();
+    }
+
+    public PersonalBoard getPersonalBoard(Integer userID){
+        return userIDtoBoards.get(userID);
+    }
+
+    public void shuffleLeaderCards() {
+        Collections.shuffle(leaderCardList);
+    }
+
+    public List<LeaderCard> getFourLeaderCard(int counterOfCalls){
+        List<LeaderCard> list = new ArrayList<>();
+        list.addAll(leaderCardList.subList(counterOfCalls * 4, (counterOfCalls * 4) + 4));
+        return list;
+    }
+
+    @Override
+    public void subscribe(Listener<MVEvent> listener) {
+        listenerList.add(listener);
+    }
+
+    @Override
+    public void unsubscribe(Listener<MVEvent> listener) {
+        listenerList.remove(listener);
+    }
+
+    @Override
+    public void publish(MVEvent event) {
+        for(Listener<MVEvent> listener : listenerList){
+            listener.update(event);
+        }
     }
 
     // DEBUG METHODS

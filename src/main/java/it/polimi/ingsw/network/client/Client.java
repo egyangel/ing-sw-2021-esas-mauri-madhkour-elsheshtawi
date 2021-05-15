@@ -113,4 +113,5 @@ public class Client implements Runnable{
             client.setView(new GUI(client));
         else System.exit(0);
     }
+
 }
