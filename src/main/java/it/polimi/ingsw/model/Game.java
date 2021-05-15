@@ -55,6 +55,10 @@ public class Game {
         leaderCardList = JsonConverter.deserializeLeaderCards();
     }
 
+    private List<Requirement> createRequirements(){
+        return JsonConverter.deserializeRequirements();
+    }
+
     // DEBUG METHODS
     public void printDevCardMatrix(){
         createDevCardDecks();
@@ -68,8 +72,15 @@ public class Game {
     public void printLeaderCards(){
         createLeaderCards();
         for(LeaderCard card: leaderCardList){
-            System.out.println(card);
+            System.out.println(card.getRequirement());
         }
 
+    }
+
+    public void printRequirements() {
+        List<Requirement> reqList = createRequirements();
+        for(Requirement req: reqList){
+            System.out.println(req);
+        }
     }
 }

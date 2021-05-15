@@ -1,0 +1,25 @@
+[
+  {
+    "reqtype": "TWOCARD",
+    "colorList": [
+      "BLUE",
+      "GREEN"
+    ]
+  },
+  {
+    "reqtype": "THREECARD",
+    "colorList": [
+      "BLUE",
+      "GREEN",
+      "YELLOW"
+    ]
+  },
+  {
+    "reqtype": "RESOURCES",
+    "resources": {
+      "values": {
+        "COIN": 1
+      }
+    }
+  }
+]

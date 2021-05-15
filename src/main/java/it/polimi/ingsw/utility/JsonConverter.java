@@ -6,6 +6,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.polimi.ingsw.model.DevCard;
 import it.polimi.ingsw.model.LeaderCard;
+import it.polimi.ingsw.model.Requirement;
 import it.polimi.ingsw.model.specialability.*;
 import it.polimi.ingsw.utility.messages.CVEvent;
 import it.polimi.ingsw.utility.messages.MVEvent;
@@ -53,7 +54,7 @@ public class JsonConverter {
 
             for (int i = 0; i < extractedJson.length; i++){
                 // System.out.println(extractedJson[i].getAbility().getType());
-                listOfCards.add(new LeaderCard(extractedJson[i].getRequirements(), extractedJson[i].getVictoryPoints(), extractedJson[i].getAbility()));
+                listOfCards.add(new LeaderCard(extractedJson[i].getRequirement(), extractedJson[i].getVictoryPoints(), extractedJson[i].getAbility()));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -61,6 +62,18 @@ public class JsonConverter {
             e.printStackTrace();
         }
         return listOfCards;
+    }
+
+    public static List<Requirement> deserializeRequirements(){
+        List<Requirement> reqs = new ArrayList<>();
+        try(JsonReader reader = new JsonReader(new FileReader("src/main/resources/RequirementList.json"))) {
+            reqs = Arrays.asList(gson.fromJson(reader, Requirement[].class));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return reqs;
     }
 
     private static String serializeDevCard(DevCard devcard) {

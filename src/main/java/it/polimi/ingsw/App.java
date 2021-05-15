@@ -42,7 +42,13 @@ public class App {
     public static void main(String[] args) throws IOException {
         Game game = new Game();
 //        game.printDevCardMatrix();
-        game.printLeaderCards();
+//        game.printLeaderCards();
+
+//        Requirement aReq = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.GREEN);
+//        System.out.println(JsonConverter.toJson(aReq));
+
+//        game.printRequirements();
+
 //        MarketTray test = new MarketTray();
 //        System.out.println("Initial MarketTray Position:, rows and columns start at 1");
 //        test.MarketTrayDraw();
