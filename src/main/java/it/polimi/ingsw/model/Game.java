@@ -55,11 +55,13 @@ public class Game {
         leaderCardList = JsonConverter.deserializeLeaderCards();
     }
 
+    // DEBUG METHODS
+
+    /*
     private List<Requirement> createRequirements(){
         return JsonConverter.deserializeRequirements();
     }
 
-    // DEBUG METHODS
     public void printDevCardMatrix(){
         createDevCardDecks();
         for(int i = 0; i < 3; i++){
@@ -72,7 +74,7 @@ public class Game {
     public void printLeaderCards(){
         createLeaderCards();
         for(LeaderCard card: leaderCardList){
-            System.out.println(card.getRequirement());
+            System.out.println(card);
         }
 
     }
@@ -83,4 +85,16 @@ public class Game {
             System.out.println(req);
         }
     }
+
+    public void printSpecialAbilities() {
+        List<SpecialAbility> abiList = createSpecialAbilities();
+        for(SpecialAbility abi: abiList){
+            System.out.println(abi);
+        }
+    }
+
+    private List<SpecialAbility> createSpecialAbilities() {
+        return JsonConverter.deserializeSpecialAbilities();
+    }
+     */
 }

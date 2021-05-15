@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumclasses.ResType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +45,7 @@ public class PersonalBoard {
 //     for now, this considers strongbox only, the code will need to be improved.
 //     in case there is not enough resource, some error/exception must be included,
 //     or assertions before execution/during testing
-    public void useDefProd(ResType L1, ResType L2, ResType R){
+    public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R){
         System.out.println("Trying Default Prod: " + L1.toString() + " + " + L2.toString() + " = " + R.toString() + "\n");
         if (L1 != L2){
             if (this.strongbox.isThereType(L1) && this.strongbox.isThereType(L2)){
@@ -90,7 +88,7 @@ public class PersonalBoard {
     }
 
     public void printStrongBox() {
-        for (ResType type : ResType.values()) {
+        for (Resources.ResType type : Resources.ResType.values()) {
             System.out.println("There is " + strongbox.getNumberOfType(type) + " " + type.toString());
         }
         System.out.println();
