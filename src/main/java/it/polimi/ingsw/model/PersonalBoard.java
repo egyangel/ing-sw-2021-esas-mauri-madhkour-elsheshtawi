@@ -143,4 +143,16 @@ public class PersonalBoard {
         }
         System.out.println();
     }
+
+    public void printWarehouse() {
+    }
+
+    public void printDevSlots(){
+
+    }
+
+    public void printFaithTrack(){}
+
+    public void printLeaderCards(){}
+
 }

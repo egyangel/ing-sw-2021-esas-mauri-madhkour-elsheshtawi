@@ -82,15 +82,16 @@ public class MarketTray {
         return resources;
     }
 
-//    public void MarketTrayDraw(){
-//        System.out.println(String.format("%70s",OutMarble.getColor()));
-//        for (int i = 0; i < row; i++) {
-//            for(int j = 0; j < column; j++) {
-//                System.out.print(String.format("%-16s",marketTray[i][j].getColor()));
-//            }
-//            System.out.println(" ");
-//        }
-//    }
+    //TODO: add "C-1" "C-2" and "R-3" etc label words in appropriate places
+    public void MarketTrayDraw(){
+        System.out.println(String.format("%70s",OutMarble.getColor()));
+        for (int i = 0; i < row; i++) {
+            for(int j = 0; j < column; j++) {
+                System.out.print(String.format("%-16s",marketTray[i][j].getColor()));
+            }
+            System.out.println(" ");
+        }
+    }
 
 //    public void ResourceDraw(){
 //        System.out.println("Resources that you have to take from the market are:");

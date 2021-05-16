@@ -67,7 +67,7 @@ public class Controller implements Listener<VCEvent> {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }
     }
-
+// todo: omer will continue from here
     private void beginFirstTurn(){
 
     }

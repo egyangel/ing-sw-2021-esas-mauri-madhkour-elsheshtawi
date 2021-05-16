@@ -113,7 +113,7 @@ public class Server implements Runnable{
                 if(numberOfConnectedUsers == numberOfUsers){
                     controller.createMatch(userIDtoUserNames);
                     for(ClientHandler handler: userIDtoHandlers.values()){
-                        handler.sendMessage(new Message(Message.MsgType.START_MATCH));
+                        handler.sendMessage(new Message(Message.MsgType.START_MATCH, userIDtoUserNames));
                     }
                 }
                 controller.startMatch();

@@ -16,13 +16,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private final Client client;
     private final PrintWriter out;
     private final Scanner in;
-//    private Map<String, Runnable> displayTransitionMap = new HashMap<>();
     private Map<String, Runnable> displayNameMap = new HashMap<>();
     private Queue<Runnable> displayTransitionQueue = new ArrayDeque<>();
     private boolean shouldTerminateClient;
     private boolean stopIdle;
     private String generalmsg;
     private CVEvent cvEventToDisplay;
+    private List<Listener<VCEvent>> listenerList = new ArrayList<>();
 
     public CLI(Client client) {
         this.client = client;
@@ -42,6 +42,16 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
         displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
         displayNameMap.put("displayActionSelection", this::displayActionSelection);
+        displayNameMap.put("displayTakeResAction", this::displayTakeResAction);
+//        displayNameMap.put("displayMarketTray", this::displayMarketTray);
+//        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
+//        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
+//        displayNameMap.put("displayWarehouseAndStrongbox", this::displayWarehouseAndStrongbox);
+//        displayNameMap.put("displayDevSlots", this::displayDevSlots);
+//        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
+//        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
+//        displayNameMap.put("displayOtherPlayers", this::displayOtherPlayers);
+//        displayNameMap.put("displayEndTurn", this::displayEndTurn);
 
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
@@ -130,8 +140,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         twoLeaderCards.add(fourLeaderCards.get(firstIndex));
         twoLeaderCards.add(fourLeaderCards.get(secondIndex));
         VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEADER_CARDS_CHOOSEN, twoLeaderCards);
-        Message leadercardmsg = new Message(Message.MsgType.VC_EVENT, vcEvent);
-        client.sendToServer(leadercardmsg);
+        publish(vcEvent);
     }
 
     public void displayTurnAssign(){
@@ -148,8 +157,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 Resources.ResType initResType = InputConsumer.getResourceType(in, out);
                 Resources initResource = new Resources(initResType, 1);
                 VCEvent vcEvent = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResource);
-                Message initResMsg = new Message(Message.MsgType.VC_EVENT, vcEvent);
-                client.sendToServer(initResMsg);
+                publish(vcEvent);
                 break;
             case 3:
                 out.println("You are the third player.");
@@ -158,8 +166,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 Resources.ResType initResTypeTwo = InputConsumer.getResourceType(in, out);
                 Resources initResourceTwo = new Resources(initResTypeTwo, 1);
                 VCEvent vcEventTwo = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResourceTwo);
-                Message initResMsgTwo = new Message(Message.MsgType.VC_EVENT, vcEventTwo);
-                client.sendToServer(initResMsgTwo);
+                publish(vcEventTwo);
                 break;
             case 4:
                 out.println("You are the fourth player.");
@@ -170,25 +177,87 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 initResTypeThree = InputConsumer.getResourceType(in, out);
                 initResourceThree.add(initResTypeThree, 1);
                 VCEvent vcEventThree = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResourceThree);
-                Message initResMsgThree = new Message(Message.MsgType.VC_EVENT, vcEventThree);
-                client.sendToServer(initResMsgThree);
+                publish(vcEventThree);
                 break;
         }
     }
 
-    //TODO: omer will continue from here
     public void displayActionSelection(){
         out.println("It is your turn now!");
         out.println("Enter the index of the action you want to take:");
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
-        out.println("[4] View warehouse and strongbox");
-        out.println("[5] View development slots");
-        out.println("[6] View faith track");
-        out.println("[7] View leader cards");
-        out.println("[8] View other players");
-        out.println("[9] End turn");
+        out.println("[4] View market tray");
+        out.println("[5] View warehouse and strongbox");
+        out.println("[6] View development slots");
+        out.println("[7] View faith track");
+        out.println("[8] View leader cards");
+        out.println("[9] View other players");
+        out.println("[0] End turn");
+        int index = InputConsumer.getANumberBetween(in, out, 1, 9);
+        switch (index){
+            case 1:
+                addNextDisplay("displayTakeResAction");
+                break;
+            case 2:
+                addNextDisplay("displayBuyDevCardAction");
+                break;
+            case 3:
+                addNextDisplay("displayActivateProdAction");
+                break;
+            case 4:
+                addNextDisplay("displayMarketTray");
+                break;
+            case 5:
+                addNextDisplay("displayWarehouseAndStrongbox");
+                break;
+            case 6:
+                addNextDisplay("displayDevSlots");
+                break;
+            case 7:
+                addNextDisplay("displayFaithTrack");
+                break;
+            case 8:
+                addNextDisplay("displayLeaderCards");
+                break;
+            case 9:
+                addNextDisplay("displayOtherPlayers");
+                break;
+            case 10:
+                addNextDisplay("displayEndTurn");
+                break;
+        }
+    }
+
+    public void displayTakeResAction(){
+    }
+
+    public void displayMarketTray(){
+        // The print should be implemented in this function but there is no time for this
+        // also true for similar methods below
+        client.getMarketTray().MarketTrayDraw();
+    }
+
+    public void displayWarehouseAndStrongbox(){
+        client.getPersonalBoard().printWarehouse();
+        client.getPersonalBoard().printStrongBox();
+    }
+
+    public void displayDevSlots(){
+        client.getPersonalBoard().printDevSlots();
+    }
+
+    public void displayFaithTrack(){
+        client.getPersonalBoard().printFaithTrack();
+    }
+
+    public void printLeaderCards(){
+        client.getPersonalBoard().printLeaderCards();
+    }
+
+    public void displayOtherPlayers(){
+
     }
 
     @Override
@@ -215,17 +284,18 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void subscribe(Listener<VCEvent> listener) {
-
+        listenerList.add(listener);
     }
 
     @Override
     public void unsubscribe(Listener<VCEvent> listener) {
-
+        listenerList.remove(listener);
     }
 
     @Override
     public void publish(VCEvent event) {
-        client.sendToServer(new Message(Message.MsgType.VC_EVENT));
+        for(Listener<VCEvent> listener: listenerList)
+            listener.update(event);
     }
 
     @Override
@@ -300,7 +370,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public synchronized void displayLobby(){
         out.println("Waiting users in the lobby are:");
-        for(String username: client.getUserIDtoOtherUserNames().values())
+        for(String username: client.getUserIDtoUserNames().values())
             out.println(username);
     }
 
