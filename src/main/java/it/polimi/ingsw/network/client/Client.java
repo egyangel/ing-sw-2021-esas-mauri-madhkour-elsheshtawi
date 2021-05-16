@@ -83,20 +83,8 @@ public class Client implements Runnable{
                 view.setGeneralMsg("When other players connect the server, the game will start...");
                 view.addNextDisplay("displayGeneralMsg");
                 break;
-            case START_MATCH:
-            case ASSIGN_TURN:
-//            case DISPLAY_LOBBY:
-//                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
-//                view.addNextDisplay("displayLobby");
-//                view.addNextDisplay("displayVoteToStart");
-//                break;
-                //TODO when a message such as user joined arrives, it should cancel waiting for user input (scanner), display lobby, redisplay asking for vote
-//            case USER_JOINED_IN_LOBBY:
-//                view.displayGeneralMsg("A new user has joined!");
-//                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
-//                view.addNextDisplay("displayLobby");
-//                break;
-
+            case START_MATCH:    // START_MATCH is the last setUp message from server to client
+                break;
         }
     }
 

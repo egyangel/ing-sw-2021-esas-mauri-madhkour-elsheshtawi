@@ -27,9 +27,9 @@ public class App {
         values1.add(Resources.ResType.STONE);
         values1.add(Resources.ResType.STONE);
 
-        warehouse[0] = new Shelf(1);
-        warehouse[1] = new Shelf(2);
-        warehouse[2] = new Shelf(3);
+        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
+        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
+        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
 
        System.out.println(warehouse[1].PutResource(values));
        System.out.println(warehouse[2].PutResource(values1));

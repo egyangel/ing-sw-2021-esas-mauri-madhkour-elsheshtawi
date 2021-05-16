@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.LeaderCard;
+import it.polimi.ingsw.model.Resources;
 import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
@@ -21,6 +22,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private boolean shouldTerminateClient;
     private boolean stopIdle;
     private String generalmsg;
+    private CVEvent cvEventToDisplay;
 
     public CLI(Client client) {
         this.client = client;
@@ -37,6 +39,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayFirstLogin", this::displayFirstLogin);
         displayNameMap.put("displayLogin", this::displayLogin);
         displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
+        displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
+        displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
+        displayNameMap.put("displayActionSelection", this::displayActionSelection);
+
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
         startDisplayTransition();
@@ -104,33 +110,100 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         client.sendToServer(loginmsg);
     }
 
+    public void displayFourLeaderCard(){
+        out.println("Here are the four leader card options...");
+        Type type = new TypeToken<List<LeaderCard>>(){}.getType();
+        List<LeaderCard> fourLeaderCards = (List<LeaderCard>) cvEventToDisplay.getEventPayload(type);
+        for (int i = 0; i < fourLeaderCards.size(); i++){
+            out.println(i);
+            out.println(fourLeaderCards.get(i));
+        }
+        out.println("Enter the index of first leader card to keep:");
+        Integer firstIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+        out.println("Enter the index of second leader card to keep:");
+        Integer secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+        while (firstIndex.equals(secondIndex)) {
+            out.println("Please enter a different index than first selection:");
+            secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+        }
+        List<LeaderCard> twoLeaderCards = new ArrayList<>();
+        twoLeaderCards.add(fourLeaderCards.get(firstIndex));
+        twoLeaderCards.add(fourLeaderCards.get(secondIndex));
+        VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEADER_CARDS_CHOOSEN, twoLeaderCards);
+        Message leadercardmsg = new Message(Message.MsgType.VC_EVENT, vcEvent);
+        client.sendToServer(leadercardmsg);
+    }
+
+    public void displayTurnAssign(){
+        Integer turn = (Integer) cvEventToDisplay.getEventPayload(Integer.class);
+        switch (turn){
+            case 1:
+                out.println("You are the first player.");
+                out.println("You have the inkwell but no initial resources or faith points.");
+                // displayIdle automatically called
+                break;
+            case 2:
+                out.println("You are the second player.");
+                out.println("You will have one initial resource of your choosing in the warehouse.");
+                Resources.ResType initResType = InputConsumer.getResourceType(in, out);
+                Resources initResource = new Resources(initResType, 1);
+                VCEvent vcEvent = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResource);
+                Message initResMsg = new Message(Message.MsgType.VC_EVENT, vcEvent);
+                client.sendToServer(initResMsg);
+                break;
+            case 3:
+                out.println("You are the third player.");
+                out.println("You will start with one faith point on your faith track.");
+                out.println("You will have one initial resource of your choosing in the warehouse.");
+                Resources.ResType initResTypeTwo = InputConsumer.getResourceType(in, out);
+                Resources initResourceTwo = new Resources(initResTypeTwo, 1);
+                VCEvent vcEventTwo = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResourceTwo);
+                Message initResMsgTwo = new Message(Message.MsgType.VC_EVENT, vcEventTwo);
+                client.sendToServer(initResMsgTwo);
+                break;
+            case 4:
+                out.println("You are the fourth player.");
+                out.println("You will start with one faith point on your faith track.");
+                out.println("You will have two initial resources of your choosing in the warehouse.");
+                Resources.ResType initResTypeThree = InputConsumer.getResourceType(in, out);
+                Resources initResourceThree = new Resources(initResTypeThree, 1);
+                initResTypeThree = InputConsumer.getResourceType(in, out);
+                initResourceThree.add(initResTypeThree, 1);
+                VCEvent vcEventThree = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResourceThree);
+                Message initResMsgThree = new Message(Message.MsgType.VC_EVENT, vcEventThree);
+                client.sendToServer(initResMsgThree);
+                break;
+        }
+    }
+
+    //TODO: omer will continue from here
+    public void displayActionSelection(){
+        out.println("It is your turn now!");
+        out.println("Enter the index of the action you want to take:");
+        out.println("[1] Take resource from market");
+        out.println("[2] Buy one development card");
+        out.println("[3] Activate the production");
+        out.println("[4] View warehouse and strongbox");
+        out.println("[5] View development slots");
+        out.println("[6] View faith track");
+        out.println("[7] View leader cards");
+        out.println("[8] View other players");
+        out.println("[9] End turn");
+    }
+
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent){
-            CVEvent cvEvent = (CVEvent) event;
-            switch (cvEvent.getEventType()) {
+            cvEventToDisplay = (CVEvent) event;
+            switch (cvEventToDisplay.getEventType()) {
                 case CHOOSE_TWO_LEADER_CARD:
-                    out.println("Here are the four leader card options...");
-                    Type type = new TypeToken<List<LeaderCard>>(){}.getType();
-                    List<LeaderCard> fourLeaderCards = (List<LeaderCard>) cvEvent.getEventPayload(type);
-                    for (int i = 0; i < fourLeaderCards.size(); i++){
-                        out.println(i);
-                        out.println(fourLeaderCards.get(i));
-                    }
-                    out.println("Enter the index of first leader card to keep:");
-                    Integer firstIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
-                    out.println("Enter the index of second leader card to keep:");
-                    Integer secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
-                    while (firstIndex == secondIndex) {
-                        out.println("Please enter a different index than first selection:");
-                        secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
-                    }
-                    List<LeaderCard> twoLeaderCards = new ArrayList<>();
-                    twoLeaderCards.add(fourLeaderCards.get(firstIndex));
-                    twoLeaderCards.add(fourLeaderCards.get(secondIndex));
-                    VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEADER_CARDS_CHOOSEN, twoLeaderCards);
-                    Message leadercardmsg = new Message(Message.MsgType.VC_EVENT, vcEvent);
-                    client.sendToServer(leadercardmsg);
+                    addNextDisplay("displayFourLeaderCard");
+                    break;
+                case ASSIGN_TURN_ORDER:
+                    addNextDisplay("displayTurnAssign");
+                    break;
+                case BEGIN_TURN:
+                    addNextDisplay("displayActionSelection");
                     break;
             }
         } else if (event instanceof MVEvent){
@@ -166,7 +239,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         int symbolIndex = 0;
         boolean appendtoRight = true;
         int lastBarSize = 0;
-        out.print("Please wait... ");
+        out.print("Waiting for the other players... ");
         out.flush();
 
         while(!shouldStopDisplayIdle()){
