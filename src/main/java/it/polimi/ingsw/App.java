@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.enumclasses.*;
-import it.polimi.ingsw.model.specialability.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,17 +15,17 @@ import it.polimi.ingsw.utility.JsonConverter;
 
 public class App {
 
-    private static List<ResType> values= new ArrayList<>() ;
-    private static List<ResType> values1= new ArrayList<>() ;
+    private static List<Resources.ResType> values= new ArrayList<>() ;
+    private static List<Resources.ResType> values1= new ArrayList<>() ;
     private static Shelf[] warehouse= new Shelf[3];
 
     private static void MyFunc() {
 
-        values.add(ResType.COIN);
-        values.add(ResType.COIN);
-        values1.add(ResType.STONE);
-        values1.add(ResType.STONE);
-        values1.add(ResType.STONE);
+        values.add(Resources.ResType.COIN);
+        values.add(Resources.ResType.COIN);
+        values1.add(Resources.ResType.STONE);
+        values1.add(Resources.ResType.STONE);
+        values1.add(Resources.ResType.STONE);
 
         warehouse[0] = new Shelf(1);
         warehouse[1] = new Shelf(2);
@@ -41,8 +39,19 @@ public class App {
 
     public static void main(String[] args) throws IOException {
         Game game = new Game();
-//        game.printDevCardMatrix();
-        game.printLeaderCards();
+
+//        game.printSpecialAbilities();
+//        Requirement aReq = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.GREEN);
+//        System.out.println(JsonConverter.toJson(aReq));
+
+//        SpecialAbility aAbi = new SpecialAbility(SpecialAbility.AbilityType.EXSTRASLOT, Resources.ResType.COIN);
+//        System.out.println(JsonConverter.toJson(aAbi));
+
+//        LeaderCard aCard = new LeaderCard(aReq, 10, aAbi);
+//        System.out.println(JsonConverter.toJson(aCard));
+
+//
+
 //        MarketTray test = new MarketTray();
 //        System.out.println("Initial MarketTray Position:, rows and columns start at 1");
 //        test.MarketTrayDraw();

@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.server;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.network.client.ServerHandler;
 import it.polimi.ingsw.utility.messages.*;
 
 import java.io.IOException;
@@ -102,6 +103,7 @@ public class Server implements Runnable{
                 numberOfConnectedUsers++;
                 respondmsg = new Message(Message.MsgType.FIRST_LOGIN_ACCEPTED);
                 senderHandler.sendMessage(respondmsg);
+                break;
             case REQUEST_LOGIN:
                 String username = incomingmsg.getJsonContent();
                 userIDtoUserNames.put(userID, username);
@@ -109,11 +111,12 @@ public class Server implements Runnable{
                 respondmsg = new Message(Message.MsgType.LOGIN_ACCEPTED);
                 senderHandler.sendMessage(respondmsg);
                 if(numberOfConnectedUsers == numberOfUsers){
+                    controller.createMatch(userIDtoUserNames);
                     for(ClientHandler handler: userIDtoHandlers.values()){
                         handler.sendMessage(new Message(Message.MsgType.START_MATCH));
-                        controller.createMatch(userIDtoUserNames);
                     }
                 }
+                controller.startMatch();
                 break;
         }
     }
@@ -121,5 +124,9 @@ public class Server implements Runnable{
     public boolean isFirstPlayerConnected() {
         if(numberOfUsers > 0) return true;
         else return false;
+    }
+
+    public ClientHandler getClientHandler(Integer userID) {
+        return userIDtoHandlers.get(userID);
     }
 }

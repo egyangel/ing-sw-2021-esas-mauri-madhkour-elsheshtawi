@@ -1,40 +1,31 @@
 package it.polimi.ingsw.model.enumclasses;
 
+import it.polimi.ingsw.model.Resources;
+
 public enum MarbleColor {
-    WHITE,BLUE,GREY,YELLOW,PURPLE,RED;
-  //  private EnumMap<MarbleColor,ResType> type;
+    WHITE, BLUE, GREY, YELLOW, PURPLE, RED;
 
     public String getColor() {
         return (this.name());
     }
 
-    public ResType getResourceType(){
+    public Resources.ResType getResourceType() {
 
-        if(this.equals(BLUE))
-            return ResType.SHIELD;
+        if (this.equals(BLUE))
+            return Resources.ResType.SHIELD;
 
-        if(this.equals(GREY))
-            return ResType.STONE;
+        if (this.equals(GREY))
+            return Resources.ResType.STONE;
 
-        if(this.equals(YELLOW))
-            return ResType.COIN;
+        if (this.equals(YELLOW))
+            return Resources.ResType.COIN;
 
-        if(this.equals(PURPLE))
-            return ResType.SERVANT;
+        if (this.equals(PURPLE))
+            return Resources.ResType.SERVANT;
 
-        if(this.equals(RED))
-            return ResType.FAITH;
+        if (this.equals(RED))
+            return Resources.ResType.FAITH;
 
         return null;
     }
-/*
-    private void set() {
-        type.put(WHITE,ResType.NOTHING);
-        type.put(BLUE,ResType.SHIELD);
-        type.put(GREY,ResType.STONE);
-        type.put(YELLOW,ResType.COIN);
-        type.put(PURPLE,ResType.SERVANT);
-        type.put(RED,ResType.FAITH);
-    }
-   */
 }

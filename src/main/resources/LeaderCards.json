@@ -1,352 +1,274 @@
 [
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"YELLOW",
-        "number": 1,
-        "level": 1
-      },
-      {
-        "type": "DevCard",
-        "req1":"GREEN",
-        "number": 1,
-        "level": 1
+    "requirement": {
+      "reqtype": "TWOCARD",
+      "colorList": [
+        "YELLOW",
+        "GREEN"
+      ]
+    },
+    "victoryPoint": 2,
+    "ability": {
+      "abilityType": "DISCOUNT",
+      "oneResType": "SERVANT",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "2",
-    "ability":
-      {
-        "type": "Discount",
-        "effect": "DISCOUNT",
-        "material": "SERVANT",
-        "number": "-1"
-      }
-
-  },
-  {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"BLUE",
-        "number": 1,
-        "level": 1
-      },
-      {
-        "type": "DevCard",
-        "req1":"PURPLE",
-        "number": 1,
-        "level": 1
-      }
-    ],
-    "points": "2",
-    "ability":
-    {
-      "type": "Discount",
-      "effect": "DISCOUNT",
-      "material": "SHIELD",
-      "number": "-1"
     }
-
   },
   {
-
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"GREEN",
-        "number": 1,
-        "level": 1
-      },
-      {
-        "type": "DevCard",
-        "req1":"BLUE",
-        "number": 1,
-        "level": 1
+    "requirement": {
+      "reqtype": "TWOCARD",
+      "colorList": [
+        "BLUE",
+        "PURPLE"
+      ]
+    },
+    "victoryPoint": 2,
+    "ability": {
+      "abilityType": "DISCOUNT",
+      "oneResType": "SHIELD",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "2",
-    "ability":
-      {
-        "type": "Discount",
-        "effect": "DISCOUNT",
-        "material": "STONE",
-        "number": "-1"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"YELLOW",
-        "number": 1,
-        "level": 1
-      },
-      {
-        "type": "DevCard",
-        "req1":"PURPLE",
-        "number": 1,
-        "level": 1
+    "requirement": {
+      "reqtype": "TWOCARD",
+      "colorList": [
+        "BLUE",
+        "GREEN"
+      ]
+    },
+    "victoryPoint": 2,
+    "ability": {
+      "abilityType": "DISCOUNT",
+      "oneResType": "STONE",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "2",
-    "ability":
-      {
-        "type": "Discount",
-        "effect": "DISCOUNT",
-        "material": "COIN",
-        "number": "-1"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "Resources",
-        "req1":"COIN",
-        "number": 5
+    "requirement": {
+      "reqtype": "TWOCARD",
+      "colorList": [
+        "YELLOW",
+        "PURPLE"
+      ]
+    },
+    "victoryPoint": 2,
+    "ability": {
+      "abilityType": "DISCOUNT",
+      "oneResType": "COIN",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "3",
-    "ability":
-      {
-        "type": "ExstraSlot",
-        "effect": "EXSTRASLOT",
-        "material": "STONE",
-        "number": "2"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "Resources",
-        "req1":"STONE",
-        "number": 5
+    "requirement": {
+      "reqtype": "RESOURCES",
+      "resources": {
+        "values": {
+          "COIN": 5
+        }
       }
-    ],
-    "points": "3",
-    "ability":
-      {
-        "type": "ExstraSlot",
-        "effect": "EXSTRASLOT",
-        "material": "SERVANT",
-        "number": "2"
+    },
+    "victoryPoint": 3,
+    "ability": {
+      "abilityType": "EXTRASLOT",
+      "oneResType": "STONE",
+      "resourceHolder": {
+        "values": {}
       }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "Resources",
-        "req1":"SERVANT",
-        "number": 5
+    "requirement": {
+      "reqtype": "RESOURCES",
+      "resources": {
+        "values": {
+          "STONE": 5
+        }
       }
-    ],
-    "points": "3",
-    "ability":
-      {
-        "type": "ExstraSlot",
-        "effect": "EXSTRASLOT",
-        "material": "SHIELD",
-        "number": "2"
+    },
+    "victoryPoint": 3,
+    "ability": {
+      "abilityType": "EXTRASLOT",
+      "oneResType": "SERVANT",
+      "resourceHolder": {
+        "values": {}
       }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "Resources",
-        "req1":"SHIELD",
-        "number": 5
+    "requirement": {
+      "reqtype": "RESOURCES",
+      "resources": {
+        "values": {
+          "SERVANT": 5
+        }
       }
-    ],
-    "points": "3",
-    "ability":
-      {
-        "type": "ExstraSlot",
-        "effect": "EXSTRASLOT",
-        "material": "COIN",
-        "number": "2"
+    },
+    "victoryPoint": 3,
+    "ability": {
+      "abilityType": "EXTRASLOT",
+      "oneResType": "SHIELD",
+      "resourceHolder": {
+        "values": {}
       }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"YELLOW",
-        "number": 2,
-        "level": 1
-      },
-      {
-        "type": "DevCard",
-        "req1":"BLUE",
-        "number": 1,
-        "level": 1
+    "requirement": {
+      "reqtype": "RESOURCES",
+      "resources": {
+        "values": {
+          "SHIELD": 5
+        }
       }
-    ],
-    "points": "5",
-    "ability":
-      {
-        "type": "ConvertWhiteMarble",
-        "effect": "CONVERTWHITE",
-        "material": "SERVANT",
-        "number": "1"
+    },
+    "victoryPoint": 3,
+    "ability": {
+      "abilityType": "EXTRASLOT",
+      "oneResType": "COIN",
+      "resourceHolder": {
+        "values": {}
       }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"GREEN",
-        "number": 2,
-        "level": 1
-      },
-      {
-        "type": "DevCard",
-        "req1":"PURPLE",
-        "number": 1,
-        "level": 1
+    "requirement": {
+      "reqtype": "THREECARD",
+      "colorList": [
+        "YELLOW",
+        "BLUE"
+      ]
+    },
+    "victoryPoint": 5,
+    "ability": {
+      "abilityType": "CONVERTWHITE",
+      "oneResType": "SERVANT",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "5",
-    "ability":
-      {
-        "type": "ConvertWhiteMarble",
-        "effect": "CONVERTWHITE",
-        "material": "SHIELD",
-        "number": "1"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"BLUE",
-        "number": 2,
-        "level": 1
-      },
-      {
-        "type": "DevCard",
-        "req1":"YELLOW",
-        "number": 1,
-        "level": 1
+    "requirement": {
+      "reqtype": "THREECARD",
+      "colorList": [
+        "GREEN",
+        "PURPLE"
+      ]
+    },
+    "victoryPoint": 5,
+    "ability": {
+      "abilityType": "CONVERTWHITE",
+      "oneResType": "SHIELD",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "5",
-    "ability":
-      {
-        "type": "ConvertWhiteMarble",
-        "effect": "CONVERTWHITE",
-        "material": "STONE",
-        "number": "1"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"PURPLE",
-        "number": 2,
-        "level": 1
-      },
-      {
-        "type": "DevCard",
-        "req1":"GREEN",
-        "number": 1,
-        "level": 1
+    "requirement": {
+      "reqtype": "THREECARD",
+      "colorList": [
+        "BLUE",
+        "YELLOW"
+      ]
+    },
+    "victoryPoint": 5,
+    "ability": {
+      "abilityType": "CONVERTWHITE",
+      "oneResType": "STONE",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "5",
-    "ability":
-      {
-        "type": "ConvertWhiteMarble",
-        "effect": "CONVERTWHITE",
-        "material": "COIN",
-        "number": "1"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"YELLOW",
-        "number": 1,
-        "level": 2
+    "requirement": {
+      "reqtype": "THREECARD",
+      "colorList": [
+        "PURPLE",
+        "GREEN"
+      ]
+    },
+    "victoryPoint": 5,
+    "ability": {
+      "abilityType": "CONVERTWHITE",
+      "oneResType": "COIN",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "4",
-    "ability":
-      {
-        "type": "AdditionalProduction",
-        "effect": "ADDPROD",
-        "material": "SHIELD",
-        "number": "1"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"BLUE",
-        "number": 1,
-        "level": 2
+    "requirement": {
+      "reqtype": "LEVELTWOCARD",
+      "colorList": [
+        "YELLOW"
+      ]
+    },
+    "victoryPoint": 4,
+    "ability": {
+      "abilityType": "ADDPROD",
+      "oneResType": "SHIELD",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "4",
-    "ability":
-      {
-        "type": "AdditionalProduction",
-        "effect": "ADDPROD",
-        "material": "SERVANT",
-        "number": "1"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"PURPLE",
-        "number": 1,
-        "level": 2
+    "requirement": {
+      "reqtype": "LEVELTWOCARD",
+      "colorList": [
+        "BLUE"
+      ]
+    },
+    "victoryPoint": 4,
+    "ability": {
+      "abilityType": "ADDPROD",
+      "oneResType": "SERVANT",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "4",
-    "ability":
-      {
-        "type": "AdditionalProduction",
-        "effect": "ADDPROD",
-        "material": "STONE",
-        "number": "1"
-      }
-
+    }
   },
   {
-    "requirements": [
-      {
-        "type": "DevCard",
-        "req1":"GREEN",
-        "number": 1,
-        "level": 2
+    "requirement": {
+      "reqtype": "LEVELTWOCARD",
+      "colorList": [
+        "PURPLE"
+      ]
+    },
+    "victoryPoint": 4,
+    "ability": {
+      "abilityType": "ADDPROD",
+      "oneResType": "STONE",
+      "resourceHolder": {
+        "values": {}
       }
-    ],
-    "points": "4",
-    "ability":
-      {
-
-        "type": "AdditionalProduction",
-        "effect": "ADDPROD",
-        "material": "COIN",
-        "number": "1"
+    }
+  },
+  {
+    "requirement": {
+      "reqtype": "LEVELTWOCARD",
+      "colorList": [
+        "GREEN"
+      ]
+    },
+    "victoryPoint": 4,
+    "ability": {
+      "abilityType": "ADDPROD",
+      "oneResType": "YELLOW",
+      "resourceHolder": {
+        "values": {}
       }
-
+    }
   }
 ]

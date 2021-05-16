@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumclasses.ResType;
-
 import java.util.ArrayList;
 import java.util.List;
 /*
@@ -27,7 +25,7 @@ public class Shelf {
 public class Shelf {
 
     private final int maxSize;
-    private List<ResType> resources;
+    private List<Resources.ResType> resources;
 
 
     public Shelf(int maxSize) {
@@ -38,7 +36,7 @@ public class Shelf {
 
 
     //adding multiple elements each time
-    public Integer PutResource(List<ResType> resources) {
+    public Integer PutResource(List<Resources.ResType> resources) {
 
 
         int i=this.resources.size();
@@ -90,7 +88,7 @@ public class Shelf {
     public boolean isFull(){
         return resources.size() == maxSize;
     }
-    private List<ResType> shelf(){
+    private List<Resources.ResType> shelf(){
         return resources;
     }
     public int GetNumberOfElements(){
@@ -99,7 +97,7 @@ public class Shelf {
     public int ShelfSize(){
         return maxSize;
     }
-    public ResType GetShelfResType(){
+    public Resources.ResType GetShelfResType(){
         return this.resources.get(0);
     }
     public void ClearShelf(){

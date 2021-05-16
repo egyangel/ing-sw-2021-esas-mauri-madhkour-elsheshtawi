@@ -2,7 +2,6 @@ package it.polimi.ingsw.model;
 
 
 import it.polimi.ingsw.model.enumclasses.MarbleColor;
-import it.polimi.ingsw.model.enumclasses.ResType;
 
 import java.util.*;
 
@@ -12,7 +11,6 @@ public class MarketTray {
     private MarbleColor OutMarble;
     private MarbleColor[] marbles = new MarbleColor[13];
     private MarbleColor[][] marketTray = new MarbleColor[3][4];
-    private ArrayList<ResType> resources = new ArrayList<>();
 
     public MarketTray() {
 
@@ -61,10 +59,11 @@ public class MarketTray {
     @ && !\result.equals(NULL)
     */
 
-    public ArrayList<ResType> selectRow (int row) {
+    public Resources selectRow (int row) {
+        Resources resources = new Resources();
         MarbleColor temp;
         temp = marketTray[row-1][0];
-        for (int j = 0; j < column; j++) resources.add(marketTray[row-1][j].getResourceType());
+        for (int j = 0; j < column; j++) resources.add(marketTray[row-1][j].getResourceType(), 1);
         for (int j = 0; j < column-1; j++) marketTray[row-1][j] = marketTray[row-1][j+1];
         marketTray[row-1][column-1] = OutMarble;
         OutMarble = temp;
@@ -72,31 +71,32 @@ public class MarketTray {
     }
     /* @require column >=1&& column <=4 */
 
-    public ArrayList<ResType> selectColumn (int column){
+    public Resources selectColumn (int column){
+        Resources resources = new Resources();
         MarbleColor temp;
         temp = marketTray[0][column-1];
-        for (int i = 0; i < row; i++) resources.add(marketTray[i][column-1].getResourceType());
+        for (int i = 0; i < row; i++) resources.add(marketTray[i][column-1].getResourceType(), 1);
         for (int i = 0; i < row-1; i++) marketTray[i][column-1] = marketTray[i+1][column-1];
         marketTray[row-1][column-1] = OutMarble;
         OutMarble = temp;
         return resources;
     }
 
-    public void MarketTrayDraw(){
-        System.out.println(String.format("%70s",OutMarble.getColor()));
-        for (int i = 0; i < row; i++) {
-            for(int j = 0; j < column; j++) {
-                System.out.print(String.format("%-16s",marketTray[i][j].getColor()));
-            }
-            System.out.println(" ");
-        }
-    }
+//    public void MarketTrayDraw(){
+//        System.out.println(String.format("%70s",OutMarble.getColor()));
+//        for (int i = 0; i < row; i++) {
+//            for(int j = 0; j < column; j++) {
+//                System.out.print(String.format("%-16s",marketTray[i][j].getColor()));
+//            }
+//            System.out.println(" ");
+//        }
+//    }
 
-    public void ResourceDraw(){
-        System.out.println("Resources that you have to take from the market are:");
-        for (ResType resource : resources) {
-            System.out.print(String.format("%-16s", resource));
-        }
-        System.out.println(" ");
-    }
+//    public void ResourceDraw(){
+//        System.out.println("Resources that you have to take from the market are:");
+//        for (Resources.ResType resource : resources.getResTypes()) {
+//            System.out.print(String.format("%-16s", resource));
+//        }
+//        System.out.println(" ");
+//    }
 }
