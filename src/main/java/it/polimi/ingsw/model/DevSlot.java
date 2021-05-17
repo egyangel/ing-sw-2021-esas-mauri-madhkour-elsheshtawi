@@ -5,9 +5,14 @@ import it.polimi.ingsw.model.DevCard;
 import java.util.Stack;
 
 public class DevSlot {
+    public enum slotPlace{
+        LEFT, CENTER, RIGHT
+    }
     private Stack<DevCard> devCards;
+    private final slotPlace place;
 
-    public DevSlot(){
+    public DevSlot(slotPlace place){
+        this.place = place;
         devCards = new Stack<>();
     }
 

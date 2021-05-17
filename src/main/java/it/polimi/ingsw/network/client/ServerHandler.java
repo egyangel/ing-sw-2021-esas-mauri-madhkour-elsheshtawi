@@ -95,7 +95,7 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
 
     @Override
     public void update(VCEvent event) {
-
+        sendMessage(new Message(Message.MsgType.VC_EVENT, event));
     }
 
     @Override

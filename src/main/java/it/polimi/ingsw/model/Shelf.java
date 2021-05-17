@@ -23,17 +23,30 @@ public class Shelf {
 
 
 public class Shelf {
+    public enum shelfPlace{
+        TOP, MIDDLE, BOTTOM
+    }
 
     private final int maxSize;
+    private final shelfPlace place;
     private List<Resources.ResType> resources;
 
 
-    public Shelf(int maxSize) {
-        this.maxSize = maxSize;
+    public Shelf(shelfPlace place) {
+        this.place = place;
+        if (place == shelfPlace.TOP) this.maxSize = 1;
+        else if (place == shelfPlace.MIDDLE) this.maxSize = 2;
+        else this.maxSize = 3;
         resources = new ArrayList<>();
     }
 
-
+    public void PutResource(Resources.ResType resType, int size){
+        List<Resources.ResType> list = new ArrayList<>();
+        for (int i = 0; i < size; i++){
+            list.add(resType);
+        }
+        PutResource(list);
+    }
 
     //adding multiple elements each time
     public Integer PutResource(List<Resources.ResType> resources) {

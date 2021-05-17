@@ -2,22 +2,18 @@ package it.polimi.ingsw.network.client;
 
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.utility.MsgPrinterToCLI;
 import it.polimi.ingsw.utility.messages.Message;
 import it.polimi.ingsw.view.IView;
 import it.polimi.ingsw.view.cli.CLI;
 import it.polimi.ingsw.view.gui.GUI;
 
-import javax.swing.*;
-
 import static it.polimi.ingsw.network.server.Server.SERVER_MIN_PORT;
 import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.lang.reflect.Type;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Client implements Runnable{
@@ -29,10 +25,12 @@ public class Client implements Runnable{
     public static final int MAX_PORT = SERVER_MAX_PORT;
 
     private PersonalBoard personalBoard;
-    private Map<Integer, String> userIDtoOtherUserNames;
+    private MarketTray marketTray;
+    private List<PersonalBoard> otherPersonalBoardImages;
+    private Map<Integer, String> userIDtoUserNames;
 
-    public Map<Integer, String> getUserIDtoOtherUserNames() {
-        return userIDtoOtherUserNames;
+    public Map<Integer, String> getUserIDtoUserNames() {
+        return userIDtoUserNames;
     }
 
     public static void main(String[] args){
@@ -83,25 +81,31 @@ public class Client implements Runnable{
                 view.setGeneralMsg("When other players connect the server, the game will start...");
                 view.addNextDisplay("displayGeneralMsg");
                 break;
-            case START_MATCH:
-            case ASSIGN_TURN:
-//            case DISPLAY_LOBBY:
-//                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
-//                view.addNextDisplay("displayLobby");
-//                view.addNextDisplay("displayVoteToStart");
-//                break;
-                //TODO when a message such as user joined arrives, it should cancel waiting for user input (scanner), display lobby, redisplay asking for vote
-//            case USER_JOINED_IN_LOBBY:
-//                view.displayGeneralMsg("A new user has joined!");
-//                userIDtoOtherUserNames = (Map<Integer, String>) msg.getObjectContent(new TypeToken<Map<Integer, String>>(){}.getType());
-//                view.addNextDisplay("displayLobby");
-//                break;
-
+            case START_MATCH:    // START_MATCH is the last setUp message from server to client
+                Type type = new TypeToken<Map<Integer, String>>(){}.getType();
+                userIDtoUserNames = (Map<Integer, String>) msg.getObject(type);
+                break;
         }
     }
 
     public IView getView(){
         return view;
+    }
+
+    public PersonalBoard getPersonalBoard() {
+        return personalBoard;
+    }
+
+    public void setPersonalBoard(PersonalBoard personalBoard) {
+        this.personalBoard = personalBoard;
+    }
+
+    public MarketTray getMarketTray() {
+        return marketTray;
+    }
+
+    public void setMarketTray(MarketTray marketTray) {
+        this.marketTray = marketTray;
     }
 
     // METHODS THAT WON'T BE USED

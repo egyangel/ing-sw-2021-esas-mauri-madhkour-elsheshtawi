@@ -6,6 +6,8 @@ import it.polimi.ingsw.utility.JsonConverter;
 public class CVEvent extends Event{
     public enum EventType {
         CHOOSE_TWO_LEADER_CARD,
+        ASSIGN_TURN_ORDER,
+        BEGIN_TURN,
         ASK_WHICH_COLUMN_ROW,
         ASK_WHICH_DEV_CARD,
         ASK_WHICH_PROD_SLOTS,

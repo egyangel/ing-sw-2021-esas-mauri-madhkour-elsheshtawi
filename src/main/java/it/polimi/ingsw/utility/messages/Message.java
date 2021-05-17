@@ -15,9 +15,6 @@ public class Message implements Serializable {
         FIRST_LOGIN_ACCEPTED,
         LOGIN_ACCEPTED, //done until here
         START_MATCH,
-        ASSIGN_TURN,
-
-        BEGIN_TURN,
 
         HEARTBEAT,
         MV_EVENT, // if something changes, new personal board will be sent to view of player
