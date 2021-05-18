@@ -37,4 +37,5 @@ public class DevSlot {
     public DevCard getTopDevCard(){
         return this.devCards.peek();
     }
+    //public
 }

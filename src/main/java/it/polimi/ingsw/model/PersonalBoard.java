@@ -59,12 +59,14 @@ public class PersonalBoard {
         } else {
             switch (place){
                 case TOP:
+                    //you can call directly my methods, since you already know from the previous check that res it is composed by only one type.
                     warehouse[0].PutResource(res.getOnlyType(), res.sumOfValues());
                     break;
                 case MIDDLE:
                     warehouse[1].PutResource(res.getOnlyType(), res.sumOfValues());
                     break;
                 case BOTTOM:
+                    //should be a 2 here not 3?. 3 is out_of_bounded
                     warehouse[3].PutResource(res.getOnlyType(), res.sumOfValues());
                     break;
             }

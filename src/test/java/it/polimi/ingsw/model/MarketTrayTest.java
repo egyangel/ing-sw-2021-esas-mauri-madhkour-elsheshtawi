@@ -3,16 +3,9 @@ package it.polimi.ingsw.model;
 
 
 import it.polimi.ingsw.model.enumclasses.MarbleColor;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.*;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class MarketTrayTest {
@@ -34,7 +27,7 @@ public class MarketTrayTest {
 
         for(int i=1;i<4;i++) {
             resources = marketTest.selectRow(i);
-            //System.out.println(resources);
+            assertNotNull(resources);
             assertEquals(false, resources.isEmpty());
             assertEquals(4, resources.size());
             for(int j = 0;j<4;j++){
@@ -43,25 +36,24 @@ public class MarketTrayTest {
                 
             }
         }
-   
-
-
-
-
-
 
 
     }
 
     @Test
     public void selectColumn() {
+        for(int i=1;i<5;i++) {
+            resources = marketTest.selectColumn(i);
+            assertNotNull(resources);
+            assertEquals(false, resources.isEmpty());
+            assertEquals(3, resources.size());
+            for(int j = 0;j<3;j++){
+                MarbleColor marble = resources.get(j);
+                assertEquals(true, marbleColors.contains(marble));
+
+            }
+        }
+
     }
 
-    @Test
-    public void marketTrayDraw() {
-    }
-
-    @Test
-    public void resourceDraw() {
-    }
 }
