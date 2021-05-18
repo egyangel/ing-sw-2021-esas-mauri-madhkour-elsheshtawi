@@ -6,6 +6,7 @@ import it.polimi.ingsw.utility.JsonConverter;
 public class VCEvent extends Event{
     public enum eventType {
         LEADER_CARDS_CHOOSEN,
+        INIT_RES_CHOOSEN,
         TAKE_RES_ACTION,
         BUY_DEV_CARD_ACTION,
         ACTIVATE_PROD_ACTION,

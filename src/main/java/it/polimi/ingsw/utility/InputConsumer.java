@@ -1,5 +1,7 @@
 package it.polimi.ingsw.utility;
 
+import it.polimi.ingsw.model.Resources;
+
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -60,10 +62,10 @@ public class InputConsumer {
 
     public static String getStartOrCancel(Scanner scanner, PrintWriter out){
         String input;
-        input = scanner.nextLine();
+        input = scanner.nextLine().toLowerCase();
         while(!input.equals("start") && !input.equals("exit")){
             out.println("Invalid input, please enter 'start' or 'exit'");
-            input = scanner.nextLine();
+            input = scanner.nextLine().toLowerCase();
         }
         return input;
     }
@@ -86,5 +88,19 @@ public class InputConsumer {
             input = Integer.parseInt(scanner.nextLine());
         }
         return input;
+    }
+
+    public static Resources.ResType getResourceType(Scanner in, PrintWriter out) {
+        Resources.ResType resType;
+        String input;
+        out.println("Enter a resource type name: [COIN] [STONE] [SERVANT] [SHIELD]");
+        input = in.nextLine().toUpperCase();
+        while (!((input.equals("COIN")) || (input.equals("STONE")) || (input.equals("SERVANT")) || (input.equals("SHIELD")))){
+            out.println("Invalid input.");
+            out.println("Enter a resource type name: [COIN] [STONE] [SERVANT] [SHIELD]");
+            input = in.nextLine().toUpperCase();
+        }
+        resType = Resources.ResType.valueOf(input);
+        return resType;
     }
 }

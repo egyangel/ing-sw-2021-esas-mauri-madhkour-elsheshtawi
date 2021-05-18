@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.network.server.VirtualView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,16 +29,16 @@ public class PersonalBoard {
     public PersonalBoard(Integer userID){
         this.userID = userID;
         defProd = new DefaultProd();
-        // from left to right on personal board
-        devSlots[0] = new DevSlot();
-        devSlots[1] = new DevSlot();
-        devSlots[2] = new DevSlot();
-        // from top to bottom on warehouse
-        warehouse[0] = new Shelf(1);
-        warehouse[1] = new Shelf(2);
-        warehouse[2] = new Shelf(3);
+        devSlots[0] = new DevSlot(DevSlot.slotPlace.LEFT);
+        devSlots[1] = new DevSlot(DevSlot.slotPlace.CENTER);
+        devSlots[2] = new DevSlot(DevSlot.slotPlace.RIGHT);
+        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
+        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
+        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
         strongbox = new Resources();
         popeAreaMap = new HashMap<>();
+        inactiveLeaderCards = new ArrayList<>();
+        activeLeaderCards = new ArrayList<>();
         popeAreaMap.put(PopeArea.FIRST, false);
         popeAreaMap.put(PopeArea.SECOND, false);
         popeAreaMap.put(PopeArea.THIRD, false);
@@ -45,6 +47,49 @@ public class PersonalBoard {
 //     for now, this considers strongbox only, the code will need to be improved.
 //     in case there is not enough resource, some error/exception must be included,
 //     or assertions before execution/during testing
+    public void putToWarehouseWithoutCheck(Resources res){
+        for(Resources.ResType resType: res.getResTypes()){
+            putFromTop(resType, res.getNumberOfType(resType));
+        }
+    }
+
+    public void putToWarehouse(Shelf.shelfPlace place, Resources res){
+        if (!res.isThisOneType()) {
+            System.out.println("Resource should be one type for this function");
+        } else {
+            switch (place){
+                case TOP:
+                    warehouse[0].PutResource(res.getOnlyType(), res.sumOfValues());
+                    break;
+                case MIDDLE:
+                    warehouse[1].PutResource(res.getOnlyType(), res.sumOfValues());
+                    break;
+                case BOTTOM:
+                    warehouse[3].PutResource(res.getOnlyType(), res.sumOfValues());
+                    break;
+            }
+        }
+    }
+
+    private boolean putFromTop(Resources.ResType resType, int size){
+        if (checkEnoughSize(0, size) && checkSameType(0, resType)){
+            warehouse[0].PutResource(resType, size);
+        } else if (checkEnoughSize(1, size) && checkSameType(1, resType)){
+            warehouse[0].PutResource(resType, size);
+        } else if (checkEnoughSize(2, size) && checkSameType(2, resType)){
+            warehouse[0].PutResource(resType, size);
+        } else return false;
+        return true;
+    }
+
+    private boolean checkEnoughSize(int index, int size){
+        return ((warehouse[index].GetNumberOfElements()) + size < warehouse[index].ShelfSize());
+    }
+
+    private boolean checkSameType(int index, Resources.ResType resType){
+        return (warehouse[index].GetShelfResType() == resType);
+    }
+
     public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R){
         System.out.println("Trying Default Prod: " + L1.toString() + " + " + L2.toString() + " = " + R.toString() + "\n");
         if (L1 != L2){
@@ -62,8 +107,8 @@ public class PersonalBoard {
         }
     }
 
-    public void increaseFaitPoint(){
-        faithPoints++;
+    public void increaseFaitPoint(int toAdd){
+        faithPoints += toAdd;
     }
 
     public void giveNextVaticanReport() {
@@ -82,6 +127,11 @@ public class PersonalBoard {
         // create a MV message inside Game
     }
 
+    public void putSelectedLeaderCards(List<LeaderCard> selectedCards) {
+        inactiveLeaderCards.addAll(selectedCards);
+    }
+
+
     // DEBUG methods
     public void setStrongbox(Resources strongbox) {
         this.strongbox = strongbox;
@@ -93,4 +143,16 @@ public class PersonalBoard {
         }
         System.out.println();
     }
+
+    public void printWarehouse() {
+    }
+
+    public void printDevSlots(){
+
+    }
+
+    public void printFaithTrack(){}
+
+    public void printLeaderCards(){}
+
 }

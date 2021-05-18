@@ -27,9 +27,9 @@ public class App {
         values1.add(Resources.ResType.STONE);
         values1.add(Resources.ResType.STONE);
 
-        warehouse[0] = new Shelf(1);
-        warehouse[1] = new Shelf(2);
-        warehouse[2] = new Shelf(3);
+        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
+        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
+        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
 
        System.out.println(warehouse[1].PutResource(values));
        System.out.println(warehouse[2].PutResource(values1));
@@ -52,18 +52,18 @@ public class App {
 
 //
 
-//        MarketTray test = new MarketTray();
-//        System.out.println("Initial MarketTray Position:, rows and columns start at 1");
-//        test.MarketTrayDraw();
-//
-//        System.out.println("After 2nd row selection");
-//        test.selectRow(2);
-//        test.MarketTrayDraw();
+        MarketTray test = new MarketTray();
+        System.out.println("Initial MarketTray Position:, rows and columns start at 1");
+        test.MarketTrayDraw();
+
+        System.out.println("After 2nd row selection");
+        test.selectRow(2);
+        test.MarketTrayDraw();
 //        test.ResourceDraw();
-//
-//        System.out.println("After 3rd column selection");
-//        test.selectColumn(3);
-//        test.MarketTrayDraw();
+
+        System.out.println("After 3rd column selection");
+        test.selectColumn(3);
+        test.MarketTrayDraw();
 //        test.ResourceDraw();
 //
 //        Player playerOne = new Player();

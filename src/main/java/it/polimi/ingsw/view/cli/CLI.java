@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.LeaderCard;
+import it.polimi.ingsw.model.Resources;
 import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
@@ -15,12 +16,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private final Client client;
     private final PrintWriter out;
     private final Scanner in;
-//    private Map<String, Runnable> displayTransitionMap = new HashMap<>();
     private Map<String, Runnable> displayNameMap = new HashMap<>();
     private Queue<Runnable> displayTransitionQueue = new ArrayDeque<>();
     private boolean shouldTerminateClient;
     private boolean stopIdle;
     private String generalmsg;
+    private CVEvent cvEventToDisplay;
+    private List<Listener<VCEvent>> listenerList = new ArrayList<>();
 
     public CLI(Client client) {
         this.client = client;
@@ -37,6 +39,20 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayFirstLogin", this::displayFirstLogin);
         displayNameMap.put("displayLogin", this::displayLogin);
         displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
+        displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
+        displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
+        displayNameMap.put("displayActionSelection", this::displayActionSelection);
+        displayNameMap.put("displayTakeResAction", this::displayTakeResAction);
+//        displayNameMap.put("displayMarketTray", this::displayMarketTray);
+//        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
+//        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
+//        displayNameMap.put("displayWarehouseAndStrongbox", this::displayWarehouseAndStrongbox);
+//        displayNameMap.put("displayDevSlots", this::displayDevSlots);
+//        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
+//        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
+//        displayNameMap.put("displayOtherPlayers", this::displayOtherPlayers);
+//        displayNameMap.put("displayEndTurn", this::displayEndTurn);
+
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
         startDisplayTransition();
@@ -104,33 +120,159 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         client.sendToServer(loginmsg);
     }
 
+    public void displayFourLeaderCard(){
+        out.println("Here are the four leader card options...");
+        Type type = new TypeToken<List<LeaderCard>>(){}.getType();
+        List<LeaderCard> fourLeaderCards = (List<LeaderCard>) cvEventToDisplay.getEventPayload(type);
+        for (int i = 0; i < fourLeaderCards.size(); i++){
+            out.println(i);
+            out.println(fourLeaderCards.get(i));
+        }
+        out.println("Enter the index of first leader card to keep:");
+        Integer firstIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+        out.println("Enter the index of second leader card to keep:");
+        Integer secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+        while (firstIndex.equals(secondIndex)) {
+            out.println("Please enter a different index than first selection:");
+            secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+        }
+        List<LeaderCard> twoLeaderCards = new ArrayList<>();
+        twoLeaderCards.add(fourLeaderCards.get(firstIndex));
+        twoLeaderCards.add(fourLeaderCards.get(secondIndex));
+        VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEADER_CARDS_CHOOSEN, twoLeaderCards);
+        publish(vcEvent);
+    }
+
+    public void displayTurnAssign(){
+        Integer turn = (Integer) cvEventToDisplay.getEventPayload(Integer.class);
+        switch (turn){
+            case 1:
+                out.println("You are the first player.");
+                out.println("You have the inkwell but no initial resources or faith points.");
+                // displayIdle automatically called
+                break;
+            case 2:
+                out.println("You are the second player.");
+                out.println("You will have one initial resource of your choosing in the warehouse.");
+                Resources.ResType initResType = InputConsumer.getResourceType(in, out);
+                Resources initResource = new Resources(initResType, 1);
+                VCEvent vcEvent = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResource);
+                publish(vcEvent);
+                break;
+            case 3:
+                out.println("You are the third player.");
+                out.println("You will start with one faith point on your faith track.");
+                out.println("You will have one initial resource of your choosing in the warehouse.");
+                Resources.ResType initResTypeTwo = InputConsumer.getResourceType(in, out);
+                Resources initResourceTwo = new Resources(initResTypeTwo, 1);
+                VCEvent vcEventTwo = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResourceTwo);
+                publish(vcEventTwo);
+                break;
+            case 4:
+                out.println("You are the fourth player.");
+                out.println("You will start with one faith point on your faith track.");
+                out.println("You will have two initial resources of your choosing in the warehouse.");
+                Resources.ResType initResTypeThree = InputConsumer.getResourceType(in, out);
+                Resources initResourceThree = new Resources(initResTypeThree, 1);
+                initResTypeThree = InputConsumer.getResourceType(in, out);
+                initResourceThree.add(initResTypeThree, 1);
+                VCEvent vcEventThree = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResourceThree);
+                publish(vcEventThree);
+                break;
+        }
+    }
+
+    public void displayActionSelection(){
+        out.println("It is your turn now!");
+        out.println("Enter the index of the action you want to take:");
+        out.println("[1] Take resource from market");
+        out.println("[2] Buy one development card");
+        out.println("[3] Activate the production");
+        out.println("[4] View market tray");
+        out.println("[5] View warehouse and strongbox");
+        out.println("[6] View development slots");
+        out.println("[7] View faith track");
+        out.println("[8] View leader cards");
+        out.println("[9] View other players");
+        out.println("[0] End turn");
+        int index = InputConsumer.getANumberBetween(in, out, 1, 9);
+        switch (index){
+            case 1:
+                addNextDisplay("displayTakeResAction");
+                break;
+            case 2:
+                addNextDisplay("displayBuyDevCardAction");
+                break;
+            case 3:
+                addNextDisplay("displayActivateProdAction");
+                break;
+            case 4:
+                addNextDisplay("displayMarketTray");
+                break;
+            case 5:
+                addNextDisplay("displayWarehouseAndStrongbox");
+                break;
+            case 6:
+                addNextDisplay("displayDevSlots");
+                break;
+            case 7:
+                addNextDisplay("displayFaithTrack");
+                break;
+            case 8:
+                addNextDisplay("displayLeaderCards");
+                break;
+            case 9:
+                addNextDisplay("displayOtherPlayers");
+                break;
+            case 10:
+                addNextDisplay("displayEndTurn");
+                break;
+        }
+    }
+
+    public void displayTakeResAction(){
+    }
+
+    public void displayMarketTray(){
+        // The print should be implemented in this function but there is no time for this
+        // also true for similar methods below
+        client.getMarketTray().MarketTrayDraw();
+    }
+
+    public void displayWarehouseAndStrongbox(){
+        client.getPersonalBoard().printWarehouse();
+        client.getPersonalBoard().printStrongBox();
+    }
+
+    public void displayDevSlots(){
+        client.getPersonalBoard().printDevSlots();
+    }
+
+    public void displayFaithTrack(){
+        client.getPersonalBoard().printFaithTrack();
+    }
+
+    public void printLeaderCards(){
+        client.getPersonalBoard().printLeaderCards();
+    }
+
+    public void displayOtherPlayers(){
+
+    }
+
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent){
-            CVEvent cvEvent = (CVEvent) event;
-            switch (cvEvent.getEventType()) {
+            cvEventToDisplay = (CVEvent) event;
+            switch (cvEventToDisplay.getEventType()) {
                 case CHOOSE_TWO_LEADER_CARD:
-                    out.println("Here are the four leader card options...");
-                    Type type = new TypeToken<List<LeaderCard>>(){}.getType();
-                    List<LeaderCard> fourLeaderCards = (List<LeaderCard>) cvEvent.getEventPayload(type);
-                    for (int i = 0; i < fourLeaderCards.size(); i++){
-                        out.println(i);
-                        out.println(fourLeaderCards.get(i));
-                    }
-                    out.println("Enter the index of first leader card to keep:");
-                    Integer firstIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
-                    out.println("Enter the index of second leader card to keep:");
-                    Integer secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
-                    while (firstIndex == secondIndex) {
-                        out.println("Please enter a different index than first selection:");
-                        secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
-                    }
-                    List<LeaderCard> twoLeaderCards = new ArrayList<>();
-                    twoLeaderCards.add(fourLeaderCards.get(firstIndex));
-                    twoLeaderCards.add(fourLeaderCards.get(secondIndex));
-                    VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEADER_CARDS_CHOOSEN, twoLeaderCards);
-                    Message leadercardmsg = new Message(Message.MsgType.VC_EVENT, vcEvent);
-                    client.sendToServer(leadercardmsg);
+                    addNextDisplay("displayFourLeaderCard");
+                    break;
+                case ASSIGN_TURN_ORDER:
+                    addNextDisplay("displayTurnAssign");
+                    break;
+                case BEGIN_TURN:
+                    addNextDisplay("displayActionSelection");
                     break;
             }
         } else if (event instanceof MVEvent){
@@ -142,17 +284,18 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void subscribe(Listener<VCEvent> listener) {
-
+        listenerList.add(listener);
     }
 
     @Override
     public void unsubscribe(Listener<VCEvent> listener) {
-
+        listenerList.remove(listener);
     }
 
     @Override
     public void publish(VCEvent event) {
-        client.sendToServer(new Message(Message.MsgType.VC_EVENT));
+        for(Listener<VCEvent> listener: listenerList)
+            listener.update(event);
     }
 
     @Override
@@ -166,7 +309,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         int symbolIndex = 0;
         boolean appendtoRight = true;
         int lastBarSize = 0;
-        out.print("Please wait... ");
+        out.print("Waiting for the other players... ");
         out.flush();
 
         while(!shouldStopDisplayIdle()){
@@ -227,7 +370,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public synchronized void displayLobby(){
         out.println("Waiting users in the lobby are:");
-        for(String username: client.getUserIDtoOtherUserNames().values())
+        for(String username: client.getUserIDtoUserNames().values())
             out.println(username);
     }
 

@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 
 public abstract class Event<T> {
     protected String jsonContent;
+    protected Integer userID = 0;
 
     public Event(Object object){
         this.jsonContent = JsonConverter.toJson(object);
@@ -13,6 +14,14 @@ public abstract class Event<T> {
 
     public String getJsonContent(){
         return jsonContent;
+    }
+
+    public void setUserID(Integer userID) {
+        this.userID = userID;
+    }
+
+    public Integer getUserID() {
+        return userID;
     }
 
     // use these two
