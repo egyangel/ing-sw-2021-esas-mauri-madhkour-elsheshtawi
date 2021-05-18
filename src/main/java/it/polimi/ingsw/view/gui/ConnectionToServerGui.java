@@ -11,6 +11,9 @@ public class ConnectionToServerGui extends JFrame{
 
     private boolean SinglePlayer= false;
     static JLayeredPane lpane = new JLayeredPane();
+    static JTextField serverIp;
+    static JTextField port;
+    static JButton submit;
 
     public ConnectionToServerGui() {
         super("Master of Renaissance");
@@ -39,12 +42,15 @@ public class ConnectionToServerGui extends JFrame{
 
 
         //adding p1 to lpane,a.k.a the base
-        lpane.add(p1, 0, 0);
+      //  lpane.add(p1, 0, 0);
 
 
         setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+
 
     }
 
@@ -72,10 +78,10 @@ public class ConnectionToServerGui extends JFrame{
         Port.setLabelFor(PortName);
 
 
-        top.add(IP_Server);
-        top.add(tfLastName);
-        top.add(Port);
-        top.add(PortName);
+        lpane.add(IP_Server);
+        lpane.add(tfLastName);
+        lpane.add(Port);
+        lpane.add(PortName);
 
 
         JPanel button = new JPanel();

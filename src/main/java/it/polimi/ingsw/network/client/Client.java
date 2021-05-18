@@ -30,6 +30,7 @@ public class Client implements Runnable{
 
     private PersonalBoard personalBoard;
     private Map<Integer, String> userIDtoOtherUserNames;
+    private GUI gui;
 
     public Map<Integer, String> getUserIDtoOtherUserNames() {
         return userIDtoOtherUserNames;
@@ -114,4 +115,7 @@ public class Client implements Runnable{
         else System.exit(0);
     }
 
+    public void setGui(GUI g) {
+        gui = g;
+    }
 }
