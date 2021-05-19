@@ -109,9 +109,9 @@ public class Controller implements Listener<VCEvent> {
                 char firstLetter = rowColumnNumber.charAt(0);
                 int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(0)));
                 if (firstLetter == 'R') {
-                    marbleList = game.getMarketTray().selectRowMarble(index);
+                    marbleList = game.getMarketTray().selectRow(index);
                 } else if (firstLetter == 'C') {
-                    marbleList = game.getMarketTray().selectColumnMarble(index);
+                    marbleList = game.getMarketTray().selectColumn(index);
                 } else System.out.println("Bad row/column and index came to server");
                 cvEvent = new CVEvent(CVEvent.EventType.MARBLELIST_SENT, marbleList);
                 userIDtoVirtualViews.get(userID).update(cvEvent);

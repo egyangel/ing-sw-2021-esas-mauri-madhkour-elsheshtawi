@@ -45,7 +45,7 @@ public class DevCard {
     public String toString(){
         return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " Victory Points: " + victoryPoints;
     }
-
+        // it is wrong, i have to implement.
     public Resources produce(){
         return null;
     }

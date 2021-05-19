@@ -59,6 +59,7 @@ public class PersonalBoard {
         } else {
             switch (place){
                 case TOP:
+                    //you can call directly my methods, since you already know from the previous check that res it is composed by only one type.
                     warehouse[0].PutResource(res.getOnlyType(), res.sumOfValues());
                     break;
                 case MIDDLE:

@@ -61,6 +61,56 @@ public class WaitingRoomGui extends JFrame{
 
 
         top.add(Nickname);
+        //lobby player
+
+        GridBagLayout layout = new GridBagLayout();
+        top.setLayout(layout);
+
+        JLabel Player1= new JLabel();
+        Player1.setForeground(Color.BLACK);
+        Player1.setFont(new Font("Arial Black", 0, 14));
+        JLabel Player2= new JLabel();
+        Player2.setForeground(Color.BLACK);
+        Player2.setFont(new Font("Arial Black", 0, 14));
+        JLabel Player3= new JLabel();
+        Player3.setForeground(Color.BLACK);
+        Player3.setFont(new Font("Arial Black", 0, 14));
+        JLabel Player4= new JLabel();
+        Player4.setForeground(Color.BLACK);
+        Player4.setFont(new Font("Arial Black", 0, 14));
+
+
+
+
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.5;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        top.add(Player1, gbc);
+
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.fill = GridBagConstraints.HORIZONTAL;
+        gbc2.weightx = 0.5;
+        gbc2.gridx = 1;
+        gbc2.gridy = 0;
+        top.add(Player2, gbc2);
+
+        GridBagConstraints gbc3 = new GridBagConstraints();
+        gbc3.fill = GridBagConstraints.HORIZONTAL;
+        gbc3.weightx = 0.5;
+        gbc3.gridx = 0;
+        gbc3.gridy = 1;
+        top.add(Player3, gbc3);
+
+        GridBagConstraints gbc4 = new GridBagConstraints();
+        gbc4.fill = GridBagConstraints.HORIZONTAL;
+        gbc4.weightx = 0.5;
+        gbc4.gridx = 1;
+        gbc4.gridy = 1;
+        top.add(Player4, gbc4);
 
 
     }

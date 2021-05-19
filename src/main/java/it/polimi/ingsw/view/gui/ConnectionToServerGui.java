@@ -15,7 +15,7 @@ public class ConnectionToServerGui extends JFrame{
     public ConnectionToServerGui() {
         super("Master of Renaissance");
         prepareSecondGUI();
-        showAction();
+
     }
 
     private void prepareSecondGUI() {
@@ -40,7 +40,8 @@ public class ConnectionToServerGui extends JFrame{
 
         //adding p1 to lpane,a.k.a the base
         lpane.add(p1, 0, 0);
-
+        showAction();
+        System.out.println(Thread.currentThread().getName()); // Stampa "main"
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -49,33 +50,74 @@ public class ConnectionToServerGui extends JFrame{
     }
 
     private void showAction() {
+
         JPanel top = new JPanel();
         //setting the pos and dim of top
-        top.setBounds(110, 160, 190, 40);
+        top.setBounds(100, 130, 250, 100);
         top.setOpaque(false);
-        //adding top to lpane,a.k.a the base
-        lpane.add(top, 1, 0);
-        top.setLayout(new GridLayout(2,2));
 
 
+        GridBagLayout layout = new GridBagLayout();
+        top.setLayout(layout);
 
         JLabel IP_Server = new JLabel("Server IP");
         IP_Server.setForeground(Color.BLACK);
         IP_Server.setFont(new Font("Arial Black", 0, 14));
-        JTextField tfLastName = new JTextField(12);
-        IP_Server.setLabelFor(tfLastName);
+        JTextField ServerName = new JTextField(12);
+        //IP_Server.setLabelFor(ServerName);
 
         JLabel Port = new JLabel("Port ");
         Port.setForeground(Color.BLACK);
         Port.setFont(new Font("Arial Black", 0, 14));
         JTextField PortName = new JTextField(12);
-        Port.setLabelFor(PortName);
+
+        //Port.setLabelFor(PortName);
 
 
-        top.add(IP_Server);
-        top.add(tfLastName);
-        top.add(Port);
-        top.add(PortName);
+        JLabel message = new JLabel(" ");
+        message.setForeground(Color.BLACK);
+        message.setFont(new Font("Arial Black", 2, 16));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.5;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        top.add(IP_Server, gbc); //gdc reset
+
+
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.fill = GridBagConstraints.HORIZONTAL;
+        gbc2.weightx = 0.5;
+        gbc2.gridx = 1;
+        gbc2.gridy = 0;
+        top.add(ServerName, gbc2);
+
+        GridBagConstraints gbc3 = new GridBagConstraints();
+        gbc3.fill = GridBagConstraints.HORIZONTAL;
+        gbc3.weightx = 0.5;
+        gbc3.gridx = 0;
+        gbc3.gridy = 1;
+        top.add(Port, gbc3);
+
+        GridBagConstraints gbc4 = new GridBagConstraints();
+        gbc4.fill = GridBagConstraints.HORIZONTAL;
+        gbc4.weightx = 0.5;
+        gbc4.gridx = 1;
+        gbc4.gridy = 1;
+        top.add(PortName, gbc4);
+
+        GridBagConstraints gbc5 = new GridBagConstraints();
+        gbc5.fill = GridBagConstraints.HORIZONTAL;
+        gbc5.weightx = 1;
+        gbc5.gridx = 0;
+        gbc5.gridy = 2;
+        gbc5.gridwidth = 2; //the name is very long, the element are spaced
+
+        top.add(message, gbc5);
+        //adding top to lpane,a.k.a the base
+        lpane.add(top, 1, 0);
 
 
         JPanel button = new JPanel();
@@ -101,8 +143,14 @@ public class ConnectionToServerGui extends JFrame{
         Connect.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
 
-                new GUI().displayLogin();
-                dispose();
+                if((ServerName.getText().isEmpty() || !ServerName.getText().equals("localhost")) && (PortName.getText().isEmpty() || !PortName.getText().equals("3000")))
+                    message.setText("Server IP or Port wrong");
+
+                else {
+                    new GUI().displayLogin();
+                    dispose();
+                }
+
 
             }});
 

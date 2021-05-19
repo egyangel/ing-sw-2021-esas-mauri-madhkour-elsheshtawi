@@ -13,6 +13,12 @@ public class DefaultProd {
         // code for GUI must be different since for now the whole LHS is represented by one Resources object
         this.LHS.add(L1, 1);
     }
+    public Resources getLeftRes(){
+         return LHS;
+    }
+    public Resources getRightRes(){
+        return RHS;
+    }
 
     public void putBottomLeftResource(Resources.ResType L2){
         // code for GUI must be different since for now the whole LHS is represented by one Resources object
