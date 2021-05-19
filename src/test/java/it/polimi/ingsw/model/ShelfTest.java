@@ -13,29 +13,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ShelfTest {
-    private  List<Resources.ResType> values= new ArrayList<>() ;
-    private  List<Resources.ResType> values1= new ArrayList<>() ;
-    private  Shelf[] warehouse= new Shelf[3];
-    private  List<Resources.ResType> draw= new ArrayList<>(Arrays.asList(Resources.ResType.STONE,Resources.ResType.COIN,Resources.ResType.SHIELD,Resources.ResType.SERVANT));
+    private  static List<Resources.ResType> values= new ArrayList<>() ;
+    private  static List<Resources.ResType> values1= new ArrayList<>() ;
+    private  static Shelf[] warehouse= new Shelf[3];
+    private  static List<Resources.ResType> draw= new ArrayList<>(Arrays.asList(Resources.ResType.STONE,Resources.ResType.COIN,Resources.ResType.SHIELD,Resources.ResType.SERVANT));
 
-    @BeforeClass
-    public void setUpClass() {
-
-        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
-        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
-        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
-
-        values.add(draw.get(0));
-        values.add(draw.get(0));
-        values1.add(draw.get(1));
-        values1.add(draw.get(1));
-        values1.add(draw.get(1));
-
-
-    }
 
     @Test
     void putResource() {
+
         warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
         warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
         warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
@@ -48,7 +34,7 @@ class ShelfTest {
 
         assertNotEquals(0,warehouse[0].PutResource(values));
         assertEquals(0,warehouse[1].PutResource(values));
-
+        //warehouse=null;
 
     }
 
