@@ -74,24 +74,18 @@ public class Shelf {
             return 0;
     }
 
-    public String SwapShelf(Shelf otherShelf){
-      //  ResType temp = otherShelf.GetShelfResType();
-        //int numOfResTemp = otherShelf.GetNumberOfElements();
-            Shelf temp=otherShelf;
-
+    public boolean SwapShelf(Shelf otherShelf){
         if ( otherShelf.GetNumberOfElements() > this.maxSize || this.GetNumberOfElements() > otherShelf.ShelfSize() )
-            return "Incorrect action";
+            return false;
         else{
+            List<Resources.ResType> resTypeList = new ArrayList<>();
+            resTypeList.addAll(otherShelf.shelf());
             otherShelf.ClearShelf();
-
-                otherShelf= this;
-
-                this.ClearShelf();
-                this.PutResource(temp.shelf());
-            }
-
-        return "Swap done";
-
+            otherShelf.PutResource(this.shelf());
+            this.ClearShelf();
+            this.PutResource(resTypeList);
+            return true;
+        }
     }
 
     public boolean isEmpty(){
@@ -116,7 +110,8 @@ public class Shelf {
     public void ClearShelf(){
         this.resources.clear();
     }
-    public void GetShelfContent(){
-        System.out.println("There are => "+this.GetNumberOfElements()+" of "+ this.GetShelfResType());
+    public String describeShelf(){
+        String string = this.GetNumberOfElements()+" of "+ this.GetShelfResType();
+        return string;
     }
 }

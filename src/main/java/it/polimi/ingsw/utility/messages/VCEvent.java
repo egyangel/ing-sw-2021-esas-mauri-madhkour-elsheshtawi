@@ -7,6 +7,8 @@ public class VCEvent extends Event{
     public enum eventType {
         LEADER_CARDS_CHOOSEN,
         INIT_RES_CHOOSEN,
+        ROW_COLUMN_INDEX_CHOOSEN,
+        WHITE_MARBLES_CONVERTED_IF_NECESSARY,
         TAKE_RES_ACTION,
         BUY_DEV_CARD_ACTION,
         ACTIVATE_PROD_ACTION,

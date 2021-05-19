@@ -8,12 +8,19 @@ public class CVEvent extends Event{
         CHOOSE_TWO_LEADER_CARD,
         ASSIGN_TURN_ORDER,
         BEGIN_TURN,
+        MARBLELIST_SENT,
+        ASK_SWAP_SHELVES,
         ASK_WHICH_COLUMN_ROW,
         ASK_WHICH_DEV_CARD,
         ASK_WHICH_PROD_SLOTS,
         ASK_WHICH_LEADER_CARD_TO_ACTIVATE
     }
     private EventType eventType;
+
+    public CVEvent(EventType eventType) {
+        super();
+        this.eventType = eventType;
+    }
 
     public CVEvent(EventType eventType, Object object){
         super(object);

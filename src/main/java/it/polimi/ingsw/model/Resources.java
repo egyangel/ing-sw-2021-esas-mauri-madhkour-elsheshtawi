@@ -5,6 +5,11 @@ import java.util.*;
 public class Resources {
     public enum ResType {
         STONE,SHIELD,SERVANT,COIN,FAITH;
+
+        @Override
+        public String toString() {
+            return this.name();
+        }
     }
     private Map<ResType, Integer> values = new HashMap<>();
 

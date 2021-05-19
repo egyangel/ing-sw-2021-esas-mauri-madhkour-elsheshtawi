@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.Resources;
+import it.polimi.ingsw.model.enumclasses.MarbleColor;
 import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.messages.*;
@@ -55,7 +56,7 @@ public class Controller implements Listener<VCEvent> {
     private void sendTurnOrderAssign(){
         TurnManager.assignTurnOrder();
         for(Map.Entry<Integer, VirtualView> entry: userIDtoVirtualViews.entrySet()){
-            Integer userTurn = TurnManager.getCurrentPlayerIndex() + 1;
+            Integer userTurn = TurnManager.getIndexOfUserID(entry.getKey());
             InitFatihPoints(entry.getKey(), userTurn);
             CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER,userTurn);
             entry.getValue().update(turnAssignEvent);
@@ -67,17 +68,22 @@ public class Controller implements Listener<VCEvent> {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }
     }
-// todo: omer will continue from here
-    private void beginFirstTurn(){
-
+    private void beginTurn(){
+        Integer currentUserID = TurnManager.getCurrentPlayerID();
+        CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.BEGIN_TURN);
+        userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
     }
 
     @Override
     public void update(VCEvent vcEvent) {
         Integer userID = vcEvent.getUserID();
-        switch (vcEvent.getEventType()){
+        Resources resources;
+        Resources resourcesWaitingToBePutIntoWarehouse;
+        CVEvent cvEvent;
+        switch (vcEvent.getEventType()) {
             case LEADER_CARDS_CHOOSEN:
-                Type type = new TypeToken<List<LeaderCard>>(){}.getType();
+                Type type = new TypeToken<List<LeaderCard>>() {
+                }.getType();
                 List<LeaderCard> selectedCards = (List<LeaderCard>) vcEvent.getEventPayload(type);
 //                PRINT CARDS FOR DEBUG
 //                for(LeaderCard card: selectedCards){
@@ -85,17 +91,35 @@ public class Controller implements Listener<VCEvent> {
 //                }
                 game.getPersonalBoard(userID).putSelectedLeaderCards(selectedCards);
                 TurnManager.registerResponse(userID);
-                if (TurnManager.hasAllClientsResponded()){
+                if (TurnManager.hasAllClientsResponded()) {
                     sendTurnOrderAssign();
                 }
                 break;
             case INIT_RES_CHOOSEN:
-                Resources initRes = (Resources) vcEvent.getEventPayload(Resources.class);
-                game.getPersonalBoard(userID).putToWarehouseWithoutCheck(initRes);
+                resources = (Resources) vcEvent.getEventPayload(Resources.class);
+                game.getPersonalBoard(userID).putToWarehouseWithoutCheck(resources);
                 TurnManager.registerResponse(userID);
-                if (TurnManager.hasAllClientsResponded()){
-                    beginFirstTurn();
+                if (TurnManager.hasAllClientsResponded()) {
+                    beginTurn();
                 }
+                break;
+            case ROW_COLUMN_INDEX_CHOOSEN:
+                String rowColumnNumber = (String) vcEvent.getEventPayload(String.class);
+                List<MarbleColor> marbleList = null;
+                char firstLetter = rowColumnNumber.charAt(0);
+                int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(0)));
+                if (firstLetter == 'R') {
+                    marbleList = game.getMarketTray().selectRowMarble(index);
+                } else if (firstLetter == 'C') {
+                    marbleList = game.getMarketTray().selectColumnMarble(index);
+                } else System.out.println("Bad row/column and index came to server");
+                cvEvent = new CVEvent(CVEvent.EventType.MARBLELIST_SENT, marbleList);
+                userIDtoVirtualViews.get(userID).update(cvEvent);
+                break;
+            case WHITE_MARBLES_CONVERTED_IF_NECESSARY:
+                resourcesWaitingToBePutIntoWarehouse = (Resources) vcEvent.getEventPayload(Resources.class);
+                cvEvent = new CVEvent(CVEvent.EventType.ASK_SWAP_SHELVES);
+                userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
         }
     }

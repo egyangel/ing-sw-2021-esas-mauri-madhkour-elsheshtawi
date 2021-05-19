@@ -3,6 +3,8 @@ package it.polimi.ingsw.view.cli;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.Resources;
+import it.polimi.ingsw.model.SpecialAbility;
+import it.polimi.ingsw.model.enumclasses.MarbleColor;
 import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
@@ -195,7 +197,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[8] View leader cards");
         out.println("[9] View other players");
         out.println("[0] End turn");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 9);
+        int index = InputConsumer.getANumberBetween(in, out, 0, 9);
         switch (index){
             case 1:
                 addNextDisplay("displayTakeResAction");
@@ -224,13 +226,16 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case 9:
                 addNextDisplay("displayOtherPlayers");
                 break;
-            case 10:
+            case 0:
                 addNextDisplay("displayEndTurn");
                 break;
         }
     }
 
     public void displayTakeResAction(){
+        String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
+        VCEvent vcEvent = new VCEvent(VCEvent.eventType.ROW_COLUMN_INDEX_CHOOSEN, rowColumnNumber);
+        publish(vcEvent);
     }
 
     public void displayMarketTray(){
@@ -240,8 +245,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayWarehouseAndStrongbox(){
-        client.getPersonalBoard().printWarehouse();
-        client.getPersonalBoard().printStrongBox();
+        displayWarehouse();
+        displayStrongbox();
     }
 
     public void displayDevSlots(){
@@ -260,6 +265,74 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     }
 
+    public void displayConvertWhiteInto(){
+        Type type = new TypeToken<List<MarbleColor>>(){}.getType();
+        List<MarbleColor> marbleList = (List<MarbleColor>) cvEventToDisplay.getEventPayload(type);
+        List<LeaderCard> whiteConverters = new ArrayList<>();
+        for (LeaderCard leaderCard : client.getPersonalBoard().getActiveLeaderCards()) {
+            if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
+                whiteConverters.add(leaderCard);
+            }
+        }
+        int whiteMarbles = 0;
+        Resources resources = new Resources();
+        for(MarbleColor marble: marbleList) {
+            if(marble.getValue() == MarbleColor.WHITE) whiteMarbles++;
+        }
+        if (whiteConverters.size() == 0 || whiteMarbles == 0){
+            for(MarbleColor marble: marbleList){
+                resources.add(marble.getResourceType(),1);
+            }
+        } else if(whiteConverters.size() == 1){
+            for(MarbleColor marble: marbleList){
+                Resources.ResType resType = marble.getResourceType();
+                if (resType == null) {
+                    resType = whiteConverters.get(0).getAbility().getResType();
+                    out.println("Your leader converted a white marble into " + resType.toString());
+                }
+                resources.add(resType,1);
+            }
+        } else if(whiteConverters.size() == 2){
+            out.println("You have two active white marble converter leader cards, and received " + whiteMarbles + " white marble from market tray");
+            out.println("You can convert the white marbles into [1]" + whiteConverters.get(0).getAbility().getResType().toString() + " OR [2]" + whiteConverters.get(1).getAbility().getResType().toString());
+            while(whiteMarbles > 0){
+                out.println("Enter the index of resource type into which you want to convert one white marble");
+                int index = InputConsumer.getANumberBetween(in, out, 1, 2);
+                index--;
+                resources.add(whiteConverters.get(index).getAbility().getResType(),1);
+                whiteMarbles--;
+                out.println("You now have " + whiteMarbles + " white marble.");
+            }
+            for(MarbleColor marble: marbleList){
+                Resources.ResType resType = marble.getResourceType();
+                if (resType != null)
+                    resources.add(resType,1);
+            }
+        }
+        VCEvent vcEvent = new VCEvent(VCEvent.eventType.WHITE_MARBLES_CONVERTED_IF_NECESSARY, resources);
+        publish(vcEvent);
+    }
+
+    public void displayAskShelves(){
+        displayWarehouse();
+        out.println("Do you want to swap shelves before putting resources into the warehouse?");
+        boolean answer = InputConsumer.getYesOrNo(in, out);
+        if (answer){
+
+        } else {
+//            VCEvent vcEvent = new VCEvent(VCEvent.eventType.ROW_COLUMN_INDEX_CHOOSEN, rowColumnNumber);
+//            publish(vcEvent);
+        }
+    }
+
+    public void displayWarehouse(){
+        out.println(client.getPersonalBoard().describeWarehouse());
+    }
+
+    public void displayStrongbox(){
+        out.println(client.getPersonalBoard().describeStrongbox());
+    }
+
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent){
@@ -274,6 +347,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 case BEGIN_TURN:
                     addNextDisplay("displayActionSelection");
                     break;
+                case MARBLELIST_SENT:
+                    addNextDisplay("displayConvertWhiteInto");
+                    break;
+                case ASK_SWAP_SHELVES:
+                    addNextDisplay("displayAskSwapShelves");
             }
         } else if (event instanceof MVEvent){
 

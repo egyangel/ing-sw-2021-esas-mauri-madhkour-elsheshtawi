@@ -4,9 +4,11 @@ import it.polimi.ingsw.utility.JsonConverter;
 
 import java.lang.reflect.Type;
 
-public abstract class Event<T> {
+public abstract class Event {
     protected String jsonContent;
     protected Integer userID = 0;
+
+    public Event(){};
 
     public Event(Object object){
         this.jsonContent = JsonConverter.toJson(object);

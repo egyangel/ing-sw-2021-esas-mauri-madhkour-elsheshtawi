@@ -59,6 +59,28 @@ public class MarketTray {
     @ && !\result.equals(NULL)
     */
 
+    public List<MarbleColor> selectRowMarble(int row){
+        List<MarbleColor> list = new ArrayList<>();
+        MarbleColor temp;
+        temp = marketTray[row-1][0];
+        for (int j = 0; j < column; j++) list.add(marketTray[row-1][j]);
+        for (int j = 0; j < column-1; j++) marketTray[row-1][j] = marketTray[row-1][j+1];
+        marketTray[row-1][column-1] = OutMarble;
+        OutMarble = temp;
+        return list;
+    }
+
+    public List<MarbleColor> selectColumnMarble(int column){
+        List<MarbleColor> list = new ArrayList<>();
+        MarbleColor temp;
+        temp = marketTray[0][column-1];
+        for (int i = 0; i < row; i++) list.add(marketTray[i][column-1]);
+        for (int i = 0; i < row-1; i++) marketTray[i][column-1] = marketTray[i+1][column-1];
+        marketTray[row-1][column-1] = OutMarble;
+        OutMarble = temp;
+        return list;
+    }
+
     public Resources selectRow (int row) {
         Resources resources = new Resources();
         MarbleColor temp;
@@ -82,7 +104,7 @@ public class MarketTray {
         return resources;
     }
 
-    //TODO: add "C-1" "C-2" and "R-3" etc label words in appropriate places
+    //TODO: FOR AMOR: optional: add "C-1" "C-2" and "R-3" etc label words in appropriate places
     public void MarketTrayDraw(){
         System.out.println(String.format("%70s",OutMarble.getColor()));
         for (int i = 0; i < row; i++) {

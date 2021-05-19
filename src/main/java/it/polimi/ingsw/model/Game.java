@@ -64,6 +64,10 @@ public class Game implements Publisher<MVEvent> {
         return userIDtoBoards.get(userID);
     }
 
+    public MarketTray getMarketTray(){
+        return market;
+    }
+
     public void shuffleLeaderCards() {
         Collections.shuffle(leaderCardList);
     }
@@ -72,6 +76,19 @@ public class Game implements Publisher<MVEvent> {
         List<LeaderCard> list = new ArrayList<>();
         list.addAll(leaderCardList.subList(counterOfCalls * 4, (counterOfCalls * 4) + 4));
         return list;
+    }
+
+    public List<Resources.ResType> getWhiteMarbleConverters(Integer userID){
+        PersonalBoard personalBoard = userIDtoBoards.get(userID);
+        List<LeaderCard> leaderList = new ArrayList<>();
+        List<Resources.ResType> resTypeList = new ArrayList<>();
+        leaderList.addAll(personalBoard.getActiveLeaderCards());
+        for(LeaderCard card: leaderList){
+            if (card.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE){
+                resTypeList.add(card.getAbility().getResType());
+            }
+        }
+        return resTypeList;
     }
 
     @Override

@@ -103,4 +103,35 @@ public class InputConsumer {
         resType = Resources.ResType.valueOf(input);
         return resType;
     }
+
+    public static String getMarketRowColumnIndex(Scanner in, PrintWriter out) {
+        out.println("[C-1] [C-2] [C-3] [C-4] [R-1] [R-2] [R-3]");
+        out.println("Enter column/row and index as shown above, indexes start at left clomn and top row:");
+        String input;
+        input = in.nextLine().toUpperCase();
+        char firstLetter = input.charAt(0);
+        char midLetter = input.charAt(1);
+        int number = Integer.parseInt(String.valueOf(input.charAt(2)));
+        while (!((firstLetter == 'C' || firstLetter == 'R') && (midLetter == '-') && (number > 0 && number < 5) && (!input.equals("R-4")))){
+            out.println("Invalid input.");
+            out.println("Enter one of the inputs as shown: [C-1] [C-2] [C-3] [C-4] [R-1] [R-2] [R-3]");
+            input = in.nextLine().toUpperCase();
+            firstLetter = input.charAt(0);
+            midLetter = input.charAt(1);
+            number = Integer.parseInt(String.valueOf(input.charAt(2)));
+        }
+        return input;
+    }
+
+    public static boolean getYesOrNo(Scanner in, PrintWriter out){
+        out.println("Please enter 'yes' or 'no':");
+        String input = in.nextLine().toUpperCase();
+        while (!(input.equals("YES") || (input.equals("NO")))){
+            out.println("Invalid input.");
+            out.println("Please enter 'yes' or 'no':");
+            input = in.nextLine().toUpperCase();
+        }
+        if (input.equals("YES")) return true;
+        else return false;
+    }
 }

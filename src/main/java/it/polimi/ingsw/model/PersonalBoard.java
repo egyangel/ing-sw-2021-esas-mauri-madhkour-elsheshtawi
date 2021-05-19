@@ -65,7 +65,7 @@ public class PersonalBoard {
                     warehouse[1].PutResource(res.getOnlyType(), res.sumOfValues());
                     break;
                 case BOTTOM:
-                    warehouse[3].PutResource(res.getOnlyType(), res.sumOfValues());
+                    warehouse[2].PutResource(res.getOnlyType(), res.sumOfValues());
                     break;
             }
         }
@@ -131,20 +131,24 @@ public class PersonalBoard {
         inactiveLeaderCards.addAll(selectedCards);
     }
 
+    public List<LeaderCard> getActiveLeaderCards(){
+        return activeLeaderCards;
+    }
+
+    public String describeStrongbox() {
+        String string = "Resources inside strong box: " + strongbox.toString();
+        return string;
+    }
 
     // DEBUG methods
     public void setStrongbox(Resources strongbox) {
         this.strongbox = strongbox;
     }
 
-    public void printStrongBox() {
-        for (Resources.ResType type : Resources.ResType.values()) {
-            System.out.println("There is " + strongbox.getNumberOfType(type) + " " + type.toString());
-        }
-        System.out.println();
-    }
 
-    public void printWarehouse() {
+    public String describeWarehouse() {
+        String string = "Top Shelf: " + warehouse[0].describeShelf() + "\nMiddle Shelf: " + warehouse[1].describeShelf() + "\nBottom Shelf: " + warehouse[2].describeShelf();
+        return string;
     }
 
     public void printDevSlots(){
