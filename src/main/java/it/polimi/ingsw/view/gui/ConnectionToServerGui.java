@@ -162,8 +162,9 @@ public class ConnectionToServerGui extends JFrame{
 
         Connect.setActionCommand("Connect");
            //adding both buttons on top panel
-        button.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        button.add(Connect);
+        //TODO note from omer: below 2 lines couldnt compile so I commented out
+//        button.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
+//        button.add(Connect);
 
 
     }

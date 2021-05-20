@@ -191,6 +191,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
         out.println("[4] View market tray");    //displayMarketTray() DONE
+        out.println("[5] View development cards available");
         out.println("[5] View and modify warehouse"); //displayAskModifyWarehouse() DONE
         out.println("[6] View strongbox");  //displayStrongbox() DONE
         out.println("[6] View development slots");
@@ -274,7 +275,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     //TODO after implementing all actions, don't forget to send updated personal board (for example take resource end result created
-    // inside displayPutResourceTaken, or discarded resources for other's faith points)
+    // inside displayPutResourceTaken, or discarded resources for other's faith points, or if vatican report triggered)
     public void displayEndTurn(){
     }
 
@@ -284,10 +285,17 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
+    public void displayBuyDevCardAction(){
+
+    }
+
     public void displayMarketTray(){
-        // The print should be implemented in this function but there is no time for this
-        // also true for similar methods below
-        client.getMarketTray().MarketTrayDraw();
+        // TODO dont assign market tray to client, make server send string version of market tray at the beginning of turn
+        out.println(client.getMarketTrayDescription());
+    }
+
+    public void displayDevCardMatrix(){
+
     }
 
     public void displayAskModifyWarehouse(){
@@ -319,7 +327,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayFaithTrack(){
-        client.getPersonalBoard().printFaithTrack();
+        out.println(client.getPersonalBoard().describeFaithTrack());
     }
 
     public void displayLeaderCards(){
@@ -381,6 +389,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayPutResourcesTaken(){
         Resources resources = (Resources) cvEventToDisplay.getEventPayload(Resources.class);
         for(Resources.ResType resType: resources.getResTypes()){
+            if(resType == Resources.ResType.FAITH){
+                client.getPersonalBoard().increaseFaitPoint(resources.getNumberOfType(resType));
+                continue;
+            }
             Resources oneTypeRes = resources.cloneThisType(resType);
             out.println("Where do you want to put " + oneTypeRes.sumOfValues() + " " + oneTypeRes.getOnlyType().toString());
             Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
@@ -397,8 +409,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 place = InputConsumer.getShelfPlace(in, out);
                 result = client.getPersonalBoard().putToWarehouse(place, oneTypeRes);
             }
-            addNextDisplay("displayMinorActions");
         }
+        addNextDisplay("displayMinorActions");
     }
 
     public void displayStrongbox(){
@@ -437,6 +449,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     client.setPersonalBoard((PersonalBoard) mvEvent.getEventPayload(PersonalBoard.class));
                     out.println("Discard from shelf successful!");
                     addNextDisplay("displayAskModifyWarehouse");
+                    break;
+                case MOST_RECENT_MARKETTRAY_SENT:
+                    client.setMarketTrayDescription((String) mvEvent.getEventPayload(String.class));
+                    break;
+                case MOST_RECENT_DEVCARDMATRIX_SENT:
+                    client.setDevCardMatrixDescription((String) mvEvent.getEventPayload(String.class));
+                    break;
+                case OTHER_PERSONALBOARDS_SENT:
                     break;
             }
         } else {

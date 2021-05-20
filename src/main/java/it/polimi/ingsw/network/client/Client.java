@@ -25,7 +25,8 @@ public class Client implements Runnable{
     public static final int MAX_PORT = SERVER_MAX_PORT;
 
     private PersonalBoard personalBoard;
-    private MarketTray marketTray;
+    private String marketTrayDescription;
+    private String devCardMatrixDescription;
     private List<PersonalBoard> otherPersonalBoardImages;
     private Map<Integer, String> userIDtoUserNames;
     private Map<Integer, String> userIDtoOtherUserNames;
@@ -102,12 +103,20 @@ public class Client implements Runnable{
         this.personalBoard = personalBoard;
     }
 
-    public MarketTray getMarketTray() {
-        return marketTray;
+    public String getMarketTrayDescription() {
+        return marketTrayDescription;
     }
 
-    public void setMarketTray(MarketTray marketTray) {
-        this.marketTray = marketTray;
+    public void setMarketTrayDescription(String marketTrayDescription) {
+        this.marketTrayDescription = marketTrayDescription;
+    }
+
+    public String getDevCardMatrixDescription() {
+        return devCardMatrixDescription;
+    }
+
+    public void setDevCardMatrixDescription(String devCardMatrixDescription){
+        this.devCardMatrixDescription = devCardMatrixDescription;
     }
 
     // METHODS THAT WON'T BE USED

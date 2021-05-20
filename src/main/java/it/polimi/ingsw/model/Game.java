@@ -93,6 +93,21 @@ public class Game implements Publisher<MVEvent> {
         return resTypeList;
     }
 
+    public void sendMarketAndDevCardMatrixTo(Integer userID){
+        String marketTrayString = market.describeMarketTray();
+        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MOST_RECENT_MARKETTRAY_SENT, marketTrayString);
+        publish(userID, marketUpdate);
+        String devCardMatrixString = describeDevCardMatrix();
+        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.MOST_RECENT_DEVCARDMATRIX_SENT, devCardMatrixString);
+        publish(userID, devCardMatrixUpdate);
+    }
+
+    //TODO FOR AMOR: return a single string that consists of top devcards in the 3x4 matrix
+    // it would be best if 3x4 view of the matrix can be preserved
+    private String describeDevCardMatrix(){
+        return null;
+    }
+
     @Override
     public void subscribe(Listener<MVEvent> listener) {
         listenerList.add(listener);

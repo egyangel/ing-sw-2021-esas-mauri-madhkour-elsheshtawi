@@ -5,6 +5,9 @@ import it.polimi.ingsw.utility.JsonConverter;
 // events after update of model in server
 public class MVEvent extends Event{
     public enum EventType {
+        MOST_RECENT_MARKETTRAY_SENT,
+        MOST_RECENT_DEVCARDMATRIX_SENT,
+        OTHER_PERSONALBOARDS_SENT,
         SWAPPED_SHELVES,
         DISCARDED_FROM_SHELF
     }

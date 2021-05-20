@@ -162,7 +162,11 @@ public class PersonalBoard {
 
     }
 
-    public void printFaithTrack(){}
+    //TODO FOR AMOR: same for faith track, try to show special pope fields
+    public String describeFaithTrack() {
+        return null;
+    }
+
 
     public void printLeaderCards(){}
 

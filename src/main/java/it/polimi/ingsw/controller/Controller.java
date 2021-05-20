@@ -72,6 +72,7 @@ public class Controller implements Listener<VCEvent> {
     }
     private void beginTurn(){
         Integer currentUserID = TurnManager.getCurrentPlayerID();
+        game.sendMarketAndDevCardMatrixTo(currentUserID);
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.BEGIN_TURN);
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
     }
