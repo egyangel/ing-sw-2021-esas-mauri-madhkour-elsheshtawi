@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 
+import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.JsonConverter;
 import it.polimi.ingsw.utility.messages.Listener;
 import it.polimi.ingsw.utility.messages.MVEvent;
@@ -15,6 +16,7 @@ public class Game implements Publisher<MVEvent> {
     private List<Listener<MVEvent>> listenerList = new ArrayList<>();
     private Map<Integer,Player> userIDtoPlayers = new HashMap<>();
     private Map<Integer,PersonalBoard> userIDtoBoards = new HashMap<>();
+    private Map<Integer,VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
     private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
@@ -91,9 +93,32 @@ public class Game implements Publisher<MVEvent> {
         return resTypeList;
     }
 
+    public void sendMarketAndDevCardMatrixTo(Integer userID){
+        String marketTrayString = market.describeMarketTray();
+        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MOST_RECENT_MARKETTRAY_SENT, marketTrayString);
+        publish(userID, marketUpdate);
+        String devCardMatrixString = describeDevCardMatrix();
+        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.MOST_RECENT_DEVCARDMATRIX_SENT, devCardMatrixString);
+        publish(userID, devCardMatrixUpdate);
+    }
+
+    //TODO FOR AMOR: return a single string that consists of top devcards in the 3x4 matrix
+    // it would be best if 3x4 view of the matrix can be preserved
+    private String describeDevCardMatrix(){
+        return null;
+    }
+
     @Override
     public void subscribe(Listener<MVEvent> listener) {
         listenerList.add(listener);
+    }
+
+    public void subscribe(Integer userID, VirtualView virtualView){
+        userIDtoVirtualView.put(userID, virtualView);
+    }
+
+    public void publish(Integer userID, MVEvent event){
+        userIDtoVirtualView.get(userID).update(event);
     }
 
     @Override

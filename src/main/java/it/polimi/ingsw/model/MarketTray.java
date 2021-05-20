@@ -101,6 +101,11 @@ public class MarketTray {
             System.out.println(" ");
         }
     }
+    //TODO FOR AMOR: do the same as MarketTrayDraw but return the descriptin rather than printing
+    public String describeMarketTray(){
+        StringBuilder sb = new StringBuilder();
+        return null;
+    }
 
   /* public void ResourceDraw(){
       System.out.println("Resources that you have to take from the market are:");
@@ -109,7 +114,4 @@ public class MarketTray {
         }
         System.out.println(" "); }
     */
-
-
-    //TODO
 }

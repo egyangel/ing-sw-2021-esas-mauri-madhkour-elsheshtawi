@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import javax.naming.spi.ResolveResult;
 import java.util.*;
 
 public class Resources {
@@ -78,17 +79,21 @@ public class Resources {
         else
             return false;
     }
-// this method should change here and in the personal board call.
+
+    public Resources splitResource(ResType resType){
+        Resources resources = new Resources(resType, getNumberOfType(resType));
+        values.remove(resType);
+        return resources;
+    }
+
+    public Resources cloneThisType(ResType resType){
+        return new Resources(resType, getNumberOfType(resType));
+    }
+
     public ResType getOnlyType(){
-       /* Iterator<Resources.ResType> itr = values.keySet().iterator();
-        while (itr.hasNext())
-        {
-            Resources.ResType key = itr.next();
-            System.out.println(key);
-
-
-        }*/
-        return values.keySet().iterator().next();
+        if (values.keySet().size() == 1)
+            return values.keySet().iterator().next();
+        else return null;
     }
 
     @Override

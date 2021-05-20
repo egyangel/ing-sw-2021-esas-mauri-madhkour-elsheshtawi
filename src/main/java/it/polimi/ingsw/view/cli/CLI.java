@@ -1,9 +1,7 @@
 package it.polimi.ingsw.view.cli;
 
 import com.google.gson.reflect.TypeToken;
-import it.polimi.ingsw.model.LeaderCard;
-import it.polimi.ingsw.model.Resources;
-import it.polimi.ingsw.model.SpecialAbility;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.enumclasses.MarbleColor;
 import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
@@ -25,6 +23,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private String generalmsg;
     private CVEvent cvEventToDisplay;
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
+    private int numberOfDiscards = 0;
 
     public CLI(Client client) {
         this.client = client;
@@ -43,8 +42,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
         displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
         displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
-        displayNameMap.put("displayActionSelection", this::displayActionSelection);
+        displayNameMap.put("displayActionSelection", this::displayAllActionSelection);
         displayNameMap.put("displayTakeResAction", this::displayTakeResAction);
+        displayNameMap.put("displayPutResourcesTaken", this::displayPutResourcesTaken);
 //        displayNameMap.put("displayMarketTray", this::displayMarketTray);
 //        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
 //        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
@@ -184,14 +184,16 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    public void displayActionSelection(){
+    public void displayAllActionSelection(){
         out.println("It is your turn now!");
         out.println("Enter the index of the action you want to take:");
-        out.println("[1] Take resource from market");
+        out.println("[1] Take resource from market");   //displayTakeResAction() DONE
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
-        out.println("[4] View market tray");
-        out.println("[5] View warehouse and strongbox");
+        out.println("[4] View market tray");    //displayMarketTray() DONE
+        out.println("[5] View development cards available");
+        out.println("[5] View and modify warehouse"); //displayAskModifyWarehouse() DONE
+        out.println("[6] View strongbox");  //displayStrongbox() DONE
         out.println("[6] View development slots");
         out.println("[7] View faith track");
         out.println("[8] View leader cards");
@@ -232,21 +234,92 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
+    public void displayMinorActionSelection(){
+        out.println("Do you want to execute any other action?");
+        out.println("Enter the index of the action you want to take:");
+        out.println("[1] View market tray");
+        out.println("[2] View and modify warehouse");
+        out.println("[3] View strongbox");
+        out.println("[4] View development slots");
+        out.println("[5] View faith track");
+        out.println("[6] View leader cards");
+        out.println("[7] View other players");
+        out.println("[8] End Turn");
+        int index = InputConsumer.getANumberBetween(in, out, 1, 8);
+        switch (index){
+            case 1:
+                addNextDisplay("displayMarketTray");
+                break;
+            case 2:
+                addNextDisplay("displayAskModifyWarehouse");
+                break;
+            case 3:
+                addNextDisplay("displayStrongbox");
+                break;
+            case 4:
+                addNextDisplay("displayDevSlots");
+                break;
+            case 5:
+                addNextDisplay("displayFaithTrack");
+                break;
+            case 6:
+                addNextDisplay("displayLeaderCards");
+                break;
+            case 7:
+                addNextDisplay("displayOtherPlayers");
+                break;
+            case 8:
+                addNextDisplay("displayEndTurn");
+                break;
+        }
+    }
+
+    //TODO after implementing all actions, don't forget to send updated personal board (for example take resource end result created
+    // inside displayPutResourceTaken, or discarded resources for other's faith points, or if vatican report triggered)
+    public void displayEndTurn(){
+    }
+
     public void displayTakeResAction(){
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
         VCEvent vcEvent = new VCEvent(VCEvent.eventType.ROW_COLUMN_INDEX_CHOOSEN, rowColumnNumber);
         publish(vcEvent);
     }
 
-    public void displayMarketTray(){
-        // The print should be implemented in this function but there is no time for this
-        // also true for similar methods below
-        client.getMarketTray().MarketTrayDraw();
+    public void displayBuyDevCardAction(){
+
     }
 
-    public void displayWarehouseAndStrongbox(){
-        displayWarehouse();
-        displayStrongbox();
+    public void displayMarketTray(){
+        // TODO dont assign market tray to client, make server send string version of market tray at the beginning of turn
+        out.println(client.getMarketTrayDescription());
+    }
+
+    public void displayDevCardMatrix(){
+
+    }
+
+    public void displayAskModifyWarehouse(){
+        out.println(client.getPersonalBoard().describeWarehouse());
+        out.println("Do you want to discard from or swap between shelves in the warehouse?");
+        String answer = InputConsumer.getSwapDiscardNo(in, out);
+        if (answer.equals("SWAP")) {
+            out.println("Enter the index of the first shelf:");
+            Shelf.shelfPlace firstPlace = InputConsumer.getShelfPlace(in, out);
+            out.println("Enter the index of the second shelf:");
+            Shelf.shelfPlace secondPlace = InputConsumer.getShelfPlace(in, out);
+            List<Shelf.shelfPlace> list = new ArrayList<>();
+            list.add(firstPlace);
+            list.add(secondPlace);
+            VCEvent vcEvent = new VCEvent(VCEvent.eventType.SWAP_SHELF_INDEX_CHOOSEN, list);
+            publish(vcEvent);
+        } else if (answer.equals("DISCARD")) {
+            out.println("Enter the index of the shelf:");
+            Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
+            VCEvent vcEvent = new VCEvent(VCEvent.eventType.DISCARD_SHELF_CHOOSEN, place);
+            publish(vcEvent);
+        } else {
+            addNextDisplay("displayActionSelection");
+        }
     }
 
     public void displayDevSlots(){
@@ -254,10 +327,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayFaithTrack(){
-        client.getPersonalBoard().printFaithTrack();
+        out.println(client.getPersonalBoard().describeFaithTrack());
     }
 
-    public void printLeaderCards(){
+    public void displayLeaderCards(){
         client.getPersonalBoard().printLeaderCards();
     }
 
@@ -313,20 +386,31 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    public void displayAskShelves(){
-        displayWarehouse();
-        out.println("Do you want to swap shelves before putting resources into the warehouse?");
-        boolean answer = InputConsumer.getYesOrNo(in, out);
-        if (answer){
-
-        } else {
-//            VCEvent vcEvent = new VCEvent(VCEvent.eventType.ROW_COLUMN_INDEX_CHOOSEN, rowColumnNumber);
-//            publish(vcEvent);
+    public void displayPutResourcesTaken(){
+        Resources resources = (Resources) cvEventToDisplay.getEventPayload(Resources.class);
+        for(Resources.ResType resType: resources.getResTypes()){
+            if(resType == Resources.ResType.FAITH){
+                client.getPersonalBoard().increaseFaitPoint(resources.getNumberOfType(resType));
+                continue;
+            }
+            Resources oneTypeRes = resources.cloneThisType(resType);
+            out.println("Where do you want to put " + oneTypeRes.sumOfValues() + " " + oneTypeRes.getOnlyType().toString());
+            Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
+            boolean result = client.getPersonalBoard().putToWarehouse(place, oneTypeRes);
+            while(!result) {
+                out.println("Cannot put the selected type of resource in the selected shelf.");
+                out.println("Select another shelf or try again by discarding one resource from the selected resource type.");
+                String string = InputConsumer.getShelfOrDiscard(in, out);
+                if(string.equals("DISCARD")){
+                    oneTypeRes.subtract(oneTypeRes.getOnlyType(), 1);
+                    numberOfDiscards++;
+                }
+                out.println("Where do you want to put " + oneTypeRes.sumOfValues() + " " + oneTypeRes.getOnlyType().toString());
+                place = InputConsumer.getShelfPlace(in, out);
+                result = client.getPersonalBoard().putToWarehouse(place, oneTypeRes);
+            }
         }
-    }
-
-    public void displayWarehouse(){
-        out.println(client.getPersonalBoard().describeWarehouse());
+        addNextDisplay("displayMinorActions");
     }
 
     public void displayStrongbox(){
@@ -350,11 +434,31 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 case MARBLELIST_SENT:
                     addNextDisplay("displayConvertWhiteInto");
                     break;
-                case ASK_SWAP_SHELVES:
-                    addNextDisplay("displayAskSwapShelves");
+                case PUT_RESOURCES_TAKEN:
+                    addNextDisplay("displayPutResourcesTaken");
             }
         } else if (event instanceof MVEvent){
-
+            MVEvent mvEvent = (MVEvent) event;
+            switch (mvEvent.getEventType()) {
+                case SWAPPED_SHELVES:
+                    client.setPersonalBoard((PersonalBoard) mvEvent.getEventPayload(PersonalBoard.class));
+                    out.println("Shelf swap successful!");
+                    addNextDisplay("displayAskModifyWarehouse");
+                    break;
+                case DISCARDED_FROM_SHELF:
+                    client.setPersonalBoard((PersonalBoard) mvEvent.getEventPayload(PersonalBoard.class));
+                    out.println("Discard from shelf successful!");
+                    addNextDisplay("displayAskModifyWarehouse");
+                    break;
+                case MOST_RECENT_MARKETTRAY_SENT:
+                    client.setMarketTrayDescription((String) mvEvent.getEventPayload(String.class));
+                    break;
+                case MOST_RECENT_DEVCARDMATRIX_SENT:
+                    client.setDevCardMatrixDescription((String) mvEvent.getEventPayload(String.class));
+                    break;
+                case OTHER_PERSONALBOARDS_SENT:
+                    break;
+            }
         } else {
             out.println("Unidentified MV or CV event");
         }

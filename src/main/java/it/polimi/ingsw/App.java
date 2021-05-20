@@ -1,16 +1,10 @@
 package it.polimi.ingsw;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.polimi.ingsw.model.*;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import it.polimi.ingsw.utility.JsonConverter;
 
 
 public class App {
@@ -31,9 +25,9 @@ public class App {
         warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
         warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
 
-       System.out.println(warehouse[1].PutResource(values));
-       System.out.println(warehouse[2].PutResource(values1));
-       System.out.println(warehouse[1].SwapShelf(warehouse[2] ));
+       System.out.println(warehouse[1].putResource(values));
+       System.out.println(warehouse[2].putResource(values1));
+       System.out.println(warehouse[1].swapShelf(warehouse[2] ));
 
     }
 

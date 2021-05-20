@@ -5,6 +5,8 @@ import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
 
 public class GUI implements IView, Listener<Event>{
+    private Client client;
+
     public GUI(Client client) {
     }
 
@@ -12,6 +14,8 @@ public class GUI implements IView, Listener<Event>{
     }
 //the first gui have the role of greet and start dislay
     public void displayGreet() {
+        client = new Client();
+        this.client.setGui(this);
         new FirstGui();
     }
 

@@ -11,15 +11,18 @@ public class ConnectionToServerGui extends JFrame{
 
     private boolean SinglePlayer= false;
     static JLayeredPane lpane = new JLayeredPane();
+    static JTextField serverIp;
+    static JTextField port;
+    static JButton submit;
 
     public ConnectionToServerGui() {
         super("Master of Renaissance");
         prepareSecondGUI();
-
+        showAction();
     }
 
     private void prepareSecondGUI() {
-
+        setDefaultLookAndFeelDecorated(true);
         //creation of the 3 panels,one ober the other,lpane is the base,
         // then p1 is the panel that contain the image and the last one contains te button
 
@@ -40,8 +43,7 @@ public class ConnectionToServerGui extends JFrame{
 
         //adding p1 to lpane,a.k.a the base
         lpane.add(p1, 0, 0);
-        showAction();
-        System.out.println(Thread.currentThread().getName()); // Stampa "main"
+
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -55,10 +57,11 @@ public class ConnectionToServerGui extends JFrame{
         //setting the pos and dim of top
         top.setBounds(100, 130, 250, 100);
         top.setOpaque(false);
+        //adding top to lpane,a.k.a the base
+        lpane.add(top, 1, 0);
+        top.setLayout(new GridLayout(2,2));
 
 
-        GridBagLayout layout = new GridBagLayout();
-        top.setLayout(layout);
 
         JLabel IP_Server = new JLabel("Server IP");
         IP_Server.setForeground(Color.BLACK);
@@ -120,16 +123,16 @@ public class ConnectionToServerGui extends JFrame{
         lpane.add(top, 1, 0);
 
 
-        JPanel button = new JPanel();
+        JPanel buttonPanel = new JPanel();
         //setting the pos and dim of top
-        button.setBounds(160, 470, 150, 200);
-        button.setOpaque(false);
+        buttonPanel.setBounds(160, 470, 150, 200);
+        buttonPanel.setOpaque(false);
         //adding top to lpane,a.k.a the base
-        lpane.add(button, 1, 1);
+        lpane.add(buttonPanel, 1, 1);
         //creations of bottons
 
         //adding top to lpane,a.k.a the base
-        lpane.add(button, 1, 0);
+        lpane.add(buttonPanel, 1, 0);
 
         //creations of botton
         JButton Connect = new JButton();
@@ -142,7 +145,7 @@ public class ConnectionToServerGui extends JFrame{
 
         Connect.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
-
+            // TODO connect to server and set the client in GUI
                 if((ServerName.getText().isEmpty() || !ServerName.getText().equals("localhost")) && (PortName.getText().isEmpty() || !PortName.getText().equals("3000")))
                     message.setText("Server IP or Port wrong");
 
@@ -159,8 +162,9 @@ public class ConnectionToServerGui extends JFrame{
 
         Connect.setActionCommand("Connect");
            //adding both buttons on top panel
-        button.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        button.add(Connect);
+        //TODO note from omer: below 2 lines couldnt compile so I commented out
+//        button.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
+//        button.add(Connect);
 
 
     }
