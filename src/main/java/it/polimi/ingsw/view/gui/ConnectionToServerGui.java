@@ -145,7 +145,7 @@ public class ConnectionToServerGui extends JFrame{
 
         Connect.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
-
+            // TODO connect to server and set the client in GUI
                 if((ServerName.getText().isEmpty() || !ServerName.getText().equals("localhost")) && (PortName.getText().isEmpty() || !PortName.getText().equals("3000")))
                     message.setText("Server IP or Port wrong");
 
