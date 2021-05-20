@@ -28,6 +28,8 @@ public class Client implements Runnable{
     private MarketTray marketTray;
     private List<PersonalBoard> otherPersonalBoardImages;
     private Map<Integer, String> userIDtoUserNames;
+    private Map<Integer, String> userIDtoOtherUserNames;
+    private GUI gui;
 
     public Map<Integer, String> getUserIDtoUserNames() {
         return userIDtoUserNames;
@@ -118,4 +120,7 @@ public class Client implements Runnable{
         else System.exit(0);
     }
 
+    public void setGui(GUI g) {
+        gui = g;
+    }
 }
