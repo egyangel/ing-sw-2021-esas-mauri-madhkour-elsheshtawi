@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.Resources;
+import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.enumclasses.MarbleColor;
 import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.VirtualView;
@@ -34,6 +35,7 @@ public class Controller implements Listener<VCEvent> {
             game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
             virtualView.subscribe(this);
+            game.subscribe(userID, virtualView);
             userIDtoVirtualViews.put(userID, virtualView);
             TurnManager.putUserID(userID);
         }
@@ -82,9 +84,9 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent;
         switch (vcEvent.getEventType()) {
             case LEADER_CARDS_CHOOSEN:
-                Type type = new TypeToken<List<LeaderCard>>() {
+                Type type1 = new TypeToken<List<LeaderCard>>() {
                 }.getType();
-                List<LeaderCard> selectedCards = (List<LeaderCard>) vcEvent.getEventPayload(type);
+                List<LeaderCard> selectedCards = (List<LeaderCard>) vcEvent.getEventPayload(type1);
 //                PRINT CARDS FOR DEBUG
 //                for(LeaderCard card: selectedCards){
 //                    System.out.println(card);
@@ -118,9 +120,27 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case WHITE_MARBLES_CONVERTED_IF_NECESSARY:
                 resourcesWaitingToBePutIntoWarehouse = (Resources) vcEvent.getEventPayload(Resources.class);
-                cvEvent = new CVEvent(CVEvent.EventType.ASK_SWAP_SHELVES);
+                cvEvent = new CVEvent(CVEvent.EventType.PUT_RESOURCES_TAKEN);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
+            case SWAP_SHELF_INDEX_CHOOSEN:
+                Type type2 = new TypeToken<List<Shelf.shelfPlace>>(){}.getType();
+                List<Shelf.shelfPlace> shelfIndexList = (List<Shelf.shelfPlace>) vcEvent.getEventPayload(type2);
+                boolean result = game.getPersonalBoard(userID).swapShelves(shelfIndexList);
+                if (!result){
+                    cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT,"Cannot swap shelves selected!");
+                    userIDtoVirtualViews.get(userID).update(cvEvent);
+                }
+                break;
+            case DISCARD_SHELF_CHOOSEN:
+                Shelf.shelfPlace place = (Shelf.shelfPlace) vcEvent.getEventPayload(Shelf.shelfPlace.class);
+                boolean result1 = game.getPersonalBoard(userID).discardFromShelf(place);
+                if (!result1){
+                    cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT,"Cannot discard from empty shelf!");
+                    userIDtoVirtualViews.get(userID).update(cvEvent);
+                }
+                break;
+
         }
     }
 }

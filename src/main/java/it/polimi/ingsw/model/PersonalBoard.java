@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.network.server.VirtualView;
+import it.polimi.ingsw.utility.messages.MVEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,42 +53,48 @@ public class PersonalBoard {
         }
     }
 
-    public void putToWarehouse(Shelf.shelfPlace place, Resources res){
-        if (!res.isThisOneType()) {
-            System.out.println("Resource should be one type for this function");
-        } else {
-            switch (place){
-                case TOP:
-                    //you can call directly my methods, since you already know from the previous check that res it is composed by only one type.
-                    warehouse[0].PutResource(res.getOnlyType(), res.sumOfValues());
-                    break;
-                case MIDDLE:
-                    warehouse[1].PutResource(res.getOnlyType(), res.sumOfValues());
-                    break;
-                case BOTTOM:
-                    warehouse[2].PutResource(res.getOnlyType(), res.sumOfValues());
-                    break;
-            }
-        }
+    public boolean putToWarehouse(Shelf.shelfPlace place, Resources res){
+        return warehouse[place.ordinal()].putResource(res);
     }
 
     private boolean putFromTop(Resources.ResType resType, int size){
         if (checkEnoughSize(0, size) && checkSameType(0, resType)){
-            warehouse[0].PutResource(resType, size);
+            warehouse[0].putResource(resType, size);
         } else if (checkEnoughSize(1, size) && checkSameType(1, resType)){
-            warehouse[0].PutResource(resType, size);
+            warehouse[0].putResource(resType, size);
         } else if (checkEnoughSize(2, size) && checkSameType(2, resType)){
-            warehouse[0].PutResource(resType, size);
+            warehouse[0].putResource(resType, size);
         } else return false;
         return true;
     }
 
     private boolean checkEnoughSize(int index, int size){
-        return ((warehouse[index].GetNumberOfElements()) + size < warehouse[index].ShelfSize());
+        return ((warehouse[index].getNumberOfElements()) + size < warehouse[index].shelfSize());
     }
 
     private boolean checkSameType(int index, Resources.ResType resType){
         return (warehouse[index].GetShelfResType() == resType);
+    }
+
+    public boolean swapShelves(List<Shelf.shelfPlace> list){
+        int firstIndex = list.get(0).ordinal();
+        int secondIndex = list.get(1).ordinal();
+        boolean result =  warehouse[firstIndex].swapShelf(warehouse[secondIndex]);
+        if (result){
+            MVEvent mvEvent = new MVEvent(MVEvent.EventType.SWAPPED_SHELVES, this);
+            game.publish(userID, mvEvent);
+        }
+        return result;
+    }
+
+    public boolean discardFromShelf(Shelf.shelfPlace place){
+        int index = place.ordinal();
+        boolean result =  warehouse[index].removeOneFromShelf();
+        if (result){
+            MVEvent mvEvent = new MVEvent(MVEvent.EventType.DISCARDED_FROM_SHELF, this);
+            game.publish(userID, mvEvent);
+        }
+        return result;
     }
 
     public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R){

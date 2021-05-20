@@ -1,6 +1,7 @@
 package it.polimi.ingsw.utility;
 
 import it.polimi.ingsw.model.Resources;
+import it.polimi.ingsw.model.Shelf;
 
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -133,5 +134,38 @@ public class InputConsumer {
         }
         if (input.equals("YES")) return true;
         else return false;
+    }
+
+    public static String getSwapDiscardNo(Scanner in, PrintWriter out){
+        out.println("Please enter one of the options: [SWAP] [DISCARD] [NO]");
+        String input = in.nextLine().toUpperCase();
+        while (!(input.equals("SWAP") || (input.equals("DISCARD")) || (input.equals("NO")))){
+            out.println("Invalid input.");
+            out.println("Please enter 'SWAP' or 'DISCARD' or 'NO':");
+            input = in.nextLine().toUpperCase();
+        }
+        return input;
+    }
+
+    public static Shelf.shelfPlace getShelfPlace(Scanner in, PrintWriter out) {
+        out.println("Please enter one of the options: [TOP] [MIDDLE] [BOTTOM]");
+        String input = in.nextLine().toUpperCase();
+        while (!(input.equals("TOP") || (input.equals("MIDDLE")) || (input.equals("BOTTOM")))){
+            out.println("Invalid input.");
+            out.println("Please enter 'TOP' or 'MIDDLE' or 'BOTTOM':");
+            input = in.nextLine().toUpperCase();
+        }
+        return Shelf.shelfPlace.valueOf(input);
+    }
+
+    public static String getShelfOrDiscard(Scanner in, PrintWriter out){
+        out.println("Please enter one of the options: [SHELF] [DISCARD]");
+        String input = in.nextLine().toUpperCase();
+        while (!(input.equals("SHELF") || (input.equals("DISCARD")))){
+            out.println("Invalid input.");
+            out.println("Please enter 'SHELF' or 'DISCARD':");
+            input = in.nextLine().toUpperCase();
+        }
+        return input;
     }
 }

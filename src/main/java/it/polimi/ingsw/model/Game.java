@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 
+import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.JsonConverter;
 import it.polimi.ingsw.utility.messages.Listener;
 import it.polimi.ingsw.utility.messages.MVEvent;
@@ -15,6 +16,7 @@ public class Game implements Publisher<MVEvent> {
     private List<Listener<MVEvent>> listenerList = new ArrayList<>();
     private Map<Integer,Player> userIDtoPlayers = new HashMap<>();
     private Map<Integer,PersonalBoard> userIDtoBoards = new HashMap<>();
+    private Map<Integer,VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
     private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
@@ -94,6 +96,14 @@ public class Game implements Publisher<MVEvent> {
     @Override
     public void subscribe(Listener<MVEvent> listener) {
         listenerList.add(listener);
+    }
+
+    public void subscribe(Integer userID, VirtualView virtualView){
+        userIDtoVirtualView.put(userID, virtualView);
+    }
+
+    public void publish(Integer userID, MVEvent event){
+        userIDtoVirtualView.get(userID).update(event);
     }
 
     @Override
