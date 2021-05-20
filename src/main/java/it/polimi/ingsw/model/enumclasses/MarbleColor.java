@@ -9,6 +9,10 @@ public enum MarbleColor {
         return (this.name());
     }
 
+    public MarbleColor getValue(){
+        return this;
+    }
+
     public Resources.ResType getResourceType() {
 
         if (this.equals(BLUE))

@@ -5,6 +5,11 @@ import java.util.*;
 public class Resources {
     public enum ResType {
         STONE,SHIELD,SERVANT,COIN,FAITH;
+
+        @Override
+        public String toString() {
+            return this.name();
+        }
     }
     private Map<ResType, Integer> values = new HashMap<>();
 
@@ -73,8 +78,16 @@ public class Resources {
         else
             return false;
     }
-
+// this method should change here and in the personal board call.
     public ResType getOnlyType(){
+       /* Iterator<Resources.ResType> itr = values.keySet().iterator();
+        while (itr.hasNext())
+        {
+            Resources.ResType key = itr.next();
+            System.out.println(key);
+
+
+        }*/
         return values.keySet().iterator().next();
     }
 

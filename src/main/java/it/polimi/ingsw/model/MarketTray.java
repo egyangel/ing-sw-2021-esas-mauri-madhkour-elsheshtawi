@@ -44,6 +44,7 @@ public class MarketTray {
         try {
             for (int i = 0; i < row; i++) {
                 for (int j = 0; j < column; j++) {
+
                     marketTray[i][j] = marbles[temp_position.get(k)];
                     k++;
                 }
@@ -59,30 +60,38 @@ public class MarketTray {
     @ && !\result.equals(NULL)
     */
 
-    public Resources selectRow (int row) {
-        Resources resources = new Resources();
+    public List<MarbleColor> selectRow (int row) {
+        List<MarbleColor> resources = new ArrayList<>();
         MarbleColor temp;
-        temp = marketTray[row-1][0];
-        for (int j = 0; j < column; j++) resources.add(marketTray[row-1][j].getResourceType(), 1);
-        for (int j = 0; j < column-1; j++) marketTray[row-1][j] = marketTray[row-1][j+1];
-        marketTray[row-1][column-1] = OutMarble;
-        OutMarble = temp;
-        return resources;
+        if( row>0 && row<4 ) {
+            temp = marketTray[row-1][0];
+            for (int j = 0; j < column; j++) resources.add(marketTray[row-1][j]);
+            for (int j = 0; j < column-1; j++) marketTray[row-1][j] = marketTray[row-1][j+1];
+            marketTray[row-1][column-1] = OutMarble;
+            OutMarble = temp;
+            return resources;
+        }else
+            return null;
     }
     /* @require column >=1&& column <=4 */
 
-    public Resources selectColumn (int column){
-        Resources resources = new Resources();
+    public List<MarbleColor> selectColumn (int column){
+        List<MarbleColor> resources = new ArrayList<>();
         MarbleColor temp;
-        temp = marketTray[0][column-1];
-        for (int i = 0; i < row; i++) resources.add(marketTray[i][column-1].getResourceType(), 1);
-        for (int i = 0; i < row-1; i++) marketTray[i][column-1] = marketTray[i+1][column-1];
-        marketTray[row-1][column-1] = OutMarble;
-        OutMarble = temp;
-        return resources;
+        if( column>0 && column<5 ) {
+            temp = marketTray[0][column - 1];
+            for (int i = 0; i < row; i++) resources.add(marketTray[i][column - 1]);
+            for (int i = 0; i < row - 1; i++) marketTray[i][column - 1] = marketTray[i + 1][column - 1];
+            marketTray[row - 1][column - 1] = OutMarble;
+            OutMarble = temp;
+            return resources;
+        }else
+            return null;
+
+
     }
 
-    //TODO: add "C-1" "C-2" and "R-3" etc label words in appropriate places
+    //TODO: FOR AMOR: optional: add "C-1" "C-2" and "R-3" etc label words in appropriate places
     public void MarketTrayDraw(){
         System.out.println(String.format("%70s",OutMarble.getColor()));
         for (int i = 0; i < row; i++) {
@@ -93,11 +102,14 @@ public class MarketTray {
         }
     }
 
-//    public void ResourceDraw(){
-//        System.out.println("Resources that you have to take from the market are:");
-//        for (Resources.ResType resource : resources.getResTypes()) {
-//            System.out.print(String.format("%-16s", resource));
-//        }
-//        System.out.println(" ");
-//    }
+  /* public void ResourceDraw(){
+      System.out.println("Resources that you have to take from the market are:");
+       for (Resources.ResType resource : resources.getResTypes()) {
+            System.out.print(String.format("%-16s", resource));
+        }
+        System.out.println(" "); }
+    */
+
+
+    //TODO
 }
