@@ -33,27 +33,29 @@ public class Shelf {
     //adding multiple elements each time
     public Integer PutResource(List<Resources.ResType> resources) {
 
-
-        int i=this.resources.size();
-
-            if (this.isEmpty() && this.ShelfSize()>= resources.size())
+        int i=0;
+            if (this.isEmpty() && this.ShelfSize()>= resources.size()) {
                 this.resources.addAll(resources);
-            else
-                if (this.isFull() || this.ShelfSize()< resources.size())
-                     return  resources.size();
-                else
-                {
-                    if (!this.resources.get(0).equals(resources.get(0)))
-                        return  resources.size();
-                    else {
-                        while (this.resources.size() < maxSize) {
-                            this.resources.add(resources.get(i));
-                            i++;
+                return 0;
+            }else
+                if (this.isFull()) {
+
+                    return resources.size();
+                }else {
+                    if (!this.isEmpty()) {
+                        if (!this.resources.get(0).equals(resources.get(0))) {
+
+                            return resources.size();
                         }
-                        return this.resources.size() - resources.size();
                     }
+                    while (this.resources.size() < maxSize) {
+                        this.resources.add(resources.get(i));
+                        i++;
+                    }
+                    return resources.size() - i;
                 }
-            return 0;
+
+
     }
 
     public boolean SwapShelf(Shelf otherShelf){
