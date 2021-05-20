@@ -9,27 +9,7 @@ import java.util.List;
 
 public class App {
 
-    private static List<Resources.ResType> values= new ArrayList<>() ;
-    private static List<Resources.ResType> values1= new ArrayList<>() ;
-    private static Shelf[] warehouse= new Shelf[3];
 
-    private static void MyFunc() {
-
-        values.add(Resources.ResType.COIN);
-        values.add(Resources.ResType.COIN);
-        values1.add(Resources.ResType.STONE);
-        values1.add(Resources.ResType.STONE);
-        values1.add(Resources.ResType.STONE);
-
-        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
-        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
-        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
-
-       System.out.println(warehouse[1].putResource(values));
-       System.out.println(warehouse[2].putResource(values1));
-       System.out.println(warehouse[1].swapShelf(warehouse[2] ));
-
-    }
 
     public static void main(String[] args) throws IOException {
         Game game = new Game();

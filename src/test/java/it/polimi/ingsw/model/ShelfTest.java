@@ -30,10 +30,10 @@ class ShelfTest {
         values1.add(draw.get(1));
         values1.add(draw.get(1));
 
-        int returAdd = warehouse[0].PutResource(values);
+        int returAdd = warehouse[0].putResource(values);
 
         assertNotEquals(0,returAdd);
-        assertEquals(0,warehouse[1].PutResource(values));
+        assertEquals(0,warehouse[1].putResource(values));
 
 
         values.clear();
@@ -52,24 +52,24 @@ class ShelfTest {
         values1.add(draw.get(1));
 
 
-        warehouse[1].PutResource(values);
-        warehouse[2].PutResource(values1);
+        warehouse[1].putResource(values);
+        warehouse[2].putResource(values1);
 
-        assertTrue(warehouse[2].SwapShelf(warehouse[1]));
+        assertTrue(warehouse[2].swapShelf(warehouse[1]));
 
         values.clear();
         values1.clear();
-        warehouse[2].ClearShelf();
-        warehouse[1].ClearShelf();
+        warehouse[2].clearShelf();
+        warehouse[1].clearShelf();
         values.add(draw.get(0));
         values.add(draw.get(0));
         values1.add(draw.get(1));
         values1.add(draw.get(1));
         values1.add(draw.get(1));
-        warehouse[1].PutResource(values);
-        warehouse[2].PutResource(values1);
+        warehouse[1].putResource(values);
+        warehouse[2].putResource(values1);
 
-        assertFalse(warehouse[2].SwapShelf(warehouse[1]));
+        assertFalse(warehouse[2].swapShelf(warehouse[1]));
 
         values.clear();
         values1.clear();
@@ -89,8 +89,8 @@ class ShelfTest {
         values1.add(draw.get(1));
         values1.add(draw.get(1));
         values1.add(draw.get(1));
-        warehouse[1].PutResource(values);
-        warehouse[2].PutResource(values1);
+        warehouse[1].putResource(values);
+        warehouse[2].putResource(values1);
 
         //assertFalse(warehouse[0].isEmpty());
         assertFalse(warehouse[1].isEmpty());
@@ -115,8 +115,8 @@ class ShelfTest {
         values1.add(draw.get(1));
         values1.add(draw.get(1));
         values1.add(draw.get(1));
-        warehouse[1].PutResource(values);
-        warehouse[2].PutResource(values1);
+        warehouse[1].putResource(values);
+        warehouse[2].putResource(values1);
 
 
         assertTrue(warehouse[1].isFull());
@@ -132,9 +132,9 @@ class ShelfTest {
         warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
         warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
 
-        assertEquals(1,warehouse[0].ShelfSize());
-        assertEquals(2,warehouse[1].ShelfSize());
-        assertEquals(3,warehouse[2].ShelfSize());
+        assertEquals(1,warehouse[0].shelfSize());
+        assertEquals(2,warehouse[1].shelfSize());
+        assertEquals(3,warehouse[2].shelfSize());
         values.clear();
         values1.clear();
     }
@@ -151,12 +151,12 @@ class ShelfTest {
         values1.add(draw.get(1));
         values1.add(draw.get(1));
 
-        warehouse[1].PutResource(values);
-        warehouse[2].PutResource(values1);
+        warehouse[1].putResource(values);
+        warehouse[2].putResource(values1);
 
         //assertEquals(1,warehouse[0].ShelfSize());
-        assertEquals(Resources.ResType.STONE,warehouse[1].GetShelfResType());
-        assertEquals(Resources.ResType.COIN,warehouse[2].GetShelfResType());
+        assertEquals(Resources.ResType.STONE,warehouse[1].getShelfResType());
+        assertEquals(Resources.ResType.COIN,warehouse[2].getShelfResType());
         values.clear();
         values1.clear();
     }

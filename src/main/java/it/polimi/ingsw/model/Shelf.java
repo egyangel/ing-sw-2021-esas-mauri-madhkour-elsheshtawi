@@ -22,19 +22,19 @@ public class Shelf {
         resources = new ArrayList<>();
     }
 
-    public void PutResource(Resources.ResType resType, int size){
+    public void putResource(Resources.ResType resType, int size){
         List<Resources.ResType> list = new ArrayList<>();
         for (int i = 0; i < size; i++){
             list.add(resType);
         }
-        PutResource(list);
+        putResource(list);
     }
 
     //adding multiple elements each time
-    public Integer PutResource(List<Resources.ResType> resources) {
+    public Integer putResource(List<Resources.ResType> resources) {
 
         int i=0;
-            if (this.isEmpty() && this.ShelfSize()>= resources.size()) {
+            if (this.isEmpty() && this.shelfSize()>= resources.size()) {
                 this.resources.addAll(resources);
                 return 0;
             }else
@@ -54,20 +54,24 @@ public class Shelf {
                     }
                     return resources.size() - i;
                 }
-
-
+    }
+    // method to be used in the game to return false if cannot put it
+    public boolean putResource(Resources res){
+        if (!res.isThisOneType() || (res.sumOfValues() + this.getNumberOfElements() > shelfSize())) return false;
+        this.putResource(res.getOnlyType(), res.sumOfValues());
+        return true;
     }
 
-    public boolean SwapShelf(Shelf otherShelf){
-        if ( otherShelf.GetNumberOfElements() > this.maxSize || this.GetNumberOfElements() > otherShelf.ShelfSize() )
+    public boolean swapShelf(Shelf otherShelf){
+        if ( otherShelf.getNumberOfElements() > this.maxSize || this.getNumberOfElements() > otherShelf.shelfSize() )
             return false;
         else{
             List<Resources.ResType> resTypeList = new ArrayList<>();
             resTypeList.addAll(otherShelf.shelf());
-            otherShelf.ClearShelf();
-            otherShelf.PutResource(this.shelf());
-            this.ClearShelf();
-            this.PutResource(resTypeList);
+            otherShelf.clearShelf();
+            otherShelf.putResource(this.shelf());
+            this.clearShelf();
+            this.putResource(resTypeList);
             return true;
         }
     }
@@ -82,20 +86,23 @@ public class Shelf {
     private List<Resources.ResType> shelf(){
         return resources;
     }
-    public int GetNumberOfElements(){
+    public int getNumberOfElements(){
         return resources.size();
     }
-    public int ShelfSize(){
+    public int shelfSize(){
         return maxSize;
     }
-    public Resources.ResType GetShelfResType(){
+    public Resources.ResType getShelfResType(){
         return this.resources.get(0);
     }
-    public void ClearShelf(){
+    public void clearShelf(){
         this.resources.clear();
     }
     public String describeShelf(){
-        String string = this.GetNumberOfElements()+" of "+ this.GetShelfResType();
+        String string = this.getNumberOfElements()+" of "+ this.getShelfResType();
         return string;
+    }
+    public boolean removeOneFromShelf(){
+        return this.resources.remove(this.resources.get(0));
     }
 }

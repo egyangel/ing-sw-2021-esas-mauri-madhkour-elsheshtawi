@@ -73,7 +73,7 @@ public class PersonalBoard {
     }
 
     private boolean checkSameType(int index, Resources.ResType resType){
-        return (warehouse[index].GetShelfResType() == resType);
+        return (warehouse[index].getShelfResType() == resType);
     }
 
     public boolean swapShelves(List<Shelf.shelfPlace> list){
