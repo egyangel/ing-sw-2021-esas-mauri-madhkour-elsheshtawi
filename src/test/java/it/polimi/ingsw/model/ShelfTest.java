@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,10 +11,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ShelfTest {
-    private  static List<Resources.ResType> values= new ArrayList<>() ;
-    private  static List<Resources.ResType> values1= new ArrayList<>() ;
-    private  static Shelf[] warehouse= new Shelf[3];
-    private  static List<Resources.ResType> draw= new ArrayList<>(Arrays.asList(Resources.ResType.STONE,Resources.ResType.COIN,Resources.ResType.SHIELD,Resources.ResType.SERVANT));
+    private  List<Resources.ResType> values= new ArrayList<>() ;
+    private  List<Resources.ResType> values1= new ArrayList<>() ;
+    private  Shelf[] warehouse= new Shelf[3];
+    private   List<Resources.ResType> draw= new ArrayList<>(Arrays.asList(Resources.ResType.STONE,Resources.ResType.COIN,Resources.ResType.SHIELD,Resources.ResType.SERVANT));
 
 
     @Test
@@ -28,10 +30,14 @@ class ShelfTest {
         values1.add(draw.get(1));
         values1.add(draw.get(1));
 
-        assertNotEquals(0,warehouse[0].putResource(values));
-        assertEquals(0,warehouse[1].putResource(values));
-        //warehouse=null;
+        int returAdd = warehouse[0].putResource(values);
 
+        assertNotEquals(0,returAdd);
+        assertEquals(0,warehouse[1].putResource(values));
+
+
+        values.clear();
+        values1.clear();
     }
 
     @Test
@@ -44,23 +50,30 @@ class ShelfTest {
         values.add(draw.get(0));
         values1.add(draw.get(1));
         values1.add(draw.get(1));
-        values1.add(draw.get(1));
+
 
         warehouse[1].putResource(values);
         warehouse[2].putResource(values1);
 
-        assertNotEquals("Swap done",warehouse[2].swapShelf(warehouse[1]));
-        assertEquals("Incorrect action",warehouse[2].swapShelf(warehouse[1]));
+        assertTrue(warehouse[2].swapShelf(warehouse[1]));
+
+        values.clear();
+        values1.clear();
+        warehouse[2].clearShelf();
+        warehouse[1].clearShelf();
+        values.add(draw.get(0));
+        values.add(draw.get(0));
+        values1.add(draw.get(1));
+        values1.add(draw.get(1));
+        values1.add(draw.get(1));
+        warehouse[1].putResource(values);
+        warehouse[2].putResource(values1);
+
+        assertFalse(warehouse[2].swapShelf(warehouse[1]));
+
         values.clear();
         values1.clear();
 
-        values.add(draw.get(0));
-        values1.add(draw.get(1));
-
-        warehouse[1].putResource(values);
-        warehouse[2].putResource(values1);
-        assertNotEquals("Swap done",warehouse[2].swapShelf(warehouse[1]));
-        assertEquals("Incorrect action",warehouse[2].swapShelf(warehouse[1]));
     }
 
     @Test
@@ -82,6 +95,8 @@ class ShelfTest {
         //assertFalse(warehouse[0].isEmpty());
         assertFalse(warehouse[1].isEmpty());
         //assertFalse(warehouse[2].isEmpty());
+        values.clear();
+        values1.clear();
 
     }
 
@@ -106,6 +121,8 @@ class ShelfTest {
 
         assertTrue(warehouse[1].isFull());
         assertTrue(warehouse[2].isFull());
+        values.clear();
+        values1.clear();
 
     }
 
@@ -118,6 +135,8 @@ class ShelfTest {
         assertEquals(1,warehouse[0].shelfSize());
         assertEquals(2,warehouse[1].shelfSize());
         assertEquals(3,warehouse[2].shelfSize());
+        values.clear();
+        values1.clear();
     }
 
     @Test
@@ -136,12 +155,12 @@ class ShelfTest {
         warehouse[2].putResource(values1);
 
         //assertEquals(1,warehouse[0].ShelfSize());
-        assertEquals(Resources.ResType.STONE,warehouse[1].GetShelfResType());
-        assertEquals(Resources.ResType.COIN,warehouse[2].GetShelfResType());
+        assertEquals(Resources.ResType.STONE,warehouse[1].getShelfResType());
+        assertEquals(Resources.ResType.COIN,warehouse[2].getShelfResType());
+        values.clear();
+        values1.clear();
     }
 
 
-    @Test
-    void getShelfContent() {
-    }
+
 }

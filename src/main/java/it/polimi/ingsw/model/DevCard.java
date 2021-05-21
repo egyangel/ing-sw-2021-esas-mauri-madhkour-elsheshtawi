@@ -56,7 +56,7 @@ public class DevCard {
     }
         // it is wrong, i have to implement.
     public Resources produce(){
-        return null;
+        return this.RHS;
     }
 
 

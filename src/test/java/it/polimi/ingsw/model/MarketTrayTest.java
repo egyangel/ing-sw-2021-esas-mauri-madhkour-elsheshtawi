@@ -18,12 +18,6 @@ public class MarketTrayTest {
     @DisplayName("selects which row to choose from the market tray")
     public void selectRow() {
 
-        /*each number in rowOfMarbles represent a Marble color in a row...
-         (for example 0=white, 1=blue etc...)
-        */List<Integer> rowOfMarbles=List.of(0,1,2,3);
-        /*Assertions.assertAll(() -> assertEquals(row, 0)
-        );*/
-
 
         for(int i=1;i<4;i++) {
             resources = marketTest.selectRow(i);
@@ -36,6 +30,8 @@ public class MarketTrayTest {
                 
             }
         }
+        int k=-1;
+        assertNull(marketTest.selectRow(k));
 
 
     }
@@ -53,6 +49,9 @@ public class MarketTrayTest {
 
             }
         }
+        int k=-1;
+        assertNull(marketTest.selectColumn(k));
+        assertNull(marketTest.selectColumn(5));
 
     }
 
