@@ -4,6 +4,15 @@ public class DevCard {
 
     public enum CardColor{
         GREEN,BLUE,YELLOW,PURPLE;
+
+        public static boolean contains(String string) {
+            for (CardColor color : CardColor.values()) {
+                if (color.name().equals(string)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     private final int level;

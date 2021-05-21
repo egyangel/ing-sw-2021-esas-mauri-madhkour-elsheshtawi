@@ -286,11 +286,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayBuyDevCardAction(){
-
+        String levelAndColor = InputConsumer.getColorAndLevel(in, out);
+        VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEVEL_COLOR_DEVCARD_CHOOSEN, levelAndColor);
+        publish(vcEvent);
     }
 
     public void displayMarketTray(){
-        // TODO dont assign market tray to client, make server send string version of market tray at the beginning of turn
         out.println(client.getMarketTrayDescription());
     }
 

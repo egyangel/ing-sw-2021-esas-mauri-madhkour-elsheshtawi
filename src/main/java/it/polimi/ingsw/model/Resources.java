@@ -7,6 +7,15 @@ public class Resources {
     public enum ResType {
         STONE,SHIELD,SERVANT,COIN,FAITH;
 
+        public static boolean contains(String string) {
+            for (Resources.ResType resType : Resources.ResType.values()) {
+                if (resType.name().equals(string)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         @Override
         public String toString() {
             return this.name();

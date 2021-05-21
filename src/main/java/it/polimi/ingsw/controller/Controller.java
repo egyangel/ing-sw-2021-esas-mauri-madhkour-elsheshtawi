@@ -141,6 +141,9 @@ public class Controller implements Listener<VCEvent> {
                     userIDtoVirtualViews.get(userID).update(cvEvent);
                 }
                 break;
+            case LEVEL_COLOR_DEVCARD_CHOOSEN:
+                break;
+                //TODO omer will be back...
 
         }
     }

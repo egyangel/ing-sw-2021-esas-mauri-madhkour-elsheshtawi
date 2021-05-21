@@ -11,11 +11,7 @@ public class VCEvent extends Event{
         WHITE_MARBLES_CONVERTED_IF_NECESSARY,
         SWAP_SHELF_INDEX_CHOOSEN,
         DISCARD_SHELF_CHOOSEN,
-        TAKE_RES_ACTION,
-        BUY_DEV_CARD_ACTION,
-        ACTIVATE_PROD_ACTION,
-        ARRANGE_WAREHOUSE,
-        ACTIVATE_LEADERCARD
+        LEVEL_COLOR_DEVCARD_CHOOSEN
     }
     private eventType eventType;
 

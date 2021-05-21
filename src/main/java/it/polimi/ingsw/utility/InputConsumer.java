@@ -1,5 +1,6 @@
 package it.polimi.ingsw.utility;
 
+import it.polimi.ingsw.model.DevCard;
 import it.polimi.ingsw.model.Resources;
 import it.polimi.ingsw.model.Shelf;
 
@@ -107,7 +108,7 @@ public class InputConsumer {
 
     public static String getMarketRowColumnIndex(Scanner in, PrintWriter out) {
         out.println("[C-1] [C-2] [C-3] [C-4] [R-1] [R-2] [R-3]");
-        out.println("Enter column/row and index as shown above, indexes start at left clomn and top row:");
+        out.println("Enter column/row and index as shown above, indexes start at left column and top row:");
         String input;
         input = in.nextLine().toUpperCase();
         char firstLetter = input.charAt(0);
@@ -165,6 +166,26 @@ public class InputConsumer {
             out.println("Invalid input.");
             out.println("Please enter 'SHELF' or 'DISCARD':");
             input = in.nextLine().toUpperCase();
+        }
+        return input;
+    }
+
+    public static String getColorAndLevel(Scanner in, PrintWriter out) {
+        out.println("Enter the color and level of the development card you want to buy:");
+        out.println("Example inputs: [BLUE-1] [GREEN-2] [YELLOW-3] [PURPLE-1]");
+        String input;
+        input = in.nextLine().toUpperCase();
+        String[] parts = input.split("-");
+        String color = parts[0];
+        String level = parts[1];
+        int number = Integer.parseInt(level);
+        while(!(DevCard.CardColor.contains(color) && (number >= 1) && (number <= 3))){
+            out.println("Invalid input, please enter an input as shown in examples without brackets");
+            out.println("Example inputs: [BLUE-1] [GREEN-2] [YELLOW-3] [PURPLE-1]");
+            parts = input.split("-");
+            color = parts[0];
+            level = parts[1];
+            number = Integer.parseInt(level);
         }
         return input;
     }
