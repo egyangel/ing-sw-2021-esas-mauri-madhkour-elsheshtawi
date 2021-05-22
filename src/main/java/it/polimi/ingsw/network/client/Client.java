@@ -16,7 +16,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
-public class Client implements Runnable{
+public class Client implements Runnable {
     private String username;
 
     private ServerHandler serverHandler;
@@ -36,7 +36,7 @@ public class Client implements Runnable{
         return userIDtoUserNames;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Client client = new Client();
 //        checkIfCLI(args[0], client);
         client.setView(new CLI(client));
@@ -52,7 +52,7 @@ public class Client implements Runnable{
         view.startDisplay();
     }
 
-    public void connectToServer(String ip, int portNumber){
+    public void connectToServer(String ip, int portNumber) {
         Socket socket;
         try {
             socket = new Socket(ip, portNumber);
@@ -65,11 +65,11 @@ public class Client implements Runnable{
         thread.start();
     }
 
-    public void sendToServer(Message msg){
+    public void sendToServer(Message msg) {
         serverHandler.sendMessage(msg);
     }
 
-    public void handleSetUpMessage(Message msg){
+    public void handleSetUpMessage(Message msg) {
         switch (msg.getMsgtype()) {
             case DISPLAY_FIRST_LOGIN:
                 serverHandler.setUserId(msg.getUserID());
@@ -80,18 +80,25 @@ public class Client implements Runnable{
                 view.addNextDisplay("displayLogin");
                 break;
             case FIRST_LOGIN_ACCEPTED:
+                Type t = new TypeToken<Map<Integer, String>>() {
+                }.getType();
+                userIDtoUserNames = (Map<Integer, String>) msg.getObject(t);
+                break;
+
+
             case LOGIN_ACCEPTED:
                 view.setGeneralMsg("When other players connect the server, the game will start...");
                 view.addNextDisplay("displayGeneralMsg");
                 break;
             case START_MATCH:    // START_MATCH is the last setUp message from server to client
-                Type type = new TypeToken<Map<Integer, String>>(){}.getType();
+                Type type = new TypeToken<Map<Integer, String>>() {
+                }.getType();
                 userIDtoUserNames = (Map<Integer, String>) msg.getObject(type);
                 break;
         }
     }
 
-    public IView getView(){
+    public IView getView() {
         return view;
     }
 
@@ -115,13 +122,13 @@ public class Client implements Runnable{
         return devCardMatrixDescription;
     }
 
-    public void setDevCardMatrixDescription(String devCardMatrixDescription){
+    public void setDevCardMatrixDescription(String devCardMatrixDescription) {
         this.devCardMatrixDescription = devCardMatrixDescription;
     }
 
     // METHODS THAT WON'T BE USED
 
-    private static void checkIfCLI(String arg, Client client){
+    private static void checkIfCLI(String arg, Client client) {
         if (arg.equals("--CLI"))
             client.setView(new CLI(client));
         else if (arg.equals("--GUI"))

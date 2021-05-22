@@ -13,6 +13,7 @@ import java.util.*;
 // MODEL CLASS
 public class Game implements Publisher<MVEvent> {
 
+    private int playersNumber;
     private List<Listener<MVEvent>> listenerList = new ArrayList<>();
     private Map<Integer,Player> userIDtoPlayers = new HashMap<>();
     private Map<Integer,PersonalBoard> userIDtoBoards = new HashMap<>();
@@ -24,6 +25,7 @@ public class Game implements Publisher<MVEvent> {
 
     public void addPlayer(Integer userID) {
         userIDtoPlayers.put(userID, new Player());
+        this.playersNumber++;
     }
 
     public void createGameObjects(){
@@ -132,6 +134,11 @@ public class Game implements Publisher<MVEvent> {
             listener.update(event);
         }
     }
+
+    public int getPlayersNumber() {
+        return playersNumber;
+    }
+
 
     // DEBUG METHODS
 
