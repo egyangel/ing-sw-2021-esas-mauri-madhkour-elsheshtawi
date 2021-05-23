@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.DevCard;
 
+import java.util.Deque;
 import java.util.Stack;
 
 public class DevSlot {
@@ -35,7 +36,22 @@ public class DevSlot {
     }
 
     public DevCard getTopDevCard(){
-        return this.devCards.peek();
+        if (this.devCards.isEmpty()) return null;
+        else return this.devCards.peek();
     }
-    //public
+
+    public int getLevelOfTopCard(){
+        DevCard devCard = getTopDevCard();
+        if (devCard == null) return 0;
+        else return devCard.getLevel() ;
+    }
+
+    public DevSlot.slotPlace getPlace(){
+        return this.place;
+    }
+
+    public void putDevCard(DevCard card) {
+        devCards.push(card);
+    }
+
 }

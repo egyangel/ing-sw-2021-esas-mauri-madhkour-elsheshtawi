@@ -89,7 +89,7 @@ public class Resources {
             return false;
     }
 
-    public Resources splitResource(ResType resType){
+    public Resources splitThisType(ResType resType){
         Resources resources = new Resources(resType, getNumberOfType(resType));
         values.remove(resType);
         return resources;
@@ -105,22 +105,28 @@ public class Resources {
         else return null;
     }
 
+    // true if smallerOrEqual.compareTo(bigger)
+    public boolean compareTo(Resources otherRes){
+        for(ResType resType: this.getResTypes()){
+            if (this.getNumberOfType(resType) > otherRes.getNumberOfType(resType)){
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         return values.toString();
     }
 
-    // DEBUG METHODS
-
-    public Resources() {
-//        for(ResType type: ResType.values()){
-//            this.values.put(type, 0);
-//        }
-    }
+    public Resources() {}
 
     public Resources(ResType resource, int number) {
         values.put(resource,number);
     }
+
+    // DEBUG METHODS
 
     //    Over-loading constructor
     public Resources(int stone, int shield, int servant, int coin, int faith){

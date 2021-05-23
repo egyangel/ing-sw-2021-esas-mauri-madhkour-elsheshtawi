@@ -105,4 +105,9 @@ public class Shelf {
     public boolean removeOneFromShelf(){
         return this.resources.remove(this.resources.get(0));
     }
+
+    public Resources getResource(){
+        if (isEmpty()) return new Resources();
+        else return new Resources(resources.get(0), resources.size());
+    }
 }
