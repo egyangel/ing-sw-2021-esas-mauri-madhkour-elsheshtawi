@@ -286,8 +286,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayBuyDevCardAction(){
-        String levelAndColor = InputConsumer.getColorAndLevel(in, out);
-        VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEVEL_COLOR_DEVCARD_CHOOSEN, levelAndColor);
+        String colorAndLevel = InputConsumer.getColorAndLevel(in, out);
+        VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEVEL_COLOR_DEVCARD_CHOOSEN, colorAndLevel);
         publish(vcEvent);
     }
 
@@ -300,7 +300,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayAskModifyWarehouse(){
-        out.println(client.getPersonalBoard().describeWarehouse());
+        displayWarehouse();
         out.println("Do you want to discard from or swap between shelves in the warehouse?");
         String answer = InputConsumer.getSwapDiscardNo(in, out);
         if (answer.equals("SWAP")) {
@@ -418,6 +418,37 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println(client.getPersonalBoard().describeStrongbox());
     }
 
+    public void displayWarehouse(){
+        out.println(client.getPersonalBoard().describeWarehouse());
+    }
+
+    public void displayPlaceDevCardSelected(){
+        DevCard selectedCard = (DevCard) cvEventToDisplay.getEventPayload(DevCard.class);
+        List<DevSlot.slotPlace> placeList = client.getPersonalBoard().getSuitablePlaces(selectedCard);
+        DevSlot.slotPlace selectedPlace = InputConsumer.getSlotPlace(in, out, placeList);
+        displayWarehouse();
+        displayStrongbox();
+        Resources remainingCost = new Resources();
+        remainingCost.add(selectedCard.getCost());
+        out.println("The cost of the card is: " + remainingCost.toString());
+        for(Resources.ResType resType: remainingCost.getResTypes()){
+            while(remainingCost.getNumberOfType(resType) > 0){
+                out.println("Where do you want to spend 1 " + resType.toString() + " from?");
+                boolean warehouse = InputConsumer.getWorS(in, out);
+                if (warehouse) {
+                    client.getPersonalBoard().spendOneFromWarehouse(resType);
+                } else {
+                    client.getPersonalBoard().spendOneFromStrongbox(resType);
+                }
+                remainingCost.subtract(resType,1);
+            }
+        }
+        client.getPersonalBoard().putDevCardOnSlot(selectedCard, selectedPlace);
+        out.println("The card is successfully bought and placed where you selected.");
+        // TODO send message to server at the end turn stage, update it about personal board change in client side
+        addNextDisplay("displayMinorActions");
+    }
+
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent){
@@ -437,6 +468,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     break;
                 case PUT_RESOURCES_TAKEN:
                     addNextDisplay("displayPutResourcesTaken");
+                    break;
+                case SUITABLE_DEVCARD:
+                    addNextDisplay("displayPlaceDevCardSelected");
+                    break;
             }
         } else if (event instanceof MVEvent){
             MVEvent mvEvent = (MVEvent) event;
