@@ -147,6 +147,58 @@ public class PersonalBoard {
         return string;
     }
 
+    private Resources getTotalResources(){
+        Resources resTotal = new Resources();
+        for(Shelf shelf: warehouse){
+            resTotal.add(shelf.getResource());
+        }
+        resTotal.add(strongbox);
+        return resTotal;
+    }
+
+    public boolean isThereEnoughRes(DevCard card){
+        Resources totalRes = getTotalResources();
+        Resources cost = card.getCost();
+        if (cost.compareTo(totalRes)) return true;
+        else return false;
+    }
+
+    public boolean isCardSuitableForSlots(DevCard card){
+        int level = card.getLevel();
+        for (DevSlot devSlot: devSlots){
+            if (level == devSlot.getLevelOfTopCard() + 1) return true;
+        }
+        return false;
+    }
+
+    public List<DevSlot.slotPlace> getSuitablePlaces(DevCard card){
+        int level = card.getLevel();
+        List<DevSlot.slotPlace> places = new ArrayList<>();
+        for (DevSlot devSlot: devSlots){
+            if (level == devSlot.getLevelOfTopCard() + 1) places.add(devSlot.getPlace());
+        }
+        return places;
+    }
+
+    public void spendOneFromWarehouse(Resources.ResType resType){
+        for(Shelf shelf: warehouse){
+            if (shelf.getShelfResType().equals(resType)){
+                shelf.removeOneFromShelf();
+                return;
+            }
+        }
+    }
+
+    public void spendOneFromStrongbox(Resources.ResType resType){
+        strongbox.subtract(resType, 1);
+    }
+
+    public void putDevCardOnSlot(DevCard card, DevSlot.slotPlace place){
+        int index = place.ordinal();
+        devSlots[index].putDevCard(card);
+    }
+
+
     // DEBUG methods
     public void setStrongbox(Resources strongbox) {
         this.strongbox = strongbox;

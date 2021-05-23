@@ -11,11 +11,10 @@ public class CVEvent extends Event{
         MARBLELIST_SENT,
         PUT_RESOURCES_TAKEN,
         INVALID_EDIT,
-        CANNOT_SWAP_SHELVES,
-        ASK_WHICH_COLUMN_ROW,
-        ASK_WHICH_DEV_CARD,
-        ASK_WHICH_PROD_SLOTS,
-        ASK_WHICH_LEADER_CARD_TO_ACTIVATE
+        EMPTY_DEVCARD_DECK,
+        NOT_ENOUGH_RES_FOR_DEVCARD,
+        UNSUITABLE_DEVCARD,
+        SUITABLE_DEVCARD
     }
     private EventType eventType;
 
