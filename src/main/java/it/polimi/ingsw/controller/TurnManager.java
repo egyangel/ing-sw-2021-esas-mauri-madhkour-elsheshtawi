@@ -5,7 +5,7 @@ import java.util.*;
 public class TurnManager {
     private static Integer currentPlayerIndex = 0;
     private static List<Integer> turnOrderUserID;
-    private static Map<Integer, Boolean> userIDtoCheck= new HashMap<>();
+    private static Map<Integer, Boolean> userIDtoCheck = new HashMap<>();
 
     public static void putUserID(Integer userID){
         userIDtoCheck.put(userID, false);
