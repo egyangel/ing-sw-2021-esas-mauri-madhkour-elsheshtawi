@@ -20,6 +20,7 @@ public class VirtualView implements Publisher<VCEvent>, Listener<Event> {
     public VirtualView(Integer userID, ClientHandler clientHandler) {
         this.userID = userID;
         this.clientHandler = clientHandler;
+
     }
 
     public void handleGameMessage(Message msg){

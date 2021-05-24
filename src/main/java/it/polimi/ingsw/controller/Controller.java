@@ -18,8 +18,8 @@ public class Controller implements Listener<VCEvent> {
 
     private Server server;
     private Game game;
-    private Map<Integer,String> userIDtoUsernames = new HashMap<>();
-    private Map<Integer,VirtualView> userIDtoVirtualViews = new HashMap<>();
+    private Map<Integer, String> userIDtoUsernames = new HashMap<>();
+    private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 
     public Controller(Game game, Server server) {
         this.game = game;
@@ -29,7 +29,7 @@ public class Controller implements Listener<VCEvent> {
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
         userIDtoUsernames.putAll(userIDtoNameMap);
         game.createGameObjects();
-        for(Integer userID: userIDtoUsernames.keySet()){
+        for (Integer userID : userIDtoUsernames.keySet()) {
             game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
             virtualView.subscribe(this);
@@ -39,36 +39,37 @@ public class Controller implements Listener<VCEvent> {
         }
     }
 
-    public void startMatch(){
+    public void startMatch() {
         game.shuffleLeaderCards();
         sendFourLeaderCards();
     }
 
-    private void sendFourLeaderCards(){
+
+    private void sendFourLeaderCards() {
         int calls = 0;
-        for (VirtualView virtualView: userIDtoVirtualViews.values()) {
-            CVEvent leaderCardEvent = new CVEvent(CVEvent.EventType.CHOOSE_TWO_LEADER_CARD,game.getFourLeaderCard(calls));
+        for (VirtualView virtualView : userIDtoVirtualViews.values()) {
+            CVEvent leaderCardEvent = new CVEvent(CVEvent.EventType.CHOOSE_TWO_LEADER_CARD, game.getFourLeaderCard(calls));
             calls++;
             virtualView.update(leaderCardEvent);
         }
     }
 
-    private void sendTurnOrderAssign(){
+    private void sendTurnOrderAssign() {
         TurnManager.assignTurnOrder();
-        for(Map.Entry<Integer, VirtualView> entry: userIDtoVirtualViews.entrySet()){
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
             Integer userTurn = TurnManager.getIndexOfUserID(entry.getKey());
             InitFatihPoints(entry.getKey(), userTurn);
-            CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER,userTurn);
+            CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
             entry.getValue().update(turnAssignEvent);
         }
     }
 
-    private void InitFatihPoints(Integer userID, Integer userTurn){
+    private void InitFatihPoints(Integer userID, Integer userTurn) {
         if (userTurn == 3 || userTurn == 4) {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }
     }
-    private void beginTurn(){
+    private void beginTurn() {
         Integer currentUserID = TurnManager.getCurrentPlayerID();
         game.sendMarketAndDevCardMatrixTo(currentUserID);
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.BEGIN_TURN);
@@ -123,21 +124,22 @@ public class Controller implements Listener<VCEvent> {
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
             case SWAP_SHELF_INDEX_CHOOSEN:
-                Type type2 = new TypeToken<List<Shelf.shelfPlace>>(){}.getType();
+                Type type2 = new TypeToken<List<Shelf.shelfPlace>>() {
+                }.getType();
                 List<Shelf.shelfPlace> shelfIndexList = (List<Shelf.shelfPlace>) vcEvent.getEventPayload(type2);
                 boolean result = game.getPersonalBoard(userID).swapShelves(shelfIndexList);
-                if (!result){
+                if (!result) {
                     // TODO OMER change invalid edit type, it might be hard in client side to differentiate different contexts
-                    cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT,"Cannot swap shelves selected!");
+                    cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT, "Cannot swap shelves selected!");
                     userIDtoVirtualViews.get(userID).update(cvEvent);
                 }
                 break;
             case DISCARD_SHELF_CHOOSEN:
                 Shelf.shelfPlace place = (Shelf.shelfPlace) vcEvent.getEventPayload(Shelf.shelfPlace.class);
                 boolean result1 = game.getPersonalBoard(userID).discardFromShelf(place);
-                if (!result1){
+                if (!result1) {
                     // TODO OMER change invalid edit type, it might be hard in client side to differentiate different contexts
-                    cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT,"Cannot discard from empty shelf!");
+                    cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT, "Cannot discard from empty shelf!");
                     userIDtoVirtualViews.get(userID).update(cvEvent);
                 }
                 break;
@@ -162,6 +164,7 @@ public class Controller implements Listener<VCEvent> {
                     userIDtoVirtualViews.get(userID).update(cvEvent);
                 }
                 break;
+                //TODO omer will be back...
 
         }
     }

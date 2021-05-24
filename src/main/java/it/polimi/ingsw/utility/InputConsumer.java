@@ -79,8 +79,8 @@ public class InputConsumer {
     public static Integer getNumberOfPlayers(Scanner scanner, PrintWriter out) {
         Integer input;
         input = Integer.parseInt(scanner.nextLine());
-        while (input < 2 || input > 4) {
-            out.println("Invalid number of players, please enter a number between 2 and 4:");
+        while (input < 1 || input > 4 ) {
+            out.println("Invalid number of players, please enter a number between 1 and 4:");
             input = Integer.parseInt(scanner.nextLine());
         }
         return input;

@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.enumclasses.CliColors;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +13,18 @@ public class App {
 
 
     public static void main(String[] args) throws IOException {
-        Game game = new Game();
+      //  Game game = new Game();
+        /* Lorenzo
+        //DevCardScreen(1,2);
+         //better with a for loop
+        System.out.println(CliColors "--------------");
+        System.out.println("");
+        //System.out.println(padder("|", 13) + "|"); not working properly..should create spaces based on the parameter n
+        System.out.println("|            !");
+        System.out.println("");
+
+         */
+
 
 //        game.printSpecialAbilities();
 //        Requirement aReq = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.GREEN);
@@ -26,7 +38,7 @@ public class App {
 
 //
 
-        MarketTray test = new MarketTray();
+   /*     MarketTray test = new MarketTray();
         System.out.println("Initial MarketTray Position:, rows and columns start at 1");
         test.MarketTrayDraw();
 
@@ -38,6 +50,8 @@ public class App {
         System.out.println("After 3rd column selection");
         test.selectColumn(3);
         test.MarketTrayDraw();
+
+    */
 //        test.ResourceDraw();
 //
 //        Player playerOne = new Player();
@@ -54,7 +68,13 @@ public class App {
 //         theGameController.startGame();
 
 
+
+
     }
+
+
+
+
 }
 
 

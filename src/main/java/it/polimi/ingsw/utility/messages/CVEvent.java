@@ -25,6 +25,7 @@ public class CVEvent extends Event{
 
     public CVEvent(EventType eventType, Object object){
         super(object);
+        this.eventType = eventType;
         this.jsonContent = JsonConverter.toJson(object);
     }
 
