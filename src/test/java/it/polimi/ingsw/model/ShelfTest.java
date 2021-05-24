@@ -55,7 +55,8 @@ class ShelfTest {
         warehouse[1].putResource(values);
         warehouse[2].putResource(values1);
 
-        assertTrue(warehouse[2].swapShelf(warehouse[1]));
+//        assertTrue(warehouse[2].swapShelf(warehouse[1]));
+        assertEquals(0,warehouse[2].swapShelf(warehouse[1]));
 
         values.clear();
         values1.clear();
@@ -69,7 +70,8 @@ class ShelfTest {
         warehouse[1].putResource(values);
         warehouse[2].putResource(values1);
 
-        assertFalse(warehouse[2].swapShelf(warehouse[1]));
+//        assertFalse(warehouse[2].swapShelf(warehouse[1]));
+        assertEquals(1,warehouse[2].swapShelf(warehouse[1]));
 
         values.clear();
         values1.clear();

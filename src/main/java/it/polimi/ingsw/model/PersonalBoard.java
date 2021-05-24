@@ -54,7 +54,7 @@ public class PersonalBoard {
     }
 
     public boolean putToWarehouse(Shelf.shelfPlace place, Resources res){
-        return warehouse[place.ordinal()].putResource(res);
+        return warehouse[place.getIndexInWarehouse()].putResource(res);
     }
 
     private boolean putFromTop(Resources.ResType resType, int size){
@@ -76,26 +76,6 @@ public class PersonalBoard {
         return (warehouse[index].getShelfResType() == resType);
     }
 
-    public boolean swapShelves(List<Shelf.shelfPlace> list){
-        int firstIndex = list.get(0).ordinal();
-        int secondIndex = list.get(1).ordinal();
-        boolean result =  warehouse[firstIndex].swapShelf(warehouse[secondIndex]);
-        if (result){
-            MVEvent mvEvent = new MVEvent(MVEvent.EventType.SWAPPED_SHELVES, this);
-            game.publish(userID, mvEvent);
-        }
-        return result;
-    }
-
-    public boolean discardFromShelf(Shelf.shelfPlace place){
-        int index = place.ordinal();
-        boolean result =  warehouse[index].removeOneFromShelf();
-        if (result){
-            MVEvent mvEvent = new MVEvent(MVEvent.EventType.DISCARDED_FROM_SHELF, this);
-            game.publish(userID, mvEvent);
-        }
-        return result;
-    }
 
     public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R){
         System.out.println("Trying Default Prod: " + L1.toString() + " + " + L2.toString() + " = " + R.toString() + "\n");
@@ -198,6 +178,16 @@ public class PersonalBoard {
         devSlots[index].putDevCard(card);
     }
 
+    public int clearShelf(Shelf.shelfPlace place){
+        // TODO send MV event through game, that includes string representation of changed object
+        return warehouse[place.getIndexInWarehouse()].clearShelf();
+    }
+
+    public int swapShelves(Shelf.shelfPlace[] places){
+        // TODO send MV event through game, that includes string representation of changed object
+        return warehouse[places[0].getIndexInWarehouse()].swapShelf(warehouse[places[1].getIndexInWarehouse()]);
+    }
+
 
     // DEBUG methods
     public void setStrongbox(Resources strongbox) {
@@ -222,4 +212,25 @@ public class PersonalBoard {
 
     public void printLeaderCards(){}
 
+    // NO USE METHODS for now
+    //    public boolean swapShelves(List<Shelf.shelfPlace> list){
+//        int firstIndex = list.get(0).ordinal();
+//        int secondIndex = list.get(1).ordinal();
+//        boolean result =  warehouse[firstIndex].swapShelf(warehouse[secondIndex]);
+//        if (result){
+//            MVEvent mvEvent = new MVEvent(MVEvent.EventType.SWAPPED_SHELVES, this);
+//            game.publish(userID, mvEvent);
+//        }
+//        return result;
+//    }
+
+//    public boolean discardFromShelf(Shelf.shelfPlace place){
+//        int index = place.ordinal();
+//        boolean result =  warehouse[index].removeOneFromShelf();
+//        if (result){
+//            MVEvent mvEvent = new MVEvent(MVEvent.EventType.DISCARDED_FROM_SHELF, this);
+//            game.publish(userID, mvEvent);
+//        }
+//        return result;
+//    }
 }

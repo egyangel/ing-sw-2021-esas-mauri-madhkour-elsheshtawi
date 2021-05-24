@@ -82,19 +82,6 @@ public class Game implements Publisher<MVEvent> {
         return list;
     }
 
-    public List<Resources.ResType> getWhiteMarbleConverters(Integer userID){
-        PersonalBoard personalBoard = userIDtoBoards.get(userID);
-        List<LeaderCard> leaderList = new ArrayList<>();
-        List<Resources.ResType> resTypeList = new ArrayList<>();
-        leaderList.addAll(personalBoard.getActiveLeaderCards());
-        for(LeaderCard card: leaderList){
-            if (card.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE){
-                resTypeList.add(card.getAbility().getResType());
-            }
-        }
-        return resTypeList;
-    }
-
     public DevCard peekTopDevCard(DevCard.CardColor color, int level){
         DevCard card = devCardMatrix[color.ordinal()][level].peekTopCard();
         return card;

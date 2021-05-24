@@ -7,6 +7,11 @@ import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
+import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
+import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
+import static it.polimi.ingsw.utility.messages.ActivateProdActionContext.ActionStep.*;
+import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
+import static it.polimi.ingsw.utility.messages.VCEvent.EventType.*;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
@@ -21,9 +26,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private boolean shouldTerminateClient;
     private boolean stopIdle;
     private String generalmsg;
-    private CVEvent cvEventToDisplay;
+    private TakeResActionContext takeResContext;
+    private BuyDevCardActionContext buyDevCardContext;
+    private ActivateProdActionContext activateProdContext;
+    private CVEvent initialCVevent;
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
-    private int numberOfDiscards = 0;
 
     public CLI(Client client) {
         this.client = client;
@@ -43,8 +50,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
         displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
         displayNameMap.put("displayActionSelection", this::displayAllActionSelection);
-        displayNameMap.put("displayTakeResAction", this::displayTakeResAction);
-        displayNameMap.put("displayPutResourcesTaken", this::displayPutResourcesTaken);
+        //TODO add used methods at the end
 //        displayNameMap.put("displayMarketTray", this::displayMarketTray);
 //        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
 //        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
@@ -125,7 +131,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayFourLeaderCard(){
         out.println("Here are the four leader card options...");
         Type type = new TypeToken<List<LeaderCard>>(){}.getType();
-        List<LeaderCard> fourLeaderCards = (List<LeaderCard>) cvEventToDisplay.getEventPayload(type);
+        List<LeaderCard> fourLeaderCards = (List<LeaderCard>) initialCVevent.getEventPayload(type);
         for (int i = 0; i < fourLeaderCards.size(); i++){
             out.println(i);
             out.println(fourLeaderCards.get(i));
@@ -141,12 +147,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         List<LeaderCard> twoLeaderCards = new ArrayList<>();
         twoLeaderCards.add(fourLeaderCards.get(firstIndex));
         twoLeaderCards.add(fourLeaderCards.get(secondIndex));
-        VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEADER_CARDS_CHOOSEN, twoLeaderCards);
+        VCEvent vcEvent = new VCEvent(LEADER_CARDS_CHOOSEN, twoLeaderCards);
         publish(vcEvent);
     }
 
     public void displayTurnAssign(){
-        Integer turn = (Integer) cvEventToDisplay.getEventPayload(Integer.class);
+        Integer turn = (Integer) initialCVevent.getEventPayload(Integer.class);
         switch (turn){
             case 1:
                 out.println("You are the first player.");
@@ -158,7 +164,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 out.println("You will have one initial resource of your choosing in the warehouse.");
                 Resources.ResType initResType = InputConsumer.getResourceType(in, out);
                 Resources initResource = new Resources(initResType, 1);
-                VCEvent vcEvent = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResource);
+                VCEvent vcEvent = new VCEvent(INIT_RES_CHOOSEN, initResource);
                 publish(vcEvent);
                 break;
             case 3:
@@ -167,7 +173,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 out.println("You will have one initial resource of your choosing in the warehouse.");
                 Resources.ResType initResTypeTwo = InputConsumer.getResourceType(in, out);
                 Resources initResourceTwo = new Resources(initResTypeTwo, 1);
-                VCEvent vcEventTwo = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResourceTwo);
+                VCEvent vcEventTwo = new VCEvent(INIT_RES_CHOOSEN, initResourceTwo);
                 publish(vcEventTwo);
                 break;
             case 4:
@@ -178,7 +184,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 Resources initResourceThree = new Resources(initResTypeThree, 1);
                 initResTypeThree = InputConsumer.getResourceType(in, out);
                 initResourceThree.add(initResTypeThree, 1);
-                VCEvent vcEventThree = new VCEvent(VCEvent.eventType.INIT_RES_CHOOSEN, initResourceThree);
+                VCEvent vcEventThree = new VCEvent(INIT_RES_CHOOSEN, initResourceThree);
                 publish(vcEventThree);
                 break;
         }
@@ -187,13 +193,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayAllActionSelection(){
         out.println("It is your turn now!");
         out.println("Enter the index of the action you want to take:");
-        out.println("[1] Take resource from market");   //displayTakeResAction() DONE
+        out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
-        out.println("[4] View market tray");    //displayMarketTray() DONE
+        out.println("[4] View market tray");
         out.println("[5] View development cards available");
-        out.println("[5] View and modify warehouse"); //displayAskModifyWarehouse() DONE
-        out.println("[6] View strongbox");  //displayStrongbox() DONE
+        out.println("[5] View and modify warehouse");
+        out.println("[6] View strongbox");
         out.println("[6] View development slots");
         out.println("[7] View faith track");
         out.println("[8] View leader cards");
@@ -276,18 +282,29 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     //TODO after implementing all actions, don't forget to send updated personal board (for example take resource end result created
     // inside displayPutResourceTaken, or discarded resources for other's faith points, or if vatican report triggered)
-    public void displayEndTurn(){
-    }
+    public void displayEndTurn(){}
 
-    public void displayTakeResAction(){
+    public void chooseRowColumnNumber(){
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
-        VCEvent vcEvent = new VCEvent(VCEvent.eventType.ROW_COLUMN_INDEX_CHOOSEN, rowColumnNumber);
+        char firstLetter = rowColumnNumber.charAt(0);
+        int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(2)));
+        if (firstLetter == 'R') {
+            takeResContext.chooseRow(true);
+        } else if (firstLetter == 'C') {
+            takeResContext.chooseRow(false);
+        } else takeResContext.setErrorTrue();
+        takeResContext.setIndex(index);
+        takeResContext.setLastStep(ROW_COLUMN_CHOOSEN);
+        VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
     }
 
-    public void displayBuyDevCardAction(){
+    public void chooseColorLevel(){
         String colorAndLevel = InputConsumer.getColorAndLevel(in, out);
-        VCEvent vcEvent = new VCEvent(VCEvent.eventType.LEVEL_COLOR_DEVCARD_CHOOSEN, colorAndLevel);
+        String[] parts = colorAndLevel.split("-");
+        buyDevCardContext.setColor(DevCard.CardColor.valueOf(parts[0]));
+        buyDevCardContext.setLevel(Integer.parseInt(parts[1]));
+        VCEvent vcEvent = new VCEvent(BUY_DEVCARD_CONTEXT_FILLED, buyDevCardContext);
         publish(vcEvent);
     }
 
@@ -297,30 +314,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     public void displayDevCardMatrix(){
 
-    }
-
-    public void displayAskModifyWarehouse(){
-        displayWarehouse();
-        out.println("Do you want to discard from or swap between shelves in the warehouse?");
-        String answer = InputConsumer.getSwapDiscardNo(in, out);
-        if (answer.equals("SWAP")) {
-            out.println("Enter the index of the first shelf:");
-            Shelf.shelfPlace firstPlace = InputConsumer.getShelfPlace(in, out);
-            out.println("Enter the index of the second shelf:");
-            Shelf.shelfPlace secondPlace = InputConsumer.getShelfPlace(in, out);
-            List<Shelf.shelfPlace> list = new ArrayList<>();
-            list.add(firstPlace);
-            list.add(secondPlace);
-            VCEvent vcEvent = new VCEvent(VCEvent.eventType.SWAP_SHELF_INDEX_CHOOSEN, list);
-            publish(vcEvent);
-        } else if (answer.equals("DISCARD")) {
-            out.println("Enter the index of the shelf:");
-            Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
-            VCEvent vcEvent = new VCEvent(VCEvent.eventType.DISCARD_SHELF_CHOOSEN, place);
-            publish(vcEvent);
-        } else {
-            addNextDisplay("displayActionSelection");
-        }
     }
 
     public void displayDevSlots(){
@@ -339,79 +332,74 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     }
 
-    public void displayConvertWhiteInto(){
-        Type type = new TypeToken<List<MarbleColor>>(){}.getType();
-        List<MarbleColor> marbleList = (List<MarbleColor>) cvEventToDisplay.getEventPayload(type);
-        List<LeaderCard> whiteConverters = new ArrayList<>();
-        for (LeaderCard leaderCard : client.getPersonalBoard().getActiveLeaderCards()) {
-            if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
-                whiteConverters.add(leaderCard);
-            }
+    public void chooseWhiteConverters(){
+        Resources.ResType firstResOption = takeResContext.getWhiteConverters().get(0).getAbility().getResType();
+        Resources.ResType secondResOption = takeResContext.getWhiteConverters().get(1).getAbility().getResType();
+        int whiteMarbles = takeResContext.getWhiteMarbleNumber();
+        out.println("You have two active white marble converter leader cards, and received " + whiteMarbles + " white marble from market tray");
+        out.println("You can convert the white marbles into [1]" + firstResOption.toString()  + " or [2]" + secondResOption.toString());
+        while(whiteMarbles > 0){
+            out.println("Enter the index of resource type into which you want to convert one white marble");
+            int index = InputConsumer.getANumberBetween(in, out, 1, 2);
+            if (index == 1) {
+                takeResContext.addOneConvertedRes(firstResOption);
+            } else
+                takeResContext.addOneConvertedRes(secondResOption);
+            whiteMarbles--;
+            out.println("You now have " + whiteMarbles + " white marble to convert.");
         }
-        int whiteMarbles = 0;
-        Resources resources = new Resources();
-        for(MarbleColor marble: marbleList) {
-            if(marble.getValue() == MarbleColor.WHITE) whiteMarbles++;
-        }
-        if (whiteConverters.size() == 0 || whiteMarbles == 0){
-            for(MarbleColor marble: marbleList){
-                resources.add(marble.getResourceType(),1);
-            }
-        } else if(whiteConverters.size() == 1){
-            for(MarbleColor marble: marbleList){
-                Resources.ResType resType = marble.getResourceType();
-                if (resType == null) {
-                    resType = whiteConverters.get(0).getAbility().getResType();
-                    out.println("Your leader converted a white marble into " + resType.toString());
-                }
-                resources.add(resType,1);
-            }
-        } else if(whiteConverters.size() == 2){
-            out.println("You have two active white marble converter leader cards, and received " + whiteMarbles + " white marble from market tray");
-            out.println("You can convert the white marbles into [1]" + whiteConverters.get(0).getAbility().getResType().toString() + " OR [2]" + whiteConverters.get(1).getAbility().getResType().toString());
-            while(whiteMarbles > 0){
-                out.println("Enter the index of resource type into which you want to convert one white marble");
-                int index = InputConsumer.getANumberBetween(in, out, 1, 2);
-                index--;
-                resources.add(whiteConverters.get(index).getAbility().getResType(),1);
-                whiteMarbles--;
-                out.println("You now have " + whiteMarbles + " white marble.");
-            }
-            for(MarbleColor marble: marbleList){
-                Resources.ResType resType = marble.getResourceType();
-                if (resType != null)
-                    resources.add(resType,1);
-            }
-        }
-        VCEvent vcEvent = new VCEvent(VCEvent.eventType.WHITE_MARBLES_CONVERTED_IF_NECESSARY, resources);
+        takeResContext.setLastStep(RES_FROM_WHITE_ADDED_TO_CONTEXT);
+        VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
     }
 
-    public void displayPutResourcesTaken(){
-        Resources resources = (Resources) cvEventToDisplay.getEventPayload(Resources.class);
-        for(Resources.ResType resType: resources.getResTypes()){
-            if(resType == Resources.ResType.FAITH){
-                client.getPersonalBoard().increaseFaitPoint(resources.getNumberOfType(resType));
-                continue;
-            }
-            Resources oneTypeRes = resources.cloneThisType(resType);
-            out.println("Where do you want to put " + oneTypeRes.sumOfValues() + " " + oneTypeRes.getOnlyType().toString());
+    public void chooseShelvesToPut(){
+        out.println("Your warehouse looks like:");
+        displayWarehouse();
+        Resources resources = takeResContext.getResources();
+        out.println("You have " + resources.toString() + " that you can put to your warehouse.");
+        out.println("Extra resources that you don't put will be discarded automatically");
+        out.println("Select one of the options below:");
+        out.println("[1] Clear shelf");
+        out.println("[2] Swap shelves");
+        out.println("[3] Select resource type and shelf to put that kind of resources");
+        out.println("[4] End take resource action");
+        int index = InputConsumer.getANumberBetween(in, out, 1, 3);
+        if (index == 1){
+            out.println("Select a shelf that you want to remove all resources from:");
             Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
-            boolean result = client.getPersonalBoard().putToWarehouse(place, oneTypeRes);
-            while(!result) {
-                out.println("Cannot put the selected type of resource in the selected shelf.");
-                out.println("Select another shelf or try again by discarding one resource from the selected resource type.");
-                String string = InputConsumer.getShelfOrDiscard(in, out);
-                if(string.equals("DISCARD")){
-                    oneTypeRes.subtract(oneTypeRes.getOnlyType(), 1);
-                    numberOfDiscards++;
-                }
-                out.println("Where do you want to put " + oneTypeRes.sumOfValues() + " " + oneTypeRes.getOnlyType().toString());
-                place = InputConsumer.getShelfPlace(in, out);
-                result = client.getPersonalBoard().putToWarehouse(place, oneTypeRes);
+            takeResContext.setShelf(place);
+            takeResContext.setLastStep(CLEAR_SHELF_CHOOSEN);
+        } else if (index == 2){
+            out.println("Select two shelves that you want to swap, extra resources will be discarded automatically:");
+            Shelf.shelfPlace firstPlace = InputConsumer.getShelfPlace(in, out);
+            Shelf.shelfPlace secondPlace = InputConsumer.getShelfPlace(in, out);
+            if(firstPlace.equals(secondPlace)){
+                out.println("You cannot select the same shelf.");
+                addNextDisplay("chooseShelvesToPut");
             }
+            takeResContext.setShelves(firstPlace, secondPlace);
+            takeResContext.setLastStep(SWAP_SHELVES_CHOOSEN);
+        } else if (index == 3){
+            List<Resources.ResType> resTypeList = new ArrayList<>();
+            resTypeList.addAll(resources.getResTypes());
+            Map<Shelf.shelfPlace, Resources.ResType> shelfToResMap = new HashMap<>();
+            for(Shelf.shelfPlace place: Shelf.shelfPlace.values()){
+                out.println("Which type of resource you want to put into " + place.toString() + " shelf?");
+                Resources.ResType selectedType = InputConsumer.getATypeAmongSet(in, out, resTypeList);
+                resTypeList.remove(selectedType);
+                shelfToResMap.put(place, selectedType);
+            }
+            takeResContext.setShelftoResTypeMap(shelfToResMap);
+            takeResContext.setLastStep(PUT_RESOURCES_CHOOSEN);
+        } else {
+            out.println("Ending take resource action...");
+            VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED);
+            publish(vcEvent);
+            return;
         }
-        addNextDisplay("displayMinorActions");
+        VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
+        publish(vcEvent);
     }
 
     public void displayStrongbox(){
@@ -423,13 +411,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayPlaceDevCardSelected(){
-        DevCard selectedCard = (DevCard) cvEventToDisplay.getEventPayload(DevCard.class);
-        List<DevSlot.slotPlace> placeList = client.getPersonalBoard().getSuitablePlaces(selectedCard);
-        DevSlot.slotPlace selectedPlace = InputConsumer.getSlotPlace(in, out, placeList);
+        //TODO OMER continue refactor buy dev card action
+//        DevCard selectedCard = (DevCard) cvEventToDisplay.getEventPayload(DevCard.class);
+//        List<DevSlot.slotPlace> placeList = client.getPersonalBoard().getSuitablePlaces(selectedCard);
+//        DevSlot.slotPlace selectedPlace = InputConsumer.getSlotPlace(in, out, placeList);
         displayWarehouse();
         displayStrongbox();
         Resources remainingCost = new Resources();
-        remainingCost.add(selectedCard.getCost());
+//        remainingCost.add(selectedCard.getCost());
         out.println("The cost of the card is: " + remainingCost.toString());
         for(Resources.ResType resType: remainingCost.getResTypes()){
             while(remainingCost.getNumberOfType(resType) > 0){
@@ -443,35 +432,72 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 remainingCost.subtract(resType,1);
             }
         }
-        client.getPersonalBoard().putDevCardOnSlot(selectedCard, selectedPlace);
+//        client.getPersonalBoard().putDevCardOnSlot(selectedCard, selectedPlace);
         out.println("The card is successfully bought and placed where you selected.");
         // TODO send message to server at the end turn stage, update it about personal board change in client side
         addNextDisplay("displayMinorActions");
     }
 
+    private void routeTakeResActionDisplay(){
+        switch (takeResContext.getLastStep()){
+            case CHOOSE_ROW_COLUMN:
+                addNextDisplay("chooseRowColumnNumber");
+                break;
+            case CHOOSE_LEADER_TO_CONVERT_WHITE:
+                addNextDisplay("chooseWhiteConverters");
+                break;
+            case CHOOSE_SHELVES:
+                addNextDisplay("chooseShelvesToPut");
+                break;
+        }
+    }
+
+    private void routeBuyDevCardActionDisplay(){
+        switch (buyDevCardContext.getLastStep()){
+            case CHOOSE_COLOR_LEVEL:
+                addNextDisplay("chooseColorLevel");
+                break;
+        }
+    }
+
+    private void routeActivateProdActionDisplay(){
+        switch (activateProdContext.getLastStep()){
+            case CHOOSE_DEV_SLOTS:
+                addNextDisplay("chooseDevSlots");
+        }
+    }
+
+    private void routeInitialActionsDisplay(){
+        switch (initialCVevent.getEventType()) {
+            case CHOOSE_TWO_LEADER_CARD:
+                addNextDisplay("displayFourLeaderCard");
+                break;
+            case ASSIGN_TURN_ORDER:
+                addNextDisplay("displayTurnAssign");
+                break;
+            case BEGIN_TURN:
+                addNextDisplay("displayActionSelection");
+                break;
+        }
+    }
+
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent){
-            cvEventToDisplay = (CVEvent) event;
-            switch (cvEventToDisplay.getEventType()) {
-                case CHOOSE_TWO_LEADER_CARD:
-                    addNextDisplay("displayFourLeaderCard");
-                    break;
-                case ASSIGN_TURN_ORDER:
-                    addNextDisplay("displayTurnAssign");
-                    break;
-                case BEGIN_TURN:
-                    addNextDisplay("displayActionSelection");
-                    break;
-                case MARBLELIST_SENT:
-                    addNextDisplay("displayConvertWhiteInto");
-                    break;
-                case PUT_RESOURCES_TAKEN:
-                    addNextDisplay("displayPutResourcesTaken");
-                    break;
-                case SUITABLE_DEVCARD:
-                    addNextDisplay("displayPlaceDevCardSelected");
-                    break;
+            CVEvent cvEvent = (CVEvent) event;
+            CVEvent.EventType eventType = cvEvent.getEventType();
+            if (eventType.equals(TAKE_RES_FILL_CONTEXT)){
+                takeResContext = (TakeResActionContext) cvEvent.getEventPayload(TakeResActionContext.class);
+                routeTakeResActionDisplay();
+            } else if (eventType.equals(BUY_DEVCARD_FILL_CONTEXT)){
+                buyDevCardContext = (BuyDevCardActionContext) cvEvent.getEventPayload(BuyDevCardActionContext.class);
+                routeBuyDevCardActionDisplay();
+            } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)){
+                activateProdContext = (ActivateProdActionContext) cvEvent.getEventPayload(ActivateProdActionContext.class);
+                routeActivateProdActionDisplay();
+            } else {
+                initialCVevent = cvEvent;
+                routeInitialActionsDisplay();
             }
         } else if (event instanceof MVEvent){
             MVEvent mvEvent = (MVEvent) event;

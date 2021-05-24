@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.Resources;
 import it.polimi.ingsw.model.Shelf;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -108,6 +109,23 @@ public class InputConsumer {
         }
         resType = Resources.ResType.valueOf(input);
         return resType;
+    }
+
+    public static Resources.ResType getATypeAmongSet(Scanner in, PrintWriter out, List<Resources.ResType> resTypeList){
+        List<String> resTypeStringList = new ArrayList<>();
+        String string = "Please enter one of the options: ";
+        for(Resources.ResType resType: resTypeList){
+            string += "[" + resType.toString() + "] ";
+            resTypeStringList.add(resType.toString()); // todo make sure restype.toString doesnt return something like RESTYPE.COIN
+        }
+        out.println(string);
+        String input = in.nextLine().toUpperCase();
+        while (!(resTypeStringList.contains(input))){
+            out.println("Invalid input.");
+            out.println(string);
+            input = in.nextLine().toUpperCase();
+        }
+        return Resources.ResType.valueOf(input);
     }
 
     public static String getMarketRowColumnIndex(Scanner in, PrintWriter out) {

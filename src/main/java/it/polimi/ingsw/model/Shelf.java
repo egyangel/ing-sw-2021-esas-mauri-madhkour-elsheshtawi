@@ -6,7 +6,14 @@ import java.util.List;
 
 public class Shelf {
     public enum shelfPlace{
-        TOP, MIDDLE, BOTTOM
+        TOP(0), MIDDLE(1), BOTTOM(2);
+        private int indexInWarehouse;
+        public int getIndexInWarehouse(){
+            return indexInWarehouse;
+        }
+        private shelfPlace(int index){
+            this.indexInWarehouse = index;
+        }
     }
 
     private final int maxSize;
@@ -62,19 +69,41 @@ public class Shelf {
         return true;
     }
 
-    public boolean swapShelf(Shelf otherShelf){
-        if ( otherShelf.getNumberOfElements() > this.maxSize || this.getNumberOfElements() > otherShelf.shelfSize() )
-            return false;
-        else{
-            List<Resources.ResType> resTypeList = new ArrayList<>();
-            resTypeList.addAll(otherShelf.shelf());
-            otherShelf.clearShelf();
-            otherShelf.putResource(this.shelf());
-            this.clearShelf();
-            this.putResource(resTypeList);
-            return true;
+    // modification of below method that returns discarded res number
+    public int swapShelf(Shelf otherShelf){
+        int thisMaxSize = this.maxSize;
+        int otherMaxSize = otherShelf.maxSize;
+        int thisSize = this.resources.size();
+        int otherSize = otherShelf.resources.size();
+        int discarded = 0;
+        if (thisSize > otherMaxSize){
+            discarded = thisSize - otherSize;
         }
+        if (otherSize > thisMaxSize){
+            discarded = otherSize - thisMaxSize;
+        }
+        List<Resources.ResType> resTypeList = new ArrayList<>();
+        resTypeList.addAll(otherShelf.shelf());
+        otherShelf.clearShelf();
+        otherShelf.putResource(this.shelf());
+        this.clearShelf();
+        this.putResource(resTypeList);
+        return discarded;
     }
+
+//    public boolean swapShelf(Shelf otherShelf){
+//        if ( otherShelf.getNumberOfElements() > this.maxSize || this.getNumberOfElements() > otherShelf.shelfSize() )
+//            return false;
+//        else{
+//            List<Resources.ResType> resTypeList = new ArrayList<>();
+//            resTypeList.addAll(otherShelf.shelf());
+//            otherShelf.clearShelf();
+//            otherShelf.putResource(this.shelf());
+//            this.clearShelf();
+//            this.putResource(resTypeList);
+//            return true;
+//        }
+//    }
 
     public boolean isEmpty(){
         return resources.isEmpty();
@@ -95,8 +124,10 @@ public class Shelf {
     public Resources.ResType getShelfResType(){
         return this.resources.get(0);
     }
-    public void clearShelf(){
+    public int clearShelf(){
+        int size = resources.size();
         this.resources.clear();
+        return size;
     }
     public String describeShelf(){
         String string = this.getNumberOfElements()+" of "+ this.getShelfResType();
