@@ -1,12 +1,16 @@
 package it.polimi.ingsw.utility;
 
 import it.polimi.ingsw.model.DevCard;
+import it.polimi.ingsw.model.DevSlot;
 import it.polimi.ingsw.model.Resources;
 import it.polimi.ingsw.model.Shelf;
 
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import static it.polimi.ingsw.network.server.Server.SERVER_MIN_PORT;
 import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
 
@@ -188,5 +192,29 @@ public class InputConsumer {
             number = Integer.parseInt(level);
         }
         return input;
+    }
+
+    public static DevSlot.slotPlace getSlotPlace(Scanner in, PrintWriter out, List<DevSlot.slotPlace> placeList){
+        String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
+        out.println("Please enter one of the options: " + placeString);
+        String input = in.nextLine().toUpperCase();
+        while (placeList.contains(DevSlot.slotPlace.valueOf(input))){
+            out.println("Invalid input.");
+            out.println("Please enter one of the options: " + placeString);
+            input = in.nextLine().toUpperCase();
+        }
+        return DevSlot.slotPlace.valueOf(input);
+    }
+
+    public static boolean getWorS(Scanner in, PrintWriter out){
+        out.println("Enter 'W' for warehouse and 'S' for strongbox:");
+        String input = in.nextLine().toUpperCase();
+        while (!((input.equals("W")) || (input.equals("S")))){
+            out.println("Invalid input.");
+            out.println("Enter 'W' for warehouse and 'S' for strongbox:");
+            input = in.nextLine().toUpperCase();
+        }
+        if (input.equals("W")) return true;
+        else return false;
     }
 }

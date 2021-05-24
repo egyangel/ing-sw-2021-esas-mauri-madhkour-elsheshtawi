@@ -46,7 +46,7 @@ public class Game implements Publisher<MVEvent> {
         Iterator<DevCard> cardIterator = allDevCards.iterator();
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 4; j++){
-                DevCardDeck deck = new DevCardDeck();
+                DevCardDeck deck = new DevCardDeck(DevCard.CardColor.values()[j], i+1);
                 for(int k = 0; k < 4; k++){
                     deck.putCard(cardIterator.next());
                 }
@@ -93,6 +93,15 @@ public class Game implements Publisher<MVEvent> {
             }
         }
         return resTypeList;
+    }
+
+    public DevCard peekTopDevCard(DevCard.CardColor color, int level){
+        DevCard card = devCardMatrix[color.ordinal()][level].peekTopCard();
+        return card;
+    }
+
+    public void removeTopDevCard(DevCard.CardColor color, int level){
+        devCardMatrix[color.ordinal()][level].removeTopCard();
     }
 
     public void sendMarketAndDevCardMatrixTo(Integer userID){

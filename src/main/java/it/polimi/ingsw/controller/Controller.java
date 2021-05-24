@@ -1,16 +1,14 @@
 package it.polimi.ingsw.controller;
 
 import com.google.gson.reflect.TypeToken;
-import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.model.LeaderCard;
-import it.polimi.ingsw.model.Resources;
-import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.enumclasses.MarbleColor;
 import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.messages.*;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +27,6 @@ public class Controller implements Listener<VCEvent> {
     }
 
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
-
         userIDtoUsernames.putAll(userIDtoNameMap);
         game.createGameObjects();
         for (Integer userID : userIDtoUsernames.keySet()) {
@@ -40,9 +37,6 @@ public class Controller implements Listener<VCEvent> {
             userIDtoVirtualViews.put(userID, virtualView);
             TurnManager.putUserID(userID);
         }
-
-
-
     }
 
     public void startMatch() {
@@ -75,7 +69,6 @@ public class Controller implements Listener<VCEvent> {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }
     }
-
     private void beginTurn() {
         Integer currentUserID = TurnManager.getCurrentPlayerID();
         game.sendMarketAndDevCardMatrixTo(currentUserID);
@@ -136,6 +129,7 @@ public class Controller implements Listener<VCEvent> {
                 List<Shelf.shelfPlace> shelfIndexList = (List<Shelf.shelfPlace>) vcEvent.getEventPayload(type2);
                 boolean result = game.getPersonalBoard(userID).swapShelves(shelfIndexList);
                 if (!result) {
+                    // TODO OMER change invalid edit type, it might be hard in client side to differentiate different contexts
                     cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT, "Cannot swap shelves selected!");
                     userIDtoVirtualViews.get(userID).update(cvEvent);
                 }
@@ -144,13 +138,33 @@ public class Controller implements Listener<VCEvent> {
                 Shelf.shelfPlace place = (Shelf.shelfPlace) vcEvent.getEventPayload(Shelf.shelfPlace.class);
                 boolean result1 = game.getPersonalBoard(userID).discardFromShelf(place);
                 if (!result1) {
+                    // TODO OMER change invalid edit type, it might be hard in client side to differentiate different contexts
                     cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT, "Cannot discard from empty shelf!");
                     userIDtoVirtualViews.get(userID).update(cvEvent);
                 }
                 break;
             case LEVEL_COLOR_DEVCARD_CHOOSEN:
+                String colorAndLevel = (String) vcEvent.getEventPayload(String.class);
+                String[] parts = colorAndLevel.split("-");
+                DevCard.CardColor color = DevCard.CardColor.valueOf(parts[0]);
+                int level = Integer.parseInt(parts[1]);
+                DevCard selectedCard = game.peekTopDevCard(color, level);
+                if (selectedCard == null){
+                    cvEvent = new CVEvent(CVEvent.EventType.EMPTY_DEVCARD_DECK, colorAndLevel);
+                    userIDtoVirtualViews.get(userID).update(cvEvent);
+                } else if (!game.getPersonalBoard(userID).isThereEnoughRes(selectedCard)){
+                    cvEvent = new CVEvent(CVEvent.EventType.NOT_ENOUGH_RES_FOR_DEVCARD, selectedCard);
+                    userIDtoVirtualViews.get(userID).update(cvEvent);
+                } else if (!game.getPersonalBoard(userID).isCardSuitableForSlots(selectedCard)){
+                    cvEvent = new CVEvent(CVEvent.EventType.UNSUITABLE_DEVCARD, selectedCard);
+                    userIDtoVirtualViews.get(userID).update(cvEvent);
+                } else {
+                    game.removeTopDevCard(color, level);
+                    cvEvent = new CVEvent(CVEvent.EventType.SUITABLE_DEVCARD, selectedCard);
+                    userIDtoVirtualViews.get(userID).update(cvEvent);
+                }
                 break;
-            //TODO omer will be back...
+                //TODO omer will be back...
 
         }
     }
