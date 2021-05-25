@@ -95,6 +95,10 @@ public class Resources {
         return resources;
     }
 
+    public void removeThisType(ResType resType){
+        values.remove(resType);
+    }
+
     public Resources cloneThisType(ResType resType){
         return new Resources(resType, getNumberOfType(resType));
     }

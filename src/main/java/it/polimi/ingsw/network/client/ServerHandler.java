@@ -41,7 +41,7 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
         System.out.println("\nConnected to server at " + socket.getInetAddress());
         if (client.getView() instanceof CLI) {
             viewCLI = (CLI) client.getView();
-            viewCLI.subscribe(this); // TODO maybe to delete
+            viewCLI.subscribe(this); // TODO Mohamed: maybe to delete, Omer: correct fix thanks, can be done also for gui
             this.subscribe(viewCLI);
         } else if(client.getView() instanceof GUI){
             viewGUI = (GUI) client.getView();

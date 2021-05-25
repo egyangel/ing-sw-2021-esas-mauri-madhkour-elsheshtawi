@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
+import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
+import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
+
 // ALSO IMPLEMENTS Publisher<CVEvent> but ABSTRACT OUT LATER
 public class Controller implements Listener<VCEvent> {
 
@@ -80,17 +84,11 @@ public class Controller implements Listener<VCEvent> {
     public void update(VCEvent vcEvent) {
         Integer userID = vcEvent.getUserID();
         Resources resources;
-        Resources resourcesWaitingToBePutIntoWarehouse;
-        CVEvent cvEvent;
         switch (vcEvent.getEventType()) {
             case LEADER_CARDS_CHOOSEN:
                 Type type1 = new TypeToken<List<LeaderCard>>() {
                 }.getType();
                 List<LeaderCard> selectedCards = (List<LeaderCard>) vcEvent.getEventPayload(type1);
-//                PRINT CARDS FOR DEBUG
-//                for(LeaderCard card: selectedCards){
-//                    System.out.println(card);
-//                }
                 game.getPersonalBoard(userID).putSelectedLeaderCards(selectedCards);
                 TurnManager.registerResponse(userID);
                 if (TurnManager.hasAllClientsResponded()) {
@@ -105,67 +103,154 @@ public class Controller implements Listener<VCEvent> {
                     beginTurn();
                 }
                 break;
-            case ROW_COLUMN_INDEX_CHOOSEN:
-                String rowColumnNumber = (String) vcEvent.getEventPayload(String.class);
-                List<MarbleColor> marbleList = null;
-                char firstLetter = rowColumnNumber.charAt(0);
-                int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(0)));
-                if (firstLetter == 'R') {
-                    marbleList = game.getMarketTray().selectRow(index);
-                } else if (firstLetter == 'C') {
-                    marbleList = game.getMarketTray().selectColumn(index);
-                } else System.out.println("Bad row/column and index came to server");
-                cvEvent = new CVEvent(CVEvent.EventType.MARBLELIST_SENT, marbleList);
+            case TAKE_RES_ACTION_SELECTED:
+                TakeResActionContext emptyTakeResContext = new TakeResActionContext();
+                handleTakeResAction(userID, emptyTakeResContext);
+                break;
+            case TAKE_RES_CONTEXT_FILLED:
+                TakeResActionContext takeResContext = (TakeResActionContext) vcEvent.getEventPayload(TakeResActionContext.class);
+                handleTakeResAction(userID, takeResContext);
+                break;
+            case BUY_DEVCARD_ACTION_SELECTED:
+                BuyDevCardActionContext emptyBuyDevContext = new BuyDevCardActionContext();
+                handleBuyDevCardAction(userID, emptyBuyDevContext);
+                break;
+            case BUY_DEVCARD_CONTEXT_FILLED:
+                BuyDevCardActionContext buyDevContext = (BuyDevCardActionContext) vcEvent.getEventPayload(BuyDevCardActionContext.class);
+                handleBuyDevCardAction(userID, buyDevContext);
+                break;
+            case ACTIVATE_PROD_ACTION_SELECTED:
+                //similar
+                break;
+            case ACTIVATE_PROD_CONTEXT_FILLED:
+                //similar
+                break;
+            case TAKE_RES_ACTION_ENDED:
+            case BUY_DEVCARD_ACTION_ENDED:
+            case ACTIVATE_PROD_ACTION_ENDED:
+                CVEvent cvEvent = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
-            case WHITE_MARBLES_CONVERTED_IF_NECESSARY:
-                resourcesWaitingToBePutIntoWarehouse = (Resources) vcEvent.getEventPayload(Resources.class);
-                cvEvent = new CVEvent(CVEvent.EventType.PUT_RESOURCES_TAKEN);
-                userIDtoVirtualViews.get(userID).update(cvEvent);
-                break;
-            case SWAP_SHELF_INDEX_CHOOSEN:
-                Type type2 = new TypeToken<List<Shelf.shelfPlace>>() {
-                }.getType();
-                List<Shelf.shelfPlace> shelfIndexList = (List<Shelf.shelfPlace>) vcEvent.getEventPayload(type2);
-                boolean result = game.getPersonalBoard(userID).swapShelves(shelfIndexList);
-                if (!result) {
-                    // TODO OMER change invalid edit type, it might be hard in client side to differentiate different contexts
-                    cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT, "Cannot swap shelves selected!");
-                    userIDtoVirtualViews.get(userID).update(cvEvent);
-                }
-                break;
-            case DISCARD_SHELF_CHOOSEN:
-                Shelf.shelfPlace place = (Shelf.shelfPlace) vcEvent.getEventPayload(Shelf.shelfPlace.class);
-                boolean result1 = game.getPersonalBoard(userID).discardFromShelf(place);
-                if (!result1) {
-                    // TODO OMER change invalid edit type, it might be hard in client side to differentiate different contexts
-                    cvEvent = new CVEvent(CVEvent.EventType.INVALID_EDIT, "Cannot discard from empty shelf!");
-                    userIDtoVirtualViews.get(userID).update(cvEvent);
-                }
-                break;
-            case LEVEL_COLOR_DEVCARD_CHOOSEN:
-                String colorAndLevel = (String) vcEvent.getEventPayload(String.class);
-                String[] parts = colorAndLevel.split("-");
-                DevCard.CardColor color = DevCard.CardColor.valueOf(parts[0]);
-                int level = Integer.parseInt(parts[1]);
-                DevCard selectedCard = game.peekTopDevCard(color, level);
-                if (selectedCard == null){
-                    cvEvent = new CVEvent(CVEvent.EventType.EMPTY_DEVCARD_DECK, colorAndLevel);
-                    userIDtoVirtualViews.get(userID).update(cvEvent);
-                } else if (!game.getPersonalBoard(userID).isThereEnoughRes(selectedCard)){
-                    cvEvent = new CVEvent(CVEvent.EventType.NOT_ENOUGH_RES_FOR_DEVCARD, selectedCard);
-                    userIDtoVirtualViews.get(userID).update(cvEvent);
-                } else if (!game.getPersonalBoard(userID).isCardSuitableForSlots(selectedCard)){
-                    cvEvent = new CVEvent(CVEvent.EventType.UNSUITABLE_DEVCARD, selectedCard);
-                    userIDtoVirtualViews.get(userID).update(cvEvent);
-                } else {
-                    game.removeTopDevCard(color, level);
-                    cvEvent = new CVEvent(CVEvent.EventType.SUITABLE_DEVCARD, selectedCard);
-                    userIDtoVirtualViews.get(userID).update(cvEvent);
-                }
-                break;
-                //TODO omer will be back...
+        }
+    }
 
+    private void handleTakeResAction(Integer userID, TakeResActionContext context){
+        switch (context.getLastStep()){
+            case ROW_COLUMN_CHOOSEN:
+                handleRowColumnIndex(userID, context);
+                break;
+            case RES_FROM_WHITE_ADDED_TO_CONTEXT:
+                context.setLastStep(CHOOSE_SHELVES);
+                break;
+            case CLEAR_SHELF_CHOOSEN:
+                handleClearShelf(userID, context);
+                break;
+            case SWAP_SHELVES_CHOOSEN:
+                handleSwapShelf(userID, context);
+                break;
+            case PUT_RESOURCES_CHOOSEN:
+                handlePutResourcesChoosen(userID, context);
+                break;
+        }
+        CVEvent cvEvent = new CVEvent(TAKE_RES_FILL_CONTEXT, context);
+        userIDtoVirtualViews.get(userID).update(cvEvent);
+    }
+
+    private void handleRowColumnIndex(Integer userID, TakeResActionContext context){
+        List<MarbleColor> marbleList;
+        if(context.isRow())
+            marbleList = game.getMarketTray().selectRow(context.getIndex());
+        else
+            marbleList = game.getMarketTray().selectColumn(context.getIndex());
+        List<LeaderCard> whiteConverters = new ArrayList<>();
+        for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
+            if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
+                whiteConverters.add(leaderCard);
+            }
+        }
+        int whiteMarbles = 0;
+        Resources resources = new Resources();
+        for(MarbleColor marble: marbleList) {
+            if(marble.getValue() == MarbleColor.WHITE) whiteMarbles++;
+        }
+        if (whiteConverters.size() == 0 || whiteMarbles == 0){
+            for(MarbleColor marble: marbleList){
+                resources.add(marble.getResourceType(),1);
+            }
+            context.setLastStep(CHOOSE_SHELVES);
+        } else if(whiteConverters.size() == 1) {
+            for (MarbleColor marble : marbleList) {
+                Resources.ResType resType = marble.getResourceType();
+                if (resType == null) {
+                    resType = whiteConverters.get(0).getAbility().getResType();
+                }
+                resources.add(resType, 1);
+            }
+            context.setLastStep(CHOOSE_SHELVES);
+        } else if(whiteConverters.size() == 2){
+            for(MarbleColor marble: marbleList){
+                Resources.ResType resType = marble.getResourceType();
+                if (resType != null)
+                    resources.add(resType,1);
+            }
+            context.setLastStep(CHOOSE_LEADER_TO_CONVERT_WHITE);
+            context.setWhiteConverters(whiteConverters);
+            context.setWhiteMarbleNumber(whiteMarbles);
+        }
+        context.setResources(resources);
+        context.convertResIntoFaith();
+    }
+
+    private void handleClearShelf(Integer userID, TakeResActionContext context){
+        Shelf.shelfPlace place = context.getShelf();
+        int discarded = game.getPersonalBoard(userID).clearShelf(place);
+        context.addDiscardedRes(discarded);
+        context.setLastStep(CHOOSE_SHELVES);
+    }
+
+    private void handleSwapShelf(Integer userID, TakeResActionContext context){
+        Shelf.shelfPlace[] places = context.getShelves();
+        int discarded = game.getPersonalBoard(userID).swapShelves(places);
+        context.addDiscardedRes(discarded);
+        context.setLastStep(CHOOSE_SHELVES);
+    }
+
+    private void handlePutResourcesChoosen(Integer userID, TakeResActionContext context){
+        Map<Shelf.shelfPlace, Resources.ResType> map = context.getShelfPlaceResTypeMap();
+        Map<Shelf.shelfPlace, Boolean> shelfToResult = new HashMap<>();
+        Boolean result;
+        for (Map.Entry<Shelf.shelfPlace, Resources.ResType> entry : map.entrySet()) {
+            Resources resToPut = new Resources();
+            resToPut.add(entry.getValue(), context.getResources().getNumberOfType(entry.getValue()));
+            result = game.getPersonalBoard(userID).putToWarehouse(entry.getKey(), resToPut);
+            shelfToResult.put(entry.getKey(), result);
+        }
+        context.setPutResultMap(shelfToResult);
+        context.removeResourcesPutToShelf();
+        context.setLastStep(CHOOSE_SHELVES); //choose shelves is correct, I did it this way intentionally
+    }
+
+    private void handleBuyDevCardAction(Integer userID, BuyDevCardActionContext context){
+        switch (context.getLastStep()){
+            case COLOR_LEVEL_CHOSEN:
+                handleColorLevelChosen(userID, context);
+                break;
+        }
+        CVEvent cvEvent = new CVEvent(BUY_DEVCARD_FILL_CONTEXT, context);
+        userIDtoVirtualViews.get(userID).update(cvEvent);
+    }
+
+    private void handleColorLevelChosen(Integer userID, BuyDevCardActionContext context){
+        DevCard selectedCard = game.peekTopDevCard(context.getColor(), context.getLevel());
+        if (selectedCard == null){
+            context.setLastStep(EMPTY_DEVCARD_DECK_ERROR);
+        } else if (!game.getPersonalBoard(userID).isThereEnoughRes(selectedCard)){
+            context.setLastStep(NOT_ENOUGH_RES_FOR_DEVCARD_ERROR);
+        } else if (!game.getPersonalBoard(userID).isCardSuitableForSlots(selectedCard)){
+            context.setLastStep(UNSUITABLE_FOR_DEVSLOTS_ERROR);
+        } else {
+            game.removeTopDevCard(context.getColor(), context.getLevel());
+            context.setLastStep(CHOOSE_DEV_SLOT);
         }
     }
 }
