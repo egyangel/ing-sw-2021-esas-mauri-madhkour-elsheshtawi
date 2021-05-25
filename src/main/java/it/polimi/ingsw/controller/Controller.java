@@ -105,7 +105,9 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case TAKE_RES_ACTION_SELECTED:
                 TakeResActionContext emptyTakeResContext = new TakeResActionContext();
-                handleTakeResAction(userID, emptyTakeResContext);
+                emptyTakeResContext.setLastStep(CHOOSE_ROW_COLUMN);
+                CVEvent cvEvent = new CVEvent(TAKE_RES_FILL_CONTEXT, emptyTakeResContext);
+                userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
             case TAKE_RES_CONTEXT_FILLED:
                 TakeResActionContext takeResContext = (TakeResActionContext) vcEvent.getEventPayload(TakeResActionContext.class);
