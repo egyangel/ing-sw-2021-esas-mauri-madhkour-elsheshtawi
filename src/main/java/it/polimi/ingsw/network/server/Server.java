@@ -81,7 +81,8 @@ public class Server implements Runnable {
 
     public void handleMessage(Integer userID, Message msg) {
         if (msg.getMsgtype() == Message.MsgType.VC_EVENT) {
-            userIDtoVirtualViews.get(userID).handleGameMessage(msg);
+
+            controller.handleGameMessage(userID,msg);
         } else if (Arrays.asList(Message.MsgType.CV_EVENT, Message.MsgType.MV_EVENT).contains(msg.getMsgtype())) {
             System.out.println("Unexpected server to server message");
         } else {

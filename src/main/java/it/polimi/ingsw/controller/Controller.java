@@ -32,7 +32,7 @@ public class Controller implements Listener<VCEvent> {
 
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
         userIDtoUsernames.putAll(userIDtoNameMap);
-        game.createGameObjects();
+
         for (Integer userID : userIDtoUsernames.keySet()) {
             game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
@@ -41,6 +41,7 @@ public class Controller implements Listener<VCEvent> {
             userIDtoVirtualViews.put(userID, virtualView);
             TurnManager.putUserID(userID);
         }
+        game.createGameObjects();
     }
 
     public void startMatch() {
@@ -61,6 +62,7 @@ public class Controller implements Listener<VCEvent> {
     private void sendTurnOrderAssign() {
         TurnManager.assignTurnOrder();
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+            // TODO: have to be fixed. it returns userID 0 but user id start from 1
             Integer userTurn = TurnManager.getIndexOfUserID(entry.getKey());
             InitFatihPoints(entry.getKey(), userTurn);
             CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
@@ -254,5 +256,10 @@ public class Controller implements Listener<VCEvent> {
             game.removeTopDevCard(context.getColor(), context.getLevel());
             context.setLastStep(CHOOSE_DEV_SLOT);
         }
+    }
+
+    public void handleGameMessage(Integer userID, Message msg) {
+        userIDtoVirtualViews.get(userID).handleGameMessage(msg);
+
     }
 }
