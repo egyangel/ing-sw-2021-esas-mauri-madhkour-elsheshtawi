@@ -419,7 +419,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayStrongbox();
         Resources remainingCost = new Resources();
 //        remainingCost.add(selectedCard.getCost());
-        out.println("The cost of the card is: " + remainingCost.toString());
+
+         out.println("The cost of the card is: " + remainingCost.toString());
         for(Resources.ResType resType: remainingCost.getResTypes()){
             while(remainingCost.getNumberOfType(resType) > 0){
                 out.println("Where do you want to spend 1 " + resType.toString() + " from?");
@@ -436,6 +437,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("The card is successfully bought and placed where you selected.");
         // TODO send message to server at the end turn stage, update it about personal board change in client side
         addNextDisplay("displayMinorActions");
+
+        //TODO Amor wrote this code,but i have to talk with omer
+   /*     VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED);
+        publish(vcEvent);
+        return;*/
     }
 
     private void routeTakeResActionDisplay(){

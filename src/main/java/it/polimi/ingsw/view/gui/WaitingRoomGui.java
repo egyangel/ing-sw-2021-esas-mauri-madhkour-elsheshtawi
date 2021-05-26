@@ -18,7 +18,7 @@ public class WaitingRoomGui extends JFrame{
 
     private void prepareWaitingRoomGUI() {
 
-        //creation of the 3 panels,one ober the other,lpane is the base,
+        //creation of the 3 panels,one over the other,lpane is the base,
         // then p1 is the panel that contain the image and the last one contains te button
 
         ImagePanel p1 = new ImagePanel("src/main/resources/Background.jpg");
@@ -27,9 +27,6 @@ public class WaitingRoomGui extends JFrame{
         setSize(489, 666);
         setLayout(new BorderLayout());
         add(lpane, BorderLayout.CENTER);
-
-
-        //upload image on the p1 panel
 
         //setting the pos and dim of p1
         p1.setBounds(0, 0, 489, 666);
@@ -80,9 +77,6 @@ public class WaitingRoomGui extends JFrame{
         Player4.setFont(new Font("Arial Black", 0, 14));
 
 
-
-
-
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -111,7 +105,6 @@ public class WaitingRoomGui extends JFrame{
         gbc4.gridx = 1;
         gbc4.gridy = 1;
         top.add(Player4, gbc4);
-
 
     }
 }

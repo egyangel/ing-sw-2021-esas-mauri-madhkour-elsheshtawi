@@ -70,7 +70,6 @@ public class LoginGui extends JFrame{
             top.add(Name);
 
 
-
             JLabel message = new JLabel(" ");
             message.setForeground(Color.BLACK);
             message.setFont(new Font("Arial Black", 2, 16));
@@ -97,9 +96,10 @@ public class LoginGui extends JFrame{
             gbc5.weightx = 1;
             gbc5.gridx = 0;
             gbc5.gridy = 2;
-            gbc5.gridwidth = 2; //the name is very long, the element are spaced
+            gbc5.gridwidth = 2;
 
             top.add(message, gbc5);
+
             //adding top to lpane,a.k.a the base
             lpane.add(top, 1, 0);
 

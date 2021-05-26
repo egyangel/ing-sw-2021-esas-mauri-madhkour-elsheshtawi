@@ -120,8 +120,10 @@ public class Controller implements Listener<VCEvent> {
                 handleBuyDevCardAction(userID, buyDevContext);
                 break;
             case ACTIVATE_PROD_ACTION_SELECTED:
-                //similar
+                ActivateProdActionContext activateProdAction = new ActivateProdActionContext();
+                handleActivateProdAction(userID, activateProdAction);
                 break;
+
             case ACTIVATE_PROD_CONTEXT_FILLED:
                 //similar
                 break;
@@ -252,5 +254,12 @@ public class Controller implements Listener<VCEvent> {
             game.removeTopDevCard(context.getColor(), context.getLevel());
             context.setLastStep(CHOOSE_DEV_SLOT);
         }
+    }
+    private void handleActivateProdAction(Integer userID, ActivateProdActionContext context){
+        switch (context.getLastStep()){
+
+        }
+        CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
+        userIDtoVirtualViews.get(userID).update(cvEvent);
     }
 }
