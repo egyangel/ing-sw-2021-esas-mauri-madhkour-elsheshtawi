@@ -110,7 +110,7 @@ public class Resources {
     }
 
     // true if smallerOrEqual.compareTo(bigger)
-    public boolean compareTo(Resources otherRes){
+    public boolean smallerOrEqual(Resources otherRes){
         for(ResType resType: this.getResTypes()){
             if (this.getNumberOfType(resType) > otherRes.getNumberOfType(resType)){
                 return false;

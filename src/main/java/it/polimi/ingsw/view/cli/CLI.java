@@ -2,14 +2,12 @@ package it.polimi.ingsw.view.cli;
 
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.enumclasses.MarbleColor;
 import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
-import static it.polimi.ingsw.utility.messages.ActivateProdActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
 import static it.polimi.ingsw.utility.messages.VCEvent.EventType.*;
 
@@ -31,6 +29,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private ActivateProdActionContext activateProdContext;
     private CVEvent initialCVevent;
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
+    private String marketTrayDescription;
+    private String devCardMatrixDescription;
+    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions;
+    private Map<Integer, String> userIDtoUsernames;
+    private boolean majorActionDone;
 
     public CLI(Client client) {
         this.client = client;
@@ -123,7 +126,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayLogin() {
         out.println("Choose a username:");
         String username = InputConsumer.getUserName(in, out);
-        out.println("Choose number of players you would like to play with:");
         Message loginmsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
         client.sendToServer(loginmsg);
     }
@@ -191,52 +193,59 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayAllActionSelection(){
+        VCEvent vcEvent;
         out.println("It is your turn now!");
         out.println("Enter the index of the action you want to take:");
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
         out.println("[4] View market tray");
-        out.println("[5] View development cards available");
-        out.println("[5] View and modify warehouse");
-        out.println("[6] View strongbox");
-        out.println("[6] View development slots");
-        out.println("[7] View faith track");
-        out.println("[8] View leader cards");
-        out.println("[9] View other players");
-        out.println("[0] End turn");
+        out.println("[5] View development card matrix");
+        out.println("[6] View warehouse");
+        out.println("[7] View strongbox");
+        out.println("[8] View development slots");
+        out.println("[9] View faith track");
+        out.println("[10] View leader cards");
+        // TODO maybe this option can be used for the users personal board too, so above display methods are not shown
+        out.println("[11] View all personal boards");
+        out.println("[12] End turn");
         int index = InputConsumer.getANumberBetween(in, out, 0, 9);
         switch (index){
             case 1:
-                addNextDisplay("displayTakeResAction");
+                vcEvent = new VCEvent(TAKE_RES_ACTION_SELECTED);
+                publish(vcEvent);
                 break;
             case 2:
-                addNextDisplay("displayBuyDevCardAction");
+                vcEvent = new VCEvent(BUY_DEVCARD_ACTION_SELECTED);
+                publish(vcEvent);
                 break;
             case 3:
-                addNextDisplay("displayActivateProdAction");
+                vcEvent = new VCEvent(ACTIVATE_PROD_ACTION_SELECTED);
+                publish(vcEvent);
                 break;
             case 4:
                 addNextDisplay("displayMarketTray");
                 break;
             case 5:
-                addNextDisplay("displayWarehouseAndStrongbox");
+                addNextDisplay("displayDevCardMatrix");
                 break;
             case 6:
-                addNextDisplay("displayDevSlots");
+                addNextDisplay("displayWarehouse");
                 break;
             case 7:
-                addNextDisplay("displayFaithTrack");
+                addNextDisplay("displayStrongbox");
                 break;
             case 8:
-                addNextDisplay("displayLeaderCards");
+                addNextDisplay("displayDevSlots");
                 break;
             case 9:
-                addNextDisplay("displayOtherPlayers");
+                addNextDisplay("displayFaithTrack");
                 break;
-            case 0:
-                addNextDisplay("displayEndTurn");
+            case 10:
+                addNextDisplay("displayLeaderCards");
                 break;
+            case 11:
+                addNextDisplay("displayAllPersonalBoards");
         }
     }
 
@@ -280,9 +289,68 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    //TODO after implementing all actions, don't forget to send updated personal board (for example take resource end result created
-    // inside displayPutResourceTaken, or discarded resources for other's faith points, or if vatican report triggered)
-    public void displayEndTurn(){}
+    public void displayMarketTray(){
+        out.println(marketTrayDescription);
+        returnToCorrectActionSelection();
+    }
+
+    public void displayDevCardMatrix(){
+        out.println(devCardMatrixDescription);
+        returnToCorrectActionSelection();
+    }
+
+    public void displayWarehouse(){
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
+        returnToCorrectActionSelection();
+    }
+
+    public void displayStrongbox(){
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getStrongboxDescription());
+        returnToCorrectActionSelection();
+    }
+
+    public void displayDevSlots(){
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getDevSlotsDescription());
+        returnToCorrectActionSelection();
+    }
+
+    public void displayFaithTrack(){
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getFaithTrackDescription());
+        returnToCorrectActionSelection();
+    }
+
+    public void displayLeaderCards(){
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getLeaderCardsDescription());
+        returnToCorrectActionSelection();
+    }
+
+    public void displayAllPersonalBoards(){
+        LinkedList<Integer> userIDs = new LinkedList<>();
+        userIDs.addAll(userIDtoBoardDescriptions.keySet());
+        userIDs.remove(client.getUserID());
+        userIDs.addFirst(client.getUserID());
+        int index = 0;
+        int numberOfPlayers = userIDtoBoardDescriptions.keySet().size();
+        out.println("Your personal board:");
+        out.println(userIDtoBoardDescriptions.get(userIDs.get(index)));
+        out.println("Enter [1] for next board, [2] for previous board, [3] to choose action:");
+        int input = InputConsumer.getANumberBetween(in, out, 1,3);
+        while (input == 1 || input == 2){
+            if (input == 1) index = (index + 1) % numberOfPlayers;
+            if (input == 2) index = (index - 1 + numberOfPlayers) % numberOfPlayers;
+            Integer userIDtoDisplay = userIDs.get(index);
+            String usernameToDisplay = userIDtoUsernames.get(userIDtoDisplay);
+            PersonalBoardDescription boardToDisplay = userIDtoBoardDescriptions.get(userIDtoDisplay);
+            out.println(usernameToDisplay + "'s personal board:");
+            out.println(boardToDisplay);
+            }
+        returnToCorrectActionSelection();
+    }
+
+    private void returnToCorrectActionSelection(){
+        if (majorActionDone) addNextDisplay("displayMinorActionSelection");
+        else addNextDisplay("displayAllActionSelection");
+    }
 
     public void chooseRowColumnNumber(){
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
@@ -294,7 +362,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             takeResContext.chooseRow(false);
         } else takeResContext.setErrorTrue();
         takeResContext.setIndex(index);
-        takeResContext.setLastStep(ROW_COLUMN_CHOOSEN);
+        takeResContext.setLastStep(ROW_COLUMN_CHOSEN);
         VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
     }
@@ -304,32 +372,47 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String[] parts = colorAndLevel.split("-");
         buyDevCardContext.setColor(DevCard.CardColor.valueOf(parts[0]));
         buyDevCardContext.setLevel(Integer.parseInt(parts[1]));
+        buyDevCardContext.setLastStep(COLOR_LEVEL_CHOSEN);
         VCEvent vcEvent = new VCEvent(BUY_DEVCARD_CONTEXT_FILLED, buyDevCardContext);
         publish(vcEvent);
     }
 
-    public void displayMarketTray(){
-        out.println(client.getMarketTrayDescription());
+    public void chooseDevSlotToPutDevCard(){
+        List<DevSlot.slotPlace> suitableSlots = buyDevCardContext.getSuitableSlots();
+        out.println("Select which development slot you want to put the selected card on.");
+        DevSlot.slotPlace place = InputConsumer.getSlotPlace(in, out, suitableSlots);
+        buyDevCardContext.setSelectedSlot(place);
+        buyDevCardContext.setLastStep(DEVSLOT_CHOSEN);
+        VCEvent vcEvent = new VCEvent(BUY_DEVCARD_CONTEXT_FILLED, buyDevCardContext);
+        publish(vcEvent);
     }
 
-    public void displayDevCardMatrix(){
-
+    public void choosePayDevCardCostFromWhere(){
+        out.println("Select warehouse or strongbox to pay the cost of the selected development card.");
+        Resources remainingCost = buyDevCardContext.getRemainingCost();
+        Resources payFromWarehouse = new Resources();
+        Resources payFromStrongbox = new Resources();
+        List<Resources.ResType> resTypeList = remainingCost.getResTypes(); //store list type in order to prevent modification of reamining cost while iterating it
+        for(Resources.ResType resType: resTypeList){
+            while(remainingCost.getNumberOfType(resType) > 0){
+                out.println("From where do you want to pay 1 " + resType.toString());
+                boolean warehouseSelected = InputConsumer.getWorS(in, out);
+                if (warehouseSelected) payFromWarehouse.add(resType, 1);
+                else payFromStrongbox.add(resType,1);
+                remainingCost.subtract(resType,1);
+            }
+        }
+        buyDevCardContext.setPayFromWarehouse(payFromWarehouse);
+        buyDevCardContext.setPayFromStrongbox(payFromStrongbox);
+        buyDevCardContext.setLastStep(PAY_FROM_WHERE_CHOSEN);
+        VCEvent vcEvent = new VCEvent(BUY_DEVCARD_CONTEXT_FILLED, buyDevCardContext);
+        publish(vcEvent);
     }
 
-    public void displayDevSlots(){
-        client.getPersonalBoard().printDevSlots();
-    }
-
-    public void displayFaithTrack(){
-        out.println(client.getPersonalBoard().describeFaithTrack());
-    }
-
-    public void displayLeaderCards(){
-        client.getPersonalBoard().printLeaderCards();
-    }
-
-    public void displayOtherPlayers(){
-
+    public void displayBuyDevActionEnd(){
+        out.println("Ending buy development card action...");
+        VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
+        publish(vcEvent);
     }
 
     public void chooseWhiteConverters(){
@@ -369,7 +452,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             out.println("Select a shelf that you want to remove all resources from:");
             Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
             takeResContext.setShelf(place);
-            takeResContext.setLastStep(CLEAR_SHELF_CHOOSEN);
+            takeResContext.setLastStep(CLEAR_SHELF_CHOSEN);
         } else if (index == 2){
             out.println("Select two shelves that you want to swap, extra resources will be discarded automatically:");
             Shelf.shelfPlace firstPlace = InputConsumer.getShelfPlace(in, out);
@@ -379,7 +462,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("chooseShelvesToPut");
             }
             takeResContext.setShelves(firstPlace, secondPlace);
-            takeResContext.setLastStep(SWAP_SHELVES_CHOOSEN);
+            takeResContext.setLastStep(SWAP_SHELVES_CHOSEN);
         } else if (index == 3){
             List<Resources.ResType> resTypeList = new ArrayList<>();
             resTypeList.addAll(resources.getResTypes());
@@ -391,7 +474,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 shelfToResMap.put(place, selectedType);
             }
             takeResContext.setShelftoResTypeMap(shelfToResMap);
-            takeResContext.setLastStep(PUT_RESOURCES_CHOOSEN);
+            takeResContext.setLastStep(PUT_RESOURCES_CHOSEN);
         } else {
             out.println("Ending take resource action...");
             VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED);
@@ -400,42 +483,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
         VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
-    }
-
-    public void displayStrongbox(){
-        out.println(client.getPersonalBoard().describeStrongbox());
-    }
-
-    public void displayWarehouse(){
-        out.println(client.getPersonalBoard().describeWarehouse());
-    }
-
-    public void displayPlaceDevCardSelected(){
-        //TODO OMER continue refactor buy dev card action
-//        DevCard selectedCard = (DevCard) cvEventToDisplay.getEventPayload(DevCard.class);
-//        List<DevSlot.slotPlace> placeList = client.getPersonalBoard().getSuitablePlaces(selectedCard);
-//        DevSlot.slotPlace selectedPlace = InputConsumer.getSlotPlace(in, out, placeList);
-        displayWarehouse();
-        displayStrongbox();
-        Resources remainingCost = new Resources();
-//        remainingCost.add(selectedCard.getCost());
-        out.println("The cost of the card is: " + remainingCost.toString());
-        for(Resources.ResType resType: remainingCost.getResTypes()){
-            while(remainingCost.getNumberOfType(resType) > 0){
-                out.println("Where do you want to spend 1 " + resType.toString() + " from?");
-                boolean warehouse = InputConsumer.getWorS(in, out);
-                if (warehouse) {
-                    client.getPersonalBoard().spendOneFromWarehouse(resType);
-                } else {
-                    client.getPersonalBoard().spendOneFromStrongbox(resType);
-                }
-                remainingCost.subtract(resType,1);
-            }
-        }
-//        client.getPersonalBoard().putDevCardOnSlot(selectedCard, selectedPlace);
-        out.println("The card is successfully bought and placed where you selected.");
-        // TODO send message to server at the end turn stage, update it about personal board change in client side
-        addNextDisplay("displayMinorActions");
     }
 
     private void routeTakeResActionDisplay(){
@@ -457,6 +504,40 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case CHOOSE_COLOR_LEVEL:
                 addNextDisplay("chooseColorLevel");
                 break;
+            case EMPTY_DEVCARD_DECK_ERROR:
+                setGeneralMsg("There is no available development card in that color and level.");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("chooseColorLevel");
+                break;
+            case NOT_ENOUGH_RES_FOR_DEVCARD_ERROR:
+                setGeneralMsg("You don't have enough resources to buy that development card.");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("chooseColorLevel");
+                break;
+            case UNSUITABLE_FOR_DEVSLOTS_ERROR:
+                setGeneralMsg("There are no suitable slots on your personal board for you to put the selected card on.");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("chooseColorLevel");
+                break;
+            case CHOOSE_DEV_SLOT:
+                addNextDisplay("chooseDevSlotToPutDevCard");
+                break;
+            case CHOOSE_PAY_COST_FROM_WHERE:
+                addNextDisplay("choosePayDevCardCostFromWhere");
+                break;
+            case NOT_ENOUGH_RES_IN_WAREHOUSE:
+                setGeneralMsg("You selected more resources from warehouse than you can pay from there!");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("choosePayDevCardCostFromWhere");
+                break;
+            case NOT_ENOUGH_RES_IN_STRONGBOX:
+                setGeneralMsg("You selected more resources from strongbox than you can pay from there!");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("choosePayDevCardCostFromWhere");
+                break;
+            case COST_PAID_DEVCARD_PUT:
+                addNextDisplay("displayBuyDevActionEnd");
+                break;
         }
     }
 
@@ -475,7 +556,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case ASSIGN_TURN_ORDER:
                 addNextDisplay("displayTurnAssign");
                 break;
-            case BEGIN_TURN:
+            case SELECT_ALL_ACTION:
                 addNextDisplay("displayActionSelection");
                 break;
         }
@@ -486,39 +567,47 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         if (event instanceof CVEvent){
             CVEvent cvEvent = (CVEvent) event;
             CVEvent.EventType eventType = cvEvent.getEventType();
-            if (eventType.equals(TAKE_RES_FILL_CONTEXT)){
+            if (eventType.equals(SELECT_ALL_ACTION)) {
+                majorActionDone = false;
+                addNextDisplay("displayAllActionSelection");
+            }
+            else if (eventType.equals(TAKE_RES_FILL_CONTEXT)){
                 takeResContext = (TakeResActionContext) cvEvent.getEventPayload(TakeResActionContext.class);
                 routeTakeResActionDisplay();
             } else if (eventType.equals(BUY_DEVCARD_FILL_CONTEXT)){
                 buyDevCardContext = (BuyDevCardActionContext) cvEvent.getEventPayload(BuyDevCardActionContext.class);
                 routeBuyDevCardActionDisplay();
-            } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)){
+            } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)) {
                 activateProdContext = (ActivateProdActionContext) cvEvent.getEventPayload(ActivateProdActionContext.class);
                 routeActivateProdActionDisplay();
+            } else if (eventType.equals(SELECT_MINOR_ACTION)){
+                majorActionDone = true;
+                addNextDisplay("displayMinorActionSelection");
             } else {
                 initialCVevent = cvEvent;
                 routeInitialActionsDisplay();
             }
         } else if (event instanceof MVEvent){
             MVEvent mvEvent = (MVEvent) event;
+            Integer userIDofUpdatedBoard = mvEvent.getUserID();
             switch (mvEvent.getEventType()) {
-                case SWAPPED_SHELVES:
-                    client.setPersonalBoard((PersonalBoard) mvEvent.getEventPayload(PersonalBoard.class));
-                    out.println("Shelf swap successful!");
-                    addNextDisplay("displayAskModifyWarehouse");
+                case MARKET_TRAY_UPDATE:
+                    marketTrayDescription = mvEvent.getJsonContent();
                     break;
-                case DISCARDED_FROM_SHELF:
-                    client.setPersonalBoard((PersonalBoard) mvEvent.getEventPayload(PersonalBoard.class));
-                    out.println("Discard from shelf successful!");
-                    addNextDisplay("displayAskModifyWarehouse");
+                case DEVCARD_MATRIX_UPDATE:
+                    devCardMatrixDescription = mvEvent.getJsonContent();
                     break;
-                case MOST_RECENT_MARKETTRAY_SENT:
-                    client.setMarketTrayDescription((String) mvEvent.getEventPayload(String.class));
+                case WAREHOUSE_UPDATE:
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
                     break;
-                case MOST_RECENT_DEVCARDMATRIX_SENT:
-                    client.setDevCardMatrixDescription((String) mvEvent.getEventPayload(String.class));
+                case STRONGBOX_UPDATE:
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(mvEvent.getJsonContent());
                     break;
-                case OTHER_PERSONALBOARDS_SENT:
+                case DEVSLOTS_UPDATE:
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(mvEvent.getJsonContent());
+                    break;
+                case FAITHPOINT_UPDATE:
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(mvEvent.getJsonContent());
                     break;
             }
         } else {
@@ -608,6 +697,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public void setGeneralMsg(String msg) {
         generalmsg = msg;
+    }
+
+    public void setUserIDtoUsernames(Map<Integer, String> userIDtoUsernames) {
+        this.userIDtoUsernames = userIDtoUsernames;
     }
 
     // METHODS THAT WON'T BE USED
