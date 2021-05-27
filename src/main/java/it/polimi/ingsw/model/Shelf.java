@@ -137,6 +137,13 @@ public class Shelf {
         return this.resources.remove(this.resources.get(0));
     }
 
+    public void removeFromShelf(int number){
+        while (number > 0){
+            removeOneFromShelf();
+            number--;
+        }
+    }
+
     public Resources getResource(){
         if (isEmpty()) return new Resources();
         else return new Resources(resources.get(0), resources.size());

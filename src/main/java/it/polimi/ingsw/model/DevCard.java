@@ -52,7 +52,7 @@ public class DevCard {
 
     @Override
     public String toString(){
-        return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " Victory Points: " + victoryPoints;
+        return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
     }
 
 

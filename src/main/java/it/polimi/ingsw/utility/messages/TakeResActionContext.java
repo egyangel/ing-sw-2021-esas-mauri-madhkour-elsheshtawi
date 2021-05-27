@@ -12,12 +12,12 @@ import java.util.Map;
 public class TakeResActionContext {
     public enum ActionStep{
         // from client to server
-        ROW_COLUMN_CHOOSEN,
+        ROW_COLUMN_CHOSEN,
         RES_FROM_WHITE_ADDED_TO_CONTEXT,
-        CLEAR_SHELF_CHOOSEN,
-        SWAP_SHELVES_CHOOSEN,
-        PUT_RESOURCES_CHOOSEN,
-        END_TAKE_RES_ACTION_CHOOSEN,
+        CLEAR_SHELF_CHOSEN,
+        SWAP_SHELVES_CHOSEN,
+        PUT_RESOURCES_CHOSEN,
+        END_TAKE_RES_ACTION_CHOSEN,
         // from server to client
         CHOOSE_ROW_COLUMN,
         CHOOSE_LEADER_TO_CONVERT_WHITE,

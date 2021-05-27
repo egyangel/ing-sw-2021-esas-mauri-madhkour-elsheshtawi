@@ -6,7 +6,6 @@ import it.polimi.ingsw.utility.JsonConverter;
 import it.polimi.ingsw.utility.messages.Listener;
 import it.polimi.ingsw.utility.messages.MVEvent;
 import it.polimi.ingsw.utility.messages.Publisher;
-import it.polimi.ingsw.utility.messages.VCEvent;
 
 import java.util.*;
 
@@ -93,16 +92,16 @@ public class Game implements Publisher<MVEvent> {
 
     public void sendMarketAndDevCardMatrixTo(Integer userID){
         String marketTrayString = market.describeMarketTray();
-        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MOST_RECENT_MARKETTRAY_SENT, marketTrayString);
+        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, marketTrayString);
         publish(userID, marketUpdate);
         String devCardMatrixString = describeDevCardMatrix();
-        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.MOST_RECENT_DEVCARDMATRIX_SENT, devCardMatrixString);
+        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, devCardMatrixString);
         publish(userID, devCardMatrixUpdate);
     }
 
     //TODO FOR AMOR: return a single string that consists of top devcards in the 3x4 matrix
     // it would be best if 3x4 view of the matrix can be preserved
-    private String describeDevCardMatrix(){
+    public String describeDevCardMatrix(){
         return null;
     }
 
@@ -124,10 +123,19 @@ public class Game implements Publisher<MVEvent> {
         listenerList.remove(listener);
     }
 
+    // this doesn't work, use publishToAll
     @Override
     public void publish(MVEvent event) {
         for(Listener<MVEvent> listener : listenerList){
             listener.update(event);
+        }
+    }
+
+
+
+    public void updateAllAboutChange(MVEvent event){
+        for(VirtualView virtualView: userIDtoVirtualView.values()){
+            virtualView.update(event);
         }
     }
 

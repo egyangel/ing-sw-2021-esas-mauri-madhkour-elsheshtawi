@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.utility.messages.MVEvent;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -122,24 +120,31 @@ public class PersonalBoard {
         return activeLeaderCards;
     }
 
-    public String describeStrongbox() {
-        String string = "Resources inside strong box: " + strongbox.toString();
-        return string;
+    public Resources getTotalResources(){
+        Resources res = new Resources();
+        res.add(getWarehouseResources());
+        res.add(getStrongboxResources());
+        return res;
     }
 
-    private Resources getTotalResources(){
-        Resources resTotal = new Resources();
+    public Resources getStrongboxResources(){
+        Resources res = new Resources();
+        res.add(strongbox);
+        return res;
+    }
+
+    public Resources getWarehouseResources(){
+        Resources res = new Resources();
         for(Shelf shelf: warehouse){
-            resTotal.add(shelf.getResource());
+            res.add(shelf.getResource());
         }
-        resTotal.add(strongbox);
-        return resTotal;
+        return res;
     }
 
     public boolean isThereEnoughRes(DevCard card){
         Resources totalRes = getTotalResources();
         Resources cost = card.getCost();
-        if (cost.compareTo(totalRes)) return true;
+        if (cost.smallerOrEqual(totalRes)) return true;
         else return false;
     }
 
@@ -174,18 +179,36 @@ public class PersonalBoard {
     }
 
     public void putDevCardOnSlot(DevCard card, DevSlot.slotPlace place){
-        int index = place.ordinal();
+        int index = place.getIndexInBoard();
         devSlots[index].putDevCard(card);
     }
 
     public int clearShelf(Shelf.shelfPlace place){
         // TODO send MV event through game, that includes string representation of changed object
+
         return warehouse[place.getIndexInWarehouse()].clearShelf();
     }
 
     public int swapShelves(Shelf.shelfPlace[] places){
         // TODO send MV event through game, that includes string representation of changed object
         return warehouse[places[0].getIndexInWarehouse()].swapShelf(warehouse[places[1].getIndexInWarehouse()]);
+    }
+
+    public void subtractFromWarehouse(Resources res){
+        List<Resources.ResType> resTypeList = new ArrayList<>();
+        resTypeList.addAll(res.getResTypes());
+        for(int i = 0; i < 3; i++){
+            for(Resources.ResType resType: resTypeList){
+                if (warehouse[i].getShelfResType().equals(resType)){
+                    int number = res.getNumberOfType(resType);
+                    warehouse[i].removeFromShelf(number);
+                }
+            }
+        }
+    }
+
+    public void subtractFromStrongbox(Resources res){
+        this.strongbox.subtract(res);
     }
 
 
@@ -200,8 +223,17 @@ public class PersonalBoard {
         return string;
     }
 
-    public void printDevSlots(){
+    public String describeStrongbox() {
+        String string = "Resources inside strong box: " + strongbox.toString();
+        return string;
+    }
 
+    public String describeDevSlots(){
+        String string = "";
+        for (DevSlot slot: devSlots){
+            string += slot.describeDevSlot() + "\n";
+        }
+        return string.trim(); //removes one \n at the end
     }
 
     //TODO FOR AMOR: same for faith track, try to show special pope fields
@@ -209,9 +241,10 @@ public class PersonalBoard {
         return null;
     }
 
-
-    public void printLeaderCards(){}
-
+    //TODO
+    public String describeLeaderCards(){
+        return null;
+    }
     // NO USE METHODS for now
     //    public boolean swapShelves(List<Shelf.shelfPlace> list){
 //        int firstIndex = list.get(0).ordinal();
