@@ -3,9 +3,12 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.network.server.Server;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SoloController extends Controller {
+    private HashMap<String,String> CrossToken; // CROSSTOKEN,Position
+
 
     public SoloController(Game game, Server server) {
         super(game, server);
@@ -23,4 +26,15 @@ public class SoloController extends Controller {
        -- place it face-down on the table
          */
     }
+
+    //TODO init the Cross Token into the first place
+    public void placeCrossToken(String position) {
+
+    }
+
+    public void initSoloActionToken(){
+        game.setSoloActionToken();
+    }
+
+
 }

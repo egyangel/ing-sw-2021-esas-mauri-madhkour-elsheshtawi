@@ -6,6 +6,7 @@ import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
+
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
@@ -74,8 +75,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         synchronized (this) {
             stop = shouldTerminateClient;
         }
-        while(!stop){
-            if (displayTransitionQueue.peek() == null){
+        while (!stop) {
+            if (displayTransitionQueue.peek() == null) {
                 displayNameMap.get("displayIdle").run();
             } else {
                 displayTransitionQueue.poll().run();
@@ -86,7 +87,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    public synchronized void addNextDisplay(String displayName){
+    public synchronized void addNextDisplay(String displayName) {
         if (displayTransitionQueue.peek() == null)
             stopDisplayIdle();
         displayTransitionQueue.add(displayNameMap.get(displayName));
@@ -106,7 +107,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String ip = "localhost";
         int portNumber = 3000; //for debug
         out.println("Connecting to server...");
-        client.connectToServer(ip,portNumber);
+        client.connectToServer(ip, portNumber);
     }
 
     @Override
@@ -126,25 +127,27 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayLogin() {
         out.println("Choose a username:");
         String username = InputConsumer.getUserName(in, out);
+        out.println("Choose number of players you would like to play with:");
         Message loginmsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
         client.sendToServer(loginmsg);
     }
 
-    public void displayFourLeaderCard(){
+    public void displayFourLeaderCard() {
         out.println("Here are the four leader card options...");
-        Type type = new TypeToken<List<LeaderCard>>(){}.getType();
+        Type type = new TypeToken<List<LeaderCard>>() {
+        }.getType();
         List<LeaderCard> fourLeaderCards = (List<LeaderCard>) initialCVevent.getEventPayload(type);
-        for (int i = 0; i < fourLeaderCards.size(); i++){
+        for (int i = 0; i < fourLeaderCards.size(); i++) {
             out.println(i);
             out.println(fourLeaderCards.get(i));
         }
         out.println("Enter the index of first leader card to keep:");
-        Integer firstIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+        Integer firstIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
         out.println("Enter the index of second leader card to keep:");
-        Integer secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+        Integer secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
         while (firstIndex.equals(secondIndex)) {
             out.println("Please enter a different index than first selection:");
-            secondIndex = InputConsumer.getANumberBetween(in,out, 1, 4);
+            secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
         }
         List<LeaderCard> twoLeaderCards = new ArrayList<>();
         twoLeaderCards.add(fourLeaderCards.get(firstIndex));
@@ -153,9 +156,15 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    public void displayTurnAssign(){
+    public void displayTurnAssign() {
         Integer turn = (Integer) initialCVevent.getEventPayload(Integer.class);
-        switch (turn){
+        switch (turn) {
+            case 0: // SOLO PLAYER
+                Resources.ResType initResTypeSolo = InputConsumer.getResourceType(in, out);
+                Resources initResourceSolo = new Resources(initResTypeSolo, 1);
+                VCEvent vcEventSolo = new VCEvent(INIT_RES_CHOOSEN, initResourceSolo);
+                publish(vcEventSolo);
+                break;
             case 1:
                 out.println("You are the first player.");
                 out.println("You have the inkwell but no initial resources or faith points.");
@@ -192,7 +201,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    public void displayAllActionSelection(){
+    public void displayAllActionSelection() {
         VCEvent vcEvent;
         out.println("It is your turn now!");
         out.println("Enter the index of the action you want to take:");
@@ -210,7 +219,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[11] View all personal boards");
         out.println("[12] End turn");
         int index = InputConsumer.getANumberBetween(in, out, 0, 9);
-        switch (index){
+        switch (index) {
             case 1:
                 vcEvent = new VCEvent(TAKE_RES_ACTION_SELECTED);
                 publish(vcEvent);
@@ -249,7 +258,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    public void displayMinorActionSelection(){
+    public void displayMinorActionSelection() {
         out.println("Do you want to execute any other action?");
         out.println("Enter the index of the action you want to take:");
         out.println("[1] View market tray");
@@ -261,7 +270,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[7] View other players");
         out.println("[8] End Turn");
         int index = InputConsumer.getANumberBetween(in, out, 1, 8);
-        switch (index){
+        switch (index) {
             case 1:
                 addNextDisplay("displayMarketTray");
                 break;
@@ -352,7 +361,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         else addNextDisplay("displayAllActionSelection");
     }
 
-    public void chooseRowColumnNumber(){
+    public void chooseRowColumnNumber() {
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
         char firstLetter = rowColumnNumber.charAt(0);
         int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(2)));
@@ -367,7 +376,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    public void chooseColorLevel(){
+    public void chooseColorLevel() {
         String colorAndLevel = InputConsumer.getColorAndLevel(in, out);
         String[] parts = colorAndLevel.split("-");
         buyDevCardContext.setColor(DevCard.CardColor.valueOf(parts[0]));
@@ -415,13 +424,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    public void chooseWhiteConverters(){
+    public void chooseWhiteConverters() {
         Resources.ResType firstResOption = takeResContext.getWhiteConverters().get(0).getAbility().getResType();
         Resources.ResType secondResOption = takeResContext.getWhiteConverters().get(1).getAbility().getResType();
         int whiteMarbles = takeResContext.getWhiteMarbleNumber();
         out.println("You have two active white marble converter leader cards, and received " + whiteMarbles + " white marble from market tray");
-        out.println("You can convert the white marbles into [1]" + firstResOption.toString()  + " or [2]" + secondResOption.toString());
-        while(whiteMarbles > 0){
+        out.println("You can convert the white marbles into [1]" + firstResOption.toString() + " or [2]" + secondResOption.toString());
+        while (whiteMarbles > 0) {
             out.println("Enter the index of resource type into which you want to convert one white marble");
             int index = InputConsumer.getANumberBetween(in, out, 1, 2);
             if (index == 1) {
@@ -436,7 +445,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    public void chooseShelvesToPut(){
+    public void chooseShelvesToPut() {
         out.println("Your warehouse looks like:");
         displayWarehouse();
         Resources resources = takeResContext.getResources();
@@ -448,26 +457,26 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[3] Select resource type and shelf to put that kind of resources");
         out.println("[4] End take resource action");
         int index = InputConsumer.getANumberBetween(in, out, 1, 3);
-        if (index == 1){
+        if (index == 1) {
             out.println("Select a shelf that you want to remove all resources from:");
             Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
             takeResContext.setShelf(place);
             takeResContext.setLastStep(CLEAR_SHELF_CHOSEN);
-        } else if (index == 2){
+        } else if (index == 2) {
             out.println("Select two shelves that you want to swap, extra resources will be discarded automatically:");
             Shelf.shelfPlace firstPlace = InputConsumer.getShelfPlace(in, out);
             Shelf.shelfPlace secondPlace = InputConsumer.getShelfPlace(in, out);
-            if(firstPlace.equals(secondPlace)){
+            if (firstPlace.equals(secondPlace)) {
                 out.println("You cannot select the same shelf.");
                 addNextDisplay("chooseShelvesToPut");
             }
             takeResContext.setShelves(firstPlace, secondPlace);
             takeResContext.setLastStep(SWAP_SHELVES_CHOSEN);
-        } else if (index == 3){
+        } else if (index == 3) {
             List<Resources.ResType> resTypeList = new ArrayList<>();
             resTypeList.addAll(resources.getResTypes());
             Map<Shelf.shelfPlace, Resources.ResType> shelfToResMap = new HashMap<>();
-            for(Shelf.shelfPlace place: Shelf.shelfPlace.values()){
+            for (Shelf.shelfPlace place : Shelf.shelfPlace.values()) {
                 out.println("Which type of resource you want to put into " + place.toString() + " shelf?");
                 Resources.ResType selectedType = InputConsumer.getATypeAmongSet(in, out, resTypeList);
                 resTypeList.remove(selectedType);
@@ -485,8 +494,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    private void routeTakeResActionDisplay(){
-        switch (takeResContext.getLastStep()){
+    private void routeTakeResActionDisplay() {
+        switch (takeResContext.getLastStep()) {
             case CHOOSE_ROW_COLUMN:
                 addNextDisplay("chooseRowColumnNumber");
                 break;
@@ -499,8 +508,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    private void routeBuyDevCardActionDisplay(){
-        switch (buyDevCardContext.getLastStep()){
+    private void routeBuyDevCardActionDisplay() {
+        switch (buyDevCardContext.getLastStep()) {
             case CHOOSE_COLOR_LEVEL:
                 addNextDisplay("chooseColorLevel");
                 break;
@@ -541,14 +550,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    private void routeActivateProdActionDisplay(){
-        switch (activateProdContext.getLastStep()){
+    private void routeActivateProdActionDisplay() {
+        switch (activateProdContext.getLastStep()) {
             case CHOOSE_DEV_SLOTS:
                 addNextDisplay("chooseDevSlots");
         }
     }
 
-    private void routeInitialActionsDisplay(){
+    private void routeInitialActionsDisplay() {
         switch (initialCVevent.getEventType()) {
             case CHOOSE_TWO_LEADER_CARD:
                 addNextDisplay("displayFourLeaderCard");
@@ -556,7 +565,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case ASSIGN_TURN_ORDER:
                 addNextDisplay("displayTurnAssign");
                 break;
-            case SELECT_ALL_ACTION:
+            case BEGIN_TURN:
                 addNextDisplay("displayActionSelection");
                 break;
         }
@@ -564,7 +573,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void update(Event event) {
-        if (event instanceof CVEvent){
+        if (event instanceof CVEvent) {
             CVEvent cvEvent = (CVEvent) event;
             CVEvent.EventType eventType = cvEvent.getEventType();
             if (eventType.equals(SELECT_ALL_ACTION)) {
@@ -574,7 +583,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             else if (eventType.equals(TAKE_RES_FILL_CONTEXT)){
                 takeResContext = (TakeResActionContext) cvEvent.getEventPayload(TakeResActionContext.class);
                 routeTakeResActionDisplay();
-            } else if (eventType.equals(BUY_DEVCARD_FILL_CONTEXT)){
+            } else if (eventType.equals(BUY_DEVCARD_FILL_CONTEXT)) {
                 buyDevCardContext = (BuyDevCardActionContext) cvEvent.getEventPayload(BuyDevCardActionContext.class);
                 routeBuyDevCardActionDisplay();
             } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)) {
@@ -587,7 +596,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 initialCVevent = cvEvent;
                 routeInitialActionsDisplay();
             }
-        } else if (event instanceof MVEvent){
+        } else if (event instanceof MVEvent) {
             MVEvent mvEvent = (MVEvent) event;
             Integer userIDofUpdatedBoard = mvEvent.getUserID();
             switch (mvEvent.getEventType()) {
@@ -627,15 +636,16 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void publish(VCEvent event) {
-        for(Listener<VCEvent> listener: listenerList)
+        for (Listener<VCEvent> listener : listenerList)
             listener.update(event);
     }
 
     @Override
-    public synchronized void displayIdle(){
+    public synchronized void displayIdle() {
         try {
             this.wait(1000);
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+        }
         String idleSymbols = "✞⨎⌬☺⌺";
         String backSpace = "\b";
         StringBuilder idleSymbolBar = new StringBuilder();
@@ -645,14 +655,15 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.print("Waiting for the other players... ");
         out.flush();
 
-        while(!shouldStopDisplayIdle()){
+        while (!shouldStopDisplayIdle()) {
             out.print(idleSymbolBar);
             out.flush();
-            lastBarSize =  idleSymbolBar.length();
+            lastBarSize = idleSymbolBar.length();
 
             try {
                 this.wait(400);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
             if (appendtoRight) {
                 idleSymbolBar.append(idleSymbols.charAt(symbolIndex));
                 if (idleSymbolBar.length() == 6) {
@@ -667,19 +678,19 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     idleSymbolBar.append(idleSymbols.charAt(symbolIndex));
                 }
             }
-            for (int i = 0; i< lastBarSize; i++) {
+            for (int i = 0; i < lastBarSize; i++) {
                 out.print(backSpace);
             }
         }
 
         stopIdle = false;
-        for (int i = 0; i< lastBarSize+15; i++)
+        for (int i = 0; i < lastBarSize + 15; i++)
             out.print(backSpace);
         out.flush();
     }
 
     @Override
-    public synchronized boolean shouldStopDisplayIdle(){
+    public synchronized boolean shouldStopDisplayIdle() {
         return stopIdle;
     }
 
@@ -690,7 +701,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     @Override
-    public synchronized void displayGeneralMsg(){
+    public synchronized void displayGeneralMsg() {
         out.println(generalmsg);
     }
 
@@ -705,9 +716,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     // METHODS THAT WON'T BE USED
     @Override
-    public synchronized void displayLobby(){
+    public synchronized void displayLobby() {
         out.println("Waiting users in the lobby are:");
-        for(String username: client.getUserIDtoUserNames().values())
+        for (String username : client.getUserIDtoUserNames().values())
             out.println(username);
     }
 

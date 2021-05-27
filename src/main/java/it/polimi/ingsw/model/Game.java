@@ -14,39 +14,42 @@ public class Game implements Publisher<MVEvent> {
 
     private int playersNumber;
     private List<Listener<MVEvent>> listenerList = new ArrayList<>();
-    private Map<Integer,Player> userIDtoPlayers = new HashMap<>();
-    private Map<Integer,PersonalBoard> userIDtoBoards = new HashMap<>();
-    private Map<Integer,VirtualView> userIDtoVirtualView = new HashMap<>();
+    private Map<Integer, Player> userIDtoPlayers = new HashMap<>();
+    private Map<Integer, PersonalBoard> userIDtoBoards = new HashMap<>();
+    private Map<Integer, VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
+    private SoloActionToken[] soloActionToken = new SoloActionToken[6];
     private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
     private DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
+    private boolean soloMode;
 
     public void addPlayer(Integer userID) {
         userIDtoPlayers.put(userID, new Player());
         this.playersNumber++;
     }
 
-    public void createGameObjects(){
+    public void createGameObjects() {
         createBoardForEachPlayer();
         createDevCardDecks();
         createMarketTray();
         createLeaderCards();
     }
 
-    private void createBoardForEachPlayer(){
-        for(Map.Entry<Integer, Player> entry: userIDtoPlayers.entrySet()){
-            userIDtoBoards.put(entry.getKey(), new PersonalBoard(entry.getKey()));
+    private void createBoardForEachPlayer() {
+        this.soloMode = userIDtoPlayers.size() > 1;
+        for (Map.Entry<Integer, Player> entry : userIDtoPlayers.entrySet()) {
+            userIDtoBoards.put(entry.getKey(), new PersonalBoard(entry.getKey(), soloMode));
         }
     }
 
-    private void createDevCardDecks(){
+    private void createDevCardDecks() {
         List<DevCard> allDevCards = JsonConverter.deserializeDevCards();
         Iterator<DevCard> cardIterator = allDevCards.iterator();
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 4; j++){
-                DevCardDeck deck = new DevCardDeck(DevCard.CardColor.values()[j], i+1);
-                for(int k = 0; k < 4; k++){
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                DevCardDeck deck = new DevCardDeck(DevCard.CardColor.values()[j], i + 1);
+                for (int k = 0; k < 4; k++) {
                     deck.putCard(cardIterator.next());
                 }
                 deck.shuffleDeck();
@@ -63,11 +66,11 @@ public class Game implements Publisher<MVEvent> {
         leaderCardList = JsonConverter.deserializeLeaderCards();
     }
 
-    public PersonalBoard getPersonalBoard(Integer userID){
+    public PersonalBoard getPersonalBoard(Integer userID) {
         return userIDtoBoards.get(userID);
     }
 
-    public MarketTray getMarketTray(){
+    public MarketTray getMarketTray() {
         return market;
     }
 
@@ -75,22 +78,22 @@ public class Game implements Publisher<MVEvent> {
         Collections.shuffle(leaderCardList);
     }
 
-    public List<LeaderCard> getFourLeaderCard(int counterOfCalls){
+    public List<LeaderCard> getFourLeaderCard(int counterOfCalls) {
         List<LeaderCard> list = new ArrayList<>();
         list.addAll(leaderCardList.subList(counterOfCalls * 4, (counterOfCalls * 4) + 4));
         return list;
     }
 
-    public DevCard peekTopDevCard(DevCard.CardColor color, int level){
+    public DevCard peekTopDevCard(DevCard.CardColor color, int level) {
         DevCard card = devCardMatrix[color.ordinal()][level].peekTopCard();
         return card;
     }
 
-    public void removeTopDevCard(DevCard.CardColor color, int level){
+    public void removeTopDevCard(DevCard.CardColor color, int level) {
         devCardMatrix[color.ordinal()][level].removeTopCard();
     }
 
-    public void sendMarketAndDevCardMatrixTo(Integer userID){
+    public void sendMarketAndDevCardMatrixTo(Integer userID) {
         String marketTrayString = market.describeMarketTray();
         MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, marketTrayString);
         publish(userID, marketUpdate);
@@ -101,7 +104,7 @@ public class Game implements Publisher<MVEvent> {
 
     //TODO FOR AMOR: return a single string that consists of top devcards in the 3x4 matrix
     // it would be best if 3x4 view of the matrix can be preserved
-    public String describeDevCardMatrix(){
+    public String describeDevCardMatrix() {
         return null;
     }
 
@@ -110,11 +113,11 @@ public class Game implements Publisher<MVEvent> {
         listenerList.add(listener);
     }
 
-    public void subscribe(Integer userID, VirtualView virtualView){
+    public void subscribe(Integer userID, VirtualView virtualView) {
         userIDtoVirtualView.put(userID, virtualView);
     }
 
-    public void publish(Integer userID, MVEvent event){
+    public void publish(Integer userID, MVEvent event) {
         userIDtoVirtualView.get(userID).update(event);
     }
 
@@ -126,21 +129,23 @@ public class Game implements Publisher<MVEvent> {
     // this doesn't work, use publishToAll
     @Override
     public void publish(MVEvent event) {
-        for(Listener<MVEvent> listener : listenerList){
+        for (Listener<MVEvent> listener : listenerList) {
             listener.update(event);
         }
     }
 
 
-
-    public void updateAllAboutChange(MVEvent event){
-        for(VirtualView virtualView: userIDtoVirtualView.values()){
+    public void updateAllAboutChange(MVEvent event) {
+        for (VirtualView virtualView : userIDtoVirtualView.values()) {
             virtualView.update(event);
         }
     }
 
     public int getPlayersNumber() {
         return playersNumber;
+    }
+
+    public void setSoloActionToken() {
     }
 
 

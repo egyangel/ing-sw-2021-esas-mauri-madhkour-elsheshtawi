@@ -21,7 +21,7 @@ import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
 public class Controller implements Listener<VCEvent> {
 
     private Server server;
-    private Game game;
+    protected Game game;
     private Map<Integer, String> userIDtoUsernames = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 
@@ -32,7 +32,7 @@ public class Controller implements Listener<VCEvent> {
 
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
         userIDtoUsernames.putAll(userIDtoNameMap);
-        game.createGameObjects();
+
         for (Integer userID : userIDtoUsernames.keySet()) {
             game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
@@ -41,6 +41,7 @@ public class Controller implements Listener<VCEvent> {
             userIDtoVirtualViews.put(userID, virtualView);
             TurnManager.putUserID(userID);
         }
+        game.createGameObjects();
     }
 
     public void startMatch() {
@@ -61,6 +62,7 @@ public class Controller implements Listener<VCEvent> {
     private void sendTurnOrderAssign() {
         TurnManager.assignTurnOrder();
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+            // TODO: have to be fixed. it returns userID 0 but user id start from 1
             Integer userTurn = TurnManager.getIndexOfUserID(entry.getKey());
             InitFatihPoints(entry.getKey(), userTurn);
             CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
@@ -125,27 +127,16 @@ public class Controller implements Listener<VCEvent> {
                 handleBuyDevCardAction(userID, buyDevContext);
                 break;
             case ACTIVATE_PROD_ACTION_SELECTED:
-              //  ActivateProdActionContext activateProdAction = new ActivateProdActionContext();
-               // handleActivateProdAction(userID, activateProdAction);
-                //TODO written by Amor
-                ActivateProdActionContext emptyActivateProContext = new ActivateProdActionContext();
-                emptyActivateProContext.setLastStep(ActivateProdActionContext.ActionStep.CHOOSE_DEV_SLOTS);
-                CVEvent cvEventTwo = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, emptyActivateProContext);
-                userIDtoVirtualViews.get(userID).update(cvEventTwo);
+                //similar
                 break;
-
             case ACTIVATE_PROD_CONTEXT_FILLED:
-
-                //TODO written by Amor
-                ActivateProdActionContext activateProdContext = (ActivateProdActionContext) vcEvent.getEventPayload(ActivateProdActionContext.class);
-                handleActivateProdAction(userID, activateProdContext);
+                //similar
                 break;
-
             case TAKE_RES_ACTION_ENDED:
             case BUY_DEVCARD_ACTION_ENDED:
             case ACTIVATE_PROD_ACTION_ENDED:
-                CVEvent cvEventEnded = new CVEvent(SELECT_MINOR_ACTION);
-                userIDtoVirtualViews.get(userID).update(cvEventEnded);
+                CVEvent cvEventTwo = new CVEvent(SELECT_MINOR_ACTION);
+                userIDtoVirtualViews.get(userID).update(cvEventTwo);
                 break;
         }
     }
@@ -332,11 +323,9 @@ public class Controller implements Listener<VCEvent> {
             game.updateAllAboutChange(devslotsEvent);
         }
     }
-    private void handleActivateProdAction(Integer userID, ActivateProdActionContext context){
-        switch (context.getLastStep()){
 
-        }
-        CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
-        userIDtoVirtualViews.get(userID).update(cvEvent);
+    public void handleGameMessage(Integer userID, Message msg) {
+        userIDtoVirtualViews.get(userID).handleGameMessage(msg);
+
     }
 }
