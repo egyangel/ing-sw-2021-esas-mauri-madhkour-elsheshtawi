@@ -24,12 +24,8 @@ public class Client implements Runnable {
     public static final int MIN_PORT = SERVER_MIN_PORT;
     public static final int MAX_PORT = SERVER_MAX_PORT;
 
-    private PersonalBoard personalBoard;
-    private String marketTrayDescription;
-    private String devCardMatrixDescription;
-    private List<PersonalBoard> otherPersonalBoardImages;
+    private Integer userID;
     private Map<Integer, String> userIDtoUserNames;
-    private Map<Integer, String> userIDtoOtherUserNames;
     private GUI gui;
 
     public Map<Integer, String> getUserIDtoUserNames() {
@@ -72,11 +68,13 @@ public class Client implements Runnable {
     public void handleSetUpMessage(Message msg) {
         switch (msg.getMsgtype()) {
             case DISPLAY_FIRST_LOGIN:
-                serverHandler.setUserId(msg.getUserID());
+                userID = msg.getUserID();
+                serverHandler.setUserId(userID);
                 view.addNextDisplay("displayFirstLogin");
                 break;
             case DISPLAY_LOGIN:
-                serverHandler.setUserId(msg.getUserID());
+                userID = msg.getUserID();
+                serverHandler.setUserId(userID);
                 view.addNextDisplay("displayLogin");
                 break;
             case FIRST_LOGIN_ACCEPTED:
@@ -94,6 +92,8 @@ public class Client implements Runnable {
                 Type type = new TypeToken<Map<Integer, String>>() {
                 }.getType();
                 userIDtoUserNames = (Map<Integer, String>) msg.getObject(type);
+                CLI cli = (CLI) view;
+                cli.setUserIDtoUsernames(userIDtoUserNames);
                 break;
         }
     }
@@ -102,28 +102,8 @@ public class Client implements Runnable {
         return view;
     }
 
-    public PersonalBoard getPersonalBoard() {
-        return personalBoard;
-    }
-
-    public void setPersonalBoard(PersonalBoard personalBoard) {
-        this.personalBoard = personalBoard;
-    }
-
-    public String getMarketTrayDescription() {
-        return marketTrayDescription;
-    }
-
-    public void setMarketTrayDescription(String marketTrayDescription) {
-        this.marketTrayDescription = marketTrayDescription;
-    }
-
-    public String getDevCardMatrixDescription() {
-        return devCardMatrixDescription;
-    }
-
-    public void setDevCardMatrixDescription(String devCardMatrixDescription) {
-        this.devCardMatrixDescription = devCardMatrixDescription;
+    public Integer getUserID(){
+        return userID;
     }
 
     // METHODS THAT WON'T BE USED

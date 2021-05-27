@@ -1,24 +1,40 @@
 package it.polimi.ingsw.utility.messages;
 
 import it.polimi.ingsw.model.DevCard;
+import it.polimi.ingsw.model.DevSlot;
+import it.polimi.ingsw.model.Resources;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 public class BuyDevCardActionContext {
     public enum ActionStep{
         // from client to server
         COLOR_LEVEL_CHOSEN,
+        DEVSLOT_CHOSEN,
+        PAY_FROM_WHERE_CHOSEN,
         // from server to client
         CHOOSE_COLOR_LEVEL,
         EMPTY_DEVCARD_DECK_ERROR,
         NOT_ENOUGH_RES_FOR_DEVCARD_ERROR,
         UNSUITABLE_FOR_DEVSLOTS_ERROR,
-        CHOOSE_DEV_SLOT;
+        CHOOSE_DEV_SLOT,
+        CHOOSE_PAY_COST_FROM_WHERE,
+        NOT_ENOUGH_RES_IN_WAREHOUSE,
+        NOT_ENOUGH_RES_IN_STRONGBOX,
+        COST_PAID_DEVCARD_PUT;
     }
     private ActionStep lastStep;
     private int level;
     private DevCard.CardColor color;
+    private DevCard selectedCard;
+    private List<DevSlot.slotPlace> suitableSlots = new ArrayList<>();
+    private DevSlot.slotPlace selectedSlot;
+    private Resources remainingCost;
+    private Resources payFromWarehouse;
+    private Resources payFromStrongbox;
 
     public int getLevel() {
         return level;
@@ -42,6 +58,56 @@ public class BuyDevCardActionContext {
 
     public void setLastStep(ActionStep step){
         lastStep = step;
+    }
+
+    public void setSuitableSlots(List<DevSlot.slotPlace> list){
+        suitableSlots.addAll(list);
+    }
+
+    public List<DevSlot.slotPlace> getSuitableSlots() {
+        return suitableSlots;
+    }
+
+    public void setSelectedSlot(DevSlot.slotPlace place){
+        this.selectedSlot = place;
+    }
+
+    public DevSlot.slotPlace getSelectedSlot() {
+        return selectedSlot;
+    }
+
+    public DevCard getSelectedCard() {
+        return selectedCard;
+    }
+
+    public void setSelectedCard(DevCard selectedCard) {
+        this.selectedCard = selectedCard;
+    }
+
+    public Resources getRemainingCost() {
+        return remainingCost;
+    }
+
+    public void setRemainingCost(Resources costOfCard) {
+        this.remainingCost = new Resources();
+        this.remainingCost.add(costOfCard);
+    }
+
+    public Resources getPayFromWarehouse() {
+        return payFromWarehouse;
+    }
+
+    public void setPayFromWarehouse(Resources payFromWarehouse) {
+        // not sure directly assigning will work for JSON, but it should
+        this.payFromWarehouse = payFromWarehouse;
+    }
+
+    public Resources getPayFromStrongbox() {
+        return payFromStrongbox;
+    }
+
+    public void setPayFromStrongbox(Resources payFromStrongbox) {
+        this.payFromStrongbox = payFromStrongbox;
     }
 
     public boolean isError(){
