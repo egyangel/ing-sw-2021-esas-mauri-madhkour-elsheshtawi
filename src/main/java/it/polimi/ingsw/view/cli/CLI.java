@@ -208,13 +208,17 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         int index = InputConsumer.getANumberBetween(in, out, 0, 9);
         switch (index){
             case 1:
-                addNextDisplay("displayTakeResAction");
+                VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED);
+                publish(vcEvent);
+               // addNextDisplay("displayTakeResAction");
                 break;
             case 2:
                 addNextDisplay("displayBuyDevCardAction");
                 break;
             case 3:
-                addNextDisplay("displayActivateProdAction");
+                VCEvent vcEventTwo = new VCEvent(ACTIVATE_PROD_ACTION_SELECTED);
+                publish(vcEventTwo);
+               // addNextDisplay("displayActivateProdAction");
                 break;
             case 4:
                 addNextDisplay("displayMarketTray");
@@ -311,8 +315,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayMarketTray(){
         out.println(client.getMarketTrayDescription());
     }
-
+    //TODO wrote by amor
     public void displayDevCardMatrix(){
+        out.println(client.getDevCardMatrixDescription());
 
     }
 
@@ -438,10 +443,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         // TODO send message to server at the end turn stage, update it about personal board change in client side
         addNextDisplay("displayMinorActions");
 
-        //TODO Amor wrote this code,but i have to talk with omer
-   /*     VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED);
-        publish(vcEvent);
-        return;*/
     }
 
     private void routeTakeResActionDisplay(){

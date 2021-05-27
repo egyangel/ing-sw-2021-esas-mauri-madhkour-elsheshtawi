@@ -122,18 +122,27 @@ public class Controller implements Listener<VCEvent> {
                 handleBuyDevCardAction(userID, buyDevContext);
                 break;
             case ACTIVATE_PROD_ACTION_SELECTED:
-                ActivateProdActionContext activateProdAction = new ActivateProdActionContext();
-                handleActivateProdAction(userID, activateProdAction);
+              //  ActivateProdActionContext activateProdAction = new ActivateProdActionContext();
+               // handleActivateProdAction(userID, activateProdAction);
+                //TODO written by Amor
+                ActivateProdActionContext emptyActivateProContext = new ActivateProdActionContext();
+                emptyActivateProContext.setLastStep(ActivateProdActionContext.ActionStep.CHOOSE_DEV_SLOTS);
+                CVEvent cvEventTwo = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, emptyActivateProContext);
+                userIDtoVirtualViews.get(userID).update(cvEventTwo);
                 break;
 
             case ACTIVATE_PROD_CONTEXT_FILLED:
-                //similar
+
+                //TODO written by Amor
+                ActivateProdActionContext activateProdContext = (ActivateProdActionContext) vcEvent.getEventPayload(ActivateProdActionContext.class);
+                handleActivateProdAction(userID, activateProdContext);
                 break;
+
             case TAKE_RES_ACTION_ENDED:
             case BUY_DEVCARD_ACTION_ENDED:
             case ACTIVATE_PROD_ACTION_ENDED:
-                CVEvent cvEventTwo = new CVEvent(SELECT_MINOR_ACTION);
-                userIDtoVirtualViews.get(userID).update(cvEventTwo);
+                CVEvent cvEventEnded = new CVEvent(SELECT_MINOR_ACTION);
+                userIDtoVirtualViews.get(userID).update(cvEventEnded);
                 break;
         }
     }
