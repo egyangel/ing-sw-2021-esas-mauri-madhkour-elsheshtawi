@@ -13,7 +13,8 @@ public class CVEvent extends Event{
 
         CHOOSE_TWO_LEADER_CARD,
         ASSIGN_TURN_ORDER,
-        SELECT_ALL_ACTION
+        SELECT_ALL_ACTION,
+        BEGIN_TURN //TODO to delete ?
     }
     private EventType eventType;
 

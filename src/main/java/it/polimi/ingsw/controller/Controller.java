@@ -21,7 +21,7 @@ import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
 public class Controller implements Listener<VCEvent> {
 
     private Server server;
-    private Game game;
+    protected Game game;
     private Map<Integer, String> userIDtoUsernames = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 

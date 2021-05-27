@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class PersonalBoard {
-    public enum PopeArea{
+    public enum PopeArea {
         FIRST,
         SECOND,
         THIRD
     }
+
     private Integer userID;
     private Game game;
     private int victoryPoints;
@@ -22,9 +23,9 @@ public class PersonalBoard {
     private List<LeaderCard> inactiveLeaderCards;
     private List<LeaderCard> activeLeaderCards;
     private int vaticanReportCallCounter = 0;
-    private Map<PopeArea,Boolean> popeAreaMap;
+    private Map<PopeArea, Boolean> popeAreaMap;
 
-    public PersonalBoard(Integer userID){
+    public PersonalBoard(Integer userID) {
         this.userID = userID;
         defProd = new DefaultProd();
         devSlots[0] = new DevSlot(DevSlot.slotPlace.LEFT);
@@ -42,72 +43,79 @@ public class PersonalBoard {
         popeAreaMap.put(PopeArea.THIRD, false);
     }
 
-//     for now, this considers strongbox only, the code will need to be improved.
+    public PersonalBoard(Integer userID, boolean solo) {
+        this(userID);
+        if (solo) {
+            // TODO Place Black CROSS
+
+        }
+    }
+
+    //     for now, this considers strongbox only, the code will need to be improved.
 //     in case there is not enough resource, some error/exception must be included,
 //     or assertions before execution/during testing
-    public void putToWarehouseWithoutCheck(Resources res){
-        for(Resources.ResType resType: res.getResTypes()){
+    public void putToWarehouseWithoutCheck(Resources res) {
+        for (Resources.ResType resType : res.getResTypes()) {
             putFromTop(resType, res.getNumberOfType(resType));
         }
     }
 
-    public boolean putToWarehouse(Shelf.shelfPlace place, Resources res){
+    public boolean putToWarehouse(Shelf.shelfPlace place, Resources res) {
         return warehouse[place.getIndexInWarehouse()].putResource(res);
     }
 
-    private boolean putFromTop(Resources.ResType resType, int size){
-        if (checkEnoughSize(0, size) && checkSameType(0, resType)){
+    private boolean putFromTop(Resources.ResType resType, int size) {
+        if (checkEnoughSize(0, size) && checkSameType(0, resType)) {
             warehouse[0].putResource(resType, size);
-        } else if (checkEnoughSize(1, size) && checkSameType(1, resType)){
+        } else if (checkEnoughSize(1, size) && checkSameType(1, resType)) {
             warehouse[0].putResource(resType, size);
-        } else if (checkEnoughSize(2, size) && checkSameType(2, resType)){
+        } else if (checkEnoughSize(2, size) && checkSameType(2, resType)) {
             warehouse[0].putResource(resType, size);
         } else return false;
         return true;
     }
 
-    private boolean checkEnoughSize(int index, int size){
+    private boolean checkEnoughSize(int index, int size) {
         return ((warehouse[index].getNumberOfElements()) + size < warehouse[index].shelfSize());
     }
 
-    private boolean checkSameType(int index, Resources.ResType resType){
+    private boolean checkSameType(int index, Resources.ResType resType) {
         return (warehouse[index].getShelfResType() == resType);
     }
 
 
-    public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R){
+    public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R) {
         System.out.println("Trying Default Prod: " + L1.toString() + " + " + L2.toString() + " = " + R.toString() + "\n");
-        if (L1 != L2){
-            if (this.strongbox.isThereType(L1) && this.strongbox.isThereType(L2)){
+        if (L1 != L2) {
+            if (this.strongbox.isThereType(L1) && this.strongbox.isThereType(L2)) {
                 this.strongbox.subtract(L1, 1);
                 this.strongbox.subtract(L2, 1);
                 this.strongbox.add(R, 1);
             }
-        }
-        else {
-            if (this.strongbox.getNumberOfType(L1) >= 2){
+        } else {
+            if (this.strongbox.getNumberOfType(L1) >= 2) {
                 this.strongbox.subtract(L1, 2);
                 this.strongbox.add(R, 1);
             }
         }
     }
 
-    public void increaseFaitPoint(int toAdd){
+    public void increaseFaitPoint(int toAdd) {
         faithPoints += toAdd;
     }
 
     public void giveNextVaticanReport() {
-        if (vaticanReportCallCounter == 0 && faithPoints >= 5 && faithPoints <= 8){
+        if (vaticanReportCallCounter == 0 && faithPoints >= 5 && faithPoints <= 8) {
             turnPopeFavorTile(PopeArea.FIRST);
         } else if (vaticanReportCallCounter == 1 && faithPoints >= 12 && faithPoints <= 16) {
             turnPopeFavorTile(PopeArea.SECOND);
-        } else if (vaticanReportCallCounter == 2 && faithPoints >= 19 && faithPoints <= 24){
+        } else if (vaticanReportCallCounter == 2 && faithPoints >= 19 && faithPoints <= 24) {
             turnPopeFavorTile(PopeArea.THIRD);
         }
         vaticanReportCallCounter++;
     }
 
-    private void turnPopeFavorTile(PopeArea area){
+    private void turnPopeFavorTile(PopeArea area) {
         popeAreaMap.replace(area, Boolean.TRUE);
         // create a MV message inside Game
     }
@@ -116,90 +124,90 @@ public class PersonalBoard {
         inactiveLeaderCards.addAll(selectedCards);
     }
 
-    public List<LeaderCard> getActiveLeaderCards(){
+    public List<LeaderCard> getActiveLeaderCards() {
         return activeLeaderCards;
     }
 
-    public Resources getTotalResources(){
+    public Resources getTotalResources() {
         Resources res = new Resources();
         res.add(getWarehouseResources());
         res.add(getStrongboxResources());
         return res;
     }
 
-    public Resources getStrongboxResources(){
+    public Resources getStrongboxResources() {
         Resources res = new Resources();
         res.add(strongbox);
         return res;
     }
 
-    public Resources getWarehouseResources(){
+    public Resources getWarehouseResources() {
         Resources res = new Resources();
-        for(Shelf shelf: warehouse){
+        for (Shelf shelf : warehouse) {
             res.add(shelf.getResource());
         }
         return res;
     }
 
-    public boolean isThereEnoughRes(DevCard card){
+    public boolean isThereEnoughRes(DevCard card) {
         Resources totalRes = getTotalResources();
         Resources cost = card.getCost();
         if (cost.smallerOrEqual(totalRes)) return true;
         else return false;
     }
 
-    public boolean isCardSuitableForSlots(DevCard card){
+    public boolean isCardSuitableForSlots(DevCard card) {
         int level = card.getLevel();
-        for (DevSlot devSlot: devSlots){
+        for (DevSlot devSlot : devSlots) {
             if (level == devSlot.getLevelOfTopCard() + 1) return true;
         }
         return false;
     }
 
-    public List<DevSlot.slotPlace> getSuitablePlaces(DevCard card){
+    public List<DevSlot.slotPlace> getSuitablePlaces(DevCard card) {
         int level = card.getLevel();
         List<DevSlot.slotPlace> places = new ArrayList<>();
-        for (DevSlot devSlot: devSlots){
+        for (DevSlot devSlot : devSlots) {
             if (level == devSlot.getLevelOfTopCard() + 1) places.add(devSlot.getPlace());
         }
         return places;
     }
 
-    public void spendOneFromWarehouse(Resources.ResType resType){
-        for(Shelf shelf: warehouse){
-            if (shelf.getShelfResType().equals(resType)){
+    public void spendOneFromWarehouse(Resources.ResType resType) {
+        for (Shelf shelf : warehouse) {
+            if (shelf.getShelfResType().equals(resType)) {
                 shelf.removeOneFromShelf();
                 return;
             }
         }
     }
 
-    public void spendOneFromStrongbox(Resources.ResType resType){
+    public void spendOneFromStrongbox(Resources.ResType resType) {
         strongbox.subtract(resType, 1);
     }
 
-    public void putDevCardOnSlot(DevCard card, DevSlot.slotPlace place){
+    public void putDevCardOnSlot(DevCard card, DevSlot.slotPlace place) {
         int index = place.getIndexInBoard();
         devSlots[index].putDevCard(card);
     }
 
-    public int clearShelf(Shelf.shelfPlace place){
+    public int clearShelf(Shelf.shelfPlace place) {
         // TODO send MV event through game, that includes string representation of changed object
 
         return warehouse[place.getIndexInWarehouse()].clearShelf();
     }
 
-    public int swapShelves(Shelf.shelfPlace[] places){
+    public int swapShelves(Shelf.shelfPlace[] places) {
         // TODO send MV event through game, that includes string representation of changed object
         return warehouse[places[0].getIndexInWarehouse()].swapShelf(warehouse[places[1].getIndexInWarehouse()]);
     }
 
-    public void subtractFromWarehouse(Resources res){
+    public void subtractFromWarehouse(Resources res) {
         List<Resources.ResType> resTypeList = new ArrayList<>();
         resTypeList.addAll(res.getResTypes());
-        for(int i = 0; i < 3; i++){
-            for(Resources.ResType resType: resTypeList){
-                if (warehouse[i].getShelfResType().equals(resType)){
+        for (int i = 0; i < 3; i++) {
+            for (Resources.ResType resType : resTypeList) {
+                if (warehouse[i].getShelfResType().equals(resType)) {
                     int number = res.getNumberOfType(resType);
                     warehouse[i].removeFromShelf(number);
                 }
@@ -207,7 +215,7 @@ public class PersonalBoard {
         }
     }
 
-    public void subtractFromStrongbox(Resources res){
+    public void subtractFromStrongbox(Resources res) {
         this.strongbox.subtract(res);
     }
 
@@ -228,9 +236,9 @@ public class PersonalBoard {
         return string;
     }
 
-    public String describeDevSlots(){
+    public String describeDevSlots() {
         String string = "";
-        for (DevSlot slot: devSlots){
+        for (DevSlot slot : devSlots) {
             string += slot.describeDevSlot() + "\n";
         }
         return string.trim(); //removes one \n at the end
@@ -242,7 +250,7 @@ public class PersonalBoard {
     }
 
     //TODO
-    public String describeLeaderCards(){
+    public String describeLeaderCards() {
         return null;
     }
     // NO USE METHODS for now
