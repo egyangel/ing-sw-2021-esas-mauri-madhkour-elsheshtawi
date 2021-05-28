@@ -565,8 +565,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case ASSIGN_TURN_ORDER:
                 addNextDisplay("displayTurnAssign");
                 break;
-            case BEGIN_TURN:
-                addNextDisplay("displayActionSelection");
+            case SELECT_ALL_ACTION:
+                majorActionDone = false;
+                addNextDisplay("displayAllActionSelection");
                 break;
         }
     }
