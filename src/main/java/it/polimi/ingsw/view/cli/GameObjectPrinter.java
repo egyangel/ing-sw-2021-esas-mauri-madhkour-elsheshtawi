@@ -12,7 +12,7 @@ public class GameObjectPrinter {
     //TODO FOR LORENZO
     //List<DevCard>= new ArrayList<>();
     public static String printDevCard(DevCard card){
-        StringBuilder stringBuilder=new StringBuilder();
+
         //stringbuilder, for loop, string format etc
         //to substitute placeholder characters inside string with devcard values, it will look something like:
         //strinformatter("%d-16", card.getCost()) etc in necessary places
@@ -56,11 +56,17 @@ public class GameObjectPrinter {
     public static String padder(String text, int n ){
         return String.format("%-"+n+"text",text);
     }
-    CliColors faith=CliColors.red;
-    CliColors getShield=CliColors.cyan;
-    CliColors getCoin=CliColors.gold;
-    CliColors getServant=CliColors.purple;
-    CliColors getStone=CliColors.grey;
+
+    @Override
+    public String toString(){
+        StringBuilder stringBuilder=new StringBuilder();
+
+
+        return null;
+    };
+
+
+
     CliColors blueCard=CliColors.blue;
     CliColors yellowCard=CliColors.yellow;
     CliColors greenCard=CliColors.green;
