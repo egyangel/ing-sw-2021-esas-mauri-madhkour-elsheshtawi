@@ -44,9 +44,9 @@ public enum CliColors {  //we can choose what to pick for game objects. i sugges
      Every time a custom color is set it remains permanently
      until this ansi is used and it returns to a default color
                                           (↓)                   */
-    static final String colorReset = "\u001B[0m";
+    public static final String colorReset = "\u001B[0m";
 
-    private String escape;
+    private final String escape;
 
     CliColors(String escape)
     {
