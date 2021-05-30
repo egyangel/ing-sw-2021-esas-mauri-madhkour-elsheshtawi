@@ -31,13 +31,9 @@ public class DevCard {
     public static CliColors getPurpleCard(){
         return CliColors.purpleBright;
     }
+    private CliColors colors;
+    private String face;
 
-
-    private static final String[] devCardDetails={
-
-
-
-    };
 
     public enum CardColor{
         GREEN,BLUE,YELLOW,PURPLE;
@@ -66,8 +62,12 @@ public class DevCard {
         this.RHS=RHS;
         this.cost=cost;
         this.victoryPoints=victoryPoints;
+
+
     }
 
+    public CliColors getColors(){return colors;  }
+    public void setColors(CliColors colors){this.colors=colors;}
     public int getLevel() {
         return this.level;
     }
@@ -89,7 +89,9 @@ public class DevCard {
 
     @Override
     public String toString(){
-        return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
+
+        return this.colors+"|"+face+"|"+CliColors.colorReset;
+        //return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
     }
 
 
