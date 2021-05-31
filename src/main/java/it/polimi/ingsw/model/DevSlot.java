@@ -14,6 +14,14 @@ public class DevSlot {
         private slotPlace(int index){
             this.indexInBoard = index;
         }
+        public static slotPlace getByName(String input){
+            for (slotPlace st : slotPlace.values()) {
+                if (st.toString().equals(input)){
+                    return st;
+                }
+            }
+            return null;
+        }
     }
     private Deque<DevCard> devCards;
     private final slotPlace place;

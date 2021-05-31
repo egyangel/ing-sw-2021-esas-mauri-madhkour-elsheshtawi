@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.Shelf;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -191,6 +192,41 @@ public class InputConsumer {
         }
         return input;
     }
+    public static List<DevSlot> getDevSlotIndexs(Scanner in, PrintWriter out){
+        int i = 0;
+        String input;
+        List<DevSlot> slotChoosen = new ArrayList<>();
+
+        List<DevSlot.slotPlace> placeList = new ArrayList<>( Arrays.asList(DevSlot.slotPlace.LEFT,DevSlot.slotPlace.CENTER,DevSlot.slotPlace.RIGHT));
+        String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
+
+        out.println("How many slots do you want to activate?  : ");
+        out.println("Example inputs: [1] [2] [3]");
+
+        int numberOfSlots = Integer.parseInt(in.nextLine());
+        while (numberOfSlots > 3 || numberOfSlots < 1){
+            out.println("Invalid input.");
+            out.println("Please enter number between 1 and 3");
+
+            numberOfSlots = Integer.parseInt(in.nextLine());
+        }
+
+        out.println("Please enter the options: " + placeString);
+
+
+        while(i < numberOfSlots){
+            input = in.nextLine().toUpperCase();
+            if (placeList.contains(DevSlot.slotPlace.getByName(input)) && !slotChoosen.contains(DevSlot.slotPlace.getByName(input))){
+                slotChoosen.add(new DevSlot(DevSlot.slotPlace.getByName(input)));
+                i ++;
+            }else{
+                out.println("Invalid input.");
+                out.println("Please enter the options: " + placeString);
+            }
+
+        }
+        return slotChoosen;
+    }
 
     public static String getColorAndLevel(Scanner in, PrintWriter out) {
         out.println("Enter the color and level of the development card you want to buy:");
@@ -216,6 +252,9 @@ public class InputConsumer {
         String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
         out.println("Please enter one of the options: " + placeString);
         String input = in.nextLine().toUpperCase();
+        //Todo here i think it is a mistake, it should be !placeList.contains(DevSlot.slotPlace.valueOf(input))
+        // i fixed it band try it in the app Class(the test is already there and now work properly, before doesn't accept the right string
+        //  while (!placeList.contains(DevSlot.slotPlace.getByName(input))){
         while (placeList.contains(DevSlot.slotPlace.valueOf(input))){
             out.println("Invalid input.");
             out.println("Please enter one of the options: " + placeString);

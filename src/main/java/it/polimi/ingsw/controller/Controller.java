@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import static it.polimi.ingsw.utility.messages.ActivateProdActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
@@ -123,14 +123,18 @@ public class Controller implements Listener<VCEvent> {
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
             case BUY_DEVCARD_CONTEXT_FILLED:
-                BuyDevCardActionContext buyDevContext = (BuyDevCardActionContext) vcEvent.getEventPayload(BuyDevCardActionContext.class);
+                BuyDevCardActionContext buyDevContext = (BuyDevCardActionContext) vcEvent.getEventPayload(ActivateProdActionContext.class);
                 handleBuyDevCardAction(userID, buyDevContext);
                 break;
             case ACTIVATE_PROD_ACTION_SELECTED:
-                //similar
+                ActivateProdActionContext emptyActivateDevCardContext = new ActivateProdActionContext();
+                emptyActivateDevCardContext.setLastStep(CHOOSE_DEV_SLOTS);
+                cvEvent = new CVEvent( ACTIVATE_PROD_FILL_CONTEXT, emptyActivateDevCardContext);
+                userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
             case ACTIVATE_PROD_CONTEXT_FILLED:
-                //similar
+                ActivateProdActionContext ActivateDevContext = (ActivateProdActionContext) vcEvent.getEventPayload(ActivateProdActionContext.class);
+                handleActivateDevCardAction(userID, ActivateDevContext);
                 break;
             case TAKE_RES_ACTION_ENDED:
             case BUY_DEVCARD_ACTION_ENDED:
@@ -265,6 +269,54 @@ public class Controller implements Listener<VCEvent> {
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
 
+    //TODO AMOR i have to change some methods inside ActivateProd..Context
+    /*
+    private void handlePaymentFromShelf(Integer userID, ActivateProdActionContext context){
+        Resources payFromWarehouse = context.getPayFromWarehouse();
+        Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
+
+        if (warehouseRes.smallerOrEqual(payFromWarehouse)) {
+            context.setPayFromWarehouse(new Resources());
+            context.setRemainingCost(context.getSelectedCard().getCost());
+            context.setLastStep(NOT_ENOUGH_RES);
+        } else {
+            game.getPersonalBoard(userID).subtractFromWarehouse(payFromWarehouse);
+            game.getPersonalBoard(userID).putDevCardOnSlot(context.getSelectedCard(), context.getSelectedSlot());
+            context.setLastStep(COST_PAID);
+            String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
+            MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
+            game.updateAllAboutChange(warehouseEvent);
+            String devSlotsDescription = game.getPersonalBoard(userID).describeDevSlots();
+            MVEvent devslotsEvent = new MVEvent(userID, MVEvent.EventType.DEVSLOTS_UPDATE, devSlotsDescription);
+            game.updateAllAboutChange(devslotsEvent);
+        }
+    }*/
+    private void handleActivateDevCardAction(Integer userID, ActivateProdActionContext context){
+        switch (context.getLastStep()){
+            case DEV_SLOTS_CHOOSEN:
+                handleActivateDevSlotsChosen(userID, context);
+                break;
+        }
+        CVEvent cvEvent = new CVEvent(BUY_DEVCARD_FILL_CONTEXT, context);
+        userIDtoVirtualViews.get(userID).update(cvEvent);
+    }
+    //this method handle the activation phase of dev Card, it checks if there are enough resources for all cards;
+    private void handleActivateDevSlotsChosen(Integer userID, ActivateProdActionContext context){
+        int i = 0;
+        List<DevCard> selectedCard = context.getSelectedCard();
+        List<Resources> costOfCard = new ArrayList<>();
+
+        while( i < selectedCard.size())
+            costOfCard.add(selectedCard.get(i).getCost());
+        context.setRemainingCost(costOfCard);
+        context.setLastStep(CHECK_RES_FROM_SHELF);
+    }
+    private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){
+        DevCard selectedCard = context.getSelectedCard();
+        Resources costOfCard = selectedCard.getCost();
+        context.setRemainingCost(costOfCard);
+        context.setLastStep(CHOOSE_PAY_COST_FROM_WHERE);
+    }
     private void handleColorLevelChosen(Integer userID, BuyDevCardActionContext context){
         DevCard selectedCard = game.peekTopDevCard(context.getColor(), context.getLevel());
         context.setSelectedCard(selectedCard);
@@ -284,14 +336,6 @@ public class Controller implements Listener<VCEvent> {
             game.updateAllAboutChange(warehouseEvent);
         }
     }
-
-    private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){
-        DevCard selectedCard = context.getSelectedCard();
-        Resources costOfCard = selectedCard.getCost();
-        context.setRemainingCost(costOfCard);
-        context.setLastStep(CHOOSE_PAY_COST_FROM_WHERE);
-    }
-
     private void handlePayFromWhereChosen(Integer userID, BuyDevCardActionContext context){
         Resources payFromWarehouse = context.getPayFromWarehouse();
         Resources payFromStrongbox = context.getPayFromStrongbox();

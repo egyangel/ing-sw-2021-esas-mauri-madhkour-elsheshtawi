@@ -7,6 +7,7 @@ import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
 
+import static it.polimi.ingsw.utility.messages.ActivateProdActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
@@ -268,7 +269,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[5] View faith track");
         out.println("[6] View leader cards");
         out.println("[7] View other players");
-        out.println("[8] End Turn");
+        out.println("[8]ACTIVATE_PROD_ACTION_ENDED Turn");
         int index = InputConsumer.getANumberBetween(in, out, 1, 8);
         switch (index) {
             case 1:
@@ -354,6 +355,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             out.println(boardToDisplay);
             }
         returnToCorrectActionSelection();
+    }
+    public void chooseDevSlots(){
+
+        List<DevSlot> slotChosen = InputConsumer.getDevSlotIndexs(in, out);
+        activateProdContext.chooseSlots(slotChosen);
+        activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+        publish(vcEvent);
     }
 
     private void returnToCorrectActionSelection(){
@@ -554,6 +563,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         switch (activateProdContext.getLastStep()) {
             case CHOOSE_DEV_SLOTS:
                 addNextDisplay("chooseDevSlots");
+
         }
     }
 
