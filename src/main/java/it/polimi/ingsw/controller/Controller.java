@@ -276,16 +276,14 @@ public class Controller implements Listener<VCEvent> {
 
         while (j < context.getSlots().size()) {
 
-            Resources payFromWarehouse = context.getPayFromWarehouse();
+            Resources payFromWarehouse = context.getSelectedCard().get(j).getLHS();
             Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
 
             if (warehouseRes.smallerOrEqual(payFromWarehouse)) {
-                context.setPayFromWarehouse(new Resources());
-                context.setRemainingCost((List<Resources>) selectedCard.get(j));
                 context.setLastStep(NOT_ENOUGH_RES);
             } else {
                 game.getPersonalBoard(userID).subtractFromWarehouse(payFromWarehouse);
-                game.getPersonalBoard(userID).putDevCardOnSlot(context.getSelectedCard(), context.getSelectedSlot());
+                game.getPersonalBoard(userID).putResInStrongBox(context.getSelectedCard().get(j).getRHS());
                 context.setLastStep(COST_PAID);
                 String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
                 MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
@@ -293,6 +291,10 @@ public class Controller implements Listener<VCEvent> {
                 String devSlotsDescription = game.getPersonalBoard(userID).describeDevSlots();
                 MVEvent devslotsEvent = new MVEvent(userID, MVEvent.EventType.DEVSLOTS_UPDATE, devSlotsDescription);
                 game.updateAllAboutChange(devslotsEvent);
+                String strongBoxDescription = game.getPersonalBoard(userID).describeStrongbox();
+                MVEvent strongboxEvent = new MVEvent(userID, MVEvent.EventType.STRONGBOX_UPDATE, strongBoxDescription);
+                game.updateAllAboutChange(strongboxEvent);
+
             }
         }
     }
@@ -310,16 +312,12 @@ public class Controller implements Listener<VCEvent> {
         int i = 0 ;
         int j = 0 ;
         List<DevCard> selectedCard = context.getSelectedCard();
-        List<Resources> costOfCard = new ArrayList<>();
+        Resources LH;
         while (j < context.getSlots().size()) {
             selectedCard.add(game.getPersonalBoard(userID).getDevCardOnSlot(context.getSlots().get(j)));
         }
         context.setSelectedCard(selectedCard);
 
-            //TODO ask to omer what does setRemaining do
-        while( i < selectedCard.size())
-            costOfCard.add(selectedCard.get(i).getCost());
-        context.setRemainingCost(costOfCard);
         context.setLastStep(CHECK_RES_FROM_SHELF);
     }
     private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){

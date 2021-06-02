@@ -219,6 +219,7 @@ public class PersonalBoard {
             }
         }
     }
+    public void putResInStrongBox(Resources res) { this.strongbox.add(res);    }
 
     public void subtractFromStrongbox(Resources res) {
         this.strongbox.subtract(res);
