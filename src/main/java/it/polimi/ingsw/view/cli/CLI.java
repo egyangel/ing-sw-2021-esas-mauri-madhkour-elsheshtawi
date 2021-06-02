@@ -356,14 +356,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             }
         returnToCorrectActionSelection();
     }
-    public void chooseDevSlots(){
 
-        List<DevSlot> slotChosen = InputConsumer.getDevSlotIndexs(in, out);
-        activateProdContext.chooseSlots(slotChosen);
-        activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
-        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
-        publish(vcEvent);
-    }
 
     private void returnToCorrectActionSelection(){
         if (majorActionDone) addNextDisplay("displayMinorActionSelection");
@@ -403,8 +396,16 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         buyDevCardContext.setLastStep(DEVSLOT_CHOSEN);
         VCEvent vcEvent = new VCEvent(BUY_DEVCARD_CONTEXT_FILLED, buyDevCardContext);
         publish(vcEvent);
-    }
 
+    }
+    public void chooseDevSlots(){
+        List<DevSlot> slotChosen = InputConsumer.getDevSlotIndexs(in, out);
+        activateProdContext.setSlots(slotChosen);
+        activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+        publish(vcEvent);
+    }
+// TODO ask how actually work this method, i am confused about the resouce handling
     public void choosePayDevCardCostFromWhere(){
         out.println("Select warehouse or strongbox to pay the cost of the selected development card.");
         Resources remainingCost = buyDevCardContext.getRemainingCost();

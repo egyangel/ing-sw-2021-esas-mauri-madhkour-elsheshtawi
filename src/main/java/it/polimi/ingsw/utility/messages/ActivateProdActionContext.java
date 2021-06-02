@@ -16,7 +16,7 @@ public class ActivateProdActionContext {
     private List<Resources> remainingCost;
     private List<DevSlot>  slotChosen;
     private List<DevCard>  selectedCard;
-
+    private Resources payment;
     private Map<Shelf.shelfPlace, Resources.ResType> shelfPlaceResTypeMap = new HashMap<>();
     private Map<Shelf.shelfPlace, Boolean> shelfToResultMap = new HashMap<>();
 
@@ -47,8 +47,11 @@ public class ActivateProdActionContext {
         lastStep = step;
     }
 
-   public void chooseSlots(List<DevSlot> slotChosen){
+   public void setSlots(List<DevSlot> slotChosen){
         this.slotChosen = slotChosen;
+    }
+    public List<DevSlot> getSlots(){
+        return this.slotChosen;
     }
 
     public void setErrorTrue(){
@@ -62,6 +65,14 @@ public class ActivateProdActionContext {
     }
     public void setRemainingCost(List<Resources> costOfCard) {
                this.remainingCost.addAll(costOfCard);
+    }
+    public Resources getPayFromWarehouse() {
+        return payment;
+    }
+
+    public void setPayFromWarehouse(Resources payFromWarehouse) {
+        // not sure directly assigning will work for JSON, but it should
+        this.payment = payFromWarehouse;
     }
 /*
     public void setIndex(int index){

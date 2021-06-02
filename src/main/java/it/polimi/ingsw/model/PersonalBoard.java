@@ -191,6 +191,11 @@ public class PersonalBoard {
         devSlots[index].putDevCard(card);
     }
 
+    public DevCard getDevCardOnSlot(DevSlot place) {
+        int index = place.getPlace().getIndexInBoard();
+        return devSlots[index].getTopDevCard();
+    }
+
     public int clearShelf(Shelf.shelfPlace place) {
         // TODO send MV event through game, that includes string representation of changed object
 

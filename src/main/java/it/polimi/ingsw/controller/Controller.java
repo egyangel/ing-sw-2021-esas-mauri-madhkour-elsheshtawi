@@ -270,27 +270,32 @@ public class Controller implements Listener<VCEvent> {
     }
 
     //TODO AMOR i have to change some methods inside ActivateProd..Context
-    /*
-    private void handlePaymentFromShelf(Integer userID, ActivateProdActionContext context){
-        Resources payFromWarehouse = context.getPayFromWarehouse();
-        Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
 
-        if (warehouseRes.smallerOrEqual(payFromWarehouse)) {
-            context.setPayFromWarehouse(new Resources());
-            context.setRemainingCost(context.getSelectedCard().getCost());
-            context.setLastStep(NOT_ENOUGH_RES);
-        } else {
-            game.getPersonalBoard(userID).subtractFromWarehouse(payFromWarehouse);
-            game.getPersonalBoard(userID).putDevCardOnSlot(context.getSelectedCard(), context.getSelectedSlot());
-            context.setLastStep(COST_PAID);
-            String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-            MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-            game.updateAllAboutChange(warehouseEvent);
-            String devSlotsDescription = game.getPersonalBoard(userID).describeDevSlots();
-            MVEvent devslotsEvent = new MVEvent(userID, MVEvent.EventType.DEVSLOTS_UPDATE, devSlotsDescription);
-            game.updateAllAboutChange(devslotsEvent);
+    private void handlePaymentFromShelf(Integer userID, ActivateProdActionContext context) {
+        int j = 0;
+
+        while (j < context.getSlots().size()) {
+
+            Resources payFromWarehouse = context.getPayFromWarehouse();
+            Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
+
+            if (warehouseRes.smallerOrEqual(payFromWarehouse)) {
+                context.setPayFromWarehouse(new Resources());
+                context.setRemainingCost((List<Resources>) selectedCard.get(j));
+                context.setLastStep(NOT_ENOUGH_RES);
+            } else {
+                game.getPersonalBoard(userID).subtractFromWarehouse(payFromWarehouse);
+                game.getPersonalBoard(userID).putDevCardOnSlot(context.getSelectedCard(), context.getSelectedSlot());
+                context.setLastStep(COST_PAID);
+                String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
+                MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
+                game.updateAllAboutChange(warehouseEvent);
+                String devSlotsDescription = game.getPersonalBoard(userID).describeDevSlots();
+                MVEvent devslotsEvent = new MVEvent(userID, MVEvent.EventType.DEVSLOTS_UPDATE, devSlotsDescription);
+                game.updateAllAboutChange(devslotsEvent);
+            }
         }
-    }*/
+    }
     private void handleActivateDevCardAction(Integer userID, ActivateProdActionContext context){
         switch (context.getLastStep()){
             case DEV_SLOTS_CHOOSEN:
@@ -301,11 +306,17 @@ public class Controller implements Listener<VCEvent> {
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
     //this method handle the activation phase of dev Card, it checks if there are enough resources for all cards;
-    private void handleActivateDevSlotsChosen(Integer userID, ActivateProdActionContext context){
-        int i = 0;
+    private void  handleActivateDevSlotsChosen(Integer userID, ActivateProdActionContext context){
+        int i = 0 ;
+        int j = 0 ;
         List<DevCard> selectedCard = context.getSelectedCard();
         List<Resources> costOfCard = new ArrayList<>();
+        while (j < context.getSlots().size()) {
+            selectedCard.add(game.getPersonalBoard(userID).getDevCardOnSlot(context.getSlots().get(j)));
+        }
+        context.setSelectedCard(selectedCard);
 
+            //TODO ask to omer what does setRemaining do
         while( i < selectedCard.size())
             costOfCard.add(selectedCard.get(i).getCost());
         context.setRemainingCost(costOfCard);
@@ -337,10 +348,12 @@ public class Controller implements Listener<VCEvent> {
         }
     }
     private void handlePayFromWhereChosen(Integer userID, BuyDevCardActionContext context){
+        //TODO ask to omer where context.getPayFromWarehouse() is setted
         Resources payFromWarehouse = context.getPayFromWarehouse();
         Resources payFromStrongbox = context.getPayFromStrongbox();
         Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
         Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
+
         if (warehouseRes.smallerOrEqual(payFromWarehouse)) {
             context.setPayFromWarehouse(new Resources());
             context.setPayFromStrongbox(new Resources());
