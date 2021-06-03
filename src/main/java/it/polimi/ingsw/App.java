@@ -41,7 +41,7 @@ public class App {
             input = in.nextLine().toUpperCase();
         }*/
         //TODO  test of getDevSlotIndexs in Inputconsumer Class
-/*
+
         Scanner in = new Scanner(System.in);
 
            int i = 0;
@@ -76,7 +76,7 @@ public class App {
             }
 
         }
-*/
+
 
 
 

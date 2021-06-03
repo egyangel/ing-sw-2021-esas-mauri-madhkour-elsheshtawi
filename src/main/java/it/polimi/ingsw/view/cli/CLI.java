@@ -399,7 +399,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     }
     public void chooseDevSlots(){
+        DevCard baseProd;
         List<DevSlot> slotChosen = InputConsumer.getDevSlotIndexs(in, out);
+        out.println("Do want to activate base production power ? ");
+        boolean answer = InputConsumer.getYesOrNo(in,out);
+        if( answer) {
+            baseProd = InputConsumer.chooseBaseProdRes(in, out);
+            activateProdContext.setBaseProdPower(answer);
+        }
         activateProdContext.setSlots(slotChosen);
         activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
@@ -431,6 +438,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayBuyDevActionEnd(){
         out.println("Ending buy development card action...");
         VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
+        publish(vcEvent);
+    }
+    public void displayActivationProdActionEnd(){
+        out.println("Ending buy development card action...");
+        VCEvent vcEvent = new VCEvent( ACTIVATE_PROD_ACTION_ENDED);
         publish(vcEvent);
     }
 
@@ -564,7 +576,20 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         switch (activateProdContext.getLastStep()) {
             case CHOOSE_DEV_SLOTS:
                 addNextDisplay("chooseDevSlots");
-
+                break;
+            case EMPTY_DEV_SLOTS_ERROR:
+                setGeneralMsg("There is no available development card in Slot");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("chooseDevSlots");
+                break;
+            case NOT_ENOUGH_RES:
+                setGeneralMsg("You don't have the require resources in the warehouse, try again the selection!");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("choosePayDevCardCostFromWhere");
+                break;
+            case COST_PAID:
+                addNextDisplay("displayActivationProdActionEnd");
+                break;
         }
     }
 

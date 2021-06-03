@@ -128,7 +128,10 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case ACTIVATE_PROD_ACTION_SELECTED:
                 ActivateProdActionContext emptyActivateDevCardContext = new ActivateProdActionContext();
-                emptyActivateDevCardContext.setLastStep(CHOOSE_DEV_SLOTS);
+
+                emptyActivateDevCardContext.setLastStep(CHECK_ACTIVE_LEADER_PRODOCTION);
+                handleActivateDevCardAction(userID, emptyActivateDevCardContext);
+                //todo ask to omer if it is right
                 cvEvent = new CVEvent( ACTIVATE_PROD_FILL_CONTEXT, emptyActivateDevCardContext);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
@@ -273,6 +276,13 @@ public class Controller implements Listener<VCEvent> {
 
     private void handlePaymentFromShelf(Integer userID, ActivateProdActionContext context) {
         int j = 0;
+/*
+        List<LeaderCard> whiteConverters = new ArrayList<>();
+        for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
+            if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
+                whiteConverters.add(leaderCard);
+            }
+        }*/
 
         while (j < context.getSlots().size()) {
 
@@ -300,24 +310,39 @@ public class Controller implements Listener<VCEvent> {
     }
     private void handleActivateDevCardAction(Integer userID, ActivateProdActionContext context){
         switch (context.getLastStep()){
+            case CHECK_ACTIVE_LEADER_PRODOCTION:
+                //TODO set leader Production in the context
+                 handleActivateLeadreChosen(userID, context);
+                 break;
             case DEV_SLOTS_CHOOSEN:
                 handleActivateDevSlotsChosen(userID, context);
                 break;
+
         }
         CVEvent cvEvent = new CVEvent(BUY_DEVCARD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
+    private void  handleActivateLeadreChosen(Integer userID, ActivateProdActionContext context){
+        int j = 0 ;
+
+        List<LeaderCard> prodLeaderCard = new ArrayList<>();
+
+        for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
+            if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
+                prodLeaderCard.add(leaderCard);
+            }
+        }
+        context.setLeaderProd(prodLeaderCard);
+    }
     //this method handle the activation phase of dev Card, it checks if there are enough resources for all cards;
     private void  handleActivateDevSlotsChosen(Integer userID, ActivateProdActionContext context){
-        int i = 0 ;
         int j = 0 ;
-        List<DevCard> selectedCard = context.getSelectedCard();
-        Resources LH;
+        List<DevCard> selectedCard = new ArrayList<>();
+
         while (j < context.getSlots().size()) {
             selectedCard.add(game.getPersonalBoard(userID).getDevCardOnSlot(context.getSlots().get(j)));
         }
         context.setSelectedCard(selectedCard);
-
         context.setLastStep(CHECK_RES_FROM_SHELF);
     }
     private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){

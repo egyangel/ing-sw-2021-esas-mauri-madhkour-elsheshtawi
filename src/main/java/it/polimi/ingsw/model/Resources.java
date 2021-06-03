@@ -14,6 +14,15 @@ public class Resources {
                 }
             }
             return false;
+
+        }
+        public static Resources.ResType getByName(String input){
+            for (Resources.ResType st : Resources.ResType.values()) {
+                if (st.toString().equals(input)){
+                    return st;
+                }
+            }
+            return null;
         }
 
         @Override

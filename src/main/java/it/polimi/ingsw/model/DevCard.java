@@ -65,6 +65,15 @@ public class DevCard {
 
 
     }
+    public DevCard ( Resources LHS, Resources RHS) {
+        this.color = null;
+        this.level = 0 ;
+        this.cost  = null;
+        this.victoryPoints = 0;
+        this.LHS = LHS;
+        this.RHS = RHS;
+
+    }
 
     public CliColors getColors(){return colors;  }
     public void setColors(CliColors colors){this.colors=colors;}

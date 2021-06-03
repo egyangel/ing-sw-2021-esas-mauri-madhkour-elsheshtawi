@@ -207,25 +207,59 @@ public class InputConsumer {
         while (numberOfSlots > 3 || numberOfSlots < 1){
             out.println("Invalid input.");
             out.println("Please enter number between 1 and 3");
-
             numberOfSlots = Integer.parseInt(in.nextLine());
         }
-
-        out.println("Please enter the options: " + placeString);
-
+        out.println("Please enter the options in the order that you want to activate( if there are resources only for one , the first one will be activate): " + placeString);
 
         while(i < numberOfSlots){
             input = in.nextLine().toUpperCase();
-            if (placeList.contains(DevSlot.slotPlace.getByName(input)) && !slotChoosen.contains(DevSlot.slotPlace.getByName(input))){
+            if (placeList.contains(DevSlot.slotPlace.getByName(input))){
                 slotChoosen.add(new DevSlot(DevSlot.slotPlace.getByName(input)));
                 i ++;
             }else{
                 out.println("Invalid input.");
                 out.println("Please enter the options: " + placeString);
             }
-
         }
         return slotChoosen;
+    }
+    public static DevCard chooseBaseProdRes(Scanner in, PrintWriter out){
+        int i = 0;
+        boolean approved = false;
+        String input;
+        List<DevSlot> slotChoosen = new ArrayList<>();
+        Resources LHS = new Resources();
+        Resources RHS = new Resources();
+
+        List<Resources.ResType> placeList = new ArrayList<>( Arrays.asList(Resources.ResType.COIN,Resources.ResType.SERVANT,Resources.ResType.SHIELD,Resources.ResType.STONE));
+        String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
+
+        out.println("Choose two resources from shelves to convert : ");
+
+        while(i < 2){
+            input = in.nextLine().toUpperCase();
+            if (placeList.contains(Resources.ResType.getByName(input)) ){
+                LHS.add(Resources.ResType.getByName(input),1);
+                i ++;
+            }else{
+                out.println("Invalid input.");
+                out.println("Please enter the options: " + placeString);
+            }
+        }
+        out.println("Choose the resource that you want : ");
+
+
+        while(!approved){
+            input = in.nextLine().toUpperCase();
+            if (placeList.contains(Resources.ResType.getByName(input)) ){
+                RHS.add(Resources.ResType.getByName(input),1);
+                approved =  true;
+            }else{
+                out.println("Invalid input.");
+                out.println("Please enter the options: " + placeString);
+            }
+        }
+        return new DevCard(LHS,RHS);
     }
 
     public static String getColorAndLevel(Scanner in, PrintWriter out) {

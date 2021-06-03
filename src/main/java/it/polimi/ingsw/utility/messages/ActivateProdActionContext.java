@@ -19,14 +19,17 @@ public class ActivateProdActionContext {
     private Resources payment;
     private Map<Shelf.shelfPlace, Resources.ResType> shelfPlaceResTypeMap = new HashMap<>();
     private Map<Shelf.shelfPlace, Boolean> shelfToResultMap = new HashMap<>();
-
+    private Boolean baseProdPower;
+    //flag for leader card
     public enum ActionStep{
         // from client to server
         DEV_SLOTS_CHOOSEN,
 
 
         // from server to client
+        CHECK_ACTIVE_LEADER_PRODOCTION,
         CHOOSE_DEV_SLOTS,
+        CHOOSE_ORDER,
         EMPTY_DEV_SLOTS_ERROR,
         NOT_ENOUGH_RES,
         CHOOSE_LEADER_TO_PRODUCE,
@@ -35,10 +38,9 @@ public class ActivateProdActionContext {
     }
     private ActionStep lastStep;
     private List<DevSlot.slotPlace> placeList = new ArrayList<>();
-    public void setIndexes(List<DevSlot.slotPlace> placeList){
-        this.placeList.addAll(placeList);
+    public void setBaseProdPower(boolean answer){
+        this.baseProdPower = answer;
     }
-
     public ActionStep getLastStep(){
         return lastStep;
     }
@@ -47,7 +49,7 @@ public class ActivateProdActionContext {
         lastStep = step;
     }
 
-   public void setSlots(List<DevSlot> slotChosen){
+    public void setSlots(List<DevSlot> slotChosen){
         this.slotChosen = slotChosen;
     }
     public List<DevSlot> getSlots(){
@@ -73,6 +75,15 @@ public class ActivateProdActionContext {
     public void setPayFromWarehouse(Resources payFromWarehouse) {
         // not sure directly assigning will work for JSON, but it should
         this.payment = payFromWarehouse;
+
+    }
+    public List<LeaderCard> getWhiteConverters() {
+        return producerCard;
+    }
+
+    public void setLeaderProd(List<LeaderCard> producerCard) {
+        this.producerCard = new ArrayList<>();
+        this.producerCard.addAll(producerCard);
     }
 /*
     public void setIndex(int index){
@@ -92,12 +103,12 @@ public class ActivateProdActionContext {
     }
 
     public List<LeaderCard> getWhiteConverters() {
-        return whiteConverters;
+        return producerCard;
     }
 
-    public void setWhiteConverters(List<LeaderCard> whiteConverters) {
-        this.whiteConverters = new ArrayList<>();
-        this.whiteConverters.addAll(whiteConverters);
+    public void setWhiteConverters(List<LeaderCard> producerCard) {
+        this.producerCard = new ArrayList<>();
+        this.whiteConverters.addAll(producerCard);
     }
 
     public Resources getResources() {
