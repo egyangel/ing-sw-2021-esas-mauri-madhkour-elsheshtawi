@@ -4,6 +4,18 @@ import it.polimi.ingsw.model.enumclasses.CliColors;
 
 public class DevCard {
 
+    public DevCard(CliColors[] values, int level, Resources lhs, Resources rhs, Resources cost, int victoryPoints) {
+        this.level = level;
+        LHS = lhs;
+        RHS = rhs;
+        this.cost = cost;
+        this.victoryPoints = victoryPoints;
+        color = null;
+    }
+
+
+
+
     public static CliColors getFaith() {
         return CliColors.red;
     }
