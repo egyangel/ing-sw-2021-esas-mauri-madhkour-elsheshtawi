@@ -7,16 +7,43 @@ import it.polimi.ingsw.model.enumclasses.CliColors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameObjectPrinter {
     //TODO FOR LORENZO
-    //List<DevCard>= new ArrayList<>();
+    List<DevCard> card= new ArrayList<>();
     public static String printDevCard(DevCard card){
 
         //stringbuilder, for loop, string format etc
         //to substitute placeholder characters inside string with devcard values, it will look something like:
         //strinformatter("%d-16", card.getCost()) etc in necessary places
         return null;
+    }
+
+    public GameObjectPrinter(int size){
+        fill(size);
+    }
+    private void fill(int size){
+        int nextColor =0;
+        /*for (int i=0; i<size;i++){
+            CliColors color;
+            DevCard c=new DevCard(CliColors.values()[nextColor]);
+            this.card.add(c);
+            nextColor=(nextColor+1)%CliColors.values().length;
+        }*/
+
+    }
+    public int getSize(){return card.size();}
+
+    public DevCard Draw(){
+        int count=card.size();
+        if (count==0)
+            return null;
+        Random rand=new Random();
+        int index= rand.nextInt(count);
+        DevCard c =card.get(index);
+        this.card.remove(c);
+        return c;
     }
 
     // argument can be Shelf[]
@@ -57,13 +84,30 @@ public class GameObjectPrinter {
         return String.format("%-"+n+"text",text);
     }
 
+
+
     @Override
     public String toString(){
         StringBuilder stringBuilder=new StringBuilder();
-
-
+        int count= card.size();
+//        StringBuilder.append("# elements= "+ count+ "\n");
+        int i=0;
+        for (DevCard c:card){
+            if (i!=0){
+//                if (i%10==0)
+//                    StringBuilder.append("\n");
+//                else StringBuilder.append("\n");
+            }
+//            StringBuilder.append(c.toString());
+            i++;
+        }
+//        return StringBuilder.toString();
         return null;
-    };
+    }
+
+    public void dump(){
+        System.out.println(this);
+    }
 
 
 
