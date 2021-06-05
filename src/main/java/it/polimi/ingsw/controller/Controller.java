@@ -289,7 +289,7 @@ public class Controller implements Listener<VCEvent> {
             Resources payFromWarehouse = context.getSelectedCard().get(j).getLHS();
             Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
 
-            if (warehouseRes.smallerOrEqual(payFromWarehouse)) {
+            if (payFromWarehouse.smallerOrEqual(warehouseRes)) {
                 context.setLastStep(NOT_ENOUGH_RES);
             } else {
                 game.getPersonalBoard(userID).subtractFromWarehouse(payFromWarehouse);

@@ -17,7 +17,20 @@ public class App {
     
 
     public static void main(String[] args) throws IOException {
-      //  Game game = new Game();
+        ClassA a1, a2;
+        ClassB b1;
+        ClassC c1;
+        a1 = new ClassB();
+        b1 = new ClassB();
+        c1 = new ClassC();
+        a2 = new ClassC();
+        b1.stampa(b1);
+        a1.stampa(b1);
+        b1.stampa(c1);
+        c1.stampa(c1);
+        c1.stampa(a1);
+        a2.stampa(c1);
+        //  Game game = new Game();
         /* Lorenzo
         //DevCardScreen(1,2);
          //better with a for loop
@@ -41,7 +54,7 @@ public class App {
             input = in.nextLine().toUpperCase();
         }*/
         //TODO  test of getDevSlotIndexs in Inputconsumer Class
-
+/*
         Scanner in = new Scanner(System.in);
 
            int i = 0;
@@ -79,7 +92,7 @@ public class App {
 
 
 
-
+*/
 //        game.printSpecialAbilities();
 //        Requirement aReq = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.GREEN);
 //        System.out.println(JsonConverter.toJson(aReq));
@@ -121,9 +134,27 @@ public class App {
 //         this will be surrounded by proper exceptions
 //         theGameController.startGame();
 
-
-
-
+    }
+    static class ClassA {
+        public void stampa(ClassA p) {
+            System.out.println("AAA");
+        }
+    }
+    static class ClassB extends ClassA {
+        public void stampa(ClassB p) {
+            System.out.println("BBB");
+        }
+        public void stampa(ClassA p) {
+            System.out.println("AAA/BBB");
+        }
+    }
+    static class ClassC extends ClassA {
+        public void stampa(ClassC p) {
+            System.out.println("CCC");
+        }
+        public void stampa(ClassA p) {
+            System.out.println("AAA/CCC");
+        }
     }
 
 

@@ -12,8 +12,9 @@ public class ActivateProdActionContext {
     private int index;
     private boolean hasError;
     private List<LeaderCard> producerCard;
+    private List<LeaderCard> activeProduceCard;
     private Resources resources;
-    private List<Resources> remainingCost;
+
     private List<DevSlot>  slotChosen;
     private List<DevCard>  selectedCard;
     private Resources payment;
@@ -27,6 +28,7 @@ public class ActivateProdActionContext {
 
 
         // from server to client
+
         CHECK_ACTIVE_LEADER_PRODOCTION,
         CHOOSE_DEV_SLOTS,
         CHOOSE_ORDER,
@@ -65,19 +67,8 @@ public class ActivateProdActionContext {
     public void setSelectedCard( List<DevCard> selectedCard) {
         this.selectedCard.addAll(selectedCard);
     }
-    public void setRemainingCost(List<Resources> costOfCard) {
-               this.remainingCost.addAll(costOfCard);
-    }
-    public Resources getPayFromWarehouse() {
-        return payment;
-    }
 
-    public void setPayFromWarehouse(Resources payFromWarehouse) {
-        // not sure directly assigning will work for JSON, but it should
-        this.payment = payFromWarehouse;
-
-    }
-    public List<LeaderCard> getWhiteConverters() {
+    public List<LeaderCard> getProducerCard() {
         return producerCard;
     }
 

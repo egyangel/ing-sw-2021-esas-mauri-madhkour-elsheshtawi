@@ -269,6 +269,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[5] View faith track");
         out.println("[6] View leader cards");
         out.println("[7] View other players");
+        //TODO omer why this action
         out.println("[8]ACTIVATE_PROD_ACTION_ENDED Turn");
         int index = InputConsumer.getANumberBetween(in, out, 1, 8);
         switch (index) {
@@ -403,10 +404,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         List<DevSlot> slotChosen = InputConsumer.getDevSlotIndexs(in, out);
         out.println("Do want to activate base production power ? ");
         boolean answer = InputConsumer.getYesOrNo(in,out);
+
         if( answer) {
             baseProd = InputConsumer.chooseBaseProdRes(in, out);
             activateProdContext.setBaseProdPower(answer);
         }
+
         activateProdContext.setSlots(slotChosen);
         activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
@@ -462,6 +465,19 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             whiteMarbles--;
             out.println("You now have " + whiteMarbles + " white marble to convert.");
         }
+        takeResContext.setLastStep(RES_FROM_WHITE_ADDED_TO_CONTEXT);
+        VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
+        publish(vcEvent);
+    }//todo have to implemnt this method
+    public void chooseProdaction() {
+        Resources.ResType firstResOption = activateProdContext.getProducerCard().get(0).getAbility().getResType();
+        Resources.ResType secondResOption = activateProdContext.getProducerCard().get(1).getAbility().getResType();
+
+        out.println("You have two active produce leader cards, and received ");
+        out.println("You can produce a choosen resources into [1]" + firstResOption.toString() + " or [2]" + secondResOption.toString());
+        int numOfCard =  InputConsumer.getANumberBetween(in, out, 1, 2);
+
+
         takeResContext.setLastStep(RES_FROM_WHITE_ADDED_TO_CONTEXT);
         VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
@@ -576,6 +592,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         switch (activateProdContext.getLastStep()) {
             case CHOOSE_DEV_SLOTS:
                 addNextDisplay("chooseDevSlots");
+                break;
+            case CHOOSE_LEADER_TO_PRODUCE:
+                addNextDisplay("chooseProdaction");
                 break;
             case EMPTY_DEV_SLOTS_ERROR:
                 setGeneralMsg("There is no available development card in Slot");

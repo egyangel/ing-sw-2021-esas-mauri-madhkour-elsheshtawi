@@ -222,7 +222,44 @@ public class InputConsumer {
             }
         }
         return slotChoosen;
-    }
+    }//todo method that handle the leadrcard prodaction
+   /* public static DevCard chooseRHS(Scanner in, PrintWriter out){
+        /nt i = 0;
+        boolean approved = false;
+        String input;
+
+        Resources RHS = new Resources();
+
+        List<Resources.ResType> placeList = new ArrayList<>( Arrays.asList(Resources.ResType.COIN,Resources.ResType.SERVANT,Resources.ResType.SHIELD,Resources.ResType.STONE));
+        String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
+
+        out.println("Choose  resources from shelves to convert : ");
+
+        while(i < 2){
+            input = in.nextLine().toUpperCase();
+            if (placeList.contains(Resources.ResType.getByName(input)) ){
+                LHS.add(Resources.ResType.getByName(input),1);
+                i ++;
+            }else{
+                out.println("Invalid input.");
+                out.println("Please enter the options: " + placeString);
+            }
+        }
+        out.println("Choose the resource that you want : ");
+
+
+        while(!approved){
+            input = in.nextLine().toUpperCase();
+            if (placeList.contains(Resources.ResType.getByName(input)) ){
+                RHS.add(Resources.ResType.getByName(input),1);
+                approved =  true;
+            }else{
+                out.println("Invalid input.");
+                out.println("Please enter the options: " + placeString);
+            }
+        }
+        return new DevCard(LHS,RHS);
+    }*/
     public static DevCard chooseBaseProdRes(Scanner in, PrintWriter out){
         int i = 0;
         boolean approved = false;
