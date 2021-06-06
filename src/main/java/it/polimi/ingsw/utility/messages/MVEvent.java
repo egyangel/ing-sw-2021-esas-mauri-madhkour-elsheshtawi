@@ -22,6 +22,7 @@ public class MVEvent extends Event{
 
     public MVEvent(EventType eventType, Object object){
         super(object);
+        this.eventType = eventType;
         this.jsonContent = JsonConverter.toJson(object);
     }
 
