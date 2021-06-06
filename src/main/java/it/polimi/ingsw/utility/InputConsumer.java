@@ -260,11 +260,35 @@ public class InputConsumer {
         }
         return new DevCard(LHS,RHS);
     }*/
+   public static List<Resources>
+   chooseRhsLeaderCard(Scanner in, PrintWriter out,int numberOfCards){
+       int i = 0;
+       String input;
+       List<Resources> RHS = new ArrayList<>();
+       Resources temp= new Resources();
+
+       List<Resources.ResType> placeList = new ArrayList<>( Arrays.asList(Resources.ResType.COIN,Resources.ResType.SERVANT,Resources.ResType.SHIELD,Resources.ResType.STONE));
+       String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
+
+       out.println("Choose the resource that you want : ");
+
+       while(i < numberOfCards){
+           input = in.nextLine().toUpperCase();
+           if (placeList.contains(Resources.ResType.getByName(input)) ){
+               temp.add(Resources.ResType.getByName(input),1);
+               RHS.add(temp);
+               i++;
+           }else{
+               out.println("Invalid input.");
+               out.println("Please enter the options: " + placeString);
+           }temp.clear();
+       }
+       return RHS;
+   }
     public static DevCard chooseBaseProdRes(Scanner in, PrintWriter out){
         int i = 0;
         boolean approved = false;
         String input;
-        List<DevSlot> slotChoosen = new ArrayList<>();
         Resources LHS = new Resources();
         Resources RHS = new Resources();
 

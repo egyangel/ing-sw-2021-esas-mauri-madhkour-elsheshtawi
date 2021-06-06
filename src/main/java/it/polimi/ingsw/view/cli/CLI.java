@@ -335,6 +335,18 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         returnToCorrectActionSelection();
     }
 
+    public void displayBuyDevActionEnd(){
+        out.println("Ending buy development card action...");
+        VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
+        publish(vcEvent);
+    }
+
+    public void displayActivationProdActionEnd(){
+        out.println("Ending activation production phase...");
+        VCEvent vcEvent = new VCEvent( ACTIVATE_PROD_ACTION_ENDED);
+        publish(vcEvent);
+    }
+
     public void displayAllPersonalBoards(){
         LinkedList<Integer> userIDs = new LinkedList<>();
         userIDs.addAll(userIDtoBoardDescriptions.keySet());
@@ -357,7 +369,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             }
         returnToCorrectActionSelection();
     }
-
 
     private void returnToCorrectActionSelection(){
         if (majorActionDone) addNextDisplay("displayMinorActionSelection");
@@ -399,23 +410,56 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
 
     }
+
     public void chooseDevSlots(){
         DevCard baseProd;
         List<DevSlot> slotChosen = InputConsumer.getDevSlotIndexs(in, out);
+        out.println("Select warehouse or strongbox to pay the left side of Development card.");
+        boolean warehouseSelectedForDevslots = InputConsumer.getWorS(in, out);
+        activateProdContext.setFromWhereToPayForDevslots(warehouseSelectedForDevslots);
         out.println("Do want to activate base production power ? ");
         boolean answer = InputConsumer.getYesOrNo(in,out);
 
         if( answer) {
             baseProd = InputConsumer.chooseBaseProdRes(in, out);
+            out.println("Select warehouse or strongbox to pay the left side.");
+            boolean warehouseSelectedForDefault = InputConsumer.getWorS(in, out);
+            activateProdContext.setFromWhereToPayForDefault(warehouseSelectedForDefault);
             activateProdContext.setBaseProdPower(answer);
+            activateProdContext.setBaseProductionCard(baseProd);
         }
-
         activateProdContext.setSlots(slotChosen);
         activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
     }
-// TODO ask how actually work this method, i am confused about the resouce handling
+//TODO Amor have to create a choosePayDevCardCostFromWher for the activation phase common for  all 3 kind of activation
+    public void chooseLeaderProdaction() {
+
+        out.println("Do want to activate LeaderCard production ability? ");
+        boolean leaderProdActivate = InputConsumer.getYesOrNo(in,out);
+
+        if(leaderProdActivate){
+            List<Resources> RHS = new ArrayList<>();
+            out.println("You have "+activateProdContext.getProducerCard().size()+" active produce leader cards ");
+            out.println("How many do you want to activate?  ");
+            int numOfCard =  InputConsumer.getANumberBetween(in, out, 1, 2);
+            RHS.addAll(InputConsumer.chooseRhsLeaderCard(in, out,numOfCard));
+            out.println("Select warehouse or strongbox to pay the left side.");
+            boolean warehouseSelected = InputConsumer.getWorS(in, out);
+            activateProdContext.setFromWhereToPayForLeader(warehouseSelected);
+            activateProdContext.setNumberOfActiveLeaderProducuion(numOfCard);
+            activateProdContext.setRhlLeaderCard(RHS);
+            activateProdContext.setLastStep(LEADER_CARD_CHOOSEN);
+        }
+        else{
+                activateProdContext.setLastStep(LEADER_CARD_NOT_CHOOSEN);
+        }
+
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED,activateProdContext);
+        publish(vcEvent);
+    }
+
     public void choosePayDevCardCostFromWhere(){
         out.println("Select warehouse or strongbox to pay the cost of the selected development card.");
         Resources remainingCost = buyDevCardContext.getRemainingCost();
@@ -438,17 +482,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    public void displayBuyDevActionEnd(){
-        out.println("Ending buy development card action...");
-        VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
-        publish(vcEvent);
-    }
-    public void displayActivationProdActionEnd(){
-        out.println("Ending buy development card action...");
-        VCEvent vcEvent = new VCEvent( ACTIVATE_PROD_ACTION_ENDED);
-        publish(vcEvent);
-    }
-
     public void chooseWhiteConverters() {
         Resources.ResType firstResOption = takeResContext.getWhiteConverters().get(0).getAbility().getResType();
         Resources.ResType secondResOption = takeResContext.getWhiteConverters().get(1).getAbility().getResType();
@@ -465,19 +498,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             whiteMarbles--;
             out.println("You now have " + whiteMarbles + " white marble to convert.");
         }
-        takeResContext.setLastStep(RES_FROM_WHITE_ADDED_TO_CONTEXT);
-        VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
-        publish(vcEvent);
-    }//todo have to implemnt this method
-    public void chooseProdaction() {
-        Resources.ResType firstResOption = activateProdContext.getProducerCard().get(0).getAbility().getResType();
-        Resources.ResType secondResOption = activateProdContext.getProducerCard().get(1).getAbility().getResType();
-
-        out.println("You have two active produce leader cards, and received ");
-        out.println("You can produce a choosen resources into [1]" + firstResOption.toString() + " or [2]" + secondResOption.toString());
-        int numOfCard =  InputConsumer.getANumberBetween(in, out, 1, 2);
-
-
         takeResContext.setLastStep(RES_FROM_WHITE_ADDED_TO_CONTEXT);
         VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
@@ -594,18 +614,34 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("chooseDevSlots");
                 break;
             case CHOOSE_LEADER_TO_PRODUCE:
-                addNextDisplay("chooseProdaction");
+                addNextDisplay("chooseLeaderProdaction");
                 break;
             case EMPTY_DEV_SLOTS_ERROR:
                 setGeneralMsg("There is no available development card in Slot");
                 addNextDisplay("displayGeneralMsg");
                 addNextDisplay("chooseDevSlots");
                 break;
-            case NOT_ENOUGH_RES:
-                setGeneralMsg("You don't have the require resources in the warehouse, try again the selection!");
+            case NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE:
+                setGeneralMsg("You don't have enough resources in strongbox!");
                 addNextDisplay("displayGeneralMsg");
                 addNextDisplay("choosePayDevCardCostFromWhere");
                 break;
+            case NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX:
+                setGeneralMsg("You don't have enough resources in strongbox !");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("choosePayDevCardCostFromWhere");
+                break;
+            case NOT_ENOUGH_RES_FOR_LEADER_PRODUCTION_IN_WAREHOUSE:
+                setGeneralMsg("You don't have enough resources in strongbox!");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("choosePayDevCardCostFromWhere");
+                break;
+            case NOT_ENOUGH_RES_FOR_LEADER_PRODUCTION_IN_STRONGBOX:
+                setGeneralMsg("You don't have enough resources in strongbox !");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("choosePayDevCardCostFromWhere");
+                break;
+
             case COST_PAID:
                 addNextDisplay("displayActivationProdActionEnd");
                 break;
@@ -626,7 +662,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
         }
     }
-
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent) {
