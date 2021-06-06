@@ -80,7 +80,13 @@ public class PersonalBoard {
     }
 
     private boolean checkSameType(int index, Resources.ResType resType) {
-        return (warehouse[index].getShelfResType() == resType);
+        try {
+            return (warehouse[index].getShelfResType() == resType);
+        } catch (Exception e) {
+            return true;
+        }
+
+
     }
 
 
@@ -219,7 +225,10 @@ public class PersonalBoard {
             }
         }
     }
-    public void putResInStrongBox(Resources res) { this.strongbox.add(res);    }
+
+    public void putResInStrongBox(Resources res) {
+        this.strongbox.add(res);
+    }
 
     public void subtractFromStrongbox(Resources res) {
         this.strongbox.subtract(res);
