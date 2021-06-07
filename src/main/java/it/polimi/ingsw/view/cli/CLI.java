@@ -429,7 +429,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
     }
-//TODO Amor have to create a choosePayDevCardCostFromWher for the activation phase common for  all 3 kind of activation
+//TODO Amor has handle not enought resources payment in prodaction
+
     public void chooseLeaderProdaction() {
 
         out.println("Do want to activate LeaderCard production ability? ");
