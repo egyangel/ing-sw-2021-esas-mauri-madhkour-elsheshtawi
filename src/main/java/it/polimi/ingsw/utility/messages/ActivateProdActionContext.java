@@ -40,8 +40,6 @@ public class ActivateProdActionContext {
         CHOOSE_PAY_COST_FOR_PRODUCTION_FROM_WHERE,
         NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE,
         NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX,
-        NOT_ENOUGH_RES_FOR_LEADER_PRODUCTION_IN_STRONGBOX,
-        NOT_ENOUGH_RES_FOR_LEADER_PRODUCTION_IN_WAREHOUSE,
         CHOOSE_LEADER_TO_PRODUCE,
         CHECK_RES_FROM_SHELF,
         COST_PAID
@@ -73,8 +71,7 @@ public class ActivateProdActionContext {
     public void setSlotAvailable(List<DevSlot> slotAvailabl){ this.slotAvailable.addAll(slotAvailabl); }
     public List<DevSlot> getSlotAvailable(){ return this.slotAvailable; }
     public void setSlots(List<DevSlot> slotChosen){ this.slotChosen.addAll(slotChosen); }
-    public List<DevSlot> getSlots(){ return this.slotChosen;
-    }
+    public List<DevSlot> getSlots(){ return this.slotChosen;  }
     public void setFromWhereToPayForDevslots(boolean warehouseSelectedForDevslots){ this.warehouseSelectedForDevslots = warehouseSelectedForDevslots; }
     public boolean getFromWhereToPayForDevslots(){
         return this.warehouseSelectedForDevslots ;
@@ -98,12 +95,10 @@ public class ActivateProdActionContext {
     }
     public void setLeaderProd(List<LeaderCard> producerCard) { this.producerCard.addAll(producerCard); }
     public List<LeaderCard> getProducerCard() { return producerCard; }
-    public int getNumberOfActiveLeaderProducuion() { return numberOfCardActivated; }
-    public void setNumberOfActiveLeaderProducuion (int numberOfCardActivated) { this.numberOfCardActivated = numberOfCardActivated; }
+    public int getNumberOfActiveLeaderProduction() { return numberOfCardActivated; }
+    public void setNumberOfActiveLeaderProduction (int numberOfCardActivated) { this.numberOfCardActivated = numberOfCardActivated; }
     public void setFromWhereToPayForLeader(boolean warehouseSelected){ this.warehouseSelectedForLeader = warehouseSelected; }
-    public boolean getFromWhereToPayForLeader(){
-        return this.warehouseSelectedForLeader ;
-    }
+    public boolean getFromWhereToPayForLeader(){ return this.warehouseSelectedForLeader ; }
 
 
 }

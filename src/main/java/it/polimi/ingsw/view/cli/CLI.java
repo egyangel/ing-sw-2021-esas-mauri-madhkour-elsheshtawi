@@ -128,6 +128,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayLogin() {
         out.println("Choose a username:");
         String username = InputConsumer.getUserName(in, out);
+        //TODO OMer here we may ask gor the number so that we know a priori the number of player and then change for an arbitrary number
         out.println("Choose number of players you would like to play with:");
         Message loginmsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
         client.sendToServer(loginmsg);
@@ -429,7 +430,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
     }
-//TODO Amor has handle not enought resources payment in prodaction
+//TODO Amor has to handle not enought resources payment in prodaction
 
     public void chooseLeaderProdaction() {
 
@@ -442,7 +443,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             out.println("How many do you want to activate?  ");
             int numOfCard =  InputConsumer.getANumberBetween(in, out, 1, 2);
             RHS.addAll(InputConsumer.chooseRhsLeaderCard(in, out,numOfCard));
-            activateProdContext.setNumberOfActiveLeaderProducuion(numOfCard);
+            activateProdContext.setNumberOfActiveLeaderProduction(numOfCard);
             activateProdContext.setRhlLeaderCard(RHS);
             activateProdContext.setLastStep(LEADER_CARD_CHOOSEN);
         }
@@ -454,20 +455,20 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
     public void choosePayProductionCostFromWhere(){
-        if(activateProdContext.getNumberOfActiveLeaderProducuion()>0)
+        if(activateProdContext.getNumberOfActiveLeaderProduction()>0)
         {
-            out.println("Select warehouse or strongbox to pay the left side.");
+            out.println("Select warehouse or strongbox to pay the left side for leader production.");
             boolean warehouseSelected = InputConsumer.getWorS(in, out);
             activateProdContext.setFromWhereToPayForLeader(warehouseSelected);
         }
         if(activateProdContext.getBaseProdPower())
         {
-            out.println("Select warehouse or strongbox to pay the left side.");
+            out.println("Select warehouse or strongbox to pay the left side for default production.");
             boolean warehouseSelectedForDefault = InputConsumer.getWorS(in, out);
             activateProdContext.setFromWhereToPayForDefault(warehouseSelectedForDefault);
 
             if(activateProdContext.getSelectedCard().size() > 0 ){
-                out.println("Select warehouse or strongbox to pay the left side of Development card.");
+                out.println("Select warehouse or strongbox to pay the left side of Development card for production.");
                 boolean warehouseSelectedForDevslots = InputConsumer.getWorS(in, out);
                 activateProdContext.setFromWhereToPayForDevslots(warehouseSelectedForDevslots);
             }
@@ -649,17 +650,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayGeneralMsg");
                 addNextDisplay("choosePayDevCardCostFromWhere");
                 break;
-            case NOT_ENOUGH_RES_FOR_LEADER_PRODUCTION_IN_WAREHOUSE:
-                setGeneralMsg("You don't have enough resources in strongbox!");
-                addNextDisplay("displayGeneralMsg");
-                addNextDisplay("choosePayDevCardCostFromWhere");
-                break;
-            case NOT_ENOUGH_RES_FOR_LEADER_PRODUCTION_IN_STRONGBOX:
-                setGeneralMsg("You don't have enough resources in strongbox !");
-                addNextDisplay("displayGeneralMsg");
-                addNextDisplay("choosePayDevCardCostFromWhere");
-                break;
-
             case COST_PAID:
                 addNextDisplay("displayActivationProdActionEnd");
                 break;
