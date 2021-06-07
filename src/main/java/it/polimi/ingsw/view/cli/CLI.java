@@ -413,18 +413,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     public void chooseDevSlots(){
         DevCard baseProd;
-        List<DevSlot> slotChosen = InputConsumer.getDevSlotIndexs(in, out);
-        out.println("Select warehouse or strongbox to pay the left side of Development card.");
-        boolean warehouseSelectedForDevslots = InputConsumer.getWorS(in, out);
-        activateProdContext.setFromWhereToPayForDevslots(warehouseSelectedForDevslots);
+        int numberOfSlotAvailable = activateProdContext.getSlotAvailable().size();
+        List<DevSlot> slotAvailable =activateProdContext.getSlotAvailable();
+        List<DevSlot> slotChosen = InputConsumer.getDevSlotIndexs(in, out,numberOfSlotAvailable,slotAvailable);
         out.println("Do want to activate base production power ? ");
         boolean answer = InputConsumer.getYesOrNo(in,out);
 
         if( answer) {
             baseProd = InputConsumer.chooseBaseProdRes(in, out);
-            out.println("Select warehouse or strongbox to pay the left side.");
-            boolean warehouseSelectedForDefault = InputConsumer.getWorS(in, out);
-            activateProdContext.setFromWhereToPayForDefault(warehouseSelectedForDefault);
             activateProdContext.setBaseProdPower(answer);
             activateProdContext.setBaseProductionCard(baseProd);
         }
@@ -445,9 +441,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             out.println("How many do you want to activate?  ");
             int numOfCard =  InputConsumer.getANumberBetween(in, out, 1, 2);
             RHS.addAll(InputConsumer.chooseRhsLeaderCard(in, out,numOfCard));
-            out.println("Select warehouse or strongbox to pay the left side.");
-            boolean warehouseSelected = InputConsumer.getWorS(in, out);
-            activateProdContext.setFromWhereToPayForLeader(warehouseSelected);
             activateProdContext.setNumberOfActiveLeaderProducuion(numOfCard);
             activateProdContext.setRhlLeaderCard(RHS);
             activateProdContext.setLastStep(LEADER_CARD_CHOOSEN);
@@ -457,6 +450,30 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
 
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED,activateProdContext);
+        publish(vcEvent);
+    }
+    public void choosePayProductionCostFromWhere(){
+        if(activateProdContext.getNumberOfActiveLeaderProducuion()>0)
+        {
+            out.println("Select warehouse or strongbox to pay the left side.");
+            boolean warehouseSelected = InputConsumer.getWorS(in, out);
+            activateProdContext.setFromWhereToPayForLeader(warehouseSelected);
+        }
+        if(activateProdContext.getBaseProdPower())
+        {
+            out.println("Select warehouse or strongbox to pay the left side.");
+            boolean warehouseSelectedForDefault = InputConsumer.getWorS(in, out);
+            activateProdContext.setFromWhereToPayForDefault(warehouseSelectedForDefault);
+
+            if(activateProdContext.getSelectedCard().size() > 0 ){
+                out.println("Select warehouse or strongbox to pay the left side of Development card.");
+                boolean warehouseSelectedForDevslots = InputConsumer.getWorS(in, out);
+                activateProdContext.setFromWhereToPayForDevslots(warehouseSelectedForDevslots);
+            }
+        }
+
+        activateProdContext.setLastStep(PAY_PRODUCTION_FROM_WHERE_CHOSEN);
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
     }
 

@@ -193,6 +193,9 @@ public class PersonalBoard {
 
     public DevCard getDevCardOnSlot(DevSlot place) {
         int index = place.getPlace().getIndexInBoard();
+        if(devSlots[index].isEmpty()){
+            return null;
+        }
         return devSlots[index].getTopDevCard();
     }
 

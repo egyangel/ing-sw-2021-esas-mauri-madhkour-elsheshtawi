@@ -10,9 +10,10 @@ import java.util.Map;
 public class ActivateProdActionContext {
 
     private boolean hasError;
-    private List<LeaderCard> producerCard;
+    private List<LeaderCard> producerCard = new ArrayList<>();
     private List<Resources> leaderRHS= new ArrayList<>();
     private List<DevSlot>  slotChosen = new ArrayList<>();
+    private List<DevSlot>  slotAvailable = new ArrayList<>();
     private List<DevCard>  selectedCard = new ArrayList<>();
     private DevCard  baseProductionCard;
     private Resources payment;
@@ -29,13 +30,12 @@ public class ActivateProdActionContext {
         LEADER_CARD_CHOOSEN,
         DEV_SLOTS_CHOOSEN,
         LEADER_CARD_NOT_CHOOSEN,
-
+        PAY_PRODUCTION_FROM_WHERE_CHOSEN,
 
         // from server to client
 
         CHECK_ACTIVE_LEADER_PRODOCTION,
         CHOOSE_DEV_SLOTS,
-        CHOOSE_ORDER,
         EMPTY_DEV_SLOTS_ERROR,
         CHOOSE_PAY_COST_FOR_PRODUCTION_FROM_WHERE,
         NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE,
@@ -55,6 +55,9 @@ public class ActivateProdActionContext {
         lastStep = step;
     }
 
+    public void setBaseProductionCard (DevCard baseProductionCard) {
+        this.baseProductionCard = baseProductionCard;
+    }
     public void setBaseProdPower(boolean answer){
         this.baseProdPower = answer;
     }
@@ -62,64 +65,45 @@ public class ActivateProdActionContext {
         return this.baseProdPower ;
     }
     public DevCard getBaseProductionCard() { return baseProductionCard; }
-
-    public void setFromWhereToPayForLeader(boolean warehouseSelected){ this.warehouseSelectedForLeader = warehouseSelected; }
-    public boolean getFromWhereToPayForLeader(){
-        return this.warehouseSelectedForLeader ;
-    }
-
     public void setFromWhereToPayForDefault(boolean warehouseSelectedForDefault){ this.warehouseSelectedForDefault = warehouseSelectedForDefault; }
     public boolean getFromWhereToPayForDefault(){
         return this.warehouseSelectedForDefault ;
     }
 
+    public void setSlotAvailable(List<DevSlot> slotAvailabl){ this.slotAvailable.addAll(slotAvailabl); }
+    public List<DevSlot> getSlotAvailable(){ return this.slotAvailable; }
+    public void setSlots(List<DevSlot> slotChosen){ this.slotChosen.addAll(slotChosen); }
+    public List<DevSlot> getSlots(){ return this.slotChosen;
+    }
     public void setFromWhereToPayForDevslots(boolean warehouseSelectedForDevslots){ this.warehouseSelectedForDevslots = warehouseSelectedForDevslots; }
     public boolean getFromWhereToPayForDevslots(){
         return this.warehouseSelectedForDevslots ;
     }
-
-
-
-
-    public void setSlots(List<DevSlot> slotChosen){
-        this.slotChosen.addAll(slotChosen);
-    }
-    public List<DevSlot> getSlots(){
-        return this.slotChosen;
+    public void setSelectedCard( List<DevCard> selectedCard) {
+        this.selectedCard.addAll(selectedCard);
     }
     public List<DevCard> getSelectedCard() { return selectedCard; }
+
+
     public void setErrorTrue(){
         this.hasError = true;
     }
 
-    public void setBaseProductionCard (DevCard baseProductionCard) {
-        this.baseProductionCard = baseProductionCard;
-    }
-    public void setSelectedCard( List<DevCard> selectedCard) {
-        this.selectedCard.addAll(selectedCard);
-    }
-
-    public List<LeaderCard> getProducerCard() {
-        return producerCard;
-    }
-
+    //All Methods below handle the activation of leader Card Production
     public void setRhlLeaderCard(List<Resources> RHS) {
         this.leaderRHS.addAll(RHS);
     }
     public List<Resources> getRhlLeaderCard() {
         return leaderRHS;
     }
+    public void setLeaderProd(List<LeaderCard> producerCard) { this.producerCard.addAll(producerCard); }
+    public List<LeaderCard> getProducerCard() { return producerCard; }
+    public int getNumberOfActiveLeaderProducuion() { return numberOfCardActivated; }
+    public void setNumberOfActiveLeaderProducuion (int numberOfCardActivated) { this.numberOfCardActivated = numberOfCardActivated; }
+    public void setFromWhereToPayForLeader(boolean warehouseSelected){ this.warehouseSelectedForLeader = warehouseSelected; }
+    public boolean getFromWhereToPayForLeader(){
+        return this.warehouseSelectedForLeader ;
+    }
 
-    public void setLeaderProd(List<LeaderCard> producerCard) {
-        this.producerCard = new ArrayList<>();
-        this.producerCard.addAll(producerCard);
-    }
-    public int getNumberOfActiveLeaderProducuion() {
-        return numberOfCardActivated;
-    }
-
-    public void setNumberOfActiveLeaderProducuion (int numberOfCardActivated) {
-        this.numberOfCardActivated = numberOfCardActivated;
-    }
 
 }

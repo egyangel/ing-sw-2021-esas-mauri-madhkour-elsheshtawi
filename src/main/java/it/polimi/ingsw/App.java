@@ -17,19 +17,32 @@ public class App {
     
 
     public static void main(String[] args) throws IOException {
-        ClassA a1, a2;
-        ClassB b1;
-        ClassC c1;
-        a1 = new ClassB();
-        b1 = new ClassB();
-        c1 = new ClassC();
-        a2 = new ClassC();
-        b1.stampa(b1);
-        a1.stampa(b1);
-        b1.stampa(c1);
-        c1.stampa(c1);
-        c1.stampa(a1);
-        a2.stampa(c1);
+        /*int j=0;
+        List<LeaderCard> prodLeaderCard = new ArrayList<>();
+        List<DevCard> Card = new ArrayList<>();
+        List<DevSlot>  slotAvailable = new ArrayList<>();
+        List<DevSlot.slotPlace> placeList = new ArrayList<>( Arrays.asList(DevSlot.slotPlace.LEFT,DevSlot.slotPlace.CENTER,DevSlot.slotPlace.RIGHT));
+        List<DevSlot> l=new ArrayList<>();
+        Resources lhs = new Resources(Resources.ResType.COIN,2);
+        Resources rhs = new Resources(Resources.ResType.SERVANT,2);
+        Resources cost = new Resources(Resources.ResType.SHIELD,2);
+        /////int level, CardColor color, Resources LHS, Resources RHS, Resources cost, int victoryPoints
+        for(int i=0;i<3; i++){
+           Card.add(new DevCard(1, DevCard.CardColor.BLUE,lhs,rhs,cost,5));
+        }
+        for(int i=0;i<3; i++) {
+            l.add(new DevSlot(placeList.get(i)));
+
+        }
+        for(int i=0;i<1; i++) {
+
+            l.get(i).putDevCard(Card.get(i));
+        }
+        while (j < 3 ) {
+            //DevSlot temp= new DevSlot (placeList.get(j));
+            System.out.println( l.get(j).getTopDevCard());
+            j++;
+        }*/
         //  Game game = new Game();
         /* Lorenzo
         //DevCardScreen(1,2);
@@ -54,10 +67,10 @@ public class App {
             input = in.nextLine().toUpperCase();
         }*/
         //TODO  test of getDevSlotIndexs in Inputconsumer Class
-/*
-        Scanner in = new Scanner(System.in);
 
-           int i = 0;
+        Scanner in = new Scanner(System.in);
+        List<DevSlot.slotPlace>  slotAvailable = new ArrayList<>();
+        int i = 0;
         String input;
         List<DevSlot> slotChoosen = new ArrayList<>();
 
@@ -67,6 +80,12 @@ public class App {
         System.out.println("How many slots do you want to activate?  : ");
         System.out.println("Example inputs: [1] [2] [3]");
 
+        for(int u=0;u < 2; u++){
+            slotAvailable.add(placeList.get(u));
+        }
+        for(int u=0;u < 2; u++){
+            System.out.println( slotAvailable.get(u));
+        }
         int numberOfSlots = Integer.parseInt(in.nextLine());
         while (numberOfSlots > 3 || numberOfSlots < 1){
             System.out.println("Invalid input.");
@@ -78,9 +97,9 @@ public class App {
         System.out.println("Please enter the options: " + placeString);
 
 
-        while(i < numberOfSlots){
+         while(i < numberOfSlots){
             input = in.nextLine().toUpperCase();
-            if (placeList.contains(DevSlot.slotPlace.getByName(input)) && !slotChoosen.contains(DevSlot.slotPlace.getByName(input))){
+            if (placeList.contains(DevSlot.slotPlace.getByName(input)) && !slotChoosen.contains(DevSlot.slotPlace.getByName(input))&& slotAvailable.contains(DevSlot.slotPlace.getByName(input)) ){
                 slotChoosen.add(new DevSlot(DevSlot.slotPlace.getByName(input)));
                 i ++;
             }else{
@@ -92,7 +111,7 @@ public class App {
 
 
 
-*/
+
 //        game.printSpecialAbilities();
 //        Requirement aReq = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.GREEN);
 //        System.out.println(JsonConverter.toJson(aReq));
@@ -135,30 +154,6 @@ public class App {
 //         theGameController.startGame();
 
     }
-    static class ClassA {
-        public void stampa(ClassA p) {
-            System.out.println("AAA");
-        }
-    }
-    static class ClassB extends ClassA {
-        public void stampa(ClassB p) {
-            System.out.println("BBB");
-        }
-        public void stampa(ClassA p) {
-            System.out.println("AAA/BBB");
-        }
-    }
-    static class ClassC extends ClassA {
-        public void stampa(ClassC p) {
-            System.out.println("CCC");
-        }
-        public void stampa(ClassA p) {
-            System.out.println("AAA/CCC");
-        }
-    }
-
-
-
 
 }
 

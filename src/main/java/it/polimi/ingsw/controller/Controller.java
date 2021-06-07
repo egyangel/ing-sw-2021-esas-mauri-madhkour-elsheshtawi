@@ -8,10 +8,8 @@ import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.messages.*;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import static it.polimi.ingsw.utility.messages.ActivateProdActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
@@ -358,12 +356,22 @@ public class Controller implements Listener<VCEvent> {
     private void  handleActivateLeaderChosen(Integer userID, ActivateProdActionContext context){
         int j = 0 ;
         List<LeaderCard> prodLeaderCard = new ArrayList<>();
+        List<DevSlot>  slotAvailable = new ArrayList<>();
+        List<DevSlot.slotPlace> placeList = new ArrayList<>( Arrays.asList(DevSlot.slotPlace.LEFT,DevSlot.slotPlace.CENTER,DevSlot.slotPlace.RIGHT));
 
         for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
              if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
                    prodLeaderCard.add(leaderCard);
              }
         }
+        while (j < 3 ) {
+            DevSlot temp= new DevSlot (placeList.get(j));
+            if (!game.getPersonalBoard(userID).getDevCardOnSlot(temp).equals(null)) {
+                slotAvailable.add(temp);
+            }
+            j++;
+        }
+        context.setSlotAvailable(slotAvailable);
         context.setLeaderProd(prodLeaderCard);
         context.setLastStep(CHOOSE_LEADER_TO_PRODUCE);
         CVEvent vcEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
@@ -371,15 +379,17 @@ public class Controller implements Listener<VCEvent> {
     }
 
     //this method handle the activation phase of dev Card, it checks if there are enough resources for all cards;
-    private void  handleActivateDevSlotsChosen(Integer userID, ActivateProdActionContext context){
-        int j = 0 ;
+    private void  handleActivateDevSlotsChosen(Integer userID, ActivateProdActionContext context) {
+        int j = 0;
         List<DevCard> selectedCard = new ArrayList<>();
 
         while (j < context.getSlots().size()) {
-            selectedCard.add(game.getPersonalBoard(userID).getDevCardOnSlot(context.getSlots().get(j)));
+            if (!game.getPersonalBoard(userID).getDevCardOnSlot(context.getSlots().get(j)).equals(null)) {
+                selectedCard.add(game.getPersonalBoard(userID).getDevCardOnSlot(context.getSlots().get(j)));
+            }
+            context.setSelectedCard(selectedCard);
+            context.setLastStep(CHOOSE_PAY_COST_FOR_PRODUCTION_FROM_WHERE);
         }
-        context.setSelectedCard(selectedCard);
-        context.setLastStep(CHOOSE_PAY_COST_FOR_PRODUCTION_FROM_WHERE);
     }
     private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){
         DevCard selectedCard = context.getSelectedCard();

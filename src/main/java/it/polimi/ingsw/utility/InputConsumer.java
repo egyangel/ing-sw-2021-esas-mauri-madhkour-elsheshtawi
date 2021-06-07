@@ -192,7 +192,7 @@ public class InputConsumer {
         }
         return input;
     }
-    public static List<DevSlot> getDevSlotIndexs(Scanner in, PrintWriter out){
+    public static List<DevSlot> getDevSlotIndexs(Scanner in, PrintWriter out,int numberOfSlotAvailable,List<DevSlot> slotAvailable){
         int i = 0;
         String input;
         List<DevSlot> slotChoosen = new ArrayList<>();
@@ -200,11 +200,11 @@ public class InputConsumer {
         List<DevSlot.slotPlace> placeList = new ArrayList<>( Arrays.asList(DevSlot.slotPlace.LEFT,DevSlot.slotPlace.CENTER,DevSlot.slotPlace.RIGHT));
         String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
 
-        out.println("How many slots do you want to activate?  : ");
+        out.println("How many slots do you want to activate(you have "+ numberOfSlotAvailable + "  :  ");
         out.println("Example inputs: [1] [2] [3]");
 
         int numberOfSlots = Integer.parseInt(in.nextLine());
-        while (numberOfSlots > 3 || numberOfSlots < 1){
+        while ((numberOfSlots > numberOfSlotAvailable || numberOfSlots < 1)){
             out.println("Invalid input.");
             out.println("Please enter number between 1 and 3");
             numberOfSlots = Integer.parseInt(in.nextLine());
@@ -213,7 +213,7 @@ public class InputConsumer {
 
         while(i < numberOfSlots){
             input = in.nextLine().toUpperCase();
-            if (placeList.contains(DevSlot.slotPlace.getByName(input))){
+            if (placeList.contains(DevSlot.slotPlace.getByName(input)) && !slotChoosen.contains(DevSlot.slotPlace.getByName(input))&& slotAvailable.contains(DevSlot.slotPlace.getByName(input)) ){
                 slotChoosen.add(new DevSlot(DevSlot.slotPlace.getByName(input)));
                 i ++;
             }else{

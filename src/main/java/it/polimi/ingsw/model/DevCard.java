@@ -15,7 +15,6 @@ public class DevCard {
 
 
 
-
     public static CliColors getFaith() {
         return CliColors.red;
     }
