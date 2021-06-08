@@ -269,43 +269,45 @@ public class Controller implements Listener<VCEvent> {
     private void handleActivationLeaderProductionPayment(Integer userID, ActivateProdActionContext context) {
         Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
         Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
-
+        Resources totLeftCost = new Resources();
+        Resources totRightCost = new Resources();
         int i = 0;
         while (i < context.getNumberOfActiveLeaderProduction()) {
-            Resources pay = new Resources(context.getProducerCard().get(i).getAbility().getResType(), 1);
-
-            if (context.getFromWhereToPayForLeader()) {
-                if (pay.smallerOrEqual(warehouseRes)) {
-                    context.setLastStep( NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE);
-                    i++;
-                } else {
-                    game.getPersonalBoard(userID).subtractFromWarehouse(pay);
-                    game.getPersonalBoard(userID).putResInStrongBox(context.getRhlLeaderCard().get(i));
-                    context.setLastStep(COST_PAID);
-                    String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-                    MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-                    game.updateAllAboutChange(warehouseEvent);
-                }
-            } else {
-                if (pay.smallerOrEqual(strongboxRes)) {
-                    context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX);
-                    i++;
-                } else {
-                    game.getPersonalBoard(userID).subtractFromStrongbox(pay);
-                    game.getPersonalBoard(userID).putResInStrongBox(context.getRhlLeaderCard().get(i));
-                    context.setLastStep(COST_PAID);
-                    String strongBoxDescription = game.getPersonalBoard(userID).describeStrongbox();
-                    MVEvent strongboxEvent = new MVEvent(userID, MVEvent.EventType.STRONGBOX_UPDATE, strongBoxDescription);
-                    game.updateAllAboutChange(strongboxEvent);
-                }
-            }
-            pay.clear();
+                totLeftCost.add(context.getProducerCard().get(i).getAbility().getResType(),1);
+                totRightCost.add(context.getRhlLeaderCard().get(i));
         }
+        if (context.getFromWhereToPayForLeader()) {
+            if (totLeftCost.smallerOrEqual(warehouseRes)) {
+                context.setLastStep( NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE);
+
+            } else {
+                game.getPersonalBoard(userID).subtractFromWarehouse(totLeftCost);
+                game.getPersonalBoard(userID).putResInStrongBox(totRightCost);
+                context.resetRhlLeaderCard();
+                context.setLastStep(COST_PAID);
+                String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
+                MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
+                game.updateAllAboutChange(warehouseEvent);
+            }
+        } else {
+            if (totLeftCost.smallerOrEqual(strongboxRes)) {
+                context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX);
+            } else {
+                game.getPersonalBoard(userID).subtractFromStrongbox(totLeftCost);
+                game.getPersonalBoard(userID).putResInStrongBox(totRightCost);
+                context.resetRhlLeaderCard();
+                context.setLastStep(COST_PAID);
+                String strongBoxDescription = game.getPersonalBoard(userID).describeStrongbox();
+                MVEvent strongboxEvent = new MVEvent(userID, MVEvent.EventType.STRONGBOX_UPDATE, strongBoxDescription);
+                game.updateAllAboutChange(strongboxEvent);
+            }
+        }
+
         context.setFromWhereToPayForLeader(false);
         context.setNumberOfActiveLeaderProduction(0);
 
     }
-    //TODO Amor have to check first if there are enough res for all the production then we can start production
+
     private void handleCheckProductionPayment(Integer userID, ActivateProdActionContext context) {
         int j = 0, i = 0;
 
@@ -419,7 +421,7 @@ public class Controller implements Listener<VCEvent> {
         }
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
-    }
+    }//todo set a variable that tell avoid to create duplicated object so that  i don't dill it with elemnt that are already in the context
     private void  handleActivateLeaderChosen(Integer userID, ActivateProdActionContext context){
         int j = 0 ;
         List<LeaderCard> prodLeaderCard = new ArrayList<>();
@@ -441,6 +443,7 @@ public class Controller implements Listener<VCEvent> {
         context.setSlotAvailable(slotAvailable);
         context.setLeaderProd(prodLeaderCard);
         context.setLastStep(CHOOSE_LEADER_TO_PRODUCE);
+        slotAvailable.clear();
         CVEvent vcEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(vcEvent);
     }

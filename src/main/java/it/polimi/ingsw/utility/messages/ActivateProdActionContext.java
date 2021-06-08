@@ -16,7 +16,8 @@ public class ActivateProdActionContext {
     private List<DevSlot>  slotAvailable = new ArrayList<>();
     private List<DevCard>  selectedCard = new ArrayList<>();
     private DevCard  baseProductionCard;
-    private Resources payment;
+    private Resources totalLeftCost = new Resources();
+    private Resources totalRightCost = new Resources();
     private boolean warehouseSelectedForLeader = false;
     private boolean warehouseSelectedForDefault = false;
     private boolean warehouseSelectedForDevslots = false;
@@ -56,20 +57,23 @@ public class ActivateProdActionContext {
     public void setBaseProductionCard (DevCard baseProductionCard) {
         this.baseProductionCard = baseProductionCard;
     }
+    public DevCard getBaseProductionCard() { return baseProductionCard;}
     public void setBaseProdPower(boolean answer){
         this.baseProdPower = answer;
     }
     public  boolean getBaseProdPower(){
         return this.baseProdPower ;
     }
-    public DevCard getBaseProductionCard() { return baseProductionCard; }
     public void setFromWhereToPayForDefault(boolean warehouseSelectedForDefault){ this.warehouseSelectedForDefault = warehouseSelectedForDefault; }
     public boolean getFromWhereToPayForDefault(){
         return this.warehouseSelectedForDefault ;
     }
+    public void resetBaseProductionCard() { baseProductionCard = null;}
+
 
     public void setSlotAvailable(List<DevSlot> slotAvailabl){ this.slotAvailable.addAll(slotAvailabl); }
     public List<DevSlot> getSlotAvailable(){ return this.slotAvailable; }
+
     public void setSlots(List<DevSlot> slotChosen){ this.slotChosen.addAll(slotChosen); }
     public List<DevSlot> getSlots(){ return this.slotChosen;  }
     public void setFromWhereToPayForDevslots(boolean warehouseSelectedForDevslots){ this.warehouseSelectedForDevslots = warehouseSelectedForDevslots; }
@@ -82,14 +86,18 @@ public class ActivateProdActionContext {
     public List<DevCard> getSelectedCard() { return selectedCard; }
 
 
-    public void setTotalLeftCost(Resources totalCost) { payment.add(totalCost);  }
+    public void setTotalLeftCost(Resources totalLeftCost) { this.totalLeftCost.add(totalLeftCost);  }
     public Resources getTotalLeftCost() {
-        return this.payment;
+        return this.totalLeftCost;
     }
-    public void setTotalRightCost(Resources totalCost) { payment.add(totalCost);  }
+    public void resetTotalLeftCost() {
+        this.totalLeftCost.clear();
+    }
+    public void setTotalRightCost(Resources totalRightCost) { this.totalRightCost.add(totalRightCost);  }
     public Resources getTotalRightCost() {
-        return this.payment;
+        return this.totalRightCost;
     }
+    public void resetTotalRightCost() { this.totalRightCost.clear(); }
 
     public void setErrorTrue(){
         this.hasError = true;
@@ -98,6 +106,9 @@ public class ActivateProdActionContext {
     //All Methods below handle the activation of leader Card Production
     public void setRhlLeaderCard(List<Resources> RHS) {
         this.leaderRHS.addAll(RHS);
+    }
+    public void resetRhlLeaderCard() {
+        this.leaderRHS.clear();
     }
     public List<Resources> getRhlLeaderCard() {
         return leaderRHS;
