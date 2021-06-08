@@ -193,7 +193,7 @@ public class InputConsumer {
         return input;
     }
     public static List<DevSlot> getDevSlotIndexs(Scanner in, PrintWriter out,int numberOfSlotAvailable,List<DevSlot> slotAvailable){
-        int i = 0;
+        int i = 0,j = 0;
         String input;
         List<DevSlot> slotChoosen = new ArrayList<>();
 
@@ -209,7 +209,11 @@ public class InputConsumer {
             out.println("Please enter number between 1 and 3");
             numberOfSlots = Integer.parseInt(in.nextLine());
         }
-        out.println("Please enter the options in the order that you want to activate( if there are resources only for one , the first one will be activate): " + placeString);
+        out.println("Please enter the slot/s that you want to activate: " + placeString);
+        out.println("Activable slots : ");
+        while(j < slotAvailable.size()){
+            out.println( slotAvailable.get(j).getPlace());
+        }
 
         while(i < numberOfSlots){
             input = in.nextLine().toUpperCase();

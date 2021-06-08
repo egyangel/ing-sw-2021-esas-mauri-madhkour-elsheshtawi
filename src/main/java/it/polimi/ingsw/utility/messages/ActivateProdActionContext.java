@@ -82,6 +82,15 @@ public class ActivateProdActionContext {
     public List<DevCard> getSelectedCard() { return selectedCard; }
 
 
+    public void setTotalLeftCost(Resources totalCost) { payment.add(totalCost);  }
+    public Resources getTotalLeftCost() {
+        return this.payment;
+    }
+    public void setTotalRightCost(Resources totalCost) { payment.add(totalCost);  }
+    public Resources getTotalRightCost() {
+        return this.payment;
+    }
+
     public void setErrorTrue(){
         this.hasError = true;
     }
