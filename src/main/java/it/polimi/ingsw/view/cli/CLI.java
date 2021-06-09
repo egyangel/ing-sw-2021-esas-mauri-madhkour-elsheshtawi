@@ -6,7 +6,7 @@ import it.polimi.ingsw.network.client.Client;
 import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
-
+import static it.polimi.ingsw.utility.messages.LeaderActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.ActivateProdActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
@@ -29,6 +29,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private TakeResActionContext takeResContext;
     private BuyDevCardActionContext buyDevCardContext;
     private ActivateProdActionContext activateProdContext;
+    private LeaderActionContext activateLeaderContext;
     private CVEvent initialCVevent;
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
     private String marketTrayDescription;
@@ -359,16 +360,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     public void displayActivationProdActionEnd(){
         out.println("Ending activation production phase...");
-        activateProdContext.resetRhlLeaderCard();
         activateProdContext.resetBaseProdPower();
-        activateProdContext.resetLeaderProd();
-        activateProdContext.resetNumberOfActiveLeaderProduction();
         activateProdContext.resetSelectedCard();
         activateProdContext.resetFromWhereToPayForDevslots();
         activateProdContext.resetSlotAvailable();
         activateProdContext.resetBaseProductionCard();
         activateProdContext.resetFromWhereToPayForDefault();
-        activateProdContext.resetFromWhereToPayForLeader();
         activateProdContext.resetTotalRightCost();
         activateProdContext.resetTotalLeftCost();
 
@@ -588,9 +585,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case CHOOSE_DEV_SLOTS:
                 addNextDisplay("chooseDevSlots");
                 break;
-            case CHOOSE_LEADER_TO_PRODUCE:
-                addNextDisplay("chooseLeaderProdaction");
-                break;
+            /*case CHOOSE_LEADER_TO_PRODUCE:
+                addNextDisplay("chooseLeaderProdAction");
+                break;*/
             case EMPTY_DEV_SLOTS_ERROR:
                 setGeneralMsg("There is no available development card in Slot");
                 addNextDisplay("displayGeneralMsg");
@@ -607,8 +604,39 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("choosePayProductionCostFromWhere");
                 break;
             case COST_PAID:
-              //  if(activateProdContext.getBaseProdPower() || activate)
-                addNextDisplay("displayActivationProdActionEnd");
+                if(activateLeaderContext.getActivationLeaderCard() && !activateLeaderContext.getActivationLeaderCardBefore())
+                    addNextDisplay("displayActivationProdActionEnd ");
+                if(!activateLeaderContext.getActivationLeaderCard()){
+                    addNextDisplay("chooseDevSlots");
+                    activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
+                    VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+                    publish(vcEvent);
+                }
+                break;
+        }
+    }
+    //handle ActivateLeaderAction
+    private void routeActivateLeaderActionDisplay() {
+        switch (activateLeaderContext.getLastStep()) {
+            case REQUIREMENT_NOT_SATISFIED_IN_WAREHOUSE:
+                setGeneralMsg("You don't have enough resources in strongbox!");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("choosePayProductionCostFromWhere");
+                break;
+            case REQUIREMENT_NOT_SATISFIED_IN_STRONGBOX:
+                setGeneralMsg("You don't have enough resources in strongbox !");
+                addNextDisplay("displayGeneralMsg");
+                addNextDisplay("choosePayProductionCostFromWhere");
+                break;
+            case POWER_ACTIVATED:
+                if(activateLeaderContext.getActivationLeaderCard() && !activateLeaderContext.getActivationLeaderCardBefore())
+                    addNextDisplay("displayActivationProdActionEnd ");
+                if(!activateLeaderContext.getActivationLeaderCard()){
+                    addNextDisplay("chooseDevSlots");
+                    activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
+                    VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+                    publish(vcEvent);
+                }
                 break;
         }
     }
@@ -630,34 +658,41 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
     }
-    public void chooseLeaderProdaction() {
+    public void chooseLeaderProdAction() {
+        int i=0;
+        out.println("Do want to activate LeaderCard ability ? ");
+        boolean leaderActivate = InputConsumer.getYesOrNo(in,out);
+        activateLeaderContext.setActivationLeaderCard(leaderActivate);
+        if(leaderActivate){
+            if(activateLeaderContext.getProducerCard().size() > 0) {
+                while(i<activateLeaderContext.getProducerCard().size() ){
 
-        out.println("Do want to activate LeaderCard production ability? ");
-        boolean leaderProdActivate = InputConsumer.getYesOrNo(in,out);
-
-        if(leaderProdActivate){
-            List<Resources> RHS = new ArrayList<>();
-            out.println("You have "+activateProdContext.getProducerCard().size()+" active produce leader cards ");
-            out.println("How many do you want to activate?  ");
-            int numOfCard =  InputConsumer.getANumberBetween(in, out, 1, 2);
-            RHS.addAll(InputConsumer.chooseRhsLeaderCard(in, out,numOfCard));
-            activateProdContext.setNumberOfActiveLeaderProduction(numOfCard);
-            activateProdContext.setRhlLeaderCard(RHS);
-            activateProdContext.setLastStep(LEADER_CARD_CHOOSEN);
+                    List<Resources> RHS = new ArrayList<>();
+                    out.println("You have " + activateLeaderContext.getProducerCard().size() + " active produce leader cards ");
+                    out.println("How many do you want to activate?  ");
+                    int numOfCard = InputConsumer.getANumberBetween(in, out, 1, 2);
+                    RHS.addAll(InputConsumer.chooseRhsLeaderCard(in, out, numOfCard));
+                    out.println("Do want to activate LeaderCard production before(yes) or after(no) normal action ? ");
+                    boolean leaderActivationBefore = InputConsumer.getYesOrNo(in, out);
+                    activateLeaderContext.setActivationLeaderCardBefore(leaderActivationBefore);
+                    activateLeaderContext.setNumberOfActiveLeaderProduction(numOfCard);
+                    activateLeaderContext.setRhlLeaderCard(RHS);
+                }
+            }
+          //  activateProdContext.setLastStep(LEADER_CARD_CHOOSEN);
         }
         else{
-            activateProdContext.setLastStep(LEADER_CARD_NOT_CHOOSEN);
+           // activateProdContext.setLastStep(LEADER_CARD_NOT_CHOOSEN);
         }
-
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED,activateProdContext);
         publish(vcEvent);
     }
     public void choosePayProductionCostFromWhere(){
-        if(activateProdContext.getNumberOfActiveLeaderProduction()>0)
+        if(activateLeaderContext.getNumberOfActiveLeaderProduction()>0)
         {
             out.println("Select warehouse or strongbox to pay the left side for leader production.");
             boolean warehouseSelected = InputConsumer.getWorS(in, out);
-            activateProdContext.setFromWhereToPayForLeader(warehouseSelected);
+            activateLeaderContext.setFromWhereToPayForLeader(warehouseSelected);
         }
         if(activateProdContext.getBaseProdPower())
         {
