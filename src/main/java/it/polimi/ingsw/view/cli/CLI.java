@@ -352,13 +352,27 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     public void displayBuyDevActionEnd(){
         out.println("Ending buy development card action...");
+
         VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
         publish(vcEvent);
     }
 
     public void displayActivationProdActionEnd(){
         out.println("Ending activation production phase...");
-        VCEvent vcEvent = new VCEvent( ACTIVATE_PROD_ACTION_ENDED);
+        activateProdContext.resetRhlLeaderCard();
+        activateProdContext.resetBaseProdPower();
+        activateProdContext.resetLeaderProd();
+        activateProdContext.resetNumberOfActiveLeaderProduction();
+        activateProdContext.resetSelectedCard();
+        activateProdContext.resetFromWhereToPayForDevslots();
+        activateProdContext.resetSlotAvailable();
+        activateProdContext.resetBaseProductionCard();
+        activateProdContext.resetFromWhereToPayForDefault();
+        activateProdContext.resetFromWhereToPayForLeader();
+        activateProdContext.resetTotalRightCost();
+        activateProdContext.resetTotalLeftCost();
+
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_ACTION_ENDED);
         publish(vcEvent);
     }
 
@@ -593,6 +607,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("choosePayProductionCostFromWhere");
                 break;
             case COST_PAID:
+              //  if(activateProdContext.getBaseProdPower() || activate)
                 addNextDisplay("displayActivationProdActionEnd");
                 break;
         }
