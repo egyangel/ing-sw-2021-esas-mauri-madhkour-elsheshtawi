@@ -88,7 +88,7 @@ public class InputConsumer {
         return input;
     }
 
-    public static Integer getANumberBetween(Scanner scanner, PrintWriter out, int min, int max) {
+    public static Integer  getANumberBetween(Scanner scanner, PrintWriter out, int min, int max) {
         Integer input;
         input = Integer.parseInt(scanner.nextLine());
         while (input < min || input > max) {

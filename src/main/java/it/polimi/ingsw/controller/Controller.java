@@ -96,6 +96,7 @@ public class Controller implements Listener<VCEvent> {
                 if (TurnManager.hasAllClientsResponded()) {
                     sendTurnOrderAssign();
                 }
+                emptyActivateLeaderContext.setPlayerCard(selectedCards);
                 handleActivateLeaderChoosen(userID,emptyActivateLeaderContext);
                 break;
             case INIT_RES_CHOOSEN:
@@ -138,7 +139,9 @@ public class Controller implements Listener<VCEvent> {
                 handleActivateDevCardAction(userID, ActivateDevContext);
                 break;
             case ACTIVATE_LEADER_CONTEXT_SELECTED:
-                emptyActivateLeaderContext.setLastStep(CHECK_ACTIVE_LEADER_PRODUCTION);
+                emptyActivateLeaderContext.setLastStep(CHECK_ACTION);
+                cvEvent = new CVEvent(BUY_DEVCARD_FILL_CONTEXT, emptyActivateLeaderContext);
+                userIDtoVirtualViews.get(userID).update(cvEvent);
                 //handleActivateDevCardAction(userID, emptyActivateLeaderContext);
                 break;
             case ACTIVATE_LEADER_CONTEXT_FILLED:
@@ -364,8 +367,6 @@ public class Controller implements Listener<VCEvent> {
         context.setSlotAvailable(slotAvailable);
         slotAvailable.clear();
 
-        CVEvent vcEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
-        userIDtoVirtualViews.get(userID).update(vcEvent);
     }
 
 
@@ -456,15 +457,23 @@ public class Controller implements Listener<VCEvent> {
     //handle the activation of prodution
     private void handleActivateLeaderAction(Integer userID, LeaderActionContext context){
         switch (context.getLastStep()){
-            /*case DEV_SLOTS_CHOOSEN:
-                handleActivateDevSlotsProductionChosen(userID, context);
+            case DISCARD_LEADER_CARD:
+                handleDiscardLeaderChosen(userID, context);
                 break;
-            case PAY_PRODUCTION_FROM_WHERE_CHOSEN:
-                handleCheckProductionPayment(userID, context);
-                break;*/
+            case LEADER_CARD_CHOOSEN:
+                handleActivateLeaderChoosen(userID, context);
+                break;
+            case LEADER_CARD_NOT_CHOOSEN:
+                handleActivateLeaderChoosen(userID, context);
+                break;
         }
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
+    }
+    private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
+
+
+
     }
     private void  handleActivateLeaderChoosen(Integer userID, LeaderActionContext context){
         int j = 0 ;
@@ -472,8 +481,6 @@ public class Controller implements Listener<VCEvent> {
         List<LeaderCard> discountLeaderCard = new ArrayList<>();
         List<LeaderCard> whiteConverterLeaderCard = new ArrayList<>();
         List<LeaderCard> extraSlotLeaderCard = new ArrayList<>();
-
-        List<DevSlot.slotPlace> placeList = new ArrayList<>( Arrays.asList(DevSlot.slotPlace.LEFT,DevSlot.slotPlace.CENTER,DevSlot.slotPlace.RIGHT));
 
         for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
             if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
@@ -489,10 +496,7 @@ public class Controller implements Listener<VCEvent> {
                 extraSlotLeaderCard.add(leaderCard);
             }
         }
-        context.setProducerCard(prodLeaderCard);
-        context.setDiscountCard(discountLeaderCard);
-        context.setExtraSlotCard(extraSlotLeaderCard);
-        context.setWhiteConverterCard(whiteConverterLeaderCard);
+
 
     }
     private void handleActivationLeaderProductionPayment(Integer userID, LeaderActionContext context) {
@@ -502,7 +506,7 @@ public class Controller implements Listener<VCEvent> {
         Resources totRightCost = new Resources();
         int i = 0;
         while (i < context.getNumberOfActiveLeaderProduction()) {
-            totLeftCost.add(context.getProducerCard().get(i).getAbility().getResType(),1);
+           // totLeftCost.add(context.getProducerCard().get(i).getAbility().getResType(),1);
             totRightCost.add(context.getRhlLeaderCard().get(i));
         }
         if (context.getFromWhereToPayForLeader()) {
