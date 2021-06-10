@@ -11,7 +11,7 @@ public class DevSlot {
         public int getIndexInBoard(){
             return indexInBoard;
         }
-        private slotPlace(int index){
+        slotPlace(int index){
             this.indexInBoard = index;
         }
         public static slotPlace getByName(String input){

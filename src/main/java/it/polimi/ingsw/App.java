@@ -17,7 +17,33 @@ public class App {
     
 
     public static void main(String[] args) throws IOException {
-      //  Game game = new Game();
+        /*int j=0;
+        List<LeaderCard> prodLeaderCard = new ArrayList<>();
+        List<DevCard> Card = new ArrayList<>();
+        List<DevSlot>  slotAvailable = new ArrayList<>();
+        List<DevSlot.slotPlace> placeList = new ArrayList<>( Arrays.asList(DevSlot.slotPlace.LEFT,DevSlot.slotPlace.CENTER,DevSlot.slotPlace.RIGHT));
+        List<DevSlot> l=new ArrayList<>();
+        Resources lhs = new Resources(Resources.ResType.COIN,2);
+        Resources rhs = new Resources(Resources.ResType.SERVANT,2);
+        Resources cost = new Resources(Resources.ResType.SHIELD,2);
+        /////int level, CardColor color, Resources LHS, Resources RHS, Resources cost, int victoryPoints
+        for(int i=0;i<3; i++){
+           Card.add(new DevCard(1, DevCard.CardColor.BLUE,lhs,rhs,cost,5));
+        }
+        for(int i=0;i<3; i++) {
+            l.add(new DevSlot(placeList.get(i)));
+
+        }
+        for(int i=0;i<1; i++) {
+
+            l.get(i).putDevCard(Card.get(i));
+        }
+        while (j < 3 ) {
+            //DevSlot temp= new DevSlot (placeList.get(j));
+            System.out.println( l.get(j).getTopDevCard());
+            j++;
+        }*/
+        //  Game game = new Game();
         /* Lorenzo
         //DevCardScreen(1,2);
          //better with a for loop
@@ -43,8 +69,8 @@ public class App {
         //TODO  test of getDevSlotIndexs in Inputconsumer Class
 
         Scanner in = new Scanner(System.in);
-
-           int i = 0;
+        List<DevSlot.slotPlace>  slotAvailable = new ArrayList<>();
+        int i = 0;
         String input;
         List<DevSlot> slotChoosen = new ArrayList<>();
 
@@ -54,6 +80,12 @@ public class App {
         System.out.println("How many slots do you want to activate?  : ");
         System.out.println("Example inputs: [1] [2] [3]");
 
+        for(int u=0;u < 2; u++){
+            slotAvailable.add(placeList.get(u));
+        }
+        for(int u=0;u < 2; u++){
+            System.out.println( slotAvailable.get(u));
+        }
         int numberOfSlots = Integer.parseInt(in.nextLine());
         while (numberOfSlots > 3 || numberOfSlots < 1){
             System.out.println("Invalid input.");
@@ -65,9 +97,9 @@ public class App {
         System.out.println("Please enter the options: " + placeString);
 
 
-        while(i < numberOfSlots){
+         while(i < numberOfSlots){
             input = in.nextLine().toUpperCase();
-            if (placeList.contains(DevSlot.slotPlace.getByName(input)) && !slotChoosen.contains(DevSlot.slotPlace.getByName(input))){
+            if (placeList.contains(DevSlot.slotPlace.getByName(input)) && !slotChoosen.contains(DevSlot.slotPlace.getByName(input))&& slotAvailable.contains(DevSlot.slotPlace.getByName(input)) ){
                 slotChoosen.add(new DevSlot(DevSlot.slotPlace.getByName(input)));
                 i ++;
             }else{
@@ -121,13 +153,7 @@ public class App {
 //         this will be surrounded by proper exceptions
 //         theGameController.startGame();
 
-
-
-
     }
-
-
-
 
 }
 

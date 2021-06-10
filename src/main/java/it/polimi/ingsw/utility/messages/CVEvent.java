@@ -8,6 +8,7 @@ public class CVEvent extends Event{
         TAKE_RES_FILL_CONTEXT,
         BUY_DEVCARD_FILL_CONTEXT,
         ACTIVATE_PROD_FILL_CONTEXT,
+        ACTIVATE_LEADER_FILL_CONTEXT,
 
         SELECT_MINOR_ACTION,
 

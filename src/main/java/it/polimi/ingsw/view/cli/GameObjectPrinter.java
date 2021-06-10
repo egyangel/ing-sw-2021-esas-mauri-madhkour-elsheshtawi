@@ -88,21 +88,21 @@ public class GameObjectPrinter {
 
     @Override
     public String toString(){
-        StringBuilder stringBuilder=new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         int count= card.size();
-//        StringBuilder.append("# elements= "+ count+ "\n");
+        stringBuilder.append("# elements= "+ count+ "\n");
         int i=0;
         for (DevCard c:card){
             if (i!=0){
-//                if (i%10==0)
-//                    StringBuilder.append("\n");
-//                else StringBuilder.append("\n");
+                if (i%10==0)
+                    stringBuilder.append("\n");
+                else stringBuilder.append("\n");
             }
-//            StringBuilder.append(c.toString());
+            stringBuilder.append(c.toString());
             i++;
         }
-//        return StringBuilder.toString();
-        return null;
+        return stringBuilder.toString();
+
     }
 
     public void dump(){
