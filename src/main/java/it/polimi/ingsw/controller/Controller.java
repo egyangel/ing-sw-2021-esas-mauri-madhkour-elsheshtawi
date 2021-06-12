@@ -64,12 +64,12 @@ public class Controller implements Listener<VCEvent> {
             // TODO: have to be fixed. it returns userID 0 but user id start from 1
             Integer userTurn = TurnManager.getIndexOfUserID(entry.getKey());
             InitFatihPoints(entry.getKey(), userTurn);
-            CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
+            CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn); // TODO: i think instead of userTurn it should be entry.getKey() as for userId;
             entry.getValue().update(turnAssignEvent);
         }
     }
 
-    private void InitFatihPoints(Integer userID, Integer userTurn) {
+    protected void InitFatihPoints(Integer userID, Integer userTurn) {
         if (userTurn == 3 || userTurn == 4) {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }

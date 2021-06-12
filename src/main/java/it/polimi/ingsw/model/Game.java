@@ -145,6 +145,18 @@ public class Game implements Publisher<MVEvent> {
         return playersNumber;
     }
 
+
+    /**
+     * Init soloAction tokens
+     */
+    public void initSoloActionTokens(){
+
+    }
+
+    /**
+     * shuffle and place solo action token
+     */
+
     public void setSoloActionToken() {
     }
 

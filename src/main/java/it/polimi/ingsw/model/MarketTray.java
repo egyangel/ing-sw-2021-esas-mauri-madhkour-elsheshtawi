@@ -14,16 +14,16 @@ public class MarketTray {
 
     public MarketTray() {
 
-        marbles[0]  = MarbleColor.WHITE;
-        marbles[1]  = MarbleColor.WHITE;
-        marbles[2]  = MarbleColor.WHITE;
-        marbles[3]  = MarbleColor.WHITE;
-        marbles[4]  = MarbleColor.BLUE;
-        marbles[5]  = MarbleColor.BLUE;
-        marbles[6]  = MarbleColor.GREY;
-        marbles[7]  = MarbleColor.GREY;
-        marbles[8]  = MarbleColor.YELLOW;
-        marbles[9]  = MarbleColor.YELLOW;
+        marbles[0] = MarbleColor.WHITE;
+        marbles[1] = MarbleColor.WHITE;
+        marbles[2] = MarbleColor.WHITE;
+        marbles[3] = MarbleColor.WHITE;
+        marbles[4] = MarbleColor.BLUE;
+        marbles[5] = MarbleColor.BLUE;
+        marbles[6] = MarbleColor.GREY;
+        marbles[7] = MarbleColor.GREY;
+        marbles[8] = MarbleColor.YELLOW;
+        marbles[9] = MarbleColor.YELLOW;
         marbles[10] = MarbleColor.PURPLE;
         marbles[11] = MarbleColor.PURPLE;
         marbles[12] = MarbleColor.RED;
@@ -60,51 +60,61 @@ public class MarketTray {
     @ && !\result.equals(NULL)
     */
 
-    public List<MarbleColor> selectRow (int row) {
+    public List<MarbleColor> selectRow(int row) {
         List<MarbleColor> resources = new ArrayList<>();
         MarbleColor temp;
-        if( row>0 && row<4 ) {
-            temp = marketTray[row-1][0];
-            for (int j = 0; j < column; j++) resources.add(marketTray[row-1][j]);
-            for (int j = 0; j < column-1; j++) marketTray[row-1][j] = marketTray[row-1][j+1];
-            marketTray[row-1][column-1] = OutMarble;
+        if (row > 0 && row < 4) {
+            temp = marketTray[row - 1][0];
+            for (int j = 0; j < column; j++) resources.add(marketTray[row - 1][j]);
+            for (int j = 0; j < column - 1; j++) marketTray[row - 1][j] = marketTray[row - 1][j + 1];
+            marketTray[row - 1][column - 1] = OutMarble;
             OutMarble = temp;
             return resources;
-        }else
+        } else
             return null;
     }
     /* @require column >=1&& column <=4 */
 
-    public List<MarbleColor> selectColumn (int column){
+    public List<MarbleColor> selectColumn(int column) {
         List<MarbleColor> resources = new ArrayList<>();
         MarbleColor temp;
-        if( column>0 && column<5 ) {
+        if (column > 0 && column < 5) {
             temp = marketTray[0][column - 1];
             for (int i = 0; i < row; i++) resources.add(marketTray[i][column - 1]);
             for (int i = 0; i < row - 1; i++) marketTray[i][column - 1] = marketTray[i + 1][column - 1];
             marketTray[row - 1][column - 1] = OutMarble;
             OutMarble = temp;
             return resources;
-        }else
+        } else
             return null;
 
 
     }
 
     //TODO: FOR AMOR: optional: add "C-1" "C-2" and "R-3" etc label words in appropriate places
-    public void MarketTrayDraw(){
-        System.out.println(String.format("%70s",OutMarble.getColor()));
+    public void MarketTrayDraw() {
+        System.out.println(String.format("%70s", OutMarble.getColor()));
         for (int i = 0; i < row; i++) {
-            for(int j = 0; j < column; j++) {
-                System.out.print(String.format("%-16s",marketTray[i][j].getColor()));
+            for (int j = 0; j < column; j++) {
+                System.out.print(String.format("%-16s", marketTray[i][j].getColor()));
             }
             System.out.println(" ");
         }
     }
+
     //TODO FOR AMOR: do the same as MarketTrayDraw but return the descriptin rather than printing
-    public String describeMarketTray(){
+    public String describeMarketTray() {
         StringBuilder sb = new StringBuilder();
-        return null;
+        sb.append("|\t");
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                sb.append(marketTray[i][j].getColor() + "\t");
+
+            }
+            sb.append("|" + "\n");
+            sb.append("|\t");
+        }
+        return sb.toString();
     }
 
   /* public void ResourceDraw(){
