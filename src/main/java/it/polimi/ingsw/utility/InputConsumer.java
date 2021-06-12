@@ -209,7 +209,7 @@ public class InputConsumer {
             out.println("Please enter number between 1 and 3");
             numberOfSlots = Integer.parseInt(in.nextLine());
         }
-        out.println("Please enter the slot/s that you want to activate: " + placeString);
+        out.println("Please enter the slot/s that you want to activate: ");
         out.println("Activable slots : ");
         while(j < slotAvailable.size()){
             out.println( slotAvailable.get(j).getPlace());
@@ -227,10 +227,10 @@ public class InputConsumer {
         }
         return slotChoosen;
     }
-   public static List<Resources> chooseRhsLeaderCard(Scanner in, PrintWriter out,int numberOfCards){
+   public static Resources chooseRhsLeaderCard(Scanner in, PrintWriter out,int numberOfCards){
        int i = 0;
        String input;
-       List<Resources> RHS = new ArrayList<>();
+       Resources RHS = new Resources();
        Resources temp= new Resources();
 
        List<Resources.ResType> placeList = new ArrayList<>( Arrays.asList(Resources.ResType.COIN,Resources.ResType.SERVANT,Resources.ResType.SHIELD,Resources.ResType.STONE));

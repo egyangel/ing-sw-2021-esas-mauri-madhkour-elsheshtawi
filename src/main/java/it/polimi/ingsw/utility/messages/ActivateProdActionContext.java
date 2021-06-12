@@ -11,32 +11,30 @@ public class ActivateProdActionContext {
         // from client to server
         DEV_SLOTS_CHOOSEN,
         PAY_PRODUCTION_FROM_WHERE_CHOSEN,
-
         // from server to client
-
-
         CHOOSE_DEV_SLOTS,
         EMPTY_DEV_SLOTS_ERROR,
-        CHOOSE_PAY_COST_FOR_PRODUCTION_FROM_WHERE,
+        CHOOSE_PRODUCTION_COST_FROM_WHERE,
         NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE,
         NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX,
         COST_PAID
     }
-
+    private int numberOfCardActivated = 0;
+    private Resources leaderRHS=  new Resources();
     private List<DevSlot>  slotChosen = new ArrayList<>();
     private List<DevSlot>  slotAvailable = new ArrayList<>();
     private List<DevCard>  selectedCard = new ArrayList<>();
     private DevCard  baseProductionCard;
     private Resources totalLeftCost = new Resources();
+    private Resources leaderLHS = new Resources();
     private Resources totalRightCost = new Resources();
     private boolean warehouseSelectedForLeader = false;
     private boolean warehouseSelectedForDefault = false;
     private boolean warehouseSelectedForDevslots = false;
     private Boolean baseProdPower = false ;
+    private Boolean activationLeaderCardProduction= false;
 
     private ActionStep lastStep;
-    private List<DevSlot.slotPlace> placeList = new ArrayList<>();
-    //flag for leader card
 
     public ActionStep getLastStep(){
         return lastStep;
@@ -90,15 +88,42 @@ public class ActivateProdActionContext {
     public Resources getTotalLeftCost() {
         return this.totalLeftCost;
     }
+    public void resetTotalLeftCost() {
+        this.totalLeftCost.clear();
+    }
+
     public void setTotalRightCost(Resources totalRightCost) { this.totalRightCost.add(totalRightCost);  }
     public Resources getTotalRightCost() {
         return this.totalRightCost;
     }
     public void resetTotalRightCost() { this.totalRightCost.clear(); }
-    public void resetTotalLeftCost() {
-        this.totalLeftCost.clear();
+
+
+    public void setFromWhereToPayForLeader(boolean warehouseSelected){ this.warehouseSelectedForLeader = warehouseSelected; }
+    public boolean getFromWhereToPayForLeader(){ return this.warehouseSelectedForLeader ; }
+
+    public void resetFromWhereToPayForLeader(){ this.warehouseSelectedForLeader   = false ; }
+    public int getNumberOfActiveLeaderProduction() { return numberOfCardActivated; }
+    public void setNumberOfActiveLeaderProduction (int numberOfCardActivated) { this.numberOfCardActivated = numberOfCardActivated; }
+    public void setActivationLeaderCardProduction(boolean activationLeaderCardAfter){ this.activationLeaderCardProduction = activationLeaderCardAfter; }
+    public boolean getActivationLeaderCardProduction(){
+        return this.activationLeaderCardProduction ;
     }
 
+    public void setRhlLeaderCard(Resources RHS) {
+        this.leaderRHS = RHS;
+    }
+    public void resetRhlLeaderCard() { this.leaderRHS.clear(); }
+    public Resources getRhlLeaderCard() {
+        return leaderRHS;
+    }
+    public void setLhlLeaderCard(Resources LHS) {
+        this.leaderLHS = LHS;
+    }
+    public void resetLhlLeaderCard() { this.leaderLHS.clear(); }
+    public Resources getLhlLeaderCard() {
+        return leaderLHS;
+    }
 
 
 

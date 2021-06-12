@@ -35,9 +35,7 @@ public class Requirement {
     public DevCard.CardColor getColor(int index){
         return colorList.get(index);
     }
-    public DevCard.CardColor getColor(){
-        return colorList.get(0);
-    }
+
 
     public Resources getResource(){
         return resources;

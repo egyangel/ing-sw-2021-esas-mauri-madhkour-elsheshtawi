@@ -70,7 +70,7 @@ public class App {
 
         Scanner in = new Scanner(System.in);
         List<DevSlot.slotPlace>  slotAvailable = new ArrayList<>();
-        int i = 0;
+        int i = 0,j=0;
         String input;
         List<DevSlot> slotChoosen = new ArrayList<>();
 
@@ -80,11 +80,10 @@ public class App {
         System.out.println("How many slots do you want to activate?  : ");
         System.out.println("Example inputs: [1] [2] [3]");
 
+
+
         for(int u=0;u < 2; u++){
             slotAvailable.add(placeList.get(u));
-        }
-        for(int u=0;u < 2; u++){
-            System.out.println( slotAvailable.get(u));
         }
         int numberOfSlots = Integer.parseInt(in.nextLine());
         while (numberOfSlots > 3 || numberOfSlots < 1){
@@ -94,8 +93,12 @@ public class App {
             numberOfSlots = Integer.parseInt(in.nextLine());
         }
 
-        System.out.println("Please enter the options: " + placeString);
-
+        System.out.println("Please enter the options: ");
+        /*for(int u=0;u < 2; u++){
+            System.out.print( slotAvailable.get(u)+ " ");
+        }
+        System.out.println("");
+*/
 
          while(i < numberOfSlots){
             input = in.nextLine().toUpperCase();
