@@ -406,26 +406,26 @@ public class Controller implements Listener<VCEvent> {
                 totRightCost.add(context.getSelectedCard().get(j).getRHS());
                 j++;
             }
-
         }
+        totRightCost.add(context.getRhlLeaderCard() );
         if (context.getFromWhereToPayForDefault() && context.getFromWhereToPayForDevslots()) {
             if (totLeftCost.smallerOrEqual(warehouseRes))
                 context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE);
         } else {
             if (totLeftCost.smallerOrEqual(strongboxRes))
                 context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX);
-
         }
         if (!context.getLastStep().equals(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE) && !context.getLastStep().equals(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX) ) {
             context.setTotalLeftCost(totLeftCost);
             context.setTotalRightCost(totRightCost);
             handleProductionPayment(userID,context);
         }
-
     }
     private void handleProductionPayment(Integer userID, ActivateProdActionContext context){
-
-        handleActivationLeaderProductionPayment(userID,context);
+        if(context.getActivationLeaderCardProduction()){
+            context.setTotalRightCost(context.getTotalRightCost());
+            handleActivationLeaderProductionPayment(userID,context);
+        }
         if (context.getFromWhereToPayForDevslots() || context.getFromWhereToPayForDefault())
         {
             game.getPersonalBoard(userID).subtractFromWarehouse(context.getTotalLeftCost());
@@ -452,6 +452,7 @@ public class Controller implements Listener<VCEvent> {
         String strongBoxDescription = game.getPersonalBoard(userID).describeStrongbox();
         MVEvent strongboxEvent = new MVEvent(userID, MVEvent.EventType.STRONGBOX_UPDATE, strongBoxDescription);
         game.updateAllAboutChange(strongboxEvent);
+
         context.resetBaseProdPower();
         context.resetSelectedCard();
         context.resetFromWhereToPayForDevslots();
@@ -464,14 +465,12 @@ public class Controller implements Listener<VCEvent> {
     private void handleActivationLeaderProductionPayment(Integer userID, ActivateProdActionContext context) {
         Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
         Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
-        Resources totLeftCost;
-        Resources totRightCost ;
-        totLeftCost = context.getLhlLeaderCard();
-        totRightCost = context.getRhlLeaderCard();
+        Resources totLeftCost = context.getLhlLeaderCard();
+
+
         if (context.getFromWhereToPayForLeader()) {
             if (!totLeftCost.smallerOrEqual(warehouseRes)) {
                 game.getPersonalBoard(userID).subtractFromWarehouse(totLeftCost);
-                game.getPersonalBoard(userID).putResInStrongBox(totRightCost);
                 game.getPersonalBoard(userID).increaseFaitPoint(1);
                 context.resetRhlLeaderCard();
                 String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
@@ -481,7 +480,6 @@ public class Controller implements Listener<VCEvent> {
         } else {
             if (!totLeftCost.smallerOrEqual(strongboxRes)) {
                 game.getPersonalBoard(userID).subtractFromStrongbox(totLeftCost);
-                game.getPersonalBoard(userID).putResInStrongBox(totRightCost);
                 game.getPersonalBoard(userID).increaseFaitPoint(1);
                 context.resetRhlLeaderCard();
                 String strongBoxDescription = game.getPersonalBoard(userID).describeStrongbox();
@@ -489,7 +487,7 @@ public class Controller implements Listener<VCEvent> {
                 game.updateAllAboutChange(strongboxEvent);
             }
         }
-        context.setFromWhereToPayForLeader(false);
+        context.resetFromWhereToPayForLeader();
     }
 
 
@@ -509,7 +507,7 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
-
+//methods that update the resources inside the strong box and warehouse
     private void setResources(Integer userID, LeaderActionContext context){
         Resources totalResources=new Resources();
         totalResources.add(game.getPersonalBoard(userID).getStrongboxResources());
