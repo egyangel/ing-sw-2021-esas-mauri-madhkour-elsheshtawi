@@ -25,14 +25,14 @@ public class LeaderActionContext {
         CHOOSE_LEADER_TO_PRODUCE,
         POWER_ACTIVATED
     }
-    private final List<LeaderCard> playerCard = new ArrayList<>();
-
+    private List<LeaderCard> playerCard = new ArrayList<>();
     private List<LeaderCard> activeLeaderCard = new ArrayList<>();
-    private List<LeaderCard> discardCard = new ArrayList<>();
+
     private Boolean activationLeaderCardBefore= false;
 
     private Boolean activationLeaderCard= false;
     private List<Resources> leaderRHS= new ArrayList<>();
+    private Resources totalResources= new Resources() ;
     private boolean warehouseSelectedForLeader = false;
     private int numberOfCardActivated;
     private int numOfDiscardCard;
@@ -46,25 +46,22 @@ public class LeaderActionContext {
         return lastStep;
     }
 
-    public void setPlayerCard(List<LeaderCard> discardCard){
-        this.discardCard.addAll(discardCard);
+    public void setPlayerCard(List<LeaderCard> playerCard){
+        this.playerCard.addAll(playerCard);
     }
-    public List<LeaderCard> getPlayerCard(){ return this.discardCard; }
+    public List<LeaderCard> getPlayerCard(){ return this.playerCard; }
     public void changePlayerCard(List<LeaderCard> discardCard){
         int i = 0;
         while(i < discardCard.size()){
             playerCard.remove(this.playerCard.indexOf(discardCard.get(i)));
+            i++;
         }
     }
 
     public void setActiveLeaderCard(List<LeaderCard> activeLeaderCard){
-        this.activeLeaderCard.addAll(discardCard);
+        this.activeLeaderCard.addAll(activeLeaderCard);
     }
     public List<LeaderCard> getActiveLeaderCard(){ return this.activeLeaderCard; }
-
-    public void setDiscardCard(List<LeaderCard> discardCard){ this.discardCard.addAll(discardCard); }
-    public List<LeaderCard> getDiscardCard(){ return this.discardCard; }
-    public void resetDiscardCard(){ this.discardCard.clear(); }
 
     public int getNumberOfDiscardLeader() { return numOfDiscardCard; }
     public void setNumberOfDiscardLeader(int numOfDiscardCard) { this.numOfDiscardCard = numOfDiscardCard; }
@@ -97,6 +94,13 @@ public class LeaderActionContext {
     public void resetRhlLeaderCard() { this.leaderRHS.clear(); }
     public void resetFromWhereToPayForLeader(){ this.warehouseSelectedForLeader   = false ; }
     public void resetNumberOfActiveLeaderProduction () { this.numberOfCardActivated = 0; }
+
+    public void setTotalResources(Resources totalResources) {
+        this.totalResources = totalResources;
+    }
+    public Resources getTotalResources() {
+        return this.totalResources;
+    }
 
 
 }

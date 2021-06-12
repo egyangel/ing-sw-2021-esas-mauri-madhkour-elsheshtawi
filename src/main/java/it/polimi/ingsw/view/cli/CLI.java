@@ -639,6 +639,28 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
     }
+    public void choosePayProductionCostFromWhere(){
+        /*if(activateLeaderContext.getNumberOfActiveLeaderProduction()>0)
+        {
+            out.println("Select warehouse or strongbox to pay the left side for leader production.");
+            boolean warehouseSelected = InputConsumer.getWorS(in, out);
+            activateLeaderContext.setFromWhereToPayForLeader(warehouseSelected);
+        }*/
+        if(activateProdContext.getBaseProdPower()) {
+            out.println("Select warehouse or strongbox to pay the left side for default production.");
+            boolean warehouseSelectedForDefault = InputConsumer.getWorS(in, out);
+            activateProdContext.setFromWhereToPayForDefault(warehouseSelectedForDefault);
+        }
+        if(activateProdContext.getSelectedCard().size() > 0 ){
+            out.println("Select warehouse or strongbox to pay the left side of Development card for production.");
+            boolean warehouseSelectedForDevslots = InputConsumer.getWorS(in, out);
+            activateProdContext.setFromWhereToPayForDevslots(warehouseSelectedForDevslots);
+        }
+        activateProdContext.setLastStep(PAY_PRODUCTION_FROM_WHERE_CHOSEN);
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+        publish(vcEvent);
+    }
+
     //handle ActivateLeaderAction
     private void routeActivateLeaderActionDisplay() {
         switch (activateLeaderContext.getLastStep()) {
@@ -669,6 +691,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("What Leader action do you want to make? ");
         out.println("[1]Discard,[2]Activation [3]both?  ");
         int numOfActionChoosen = InputConsumer.getANumberBetween(in, out, 1, 3);
+        if(activateLeaderContext.getActiveLeaderCard().size()>0)
         switch(numOfActionChoosen) {
             case 1:
                 chooseDiscardLeaderAction();
@@ -677,21 +700,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 chooseLeaderActivationAction();
                 break;
             case 3:
+                //todo ask to omer if this work as i thought it, i mean first
+                // call the discard action and handle it in server side then
+                // after changing the player card and faithtrack call the activation leader action with the right card
                 chooseDiscardLeaderAction();
                 chooseLeaderActivationAction();
                 break;
         }
-            if (activateLeaderContext.getPlayerCard().size() > 0) {
-                while (j < activateLeaderContext.getPlayerCard().size()) {
-                    out.println("You have " + activateLeaderContext.getPlayerCard().size() + "leader cards ");
-                    out.println("How many do you want to Discard[?  ");
-                    out.println("[1]for the first,[2] for the second [3] for both?  ");
-                    int numOfDiscardCard = InputConsumer.getANumberBetween(in, out, 1, 3);
-                    activateLeaderContext.setNumberOfDiscardLeader(numOfDiscardCard);
-
-                }
-            }
-
     }
     public void chooseDiscardLeaderAction() {
         int j = 0;
@@ -714,82 +729,119 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
     public void chooseLeaderActivationAction() {
-        int i=0;
-        if(activateLeaderContext.getPlayerCard().size()>0) {
+        int i=0,j=0;
+        List<LeaderCard> activeLeaderCard = new ArrayList<>();
+        int numOfActivableLeaderCard = (activateLeaderContext.getPlayerCard().size() - activateLeaderContext.getNumberOfActiveLeaderProduction());
+        out.println("You can active  " + numOfActivableLeaderCard + "  leader cards ");
+        if (numOfActivableLeaderCard > 0) {
+
             out.println("Do want to activate LeaderCard ? ");
             boolean leaderActivate = InputConsumer.getYesOrNo(in, out);
             activateLeaderContext.setActivationLeaderCard(leaderActivate);
+
             if (leaderActivate) {
+                out.println("Your Leader Card:");
+                while(j<numOfActivableLeaderCard){
 
-                while (i < activateLeaderContext.getPlayerCard().size()) {
+                    out.println("Do you want to activate this Leader Card:"+"["+ (j + 1) +"] :"+ activateLeaderContext.getPlayerCard().get(j));
+                    if(InputConsumer.getYesOrNo(in, out)){
+                       if(checkLeaderActivationAction( activateLeaderContext.getPlayerCard().get(j)))
+                           activeLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
+                           else
+                           out.println("You don't satisfy the requirement:");
+                       }
 
-                    out.println("You have " + activateLeaderContext.getPlayerCard().size() + "leader cards ");
-                    out.println("How many do you want to activate?  ");
-                    int numOfCard = InputConsumer.getANumberBetween(in, out, 1, activateLeaderContext.getPlayerCard().size());
+                    j++;
+                }
+                while (i < numOfActivableLeaderCard) {
 
-                    out.println("Do want to activate LeaderCard production before(yes) or after(no) normal action ? ");
-                    boolean leaderActivationBefore = InputConsumer.getYesOrNo(in, out);
-                    activateLeaderContext.setActivationLeaderCardBefore(leaderActivationBefore);
-                    activateLeaderContext.setNumberOfActiveLeaderProduction(numOfCard);
 
                 }
+                    out.println("Do want to activate LeaderCard action before(yes) or after(no) normal action ? ");
+                    boolean leaderActivationBefore = InputConsumer.getYesOrNo(in, out);
+                    activateLeaderContext.setActivationLeaderCardBefore(leaderActivationBefore);
+
+
+
                 activateLeaderContext.setLastStep(LEADER_CARD_CHOOSEN);
             } else {
                 activateLeaderContext.setLastStep(LEADER_CARD_NOT_CHOOSEN);
             }
         }
-        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED,activateProdContext);
-        publish(vcEvent);
-    }
-    public void chooseLeaderProdAction() {
-        int i=0;
-        out.println("Do want to activate LeaderCard ability ? ");
-        boolean leaderActivate = InputConsumer.getYesOrNo(in,out);
-        activateLeaderContext.setActivationLeaderCard(leaderActivate);
-        if(leaderActivate){
-            if(activateLeaderContext.getPlayerCard().size() > 0) {
-                while(i < activateLeaderContext.getPlayerCard().size() ){
-
-                    List<Resources> RHS = new ArrayList<>();
-                    out.println("You have " + activateLeaderContext.getPlayerCard().size() + " active produce leader cards ");
-                    out.println("How many do you want to activate?  ");
-                    int numOfCard = InputConsumer.getANumberBetween(in, out, 1, 2);
-                    RHS.addAll(InputConsumer.chooseRhsLeaderCard(in, out, numOfCard));
-                    out.println("Do want to activate LeaderCard production before(yes) or after(no) normal action ? ");
-                    boolean leaderActivationBefore = InputConsumer.getYesOrNo(in, out);
-                    activateLeaderContext.setActivationLeaderCardBefore(leaderActivationBefore);
-                    activateLeaderContext.setNumberOfActiveLeaderProduction(numOfCard);
-                    activateLeaderContext.setRhlLeaderCard(RHS);
-                }
-            }
-          //  activateProdContext.setLastStep(LEADER_CARD_CHOOSEN);
-        }
-        else{
-           // activateProdContext.setLastStep(LEADER_CARD_NOT_CHOOSEN);
-        }
-        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED,activateProdContext);
-        publish(vcEvent);
-    }
-    public void choosePayProductionCostFromWhere(){
-        /*if(activateLeaderContext.getNumberOfActiveLeaderProduction()>0)
-        {
-            out.println("Select warehouse or strongbox to pay the left side for leader production.");
-            boolean warehouseSelected = InputConsumer.getWorS(in, out);
-            activateLeaderContext.setFromWhereToPayForLeader(warehouseSelected);
-        }*/
-        if(activateProdContext.getBaseProdPower()) {
-            out.println("Select warehouse or strongbox to pay the left side for default production.");
-            boolean warehouseSelectedForDefault = InputConsumer.getWorS(in, out);
-            activateProdContext.setFromWhereToPayForDefault(warehouseSelectedForDefault);
-        }
-        if(activateProdContext.getSelectedCard().size() > 0 ){
-            out.println("Select warehouse or strongbox to pay the left side of Development card for production.");
-            boolean warehouseSelectedForDevslots = InputConsumer.getWorS(in, out);
-            activateProdContext.setFromWhereToPayForDevslots(warehouseSelectedForDevslots);
-        }
-        activateProdContext.setLastStep(PAY_PRODUCTION_FROM_WHERE_CHOSEN);
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
+    }
+    private boolean checkLeaderActivationAction(LeaderCard leaderToCheck) {
+        int numberOfSlotAvailable = activateProdContext.getSlotAvailable().size();
+        List<DevSlot> slotAvailable = activateProdContext.getSlotAvailable();
+        int count = 0;
+        int i = 0;
+        while (i < numberOfSlotAvailable) {
+            if (activateProdContext.getSlotAvailable().get(i).getTopDevCard() != null) {
+                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
+                    if (leaderToCheck.getRequirement().getColor().equals(slotAvailable.get(i).getTopDevCard().getColor()) &&
+                            slotAvailable.get(i).getTopDevCard().getLevel() == 2) {
+                        return true;
+                    }
+                }
+
+                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT) {
+                    if (count == 2)
+                        return true;
+                    if (leaderToCheck.getRequirement().getColor(0).equals(activateProdContext.getSlotAvailable().get(i).getTopDevCard().getColor())
+                            || leaderToCheck.getRequirement().getColor(1).equals(activateProdContext.getSlotAvailable().get(i).getTopDevCard().getColor())) {
+                        count++;
+                    }
+                }
+                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXSTRASLOT) {
+                    Resources totalRes=new Resources();
+                    totalRes.add(activateLeaderContext.getTotalResources());
+                    if ((totalRes.getResTypes().contains(leaderToCheck.getRequirement().getResource().getOnlyType()))
+                            &&(totalRes.getNumberOfType(leaderToCheck.getRequirement().getResource().getOnlyType()) == 5)){
+                        return true;
+                    }
+                }
+                //todo ask to omer
+                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
+                    if (leaderToCheck.getRequirement().getColor(0).equals(slotAvailable.get(i).getTopDevCard().getColor()) &&
+                            slotAvailable.get(i).getTopDevCard().getLevel() == 2) {
+                        return true;
+                    }
+                }
+            }
+            i++;
+        }
+        return false;
+    }
+    public void chooseLeaderProdAction() {
+        int i = 0;
+            out.println("Do want to activate LeaderCard ability ? ");
+            boolean leaderActivate = InputConsumer.getYesOrNo(in, out);
+            activateLeaderContext.setActivationLeaderCard(leaderActivate);
+            if (leaderActivate) {
+                if (activateLeaderContext.getPlayerCard().size() > 0) {
+                    while (i < activateLeaderContext.getPlayerCard().size()) {
+
+                        List<Resources> RHS = new ArrayList<>();
+                        out.println("You have " + activateLeaderContext.getPlayerCard().size() + " active produce leader cards ");
+                        out.println("How many do you want to activate?  ");
+                        int numOfCard = InputConsumer.getANumberBetween(in, out, 1, 2);
+                        RHS.addAll(InputConsumer.chooseRhsLeaderCard(in, out, numOfCard));
+                        out.println("Do want to activate LeaderCard production before(yes) or after(no) normal action ? ");
+                        boolean leaderActivationBefore = InputConsumer.getYesOrNo(in, out);
+                        activateLeaderContext.setActivationLeaderCardBefore(leaderActivationBefore);
+                        activateLeaderContext.setNumberOfActiveLeaderProduction(numOfCard);
+                        activateLeaderContext.setRhlLeaderCard(RHS);
+                    }
+                }
+                //  activateProdContext.setLastStep(LEADER_CARD_CHOOSEN);
+            } else {
+                // activateProdContext.setLastStep(LEADER_CARD_NOT_CHOOSEN);
+            }
+
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED,activateProdContext);
+        publish(vcEvent);
+
     }
 
 
