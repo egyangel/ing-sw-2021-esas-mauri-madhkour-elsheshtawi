@@ -55,7 +55,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
         displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
         displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
-        displayNameMap.put("displayActionSelection", this::displayAllActionSelection);
+        displayNameMap.put("displayAllActionSelection", this::displayAllActionSelection);
+        displayNameMap.put("chooseLeaderAction", this::chooseLeaderAction);
+        displayNameMap.put("chooseRowColumnNumber", this::chooseRowColumnNumber);
+        displayNameMap.put("chooseShelvesToPut", this::chooseShelvesToPut);
         //TODO add used methods at the end
 //        displayNameMap.put("displayMarketTray", this::displayMarketTray);
 //        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
@@ -226,7 +229,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
         out.println("[4] View market tray");
-        out.println("[5] View market tray");
+        out.println("[5] Activate Leader Carc");
         out.println("[6] View development card matrix");
         out.println("[7] View warehouse");
         out.println("[8] View strongbox");
@@ -236,48 +239,56 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         // TODO maybe this option can be used for the users personal board too, so above display methods are not shown
         out.println("[12] View all personal boards");
         out.println("[13] End turn");
+        try {
         int index = InputConsumer.getANumberBetween(in, out, 1, 11);
-        switch (index) {
-            case 1:
-                vcEvent = new VCEvent(TAKE_RES_ACTION_SELECTED);
-                publish(vcEvent);
-                break;
-            case 2:
-                vcEvent = new VCEvent(BUY_DEVCARD_ACTION_SELECTED);
-                publish(vcEvent);
-                break;
-            case 3:
-                vcEvent = new VCEvent(ACTIVATE_PROD_ACTION_SELECTED);
-                publish(vcEvent);
-                break;
-            case 4:
-                vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-                publish(vcEvent);
-                break;
-            case 5:
-                addNextDisplay("displayMarketTray");
-                break;
-            case 6:
-                addNextDisplay("displayDevCardMatrix");
-                break;
-            case 7:
-                addNextDisplay("displayWarehouse");
-                break;
-            case 8:
-                addNextDisplay("displayStrongbox");
-                break;
-            case 9:
-                addNextDisplay("displayDevSlots");
-                break;
-            case 10:
-                addNextDisplay("displayFaithTrack");
-                break;
-            case 11:
-                addNextDisplay("displayLeaderCards");
-                break;
-            case 12:
-                addNextDisplay("displayAllPersonalBoards");
+
+            switch (index) {
+                case 1:
+                    vcEvent = new VCEvent(TAKE_RES_ACTION_SELECTED);
+                    publish(vcEvent);
+                    break;
+                case 2:
+                    vcEvent = new VCEvent(BUY_DEVCARD_ACTION_SELECTED);
+                    publish(vcEvent);
+                    break;
+                case 3:
+                    vcEvent = new VCEvent(ACTIVATE_PROD_ACTION_SELECTED);
+                    publish(vcEvent);
+                    break;
+                case 4:
+                    vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+                    publish(vcEvent);
+                    break;
+                case 5:
+                    addNextDisplay("displayMarketTray");
+                    break;
+                case 6:
+                    addNextDisplay("displayDevCardMatrix");
+                    break;
+                case 7:
+                    addNextDisplay("displayWarehouse");
+                    break;
+                case 8:
+                    addNextDisplay("displayStrongbox");
+                    break;
+                case 9:
+                    addNextDisplay("displayDevSlots");
+                    break;
+                case 10:
+                    addNextDisplay("displayFaithTrack");
+                    break;
+                case 11:
+                    addNextDisplay("displayLeaderCards");
+                    break;
+                case 12:
+                    addNextDisplay("displayAllPersonalBoards");
+            }
+        }catch (Exception $e){
+            // in case of excepio display error and retry the selection
+            out.println($e.getMessage());
+            addNextDisplay("displayAllActionSelection");
         }
+
     }
 
     public void displayMinorActionSelection() {
@@ -332,8 +343,16 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayWarehouse(){
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
-        returnToCorrectActionSelection();
+        // TODO userIDtoBoardDescriptions is not setted so it's thrown an exception
+        // returnToCorrectActionSelection() in catch for test perpose
+        try {
+            out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
+            returnToCorrectActionSelection();
+
+        }catch (Exception e){
+            returnToCorrectActionSelection();
+        }
+
     }
 
     public void displayStrongbox(){
@@ -408,6 +427,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
     public void chooseRowColumnNumber() {
+        // TODO: fix index out of range exception
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
         char firstLetter = rowColumnNumber.charAt(0);
         int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(2)));
