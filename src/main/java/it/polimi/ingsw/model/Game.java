@@ -105,7 +105,16 @@ public class Game implements Publisher<MVEvent> {
     //TODO FOR AMOR: return a single string that consists of top devcards in the 3x4 matrix
     // it would be best if 3x4 view of the matrix can be preserved
     public String describeDevCardMatrix() {
-        return null;
+        //Todo should show only the first card of each row ?
+        String description = "";
+        for (int x = 0; x < devCardMatrix.length; x++) {
+            for (int y = 0; y < devCardMatrix[x].length; y++) {
+                description = description + "\n" + devCardMatrix[x][y].peekTopCard().toString();
+
+            }
+        }
+        return description;
+
     }
 
     @Override
@@ -149,7 +158,7 @@ public class Game implements Publisher<MVEvent> {
     /**
      * Init soloAction tokens
      */
-    public void initSoloActionTokens(){
+    public void initSoloActionTokens() {
 
     }
 
