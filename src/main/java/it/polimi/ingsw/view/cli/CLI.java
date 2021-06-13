@@ -217,15 +217,45 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
         }
     }
+    /**
+     * methods that handle the leader action activation
+     * ask the player if he want to play this action, if yes the method call
+     * routeActivateLeaderActionDisplay that handle the leader actions
+     *
+     * */
+    public void displayLeaderCardAction(){
+        out.println("Do want to activate LeaderCard Action ? ");
+        boolean leaderActivate = InputConsumer.getYesOrNo(in, out);
+        activateLeaderContext.setActivationLeaderCard(leaderActivate);
 
+        if (leaderActivate) {
+            out.println("Do want to activate LeaderCard action before(yes) or after(no) normal action ? ");
+            boolean leaderActivationBefore = InputConsumer.getYesOrNo(in, out);
+            activateLeaderContext.setActivationLeaderCardBefore(leaderActivationBefore);
+            if (leaderActivationBefore) {
+                activateLeaderContext.setLastStep(CHOOSE_ACTION);
+                routeActivateLeaderActionDisplay();
+            }
+
+        }
+
+    }
+    /**
+     * methods that handle the menu of the player actions. and based on the action chosen call respectively
+     * the method that handle, except for the 3 normal actions. when the player chooses one of the 3 normal
+     * actions an event it created and sent so that the server handle it
+     * */
     public void displayAllActionSelection() {
         VCEvent vcEvent;
         out.println("It is your turn now!");
+
+        displayLeaderCardAction();
+
         out.println("Enter the index of the action you want to take:");
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
-        out.println("[3] Activate the production");
-        out.println("[4] View market tray");
+        //out.println("[3] Activate the production");
+        out.println("[4] Active leader Action");
         out.println("[5] View market tray");
         out.println("[6] View development card matrix");
         out.println("[7] View warehouse");
@@ -251,6 +281,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 publish(vcEvent);
                 break;
             case 4:
+                // todo this maybe be an event that always activated, i mean always throw the event and if the player
+                //  doesn't want to activate than the normal action happend otherwise it fill the leader action context
                 vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
                 publish(vcEvent);
                 break;
@@ -393,6 +425,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         if (majorActionDone) addNextDisplay("displayMinorActionSelection");
         else addNextDisplay("displayAllActionSelection");
     }
+    /**
+     * methods that handle the take resource action. It check the resources context based on the last step(then next action that the player have to make )
+     * call the methods that:
+     * -handle the draw from the market tray,
+     * -handle the activation of the white converter leader card
+     * -handle in which shelves the player put the resources
+     *
+     * */
     //Handle the TakeResAction
     private void routeTakeResActionDisplay() {
         switch (takeResContext.getLastStep()) {
@@ -407,6 +447,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
         }
     }
+    /**
+     * methods that handle the handle the draw from the market tray.
+     * Ask to the player to choose a row or column and so that he can take the resources that correspond to that choice
+     * then sent an event to the server so that , it take the resources from the market and change the market configuration
+     * */
     public void chooseRowColumnNumber() {
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
         char firstLetter = rowColumnNumber.charAt(0);
@@ -421,6 +466,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
     }
+    /**
+     * methods that handle the activation of the white converter leader card
+     * if the player draw white marbles ang he has a white converter leader card active
+     * he can convert that white marbles in some other resources based on the leader card ability.
+     * Also here after the player fill the TAKE_RES_CONTEXT_FILLED it publish an VC(view to controller)
+     * event that check and manage the transformation
+     * */
     public void chooseWhiteConverters() {
         Resources.ResType firstResOption = takeResContext.getWhiteConverters().get(0).getAbility().getResType();
         Resources.ResType secondResOption = takeResContext.getWhiteConverters().get(1).getAbility().getResType();
@@ -440,7 +492,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         takeResContext.setLastStep(RES_FROM_WHITE_ADDED_TO_CONTEXT);
         VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
-    }
+    } /**
+     * methods that handle the phase where the player manage the resources and the shelves configuration,
+     *
+     * */
     public void chooseShelvesToPut() {
         out.println("Your warehouse looks like:");
         displayWarehouse();
@@ -489,6 +544,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
         publish(vcEvent);
     }
+    /**
+     * methods that handle the dev card buying.Ask to the player the card and after filled the buyCardContext sent
+     * the event so that the controller can check everything about that action
+     *
+     * */
     //Handle the BuyDevCardAction
     private void routeBuyDevCardActionDisplay() {
         switch (buyDevCardContext.getLastStep()) {
@@ -677,13 +737,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case CHOOSE_ACTION:
                 addNextDisplay("chooseLeaderAction");
                 break;
-            case CHOOSE_DISCARD_A_LEADER:
-                setGeneralMsg("You don't have enough resources in strongbox!");
-                addNextDisplay("displayGeneralMsg");
-                break;
             case POWER_ACTIVATED:
-
-
+                addNextDisplay("displayActivationProdActionEnd ");
                 break;
         }
     }
@@ -762,9 +817,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     out.println("Do want to activate LeaderCard action before(yes) or after(no) normal action ? ");
                     boolean leaderActivationBefore = InputConsumer.getYesOrNo(in, out);
                     activateLeaderContext.setActivationLeaderCardBefore(leaderActivationBefore);
-                    activateLeaderContext.setLastStep(LEADER_CARD_CHOOSEN);
+                    activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
                 } else {
-                    activateLeaderContext.setLastStep(LEADER_CARD_NOT_CHOOSEN);
+                    activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);
                 }
             }
         }
@@ -813,10 +868,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
         return false;
     }
-
-
-
-
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent) {

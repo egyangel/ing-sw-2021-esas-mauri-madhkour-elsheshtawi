@@ -12,16 +12,12 @@ public class LeaderActionContext {
 
     public enum ActionStep{
         // from client to server
-        LEADER_CARD_CHOOSEN,
-        LEADER_CARD_NOT_CHOOSEN,
+        LEADER_CARD_ACTIVATED_CHOOSEN,
+        LEADER_CARD_NOT_ACTIVATED_CHOOSEN,
         DISCARD_LEADER_CARD,
 
         // from server to client
         CHOOSE_ACTION,
-        CHOOSE_DISCARD_A_LEADER,
-        CHECK_ACTIVE_LEADER_PRODUCTION,
-
-        CHOOSE_LEADER_TO_PRODUCE,
         POWER_ACTIVATED
     }
     private List<LeaderCard> playerCard = new ArrayList<>();

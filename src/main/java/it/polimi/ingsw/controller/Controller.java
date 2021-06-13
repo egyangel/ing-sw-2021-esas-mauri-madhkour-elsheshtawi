@@ -20,7 +20,7 @@ public class Controller implements Listener<VCEvent> {
 
     private Server server;
     protected Game game;
-    private List<DevCard> allOwnedDevCard = new ArrayList<>();
+    private List<DevCard>  allOwnedDevCard = new ArrayList<>();
     private Map<Integer, String> userIDtoUsernames = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 
@@ -497,10 +497,11 @@ public class Controller implements Listener<VCEvent> {
             case DISCARD_LEADER_CARD:
                 handleDiscardLeaderChosen(userID, context);
                 break;
-            case LEADER_CARD_CHOOSEN:
+            case LEADER_CARD_ACTIVATED_CHOOSEN:
                 handleActivateLeaderChoosen(userID, context);
                 break;
-            case LEADER_CARD_NOT_CHOOSEN:
+            case LEADER_CARD_NOT_ACTIVATED_CHOOSEN:
+                //todo this part maybe is not necessary
                 handleActivateLeaderChoosen(userID, context);
                 break;
         }
@@ -541,12 +542,6 @@ public class Controller implements Listener<VCEvent> {
 
     }
     private void  handleActivateLeaderChoosen(Integer userID, LeaderActionContext context){
-
-
-        for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
-
-        }
-
 
     }
     private void handleActivationLeaderProduction(Integer userID, LeaderActionContext context,ActivateProdActionContext contextProd) {
