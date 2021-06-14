@@ -262,8 +262,6 @@ public class Controller implements Listener<VCEvent> {
         MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
         game.updateAllAboutChange(warehouseEvent);
     }
-
-
     //handle BuyDevCardAction
     private void handleBuyDevCardAction(Integer userID, BuyDevCardActionContext context){
         switch (context.getLastStep()){
@@ -341,7 +339,7 @@ public class Controller implements Listener<VCEvent> {
     }
 
 
-    //handle the activation of prodution
+    //handle the activation of production
     private void handleActivateDevCardAction(Integer userID, ActivateProdActionContext context){
         switch (context.getLastStep()){
             case DEV_SLOTS_CHOOSEN:

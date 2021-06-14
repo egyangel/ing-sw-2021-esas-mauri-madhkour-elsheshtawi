@@ -550,7 +550,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * the event so that the controller can check everything about that action
      *
      * */
-    //commit on my own repo
+
     //Handle the BuyDevCardAction
     private void routeBuyDevCardActionDisplay() {
         switch (buyDevCardContext.getLastStep()) {
@@ -739,7 +739,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case CHOOSE_ACTION:
                 addNextDisplay("chooseLeaderAction");
                 break;
-
             case POWER_ACTIVATED:
 
 
@@ -773,7 +772,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("Do want to Discard LeaderCard ? ");
         boolean discard = InputConsumer.getYesOrNo(in, out);
         int numOfDiscardableLeaderCard = (activateLeaderContext.getPlayerCard().size() - activateLeaderContext.getNumberOfActiveLeader());
-        out.println("You can active  " + numOfDiscardableLeaderCard + "  leader cards ");
+        out.println("You can discard  " + numOfDiscardableLeaderCard + "  leader cards ");
         if (discard) {
             if (numOfDiscardableLeaderCard > 0) {
                 while (j < numOfDiscardableLeaderCard) {
@@ -782,10 +781,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     out.println("[1]for the first,[2] for the second [3] for both?  ");
 
                     int numOfDiscardedCard = InputConsumer.getANumberBetween(in, out, 1, 3);
-
-                    if(numOfDiscardableLeaderCard == 1 ) {
-                        activateLeaderContext.setNumberOfDiscardLeader(numOfDiscardedCard);
-                    }
+                    activateLeaderContext.setNumberOfDiscardLeader(numOfDiscardedCard);
+                    j++;
 
                 }
             }
@@ -801,11 +798,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("You can active  " + numOfActivatableLeaderCard + "  leader cards ");
         if (numOfActivatableLeaderCard > 0) {
 
-            out.println("Do want to activate LeaderCard ? ");
-            boolean leaderActivate = InputConsumer.getYesOrNo(in, out);
-            activateLeaderContext.setActivationLeaderCard(leaderActivate);
 
-            if (leaderActivate) {
+            if (activateLeaderContext.getActivationLeaderCard()) {
                 out.println("Your Leader Card:");
                 while (j < numOfActivatableLeaderCard) {
                     out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
@@ -818,9 +812,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     j++;
                 }
                 if (activeLeaderCard.size() > 0) {
-                    out.println("Do want to activate LeaderCard action before(yes) or after(no) normal action ? ");
-                    boolean leaderActivationBefore = InputConsumer.getYesOrNo(in, out);
-                    activateLeaderContext.setActivationLeaderCardBefore(leaderActivationBefore);
                     activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
                 } else {
                     activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);

@@ -4,10 +4,6 @@ import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//todo omer i will finish this stuff on my own before friday.
-// After talking to daniele he explained me that we implement the wrong rule.
-// So first i have to finish this part than we will talk.
-// THe production action has already done
 public class LeaderActionContext {
 
     public enum ActionStep{
@@ -16,8 +12,9 @@ public class LeaderActionContext {
         LEADER_CARD_NOT_ACTIVATED_CHOOSEN,
         DISCARD_LEADER_CARD,
 
-        // from server to client
+        //inside client
         CHOOSE_ACTION,
+        // from server to client
         POWER_ACTIVATED
     }
     private List<LeaderCard> playerCard = new ArrayList<>();
@@ -69,7 +66,7 @@ public class LeaderActionContext {
 
 
     //All Methods below handle the activation of leader Card Production
-    public void setActivationLeaderCard(boolean activationLeaderCardAfter){ this.activationLeaderCard = activationLeaderCardAfter; }
+    public void setActivationLeaderCard(boolean activationLeaderCard){ this.activationLeaderCard = activationLeaderCard; }
     public boolean getActivationLeaderCard(){
         return this.activationLeaderCard ;
     }
