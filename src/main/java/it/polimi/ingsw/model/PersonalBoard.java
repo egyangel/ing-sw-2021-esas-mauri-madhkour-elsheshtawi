@@ -155,9 +155,22 @@ public class PersonalBoard {
     public void putSelectedLeaderCards(List<LeaderCard> selectedCards) {
         inactiveLeaderCards.addAll(selectedCards);
     }
+    public List<LeaderCard> getInactiveLeaderCards() {
+       return this.inactiveLeaderCards;
+    }
+    public void changePlayerCard(List<LeaderCard> discardCard){
+        int i = 0;
+        while(i < discardCard.size()){
+            inactiveLeaderCards.remove(this.inactiveLeaderCards.indexOf(discardCard.get(i)));
+            i++;
+        }
+    }
 //todo the leader cards aren't active but only chosen from the player
+    public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
+     this.activeLeaderCards=activeLeaderCards;
+}
     public List<LeaderCard> getActiveLeaderCards() {
-        return activeLeaderCards;
+        return this.activeLeaderCards;
     }
 
     public Resources getTotalResources() {
@@ -271,21 +284,19 @@ public class PersonalBoard {
 
 
     public String describeWarehouse() {
-        String string = "Top Shelf: " + warehouse[0].describeShelf() + "\nMiddle Shelf: " + warehouse[1].describeShelf() + "\nBottom Shelf: " + warehouse[2].describeShelf();
-        return string;
+        return "Top Shelf: " + warehouse[0].describeShelf() + "\nMiddle Shelf: " + warehouse[1].describeShelf() + "\nBottom Shelf: " + warehouse[2].describeShelf();
     }
 
     public String describeStrongbox() {
-        String string = "Resources inside strong box: " + strongbox.toString();
-        return string;
+        return "Resources inside strong box: " + strongbox.toString();
     }
 
     public String describeDevSlots() {
-        String string = "";
+        StringBuilder string = new StringBuilder();
         for (DevSlot slot : devSlots) {
-            string += slot.describeDevSlot() + "\n";
+            string.append(slot.describeDevSlot()).append("\n");
         }
-        return string.trim(); //removes one \n at the end
+        return string.toString().trim(); //removes one \n at the end
     }
 
     //TODO FOR AMOR: same for faith track, try to show special pope fields
