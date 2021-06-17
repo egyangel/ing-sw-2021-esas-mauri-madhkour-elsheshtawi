@@ -29,9 +29,9 @@ public class ActivateProdActionContext {
     private Resources defautProdLHS = new Resources();
     private Resources devProdLHS = new Resources();
     private Resources totalRightCost = new Resources();
-    private boolean warehouseSelectedForLeader = false;
+    /*private boolean warehouseSelectedForLeader = false;
     private boolean warehouseSelectedForDefault = false;
-    private boolean warehouseSelectedForDevslots = false;
+    private boolean warehouseSelectedForDevslots = false;*/
     private Boolean baseProdPower = false ;
     private Boolean activationLeaderCardProduction= false;
 
@@ -55,38 +55,37 @@ public class ActivateProdActionContext {
     public  boolean getBaseProdPower(){
         return this.baseProdPower ;
     }
-    public void setFromWhereToPayForDefault(boolean warehouseSelectedForDefault){ this.warehouseSelectedForDefault = warehouseSelectedForDefault; }
+
+   /* public void setFromWhereToPayForDefault(boolean warehouseSelectedForDefault){ this.warehouseSelectedForDefault = warehouseSelectedForDefault; }
     public boolean getFromWhereToPayForDefault(){
         return this.warehouseSelectedForDefault ;
     }
+    public void setFromWhereToPayForDevslots(boolean warehouseSelectedForDevslots){ this.warehouseSelectedForDevslots = warehouseSelectedForDevslots; }
+    public void setFromWhereToPayForLeader(boolean warehouseSelected){ this.warehouseSelectedForLeader = warehouseSelected; }
 
 
+    public boolean getActivationLeaderCardProduction(){
+        return this.activationLeaderCardProduction ;
+    }
+    */
+   public void setActivationLeaderCardProduction(boolean activationLeaderCard){ this.activationLeaderCardProduction = activationLeaderCard; }
     public void setSlotAvailable(List<DevSlot> slotAvailable){ this.slotAvailable.addAll(slotAvailable); }
     public List<DevSlot> getSlotAvailable(){ return this.slotAvailable; }
 
     public void setSlots(List<DevSlot> slotChosen){ this.slotChosen.addAll(slotChosen); }
     public List<DevSlot> getSlots(){ return this.slotChosen;  }
 
-    public void setFromWhereToPayForDevslots(boolean warehouseSelectedForDevslots){ this.warehouseSelectedForDevslots = warehouseSelectedForDevslots; }
-    public boolean getFromWhereToPayForDevslots(){
-        return this.warehouseSelectedForDevslots ;
+    public boolean getActivationLeaderCardProduction(){
+        return this.activationLeaderCardProduction ;
     }
-
     public void setSelectedCard( List<DevCard> selectedCard) {
         this.selectedCard.addAll(selectedCard);
     }
     public List<DevCard> getSelectedCard() { return selectedCard; }
 
-    public void setFromWhereToPayForLeader(boolean warehouseSelected){ this.warehouseSelectedForLeader = warehouseSelected; }
-    public boolean getFromWhereToPayForLeader(){ return this.warehouseSelectedForLeader ; }
 
     public void setNumberOfActiveLeaderProduction (int numberOfCardActivated) { this.numberOfCardActivated = numberOfCardActivated; }
     public int getNumberOfActiveLeaderProduction() { return numberOfCardActivated; }
-
-    public void setActivationLeaderCardProduction(boolean activationLeaderCardAfter){ this.activationLeaderCardProduction = activationLeaderCardAfter; }
-    public boolean getActivationLeaderCardProduction(){
-        return this.activationLeaderCardProduction ;
-    }
 
 
     public void resetActivationProduction() {
@@ -98,10 +97,6 @@ public class ActivateProdActionContext {
         this.baseProdPower = false;
         this.totalRightCost.clear();
         this.baseProductionCard = null;
-        this.warehouseSelectedForLeader = false ;
-        this.warehouseSelectedForDefault = false;
-        this.warehouseSelectedForDevslots = false ;
-
     }
 
 

@@ -115,13 +115,13 @@ public class PersonalBoard {
     public  List<DevCard> getOwnedCard() {
         return this.ownedCards;
     }
+
     public void countVictoryPoints(int victoryPoints) {
         this.victoryPoints+=victoryPoints;
     }
     public  int getVictoryPoints() {
         return this.victoryPoints;
     }
-
     public void increaseFaitPoint(int toAdd) {
         faithPoints += toAdd;
     }
@@ -152,12 +152,10 @@ public class PersonalBoard {
 
         return temp;
     }
-    public void putSelectedLeaderCards(List<LeaderCard> selectedCards) {
-        inactiveLeaderCards.addAll(selectedCards);
-    }
-    public List<LeaderCard> getInactiveLeaderCards() {
-       return this.inactiveLeaderCards;
-    }
+
+    public void putSelectedLeaderCards(List<LeaderCard> selectedCards) { inactiveLeaderCards.addAll(selectedCards); }
+    public List<LeaderCard> getInactiveLeaderCards() { return this.inactiveLeaderCards; }
+
     public void changePlayerCard(List<LeaderCard> discardCard){
         int i = 0;
         while(i < discardCard.size()){
@@ -165,7 +163,7 @@ public class PersonalBoard {
             i++;
         }
     }
-//todo the leader cards aren't active but only chosen from the player
+
     public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
      this.activeLeaderCards=activeLeaderCards;
 }

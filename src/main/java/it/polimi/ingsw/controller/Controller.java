@@ -138,9 +138,9 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case ACTIVATE_LEADER_CONTEXT_SELECTED:
                 LeaderActionContext emptyActivateLeaderContext = new LeaderActionContext();
+                emptyActivateLeaderContext.setPlayerCard(game.getPersonalBoard(userID).getInactiveLeaderCards());
                 emptyActivateLeaderContext.setTotalResources(game.getPersonalBoard(userID).getTotalResources());
                 emptyActivateLeaderContext.setLastStep(CHOOSE_ACTION);
-                //setResources(userID, emptyActivateLeaderContext);
                 cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, emptyActivateLeaderContext);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
@@ -481,49 +481,27 @@ public class Controller implements Listener<VCEvent> {
             case LEADER_CARD_ACTIVATED_CHOOSEN:
                 handleActivateLeaderChoosen(userID, context);
                 break;
+            case BOTH_ACTION:
+                handleDiscardLeaderChosen(userID, context);
+                handleActivateLeaderChoosen(userID, context);
+                break;
             case LEADER_CARD_NOT_ACTIVATED_CHOOSEN:
-                //todo this part maybe is not necessary
+                //todo this phandleDiscardLeaderChosenart maybe is not necessary
                 handleActivateLeaderChoosen(userID, context);
                 break;
         }
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
-//methods that update the resources inside the strong box and warehouse
-    private void setResources(Integer userID, LeaderActionContext context){
-        Resources totalResources=new Resources();
-        totalResources.add(game.getPersonalBoard(userID).getStrongboxResources());
-        totalResources.add(game.getPersonalBoard(userID).getStrongboxResources());
-        context.setTotalResources(totalResources);
-        totalResources.clear();
-    }
-    private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
-        int index ;
-        List<LeaderCard> discardedCard = new ArrayList<>();
-        index =context.getNumberOfDiscardLeader();
 
-        switch(index){
-            case 1:
-                discardedCard.add(context.getPlayerCard().get(0));
-                context.changePlayerCard(discardedCard);
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-                break;
-            case 2:
-                discardedCard.add(context.getPlayerCard().get(1));
-                context.changePlayerCard(discardedCard);
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-                break;
-            case 3:
-                discardedCard.addAll(context.getPlayerCard());
-                context.changePlayerCard(discardedCard);
-                game.getPersonalBoard(userID).increaseFaitPoint(2);
-                break;
-        }
-        discardedCard.clear();
+    private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
+
+       game.getPersonalBoard(userID).changePlayerCard(context.discardedPlayerCard());
+       game.getPersonalBoard(userID).increaseFaitPoint(context.discardedPlayerCard().size());
 
     }
     private void  handleActivateLeaderChoosen(Integer userID, LeaderActionContext context){
-
+        game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
     }
 
     private void computeVictoryPoint(Integer userID) {
