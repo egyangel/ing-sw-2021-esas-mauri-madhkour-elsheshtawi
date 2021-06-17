@@ -4,14 +4,21 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.enumclasses.MarbleColor;
 
 import java.util.*;
-
+/**
+ * Market Tray  ,it is the the representation of the market tray.
+ * It simulate the market of the real game
+ * @author
+ * */
 public class MarketTray {
     private final int row = 3;
     private final int column = 4;
     private MarbleColor OutMarble;
     private MarbleColor[] marbles = new MarbleColor[13];
     private MarbleColor[][] marketTray = new MarbleColor[3][4];
+/**
+ *Constructor create the 13 marble with the proper color
 
+ */
     public MarketTray() {
 
         marbles[0] = MarbleColor.WHITE;
@@ -30,7 +37,11 @@ public class MarketTray {
 
         MarblePositioning();
     }
-
+/**
+ * Method that handle the initial phase of the game.
+ * Putting the marble on the tray(matrix) in a random way
+ *
+ * */
     //positioning the murbles in a random way at the beginning of the game
     private void MarblePositioning() {
         int k = 0;
@@ -59,7 +70,12 @@ public class MarketTray {
     @ ensure markettray.lenght().equals(\old(markettray.lenght())
     @ && !\result.equals(NULL)
     */
-
+    /**
+     * Method that handle the selection of the row
+     * It change the tray (matrix) configuration by shifting on the left the element in that row,
+     * The first(lefter one) goes out
+     *
+     * */
     public List<MarbleColor> selectRow(int row) {
         List<MarbleColor> resources = new ArrayList<>();
         MarbleColor temp;
@@ -74,7 +90,12 @@ public class MarketTray {
             return null;
     }
     /* @require column >=1&& column <=4 */
-
+    /**
+     * Method that handle the selection of the column
+     * It change the tray (matrix) configuration by shifting the element in that column,
+     * The first(TOp one) goes out
+     *
+     * */
     public List<MarbleColor> selectColumn(int column) {
         List<MarbleColor> resources = new ArrayList<>();
         MarbleColor temp;
@@ -102,7 +123,7 @@ public class MarketTray {
         }
     }
 
-    //TODO FOR AMOR: do the same as MarketTrayDraw but return the descriptin rather than printing
+    //TODO FOR AMOR: do the same as MarketTrayDraw but return the description rather than printing
     public String describeMarketTray() {
         StringBuilder sb = new StringBuilder();
         sb.append("|\t");

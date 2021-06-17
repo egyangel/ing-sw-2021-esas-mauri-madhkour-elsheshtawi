@@ -11,7 +11,7 @@ public class LeaderActionContext {
         LEADER_CARD_ACTIVATED_CHOOSEN,
         LEADER_CARD_NOT_ACTIVATED_CHOOSEN,
         DISCARD_LEADER_CARD,
-        BOTH_ACTION,
+        BOTH_ACTIONS,
 
         // from server to client
         CHOOSE_ACTION,

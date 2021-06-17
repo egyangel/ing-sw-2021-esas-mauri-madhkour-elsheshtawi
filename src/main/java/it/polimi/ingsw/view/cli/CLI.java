@@ -18,8 +18,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * Cli class , it the client interface
- * @author Omer Esas
+ * Cli class , it is the client interface
+ * @author
  *
  * */
 
@@ -591,7 +591,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("choosePayDevCardCostFromWhere");
                 break;
             case COST_PAID_DEVCARD_PUT:
-                addNextDisplay("displayBuyDevActionEnd");
+
                 if(activateLeaderContext.getActivationLeaderCardBefore())
                     addNextDisplay("displayBuyDevActionEnd");
                 else{
@@ -762,6 +762,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
     }*/
+    /**
+     * methods that handle the usage of leader cards with additional production. Ask to the player
+     * the number of cards that he has to use and the res that he want to get from the production.
+     * @param numberOfActiveProduceCard is the number of available card on the player board with that ability
+     * */
     public void chooseLeaderProdAction(int numberOfActiveProduceCard) {
 
         Resources RHS = new Resources();
@@ -772,6 +777,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         activateProdContext.setRhlLeaderCard(RHS);
 
     }
+
+    /**
+     * methods that handle the Leader Action based on the CV event and last step of activateLeaderContext that has been set
+     * in the server side after the player chose this action in his turn.This methods call the action that correspond to that event.
+     * */
     //handle ActivateLeaderAction
     private void routeActivateLeaderActionDisplay() {
         activateLeaderContext.setActivationLeaderCardBefore(true);
@@ -784,6 +794,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
         }
     }
+
+    /**
+     * methods that handle the Leader Action. Only ask to the player which action between discard, activate or both and then based on the
+     * choice call the method that handle the choice.If the player choice to activate both first call the discard methods then the activation.
+     * */
     public void chooseLeaderAction() {
 
         out.println("What Leader action do you want to make? ");
@@ -800,6 +815,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
         }
     }
+    /**
+     * methods that handle the Discard Leader Action. Ask to the player which Cards want to discard, fill the activateLeaderContext.
+     * After the player fill the  context  it publish an VC(view to controller)
+     * THen server update the personal board based on the choice.
+     * @param numOfActionChoosen  it is used to distinguish the discard action([1]) from the both action([3]).
+     *                            if both call then activation methods
+     * */
     public void chooseDiscardLeaderAction(int numOfActionChoosen ) {
         int j=0;
         List<LeaderCard> discardedLeaderCard = new ArrayList<>();
@@ -820,13 +842,23 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         activateLeaderContext.changePlayerCard(discardedLeaderCard);
 
         if(numOfActionChoosen==3 && discardedLeaderCard.size()<2){
+            activateLeaderContext.setLastStep(BOTH_ACTIONS);
             chooseLeaderActivationAction();
         }else {
             activateLeaderContext.setLastStep(DISCARD_LEADER_CARD);
             VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
             publish(vcEvent);
         }
+
     }
+    /**
+     * methods that handle the Activation Leader Action. Ask to the player which Cards want to Activate based on the card that has in his hands,
+     * this methods used another one that check if the requirements are satisfied or not by the player ,
+     * fill the activateLeaderContext with thee choice.
+     * After the player fill the  context  it publish an VC(view to controller)
+     * THen server update the personal board based on the choice.
+     *
+     * */
     public void chooseLeaderActivationAction() {
         int j=0;
         List<LeaderCard> activeLeaderCard = new ArrayList<>();
@@ -854,6 +886,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
+    /**
+     * methods that handle the check of the requirements of leader cards,
+     * @param leaderToCheck is the card to check
+     * */
     private boolean checkLeaderActivationAction(LeaderCard leaderToCheck) {
         int numberOfSlotAvailable = activateProdContext.getSlotAvailable().size();
         List<DevSlot> slotAvailable = activateProdContext.getSlotAvailable();

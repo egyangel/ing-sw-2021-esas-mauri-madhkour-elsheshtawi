@@ -471,23 +471,24 @@ public class Controller implements Listener<VCEvent> {
 
     }
 
-
     //handle the activation of prodution
     private void handleActivateLeaderAction(Integer userID, LeaderActionContext context){
         switch (context.getLastStep()){
             case DISCARD_LEADER_CARD:
                 handleDiscardLeaderChosen(userID, context);
+                context.setLastStep(END_LEADER_ACTION);
                 break;
             case LEADER_CARD_ACTIVATED_CHOOSEN:
                 handleActivateLeaderChoosen(userID, context);
+                context.setLastStep(END_LEADER_ACTION);
                 break;
-            case BOTH_ACTION:
+            case BOTH_ACTIONS:
                 handleDiscardLeaderChosen(userID, context);
                 handleActivateLeaderChoosen(userID, context);
+                context.setLastStep(END_LEADER_ACTION);
                 break;
             case LEADER_CARD_NOT_ACTIVATED_CHOOSEN:
-                //todo this phandleDiscardLeaderChosenart maybe is not necessary
-                handleActivateLeaderChoosen(userID, context);
+                context.setLastStep(END_LEADER_ACTION);
                 break;
         }
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
@@ -500,6 +501,7 @@ public class Controller implements Listener<VCEvent> {
        game.getPersonalBoard(userID).increaseFaitPoint(context.discardedPlayerCard().size());
 
     }
+
     private void  handleActivateLeaderChoosen(Integer userID, LeaderActionContext context){
         game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
     }

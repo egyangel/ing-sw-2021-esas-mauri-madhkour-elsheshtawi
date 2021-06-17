@@ -1,7 +1,11 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enumclasses.CliColors;
-
+/**
+ * Development Card class
+ * @author
+ *
+ * */
 public class DevCard {
 
     public DevCard(CliColors[] values, int level, Resources lhs, Resources rhs, Resources cost, int victoryPoints) {
@@ -45,7 +49,9 @@ public class DevCard {
     private CliColors colors;
     private String face;
 
-
+    /**
+     * Enumeration class that represent the card's color
+     * */
     public enum CardColor{
         GREEN,BLUE,YELLOW,PURPLE;
 
@@ -66,6 +72,15 @@ public class DevCard {
     private final Resources cost;
     private final int victoryPoints;
 
+    /**
+     * Constructor of a normal Development Card
+     * @param color represent the color of the card
+     * @param level represent the level of the card
+     * @param cost represent the cost of the card
+     * @param LHS represent the LHS(left hand side of production power) of the card
+     * @param RHS represent the RHS(right hand side of production power of the card
+     * @param victoryPoints represent the victoryPoints of the card
+     * */
     public DevCard (int level, CardColor color, Resources LHS, Resources RHS, Resources cost, int victoryPoints) {
         this.color=color;
         this.level=level;
@@ -74,8 +89,13 @@ public class DevCard {
         this.cost=cost;
         this.victoryPoints=victoryPoints;
 
-
     }
+    /**
+     * Constructor of Default Production, I chose to think it as a Development
+     * Card with only the two attribute
+     * @param LHS represent the LHS(left hand side of production power) of the card
+     * @param RHS represent the RHS(right hand side of production power of the card
+     * */
     public DevCard ( Resources LHS, Resources RHS) {
         this.color = null;
         this.level = 0 ;

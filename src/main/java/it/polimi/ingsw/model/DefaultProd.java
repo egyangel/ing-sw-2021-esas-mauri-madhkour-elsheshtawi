@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
-
+/**
+ * @deprecated class not more needed
+ * */
 public class DefaultProd {
     private Resources LHS;
     private Resources RHS;
@@ -10,7 +12,6 @@ public class DefaultProd {
     }
 
     public void putTopLeftResource(Resources.ResType L1){
-        // code for GUI must be different since for now the whole LHS is represented by one Resources object
         this.LHS.add(L1, 1);
     }
     public Resources getLeftRes(){
@@ -21,7 +22,6 @@ public class DefaultProd {
     }
 
     public void putBottomLeftResource(Resources.ResType L2){
-        // code for GUI must be different since for now the whole LHS is represented by one Resources object
         this.LHS.add(L2, 1);
     }
 

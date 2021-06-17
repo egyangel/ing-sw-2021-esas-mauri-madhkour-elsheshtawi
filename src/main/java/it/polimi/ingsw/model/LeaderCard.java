@@ -1,10 +1,16 @@
 package it.polimi.ingsw.model;
-
+/**
+ * Leader Card class  ,it is the the representation of the leader card with
+ * @author
+ * */
 public class LeaderCard {
     private Requirement requirement;
     private int victoryPoint;
     private SpecialAbility ability;
-
+/**
+ * Constructor set the param of the card object *
+ *
+ * */
     public LeaderCard(Requirement requirement, Integer vicPoints, SpecialAbility specialAbility ){
         this.requirement = requirement;
         this.victoryPoint = vicPoints;

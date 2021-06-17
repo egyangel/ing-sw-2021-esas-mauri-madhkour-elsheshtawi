@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.DevCard;
-
 import java.util.*;
-
+/**
+ * Development Slot  , it is the class that handle the Development
+ * slot on the personal board of the player
+ * @author
+ * */
 public class DevSlot {
     public enum slotPlace{
         LEFT(0), CENTER(1), RIGHT(2);
