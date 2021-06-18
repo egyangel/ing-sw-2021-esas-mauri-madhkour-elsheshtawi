@@ -5,7 +5,11 @@ import java.util.*;
 
 public class Resources {
     public enum ResType {
-        STONE,SHIELD,SERVANT,COIN,FAITH;
+        STONE("\u001B[37m[", "⌬]\u001B[0m"),
+        SHIELD("\u001B[34m[", "⌺]\u001B[0m"),
+        SERVANT("\u001B[35m[", "☺]\u001B[0m"),
+        COIN("\u001B[33m[", "⨎]\u001B[0m"),
+        FAITH("\u001B[31m[", "✞]\u001B[0m");
 
         public static boolean contains(String string) {
             for (Resources.ResType resType : Resources.ResType.values()) {
@@ -24,7 +28,21 @@ public class Resources {
             }
             return null;
         }
+        private String firstAnsiPart;
+        private String secondAnsiPart;
 
+        public String getFirstAnsiPart() {
+            return firstAnsiPart;
+        }
+
+        public String getSecondAnsiPart() {
+            return secondAnsiPart;
+        }
+
+        ResType(String firstAnsiPart, String secondAnsiPart) {
+            this.firstAnsiPart = firstAnsiPart;
+            this.secondAnsiPart = secondAnsiPart;
+        }
         @Override
         public String toString() {
             return this.name();
@@ -137,6 +155,14 @@ public class Resources {
 
     public Resources(ResType resource, int number) {
         values.put(resource,number);
+    }
+
+    public String describeResource(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Map.Entry<ResType, Integer> entry : values.entrySet()) {
+            stringBuilder.append(entry.getKey().firstAnsiPart + entry.getValue() + " " + entry.getKey().secondAnsiPart);
+        }
+        return stringBuilder.toString();
     }
 
     // DEBUG METHODS

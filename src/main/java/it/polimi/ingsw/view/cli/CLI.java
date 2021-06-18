@@ -168,13 +168,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * can know about the player's choice
      * */
     public void displayFourLeaderCard() {
-        out.println("Here are the four leader card options...");
+        out.println("Here are the four leader card options, select two of them:");
         Type type = new TypeToken<List<LeaderCard>>() {
         }.getType();
         List<LeaderCard> fourLeaderCards = (List<LeaderCard>) initialCVevent.getEventPayload(type);
         for (int i = 0; i < fourLeaderCards.size(); i++) {
-            out.println(i);
-            out.println(fourLeaderCards.get(i));
+            out.println(i+1 + ") " + fourLeaderCards.get(i).describeLeaderCard());
         }
         out.println("Enter the index of first leader card to keep:");
         Integer firstIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
@@ -185,8 +184,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
         }
         List<LeaderCard> twoLeaderCards = new ArrayList<>();
-        twoLeaderCards.add(fourLeaderCards.get(firstIndex));
-        twoLeaderCards.add(fourLeaderCards.get(secondIndex));
+        twoLeaderCards.add(fourLeaderCards.get(firstIndex-1));
+        twoLeaderCards.add(fourLeaderCards.get(secondIndex-1));
         VCEvent vcEvent = new VCEvent(LEADER_CARDS_CHOOSEN, twoLeaderCards);
         publish(vcEvent);
     }
@@ -911,7 +910,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                         count++;
                     }
                 }
-                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXSTRASLOT) {
+                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT) {
                     Resources totalRes=new Resources();
                     totalRes.add(activateLeaderContext.getTotalResources());
                     if ((totalRes.getResTypes().contains(leaderToCheck.getRequirement().getResource().getOnlyType()))
@@ -1007,7 +1006,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public synchronized void displayIdle() {
         try {
-            this.wait(1000);
+            this.wait(2000);
         } catch (InterruptedException e) {
         }
         String idleSymbols = "✞⨎⌬☺⌺";

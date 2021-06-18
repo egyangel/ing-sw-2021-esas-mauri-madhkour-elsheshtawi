@@ -16,9 +16,7 @@ public class DevCard {
         this.victoryPoints = victoryPoints;
         color = null;
     }
-
-
-
+/*
     public static CliColors getFaith() {
         return CliColors.red;
     }
@@ -49,11 +47,16 @@ public class DevCard {
     private CliColors colors;
     private String face;
 
+ */
+
     /**
      * Enumeration class that represent the card's color
      * */
     public enum CardColor{
-        GREEN,BLUE,YELLOW,PURPLE;
+        GREEN("\u001B[32m"),
+        BLUE("\u001B[34m"),
+        YELLOW("\u001B[33m"),
+        PURPLE("\u001B[35m");
 
         public static boolean contains(String string) {
             for (CardColor color : CardColor.values()) {
@@ -62,6 +65,17 @@ public class DevCard {
                 }
             }
             return false;
+        }
+        static final String RESET = "\u001B[0m";
+        private String ansiCode;
+        CardColor(String ansiCode)
+        {
+            this.ansiCode = ansiCode;
+        }
+        @Override
+        public String toString()
+        {
+            return ansiCode;
         }
     }
 
@@ -106,8 +120,8 @@ public class DevCard {
 
     }
 
-    public CliColors getColors(){return colors;  }
-    public void setColors(CliColors colors){this.colors=colors;}
+//    public CliColors getColors(){return colors;  }
+//    public void setColors(CliColors colors){this.colors=colors;}
     public int getLevel() {
         return this.level;
     }
@@ -127,12 +141,12 @@ public class DevCard {
         return this.cost;
     }
 
-    @Override
-    public String toString(){
-
-        return this.colors+"|"+face+"|"+CliColors.colorReset;
-        //return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
-    }
+//    @Override
+//    public String toString(){
+//
+//        return this.colors+"|"+face+"|"+CliColors.colorReset;
+//        //return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
+//    }
 
 
 

@@ -39,4 +39,14 @@ public class LeaderCard {
                 ", ability=" + ability +
                 '}';
     }
+
+    public String describeLeaderCard(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(requirement.describeRequirement());
+        stringBuilder.append(", ");
+        stringBuilder.append("VP: " + victoryPoint);
+        stringBuilder.append(", ");
+        stringBuilder.append(ability.describeSpecialAbility());
+        return stringBuilder.toString();
+    }
 }

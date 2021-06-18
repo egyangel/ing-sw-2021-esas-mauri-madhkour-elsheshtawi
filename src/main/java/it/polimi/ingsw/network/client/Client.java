@@ -78,12 +78,6 @@ public class Client implements Runnable {
                 view.addNextDisplay("displayLogin");
                 break;
             case FIRST_LOGIN_ACCEPTED:
-                Type t = new TypeToken<Map<Integer, String>>() {
-                }.getType();
-                userIDtoUserNames = (Map<Integer, String>) msg.getObject(t);
-                break;
-
-
             case LOGIN_ACCEPTED:
                 view.setGeneralMsg("When other players connect the server, the game will start...");
                 view.addNextDisplay("displayGeneralMsg");

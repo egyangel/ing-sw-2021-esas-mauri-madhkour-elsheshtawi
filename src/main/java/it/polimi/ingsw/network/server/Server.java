@@ -54,9 +54,10 @@ public class Server implements Runnable {
                 socket = serverSocket.accept();
                 System.out.println("New client request received : " + socket);
 
-                if (numberOfUsers < MAX_NUM_OF_PLAYERS) {
+                if (numberOfConnectedUsers == 0 || numberOfConnectedUsers < numberOfUsers) {
                     System.out.println("Creating a new handler for this client...");
-                    Integer userID = numberOfUsers + 1; // otherwise first login wouldn't fire. TODO:delete comment
+                    numberOfConnectedUsers++;
+                    Integer userID = numberOfConnectedUsers;
                     ClientHandler clientHandler = new ClientHandler(userID, socket, this);
                     System.out.println("Adding to userID - client handler map...");
                     userIDtoHandlers.put(userID, clientHandler);
@@ -81,7 +82,6 @@ public class Server implements Runnable {
 
     public void handleMessage(Integer userID, Message msg) {
         if (msg.getMsgtype() == Message.MsgType.VC_EVENT) {
-
             controller.handleGameMessage(userID,msg);
         } else if (Arrays.asList(Message.MsgType.CV_EVENT, Message.MsgType.MV_EVENT).contains(msg.getMsgtype())) {
             System.out.println("Unexpected server to server message");
@@ -102,8 +102,6 @@ public class Server implements Runnable {
                 Map<String, String> firstLoginMap = (Map<String, String>) incomingmsg.getObject(type);
                 numberOfUsers = Integer.parseInt(firstLoginMap.get("numberOfPlayers"));
                 userIDtoUserNames.put(userID, firstLoginMap.get("username"));
-                numberOfConnectedUsers++;
-                respondmsg = new Message(Message.MsgType.FIRST_LOGIN_ACCEPTED, numberOfUsers);
                 game = new Game();
                 if (numberOfUsers == 1) {
                     controller = new SoloController(game, this);
@@ -114,16 +112,13 @@ public class Server implements Runnable {
                     controller.startMatch();
                 } else {
                     controller = new Controller(game, this);
+                    respondmsg = new Message(Message.MsgType.FIRST_LOGIN_ACCEPTED, numberOfUsers);
+                    senderHandler.sendMessage(respondmsg);
                 }
-
-
-                //  senderHandler.sendMessage(respondmsg);
-
                 break;
             case REQUEST_LOGIN:
                 String username = incomingmsg.getJsonContent();
                 userIDtoUserNames.put(userID, username);
-                numberOfConnectedUsers++;
                 respondmsg = new Message(Message.MsgType.LOGIN_ACCEPTED);
                 senderHandler.sendMessage(respondmsg);
                 if (numberOfConnectedUsers == numberOfUsers) {
@@ -131,13 +126,13 @@ public class Server implements Runnable {
                     for (ClientHandler handler : userIDtoHandlers.values()) {
                         handler.sendMessage(new Message(Message.MsgType.START_MATCH, userIDtoUserNames));
                     }
+                    controller.startMatch();
                 }
-                controller.startMatch();
                 break;
         }
     }
 
-    public boolean isFirstPlayerConnected() {
+    public boolean isFirstPlayerSetupDone() {
         if (numberOfUsers > 0) return true;
         else return false;
     }
