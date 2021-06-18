@@ -72,10 +72,15 @@ public class DevCard {
         {
             this.ansiCode = ansiCode;
         }
+
+        public String getAnsiCode(){
+            return ansiCode;
+        }
+
         @Override
         public String toString()
         {
-            return ansiCode;
+            return this.name();
         }
     }
 

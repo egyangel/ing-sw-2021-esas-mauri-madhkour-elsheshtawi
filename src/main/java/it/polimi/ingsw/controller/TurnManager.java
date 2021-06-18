@@ -43,8 +43,8 @@ public class TurnManager {
         return currentPlayerIndex;
     }
 
-    public static Integer getIndexOfUserID(Integer userID){
-        return turnOrderUserID.indexOf(userID);
+    public static Integer getOrderOfUserID(Integer userID){
+        return turnOrderUserID.indexOf(userID) + 1;
     }
 
     public static void goToNextTurn(){

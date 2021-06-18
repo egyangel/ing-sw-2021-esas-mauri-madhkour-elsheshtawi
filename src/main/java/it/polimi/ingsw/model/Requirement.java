@@ -57,8 +57,8 @@ public class Requirement {
             case TWOCARD:
                 DevCard.CardColor firstColor = colorList.get(0);
                 DevCard.CardColor secondColor = colorList.get(1);
-                stringBuilder.append(firstColor.toString() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
-                stringBuilder.append(secondColor.toString() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(firstColor.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(secondColor.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
                 break;
             case RESOURCES:
                 stringBuilder.append(resources.describeResource());
@@ -66,13 +66,13 @@ public class Requirement {
             case THREECARD:
                 DevCard.CardColor colorOfTwoCard = colorList.get(0);
                 DevCard.CardColor colorOfOneCard = colorList.get(1);
-                stringBuilder.append(colorOfTwoCard.toString() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
-                stringBuilder.append(colorOfTwoCard.toString() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
-                stringBuilder.append(colorOfOneCard.toString() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(colorOfTwoCard.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(colorOfTwoCard.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(colorOfOneCard.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
                 break;
             case LEVELTWOCARD:
                 DevCard.CardColor colorOfOnlyCard = colorList.get(0);
-                stringBuilder.append(colorOfOnlyCard.toString() + "[" + "\u2681" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(colorOfOnlyCard.getAnsiCode() + "[" + "\u2681" + "]" + DevCard.CardColor.RESET);
                 break;
         }
         return stringBuilder.toString();

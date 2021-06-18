@@ -60,10 +60,9 @@ public class Controller implements Listener<VCEvent> {
     private void sendTurnOrderAssign() {
         TurnManager.assignTurnOrder();
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-            // TODO: have to be fixed. it returns userID 0 but user id start from 1
-            Integer userTurn = TurnManager.getIndexOfUserID(entry.getKey());
+            Integer userTurn = TurnManager.getOrderOfUserID(entry.getKey());
             InitFatihPoints(entry.getKey(), userTurn);
-            CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn); // TODO: i think instead of userTurn it should be entry.getKey() as for userId;
+            CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
             entry.getValue().update(turnAssignEvent);
         }
     }
@@ -87,6 +86,7 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent;
 
         switch (vcEvent.getEventType()) {
+            // todo written by Omer: for solo mode I think it would be easier to create its own initial setup messages
             case LEADER_CARDS_CHOOSEN:
                 Type type1 = new TypeToken<List<LeaderCard>>() {
                 }.getType();
