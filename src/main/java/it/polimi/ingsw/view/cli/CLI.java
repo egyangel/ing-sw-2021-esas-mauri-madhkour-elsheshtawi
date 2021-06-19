@@ -41,8 +41,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
     private String marketTrayDescription;
     private String devCardMatrixDescription;
-    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions;
-    private Map<Integer, String> userIDtoUsernames;
+    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<>();
+    private Map<Integer, String> userIDtoUsernames =  new HashMap<>();
     private boolean majorActionDone;
 
     /**
@@ -79,9 +79,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         //TODO add used methods at the end
         displayNameMap.put("displayMarketTray", this::displayMarketTray);
         displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
+        displayNameMap.put("displayWarehouse", this::displayWarehouse);
+        displayNameMap.put("displayStrongbox", this::displayStrongbox);
+
 //        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
 //        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
-//        displayNameMap.put("displayWarehouseAndStrongbox", this::displayWarehouseAndStrongbox);
 //        displayNameMap.put("displayDevSlots", this::displayDevSlots);
 //        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
 //        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
@@ -166,12 +168,19 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayFourLeaderCard");
                 break;
             case ASSIGN_TURN_ORDER:
+                initEmptyPersonalBoards();
                 addNextDisplay("displayTurnAssign");
                 break;
             case SELECT_ALL_ACTION:
                 majorActionDone = false;
                 addNextDisplay("displayAllActionSelection");
                 break;
+        }
+    }
+
+    private void initEmptyPersonalBoards(){
+        for(Integer userID: userIDtoUsernames.keySet()){
+            userIDtoBoardDescriptions.put(userID, new PersonalBoardDescription());
         }
     }
 
@@ -379,16 +388,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayWarehouse() {
-        // TODO userIDtoBoardDescriptions is not setted so it's thrown an exception
-        // returnToCorrectActionSelection() in catch for test perpose
-        try {
-            out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
-            returnToCorrectActionSelection();
-
-        } catch (Exception e) {
-            returnToCorrectActionSelection();
-        }
-
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
+        returnToCorrectActionSelection();
     }
 
     public void displayStrongbox() {
@@ -1000,22 +1001,38 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     marketTrayDescription = marketTray.describeMarketTray();
                     break;
                 case DEVCARD_MATRIX_UPDATE:
-                    devCardMatrixDescription = mvEvent.getJsonContent();
+                    Type devCardListType = new TypeToken<List<DevCard>>() {}.getType();
+                    List<DevCard> topDevCards = (List<DevCard>) mvEvent.getEventPayload(devCardListType);
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i<12; i++){
+                        sb.append(i + ") " + topDevCards.get(i).describeDevCard());
+                        sb.append("\n");
+                    }
+                    devCardMatrixDescription = sb.toString();
                     break;
                 case WAREHOUSE_UPDATE:
+                    Type shelfListType = new TypeToken<List<Shelf>>() {}.getType();
+                    List<Shelf> shelves = (List<Shelf>) mvEvent.getEventPayload(shelfListType);
+                    StringBuilder sb1 = new StringBuilder();
+                    for (int i = 0; i<3; i++){
+                        sb1.append(shelves.get(i).describeShelfFancy());
+                    }
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(sb1.toString());
                     //   userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
 
-                    PersonalBoardDescription personalDescription = userIDtoBoardDescriptions.get(userIDofUpdatedBoard);
-                    if (personalDescription == null) {
-                        personalDescription = new PersonalBoardDescription();
-                        personalDescription.setWarehouseDescription(mvEvent.getJsonContent());
-                        this.userIDtoBoardDescriptions.put(userIDofUpdatedBoard, personalDescription);
-                    } else {
-                        userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
-                    }
+//                    PersonalBoardDescription personalDescription = userIDtoBoardDescriptions.get(userIDofUpdatedBoard);
+//                    if (personalDescription == null) {
+//                        personalDescription = new PersonalBoardDescription();
+//                        personalDescription.setWarehouseDescription(mvEvent.getJsonContent());
+//                        this.userIDtoBoardDescriptions.put(userIDofUpdatedBoard, personalDescription);
+//                    } else {
+//                        userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
+//                    }
                     break;
                 case STRONGBOX_UPDATE:
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(mvEvent.getJsonContent());
+                    Resources strongboxRes = (Resources) mvEvent.getEventPayload(Resources.class);
+                    String strongboxDescription = strongBoxPrinter(strongboxRes);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(strongboxDescription);
                     break;
                 case DEVSLOTS_UPDATE:
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(mvEvent.getJsonContent());
@@ -1027,6 +1044,25 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         } else {
             out.println("Unidentified MV or CV event");
         }
+    }
+
+    private String  strongBoxPrinter(Resources res){
+        Resources res1 = res.cloneThisType(Resources.ResType.COIN);
+        Resources res2 = res.cloneThisType(Resources.ResType.STONE);
+        Resources res3 = res.cloneThisType(Resources.ResType.SHIELD);
+        Resources res4 = res.cloneThisType(Resources.ResType.SERVANT);
+        StringBuilder sb = new StringBuilder();
+        sb.append("  ");
+        for(int i = 0; i<13; i++){
+            sb.append("\u2509");
+        }
+        sb.append("\n\u254f " + res1.describeResource() + "  " + res2.describeResource() + " \u254f\n");
+        sb.append("\u254f " + res3.describeResource() + "  " + res4.describeResource() + " \u254f\n");
+        sb.append("  ");
+        for(int i = 0; i<13; i++){
+            sb.append("\u2509");
+        }
+        return sb.toString();
     }
 
         @Override

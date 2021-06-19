@@ -63,6 +63,7 @@ public class Resources {
     }
 
     public void add(ResType type,Integer val){
+        if (val <= 0) return;
         this.values.put(type, this.getNumberOfType(type) + val); //replaces by default if type exists before
     }
 
@@ -154,7 +155,7 @@ public class Resources {
     public Resources() {}
 
     public Resources(ResType resource, int number) {
-        values.put(resource,number);
+        if (number >=0) values.put(resource,number);
     }
 
     public String describeResource(){

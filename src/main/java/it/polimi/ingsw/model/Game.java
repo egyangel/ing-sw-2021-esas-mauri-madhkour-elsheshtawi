@@ -98,8 +98,15 @@ public class Game implements Publisher<MVEvent> {
 //        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, marketTrayString);
         MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, market);
         publish(userID, marketUpdate);
-        String devCardMatrixString = describeDevCardMatrix();
-        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, devCardMatrixString);
+//        String devCardMatrixString = describeDevCardMatrix();
+//        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, devCardMatrixString);
+        List<DevCard> topDevCards = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                topDevCards.add(devCardMatrix[i][j].peekTopCard());
+            }
+        }
+        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, topDevCards);
         publish(userID, devCardMatrixUpdate);
     }
 

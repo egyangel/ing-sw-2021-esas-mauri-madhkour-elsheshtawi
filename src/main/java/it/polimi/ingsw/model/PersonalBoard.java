@@ -253,6 +253,14 @@ public class PersonalBoard {
         return warehouse[places[0].getIndexInWarehouse()].swapShelf(warehouse[places[1].getIndexInWarehouse()]);
     }
 
+    public List<Shelf> getShelves(){
+        List<Shelf> shelves = new ArrayList<>();
+        shelves.add(warehouse[0]);
+        shelves.add(warehouse[1]);
+        shelves.add(warehouse[2]);
+        return shelves;
+    }
+
     public void subtractFromWarehouse(Resources res) {
         List<Resources.ResType> resTypeList = new ArrayList<>();
         resTypeList.addAll(res.getResTypes());

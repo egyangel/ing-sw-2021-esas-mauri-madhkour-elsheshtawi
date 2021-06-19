@@ -3,9 +3,9 @@ package it.polimi.ingsw.model.enumclasses;
 import it.polimi.ingsw.model.Resources;
 
 public enum MarbleColor {
-    WHITE("\u001B[37m"),
+    WHITE("\033[1;37m"),
     BLUE("\u001B[34m"),
-    GREY("\u001B[37m"),
+    GREY("\u001B[0;30m"),
     YELLOW("\u001B[33m"),
     PURPLE("\u001B[35m"),
     RED("\u001B[31m");

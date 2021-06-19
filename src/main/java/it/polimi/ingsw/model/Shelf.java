@@ -134,6 +134,67 @@ public class Shelf {
         String string = this.getNumberOfElements()+" of "+ this.getShelfResType();
         return string;
     }
+    public String describeShelfFancy(){
+        StringBuilder sb = new StringBuilder();
+        switch(place){
+            case TOP:
+                sb.append("      \u2571 \u2572\n");
+                if (resources.isEmpty()){
+                    sb.append("    \u2571  -  \u2572");
+                }
+                else {
+                    sb.append("    \u2571 " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                }
+                sb.append("\n");
+                break;
+            case MIDDLE:
+                sb.append("  \u2571");
+                if (resources.isEmpty()){
+                    sb.append("  -   -  \u2572");
+                }
+                else if(resources.size() == 1){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  \u2572");
+                } else if(resources.size() == 2){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                }
+                sb.append("\n");
+                break;
+            case BOTTOM:
+                sb.append("\u2571");
+                if (resources.isEmpty()){
+                    sb.append("  -   -   -  \u2572");
+                }
+                else if(resources.size() == 1){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  -   \u2572");
+                } else if(resources.size() == 2){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  \u2572");
+                } else if(resources.size() == 3){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                }
+                sb.append("\n");
+                for(int i = 0; i<15; i++){
+                    sb.append("\u2500");
+                }
+                break;
+        }
+        return sb.toString();
+    }
+
+//    public static void main(String[] args){
+//        Shelf[] warehouse = new Shelf[3];
+//        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
+//        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
+//        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
+//        warehouse[0].putResource(Resources.ResType.COIN, 1);
+//        warehouse[1].putResource(Resources.ResType.SHIELD, 1);
+//        warehouse[2].putResource(Resources.ResType.SERVANT, 3);
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(warehouse[0].describeShelfFancy());
+//        sb.append(warehouse[1].describeShelfFancy());
+//        sb.append(warehouse[2].describeShelfFancy());
+//        System.out.println(sb.toString());
+//    }
+
     public boolean removeOneFromShelf(){
         return this.resources.remove(this.resources.get(0));
     }

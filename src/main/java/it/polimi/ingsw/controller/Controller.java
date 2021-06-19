@@ -82,6 +82,19 @@ public class Controller implements Listener<VCEvent> {
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
     }
 
+    private void sendInitPersonalBoardDescriptions(){
+        List<Shelf> shelves;
+        Resources strongbox;
+        for(Integer userId: userIDtoVirtualViews.keySet()){
+            shelves = game.getPersonalBoard(userId).getShelves();
+            MVEvent warehouseUpdate = new MVEvent(userId, MVEvent.EventType.WAREHOUSE_UPDATE, shelves);
+            game.updateAllAboutChange(warehouseUpdate);
+            strongbox = game.getPersonalBoard(userId).getStrongboxResources();
+            MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
+            game.updateAllAboutChange(strongboxUpdate);
+        }
+    }
+
     @Override
     public void update(VCEvent vcEvent) {
         Integer userID = vcEvent.getUserID();
@@ -105,6 +118,7 @@ public class Controller implements Listener<VCEvent> {
                 game.getPersonalBoard(userID).putToWarehouseWithoutCheck(resources);
                 TurnManager.registerResponse(userID);
                 if (TurnManager.hasAllClientsResponded()) {
+                    sendInitPersonalBoardDescriptions();
                     beginTurn();
                 }
                 break;
@@ -189,6 +203,7 @@ public class Controller implements Listener<VCEvent> {
             marbleList = game.getMarketTray().selectColumn(context.getIndex());
         List<LeaderCard> whiteConverters = new ArrayList<>();
         //todo Omer also this part has something that doesn't convince me,inside getActiveLeaderCards there are only the owned cards and not the active one
+        //todo Omer: it only checks active cards of type white converter, in personal board, there are two lists: activeLeaderCards and inactiveLeaderCards
         for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
             if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
                 whiteConverters.add(leaderCard);
@@ -223,8 +238,8 @@ public class Controller implements Listener<VCEvent> {
             context.setWhiteConverters(whiteConverters);
             context.setWhiteMarbleNumber(whiteMarbles);
         }
-        String marketTrayDescription = game.getMarketTray().describeMarketTray();
-        MVEvent marketTrayEvent = new MVEvent(userID, MVEvent.EventType.MARKET_TRAY_UPDATE, marketTrayDescription);
+        // sending market tray description doesnt work for colored text because of escape characters and JSON etc, sending markettray object works fine
+        MVEvent marketTrayEvent = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, game.getMarketTray());
         game.updateAllAboutChange(marketTrayEvent);
         context.setResources(resources);
         context.convertResIntoFaith();
