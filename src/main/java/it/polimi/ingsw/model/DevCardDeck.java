@@ -3,12 +3,19 @@ package it.polimi.ingsw.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+/**
+ * Development Deck card class , it is the class that handle the Development deck
+ * @author
+ *
+ * */
 public class DevCardDeck {
     private DevCard.CardColor color;
     private int level;
     private List<DevCard> stackOfDevCards = new ArrayList<>();
-
+    /**
+     * Constructor
+     *
+     * */
     public DevCardDeck(DevCard.CardColor color, int level) {
         this.color = color;
         this.level = level;

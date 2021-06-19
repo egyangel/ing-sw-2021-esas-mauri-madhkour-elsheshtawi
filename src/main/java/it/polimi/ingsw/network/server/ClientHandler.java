@@ -35,7 +35,7 @@ public class ClientHandler implements Runnable{
         System.out.println("Connected to client " + userID + " at " + socket.getInetAddress());
 
         try {
-            if(server.isFirstPlayerConnected()){
+            if(server.isFirstPlayerSetupDone()){
                 sendMessage(new Message(Message.MsgType.DISPLAY_LOGIN));
             } else {
                 sendMessage(new Message(Message.MsgType.DISPLAY_FIRST_LOGIN));

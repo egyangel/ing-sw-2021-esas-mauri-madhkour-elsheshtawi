@@ -1,7 +1,11 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enumclasses.CliColors;
-
+/**
+ * Development Card class
+ * @author
+ *
+ * */
 public class DevCard {
 
     public DevCard(CliColors[] values, int level, Resources lhs, Resources rhs, Resources cost, int victoryPoints) {
@@ -12,9 +16,7 @@ public class DevCard {
         this.victoryPoints = victoryPoints;
         color = null;
     }
-
-
-
+/*
     public static CliColors getFaith() {
         return CliColors.red;
     }
@@ -45,9 +47,16 @@ public class DevCard {
     private CliColors colors;
     private String face;
 
+ */
 
+    /**
+     * Enumeration class that represent the card's color
+     * */
     public enum CardColor{
-        GREEN,BLUE,YELLOW,PURPLE;
+        GREEN("\u001B[32m"),
+        BLUE("\u001B[34m"),
+        YELLOW("\u001B[33m"),
+        PURPLE("\u001B[35m");
 
         public static boolean contains(String string) {
             for (CardColor color : CardColor.values()) {
@@ -56,6 +65,22 @@ public class DevCard {
                 }
             }
             return false;
+        }
+        static final String RESET = "\u001B[0m";
+        private String ansiCode;
+        CardColor(String ansiCode)
+        {
+            this.ansiCode = ansiCode;
+        }
+
+        public String getAnsiCode(){
+            return ansiCode;
+        }
+
+        @Override
+        public String toString()
+        {
+            return this.name();
         }
     }
 
@@ -66,6 +91,15 @@ public class DevCard {
     private final Resources cost;
     private final int victoryPoints;
 
+    /**
+     * Constructor of a normal Development Card
+     * @param color represent the color of the card
+     * @param level represent the level of the card
+     * @param cost represent the cost of the card
+     * @param LHS represent the LHS(left hand side of production power) of the card
+     * @param RHS represent the RHS(right hand side of production power of the card
+     * @param victoryPoints represent the victoryPoints of the card
+     * */
     public DevCard (int level, CardColor color, Resources LHS, Resources RHS, Resources cost, int victoryPoints) {
         this.color=color;
         this.level=level;
@@ -74,8 +108,13 @@ public class DevCard {
         this.cost=cost;
         this.victoryPoints=victoryPoints;
 
-
     }
+    /**
+     * Constructor of Default Production, I chose to think it as a Development
+     * Card with only the two attribute
+     * @param LHS represent the LHS(left hand side of production power) of the card
+     * @param RHS represent the RHS(right hand side of production power of the card
+     * */
     public DevCard ( Resources LHS, Resources RHS) {
         this.color = null;
         this.level = 0 ;
@@ -86,8 +125,8 @@ public class DevCard {
 
     }
 
-    public CliColors getColors(){return colors;  }
-    public void setColors(CliColors colors){this.colors=colors;}
+//    public CliColors getColors(){return colors;  }
+//    public void setColors(CliColors colors){this.colors=colors;}
     public int getLevel() {
         return this.level;
     }
@@ -107,12 +146,12 @@ public class DevCard {
         return this.cost;
     }
 
-    @Override
-    public String toString(){
-
-        return this.colors+"|"+face+"|"+CliColors.colorReset;
-        //return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
-    }
+//    @Override
+//    public String toString(){
+//
+//        return this.colors+"|"+face+"|"+CliColors.colorReset;
+//        //return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
+//    }
 
 
 

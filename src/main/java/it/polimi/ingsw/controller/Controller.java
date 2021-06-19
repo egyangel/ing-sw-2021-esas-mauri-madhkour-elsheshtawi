@@ -20,7 +20,6 @@ public class Controller implements Listener<VCEvent> {
 
     private Server server;
     protected Game game;
-    private List<DevCard> allOwnedDevCard = new ArrayList<>();
     private Map<Integer, String> userIDtoUsernames = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 
@@ -61,10 +60,9 @@ public class Controller implements Listener<VCEvent> {
     private void sendTurnOrderAssign() {
         TurnManager.assignTurnOrder();
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-            // TODO: have to be fixed. it returns userID 0 but user id start from 1
-            Integer userTurn = TurnManager.getIndexOfUserID(entry.getKey());
+            Integer userTurn = TurnManager.getOrderOfUserID(entry.getKey());
             InitFatihPoints(entry.getKey(), userTurn);
-            CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn); // TODO: i think instead of userTurn it should be entry.getKey() as for userId;
+            CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
             entry.getValue().update(turnAssignEvent);
         }
     }
@@ -86,8 +84,9 @@ public class Controller implements Listener<VCEvent> {
         Integer userID = vcEvent.getUserID();
         Resources resources;
         CVEvent cvEvent;
-        LeaderActionContext emptyActivateLeaderContext = new LeaderActionContext();
+
         switch (vcEvent.getEventType()) {
+            // todo written by Omer: for solo mode I think it would be easier to create its own initial setup messages
             case LEADER_CARDS_CHOOSEN:
                 Type type1 = new TypeToken<List<LeaderCard>>() {
                 }.getType();
@@ -97,8 +96,6 @@ public class Controller implements Listener<VCEvent> {
                 if (TurnManager.hasAllClientsResponded()) {
                     sendTurnOrderAssign();
                 }
-                emptyActivateLeaderContext.setPlayerCard(selectedCards);
-                handleActivateLeaderChoosen(userID,emptyActivateLeaderContext);
                 break;
             case INIT_RES_CHOOSEN:
                 resources = (Resources) vcEvent.getEventPayload(Resources.class);
@@ -140,15 +137,16 @@ public class Controller implements Listener<VCEvent> {
                 handleActivateDevCardAction(userID, ActivateDevContext);
                 break;
             case ACTIVATE_LEADER_CONTEXT_SELECTED:
+                LeaderActionContext emptyActivateLeaderContext = new LeaderActionContext();
+                emptyActivateLeaderContext.setPlayerCard(game.getPersonalBoard(userID).getInactiveLeaderCards());
+                emptyActivateLeaderContext.setTotalResources(game.getPersonalBoard(userID).getTotalResources());
                 emptyActivateLeaderContext.setLastStep(CHOOSE_ACTION);
-                setResources(userID, emptyActivateLeaderContext);
                 cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, emptyActivateLeaderContext);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
-
                 break;
             case ACTIVATE_LEADER_CONTEXT_FILLED:
                 LeaderActionContext activateLeaderContext = (LeaderActionContext) vcEvent.getEventPayload(LeaderActionContext.class);
-                //handleActivateDevCardAction(userID, activateLeaderContext);
+                handleActivateLeaderAction(userID, activateLeaderContext);
                 break;
             case TAKE_RES_ACTION_ENDED:
             case BUY_DEVCARD_ACTION_ENDED:
@@ -156,7 +154,7 @@ public class Controller implements Listener<VCEvent> {
                 CVEvent cvEventTwo = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEventTwo);
                 break;
-        }
+        }//todo change the implementation of leader card action. put it as the other event,move everything in controller side
     }
     //handle TakeResAction
     private void handleTakeResAction(Integer userID, TakeResActionContext context){
@@ -187,6 +185,7 @@ public class Controller implements Listener<VCEvent> {
         else
             marbleList = game.getMarketTray().selectColumn(context.getIndex());
         List<LeaderCard> whiteConverters = new ArrayList<>();
+        //todo Omer also this part has something that doesn't convince me,inside getActiveLeaderCards there are only the owned cards and not the active one
         for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
             if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
                 whiteConverters.add(leaderCard);
@@ -262,8 +261,6 @@ public class Controller implements Listener<VCEvent> {
         MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
         game.updateAllAboutChange(warehouseEvent);
     }
-
-
     //handle BuyDevCardAction
     private void handleBuyDevCardAction(Integer userID, BuyDevCardActionContext context){
         switch (context.getLastStep()){
@@ -326,7 +323,9 @@ public class Controller implements Listener<VCEvent> {
             game.getPersonalBoard(userID).subtractFromWarehouse(payFromWarehouse);
             game.getPersonalBoard(userID).subtractFromStrongbox(payFromStrongbox);
             game.getPersonalBoard(userID).putDevCardOnSlot(context.getSelectedCard(), context.getSelectedSlot());
-            allOwnedDevCard.add(context.getSelectedCard());
+            game.getPersonalBoard(userID).setOwnedCard(context.getSelectedCard());
+            game.getPersonalBoard(userID).countVictoryPoints(context.getSelectedCard().getVictoryPoints());
+
             context.setLastStep(COST_PAID_DEVCARD_PUT);
             String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
             MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
@@ -337,26 +336,27 @@ public class Controller implements Listener<VCEvent> {
             String devSlotsDescription = game.getPersonalBoard(userID).describeDevSlots();
             MVEvent devslotsEvent = new MVEvent(userID, MVEvent.EventType.DEVSLOTS_UPDATE, devSlotsDescription);
             game.updateAllAboutChange(devslotsEvent);
+            if(game.getPersonalBoard(userID).getOwnedCard().size()== 7) {
+               triggerTheEndGame(userID);
+            }
         }
     }
 
-
-    //handle the activation of prodution
+    //handle the activation of production
     private void handleActivateDevCardAction(Integer userID, ActivateProdActionContext context){
         switch (context.getLastStep()){
             case DEV_SLOTS_CHOOSEN:
                 handleActivateDevSlotsProductionChosen(userID, context);
                 break;
-            case PAY_PRODUCTION_FROM_WHERE_CHOSEN:
+            /*case PAY_PRODUCTION_FROM_WHERE_CHOSEN:
                  handleCheckProductionPayment(userID, context);
-                 break;
+                 break;*/
         }
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
     private void  handleSlotAvailableChoosen(Integer userID, ActivateProdActionContext context){
         int j = 0 ;
-
         List<DevSlot>  slotAvailable = new ArrayList<>();
         List<DevSlot.slotPlace> placeList = new ArrayList<>( Arrays.asList(DevSlot.slotPlace.LEFT,DevSlot.slotPlace.CENTER,DevSlot.slotPlace.RIGHT));
 
@@ -369,10 +369,7 @@ public class Controller implements Listener<VCEvent> {
         }
         context.setSlotAvailable(slotAvailable);
         slotAvailable.clear();
-
     }
-
-
 
     private void  handleActivateDevSlotsProductionChosen(Integer userID, ActivateProdActionContext context) {
         int j = 0;
@@ -383,19 +380,17 @@ public class Controller implements Listener<VCEvent> {
                 selectedCard.add(game.getPersonalBoard(userID).getDevCardOnSlot(context.getSlots().get(j)));
             }
             context.setSelectedCard(selectedCard);
-            context.setLastStep(CHOOSE_PRODUCTION_COST_FROM_WHERE);
+            handleCheckProductionPayment(userID, context);
+            //context.setLastStep(CHOOSE_PRODUCTION_COST_FROM_WHERE);
         }
     }
     //this method handle the activation phase of dev Card, it checks if there are enough resources for all cards;
     private void handleCheckProductionPayment(Integer userID, ActivateProdActionContext context) {
         int j = 0;
-        Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
-        Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
-
         Resources totLeftCost = new Resources();
         Resources totRightCost = new Resources();
 
-    // check if there are the total resources to activate all the things choosen from the player in the production action
+        // check if there are the total resources to activate all the things chosen from the player in the production action
         if (context.getBaseProdPower()) {
             totLeftCost.add(context.getBaseProductionCard().getLHS());
             totRightCost.add(context.getBaseProductionCard().getRHS());
@@ -407,41 +402,45 @@ public class Controller implements Listener<VCEvent> {
                 j++;
             }
         }
-        totRightCost.add(context.getRhlLeaderCard() );
-        if (context.getFromWhereToPayForDefault() && context.getFromWhereToPayForDevslots()) {
-            if (totLeftCost.smallerOrEqual(warehouseRes))
-                context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE);
-        } else {
-            if (totLeftCost.smallerOrEqual(strongboxRes))
-                context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX);
+        if (context.getActivationLeaderCardProduction()) {
+            totLeftCost.add(context.getLhlLeaderCard());
+            totRightCost.add(context.getRhlLeaderCard());
         }
-        if (!context.getLastStep().equals(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_WAREHOUSE) && !context.getLastStep().equals(NOT_ENOUGH_RES_FOR_PRODUCTION_IN_STRONGBOX) ) {
-            context.setTotalLeftCost(totLeftCost);
+
+        if (totLeftCost.smallerOrEqual(game.getPersonalBoard(userID).getTotalResources()))
+        {
+            context.resetTotalRightCost();
+            context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION);
+        }
+        if (!context.getLastStep().equals(NOT_ENOUGH_RES_FOR_PRODUCTION) ) {
             context.setTotalRightCost(totRightCost);
             handleProductionPayment(userID,context);
         }
     }
     private void handleProductionPayment(Integer userID, ActivateProdActionContext context){
+         int j=0;
         if(context.getActivationLeaderCardProduction()){
-            context.setTotalRightCost(context.getTotalRightCost());
             handleActivationLeaderProductionPayment(userID,context);
         }
-        if (context.getFromWhereToPayForDevslots() || context.getFromWhereToPayForDefault())
-        {
-            game.getPersonalBoard(userID).subtractFromWarehouse(context.getTotalLeftCost());
-            game.getPersonalBoard(userID).putResInStrongBox(context.getTotalRightCost());
-            context.setLastStep(COST_PAID);
-            String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-            MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-            game.updateAllAboutChange(warehouseEvent);
-        }else {
-            game.getPersonalBoard(userID).subtractFromStrongbox(context.getTotalLeftCost());
-            game.getPersonalBoard(userID).putResInStrongBox(context.getTotalRightCost());
-            context.setLastStep(COST_PAID);
-            String strongBoxDescription = game.getPersonalBoard(userID).describeStrongbox();
-            MVEvent strongboxEvent = new MVEvent(userID, MVEvent.EventType.STRONGBOX_UPDATE, strongBoxDescription);
-            game.updateAllAboutChange(strongboxEvent);
+
+
+        if(context.getBaseProductionCard().getLHS().smallerOrEqual(game.getPersonalBoard(userID).getWarehouseResources()))
+            game.getPersonalBoard(userID).subtractFromWarehouse(context.getBaseProductionCard().getLHS());
+        else
+            game.getPersonalBoard(userID).subtractFromStrongbox(context.getBaseProductionCard().getLHS());
+
+        if (context.getSelectedCard().size() > 0) {
+            while (j < context.getSelectedCard().size()) {
+                if(context.getSelectedCard().get(j).getLHS().smallerOrEqual(game.getPersonalBoard(userID).getWarehouseResources()))
+                    game.getPersonalBoard(userID).subtractFromWarehouse(context.getSelectedCard().get(j).getLHS());
+                else
+                    game.getPersonalBoard(userID).subtractFromStrongbox(context.getSelectedCard().get(j).getLHS());
+
+                j++;
+            }
         }
+        game.getPersonalBoard(userID).putResInStrongBox(context.getTotalRightCost());
+        context.setLastStep(COST_PAID);
 
         String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
         MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
@@ -453,146 +452,78 @@ public class Controller implements Listener<VCEvent> {
         MVEvent strongboxEvent = new MVEvent(userID, MVEvent.EventType.STRONGBOX_UPDATE, strongBoxDescription);
         game.updateAllAboutChange(strongboxEvent);
 
-        context.resetBaseProdPower();
-        context.resetSelectedCard();
-        context.resetFromWhereToPayForDevslots();
-        context.resetSlotAvailable();
-        context.resetBaseProductionCard();
-        context.resetFromWhereToPayForDefault();
-        context.resetTotalRightCost();
-        context.resetTotalLeftCost();
+        context.resetActivationProduction();
+
+
     }
     private void handleActivationLeaderProductionPayment(Integer userID, ActivateProdActionContext context) {
-        Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
-        Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
-        Resources totLeftCost = context.getLhlLeaderCard();
+
+        if(context.getLhlLeaderCard().smallerOrEqual(game.getPersonalBoard(userID).getWarehouseResources()))
+            game.getPersonalBoard(userID).subtractFromWarehouse(context.getLhlLeaderCard());
+        else
+            game.getPersonalBoard(userID).subtractFromStrongbox(context.getLhlLeaderCard());
+
+        if(context.getNumberOfActiveLeaderProduction()==1)
+            game.getPersonalBoard(userID).increaseFaitPoint(1);
+        else
+            game.getPersonalBoard(userID).increaseFaitPoint(2);
 
 
-        if (context.getFromWhereToPayForLeader()) {
-            if (!totLeftCost.smallerOrEqual(warehouseRes)) {
-                game.getPersonalBoard(userID).subtractFromWarehouse(totLeftCost);
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-                context.resetRhlLeaderCard();
-                String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-                MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-                game.updateAllAboutChange(warehouseEvent);
-            }
-        } else {
-            if (!totLeftCost.smallerOrEqual(strongboxRes)) {
-                game.getPersonalBoard(userID).subtractFromStrongbox(totLeftCost);
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-                context.resetRhlLeaderCard();
-                String strongBoxDescription = game.getPersonalBoard(userID).describeStrongbox();
-                MVEvent strongboxEvent = new MVEvent(userID, MVEvent.EventType.STRONGBOX_UPDATE, strongBoxDescription);
-                game.updateAllAboutChange(strongboxEvent);
-            }
-        }
-        context.resetFromWhereToPayForLeader();
     }
-
 
     //handle the activation of prodution
     private void handleActivateLeaderAction(Integer userID, LeaderActionContext context){
         switch (context.getLastStep()){
             case DISCARD_LEADER_CARD:
                 handleDiscardLeaderChosen(userID, context);
+                context.setLastStep(END_LEADER_ACTION);
                 break;
-            case LEADER_CARD_CHOOSEN:
+            case LEADER_CARD_ACTIVATED_CHOOSEN:
                 handleActivateLeaderChoosen(userID, context);
+                context.setLastStep(END_LEADER_ACTION);
                 break;
-            case LEADER_CARD_NOT_CHOOSEN:
+            case BOTH_ACTIONS:
+                handleDiscardLeaderChosen(userID, context);
                 handleActivateLeaderChoosen(userID, context);
+                context.setLastStep(END_LEADER_ACTION);
+                break;
+            case LEADER_CARD_NOT_ACTIVATED_CHOOSEN:
+                context.setLastStep(END_LEADER_ACTION);
                 break;
         }
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
-//methods that update the resources inside the strong box and warehouse
-    private void setResources(Integer userID, LeaderActionContext context){
-        Resources totalResources=new Resources();
-        totalResources.add(game.getPersonalBoard(userID).getStrongboxResources());
-        totalResources.add(game.getPersonalBoard(userID).getStrongboxResources());
-        context.setTotalResources(totalResources);
-        totalResources.clear();
-    }
+
     private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
-        int index ;
-        List<LeaderCard> discardedCard = new ArrayList<>();
-        index =context.getNumberOfDiscardLeader();
 
-        switch(index){
-            case 1:
-                discardedCard.add(context.getPlayerCard().get(0));
-                context.changePlayerCard(discardedCard);
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-                break;
-            case 2:
-                discardedCard.add(context.getPlayerCard().get(1));
-                context.changePlayerCard(discardedCard);
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-                break;
-            case 3:
-                discardedCard.addAll(context.getPlayerCard());
-                context.changePlayerCard(discardedCard);
-                game.getPersonalBoard(userID).increaseFaitPoint(2);
-                break;
-        }
-        discardedCard.clear();
+       game.getPersonalBoard(userID).changePlayerCard(context.discardedPlayerCard());
+       game.getPersonalBoard(userID).increaseFaitPoint(context.discardedPlayerCard().size());
 
     }
+
     private void  handleActivateLeaderChoosen(Integer userID, LeaderActionContext context){
-
-
-        for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
-
-        }
-
-
-    }
-    private void handleActivationLeaderProduction(Integer userID, LeaderActionContext context,ActivateProdActionContext contextProd) {
-       /* Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
-        Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
-        Resources totLeftCost = new Resources();
-        Resources totRightCost = new Resources();
-        int i = 0;
-        while (i < context.getNumberOfActiveLeaderProduction()) {
-
-            totRightCost.add(context.getRhlLeaderCard().get(i));
-        }
-        if (context.getFromWhereToPayForLeader()) {
-            if (totLeftCost.smallerOrEqual(warehouseRes)) {
-                context.setLastStep(REQUIREMENT_NOT_SATISFIED_IN_WAREHOUSE);
-
-            } else {
-                game.getPersonalBoard(userID).subtractFromStrongbox(contextProd.getTotalLeftCost());
-                game.getPersonalBoard(userID).putResInStrongBox(totRightCost);
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-                context.resetRhlLeaderCard();
-                context.setLastStep(LeaderActionContext.ActionStep.POWER_ACTIVATED);
-                String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-                MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-                game.updateAllAboutChange(warehouseEvent);
-            }
-        } else {
-            if (totLeftCost.smallerOrEqual(strongboxRes)) {
-                context.setLastStep(REQUIREMENT_NOT_SATISFIED_IN_WAREHOUSE);
-            } else {
-                game.getPersonalBoard(userID).putResInStrongBox(totRightCost);
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-                context.resetRhlLeaderCard();
-                context.setLastStep(POWER_ACTIVATED);
-                String strongBoxDescription = game.getPersonalBoard(userID).describeStrongbox();
-                MVEvent strongboxEvent = new MVEvent(userID, MVEvent.EventType.STRONGBOX_UPDATE, strongBoxDescription);
-                game.updateAllAboutChange(strongboxEvent);
-            }
-        }
-
-        context.setFromWhereToPayForLeader(false);
-        context.setNumberOfActiveLeaderProduction(0);
-*/
+        game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
     }
 
+    private void computeVictoryPoint(Integer userID) {
 
+        int respoint;
+        game.getPersonalBoard(userID).countVictoryPoints(game.getPersonalBoard(userID).getTurnPopeFavorTile());
+        respoint =game.getPersonalBoard(userID).getTotalResources().sumOfValues();
+        respoint = respoint/5;
+
+        game.getPersonalBoard(userID).countVictoryPoints(respoint);
+    }
+
+    private void  triggerTheEndGame(Integer userID) {
+
+        computeVictoryPoint(userID);
+
+        CVEvent cvEvent = new CVEvent(END_GAME);
+        userIDtoVirtualViews.get(userID).update(cvEvent);
+
+    }
 
 
     public void handleGameMessage(Integer userID, Message msg) {

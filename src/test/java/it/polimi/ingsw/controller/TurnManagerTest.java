@@ -38,7 +38,7 @@ class TurnManagerTest {
     @Test
     void putUserID() {
         t.putUserID(userID);
-        assertEquals(userID,t.getIndexOfUserID(userID));
+        assertEquals(userID,t.getOrderOfUserID(userID));
 
 
 

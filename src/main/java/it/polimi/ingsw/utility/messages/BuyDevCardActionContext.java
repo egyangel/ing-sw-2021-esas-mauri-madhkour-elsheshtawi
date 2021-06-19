@@ -29,6 +29,7 @@ public class BuyDevCardActionContext {
     private ActionStep lastStep;
     private int level;
     private DevCard.CardColor color;
+    private List<DevCard> ownedCards = new ArrayList<>();
     private DevCard selectedCard;
     private List<DevSlot.slotPlace> suitableSlots = new ArrayList<>();
     private DevSlot.slotPlace selectedSlot;

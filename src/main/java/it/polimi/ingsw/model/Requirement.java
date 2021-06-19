@@ -49,4 +49,32 @@ public class Requirement {
                 ", resources=" + resources +
                 '}';
     }
+
+    public String describeRequirement(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Reqs: ");
+        switch (reqtype){
+            case TWOCARD:
+                DevCard.CardColor firstColor = colorList.get(0);
+                DevCard.CardColor secondColor = colorList.get(1);
+                stringBuilder.append(firstColor.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(secondColor.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                break;
+            case RESOURCES:
+                stringBuilder.append(resources.describeResource());
+                break;
+            case THREECARD:
+                DevCard.CardColor colorOfTwoCard = colorList.get(0);
+                DevCard.CardColor colorOfOneCard = colorList.get(1);
+                stringBuilder.append(colorOfTwoCard.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(colorOfTwoCard.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                stringBuilder.append(colorOfOneCard.getAnsiCode() + "[" + "\u25a1" + "]" + DevCard.CardColor.RESET);
+                break;
+            case LEVELTWOCARD:
+                DevCard.CardColor colorOfOnlyCard = colorList.get(0);
+                stringBuilder.append(colorOfOnlyCard.getAnsiCode() + "[" + "\u2681" + "]" + DevCard.CardColor.RESET);
+                break;
+        }
+        return stringBuilder.toString();
+    }
 }

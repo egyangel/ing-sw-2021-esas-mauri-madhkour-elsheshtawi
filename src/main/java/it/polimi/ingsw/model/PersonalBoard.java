@@ -14,16 +14,19 @@ public class PersonalBoard {
 
     private Integer userID;
     private Game game;
-    private int victoryPoints;
+    private int victoryPoints = 0;
     private DefaultProd defProd;
     private DevSlot[] devSlots = new DevSlot[3];
     private Shelf[] warehouse = new Shelf[3];
     private Resources strongbox;
+
     private int faithPoints = 0;
     private List<LeaderCard> inactiveLeaderCards;
     private List<LeaderCard> activeLeaderCards;
     private int vaticanReportCallCounter = 0;
     private Map<PopeArea, Boolean> popeAreaMap;
+
+    private List<DevCard> ownedCards = new ArrayList<>();
 
     public PersonalBoard(Integer userID) {
         this.userID = userID;
@@ -89,7 +92,8 @@ public class PersonalBoard {
 
     }
 
-
+//Todo Ask to omer about this, i did it in different way in the client side, i ask LHS and RHS and create a dev card and
+// in the controller side manage the convertion from LHS res to RhS res
     public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R) {
         System.out.println("Trying Default Prod: " + L1.toString() + " + " + L2.toString() + " = " + R.toString() + "\n");
         if (L1 != L2) {
@@ -105,7 +109,19 @@ public class PersonalBoard {
             }
         }
     }
+    public void setOwnedCard(DevCard myCards) {
+        this.ownedCards.add(myCards);
+    }
+    public  List<DevCard> getOwnedCard() {
+        return this.ownedCards;
+    }
 
+    public void countVictoryPoints(int victoryPoints) {
+        this.victoryPoints+=victoryPoints;
+    }
+    public  int getVictoryPoints() {
+        return this.victoryPoints;
+    }
     public void increaseFaitPoint(int toAdd) {
         faithPoints += toAdd;
     }
@@ -125,13 +141,34 @@ public class PersonalBoard {
         popeAreaMap.replace(area, Boolean.TRUE);
         // create a MV message inside Game
     }
+    public int getTurnPopeFavorTile() {
+        int temp=0;
 
-    public void putSelectedLeaderCards(List<LeaderCard> selectedCards) {
-        inactiveLeaderCards.addAll(selectedCards);
+        for (Map.Entry<PopeArea, Boolean> entry : popeAreaMap.entrySet()) {
+            if (entry.getKey() == PopeArea.FIRST && entry.getValue()) temp += 2;
+            if (entry.getKey() == PopeArea.SECOND && entry.getValue()) temp += 3;
+            if (entry.getKey() == PopeArea.THIRD && entry.getValue()) temp += 4;
+        }
+
+        return temp;
     }
 
+    public void putSelectedLeaderCards(List<LeaderCard> selectedCards) { inactiveLeaderCards.addAll(selectedCards); }
+    public List<LeaderCard> getInactiveLeaderCards() { return this.inactiveLeaderCards; }
+
+    public void changePlayerCard(List<LeaderCard> discardCard){
+        int i = 0;
+        while(i < discardCard.size()){
+            inactiveLeaderCards.remove(this.inactiveLeaderCards.indexOf(discardCard.get(i)));
+            i++;
+        }
+    }
+
+    public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
+     this.activeLeaderCards=activeLeaderCards;
+}
     public List<LeaderCard> getActiveLeaderCards() {
-        return activeLeaderCards;
+        return this.activeLeaderCards;
     }
 
     public Resources getTotalResources() {
@@ -199,7 +236,7 @@ public class PersonalBoard {
 
     public DevCard getDevCardOnSlot(DevSlot place) {
         int index = place.getPlace().getIndexInBoard();
-        if (devSlots[index].isEmpty()) {
+        if(devSlots[index].isEmpty()){
             return null;
         }
         return devSlots[index].getTopDevCard();
@@ -245,7 +282,7 @@ public class PersonalBoard {
 
 
     public String describeWarehouse() {
-        // TODO something Wrong
+
 
         String string = "";
         if (!warehouse[0].getResource().isEmpty())
@@ -265,11 +302,11 @@ public class PersonalBoard {
     }
 
     public String describeDevSlots() {
-        String string = "";
+        StringBuilder string = new StringBuilder();
         for (DevSlot slot : devSlots) {
-            string += slot.describeDevSlot() + "\n";
+            string.append(slot.describeDevSlot()).append("\n");
         }
-        return string.trim(); //removes one \n at the end
+        return string.toString().trim(); //removes one \n at the end
     }
 
     //TODO FOR AMOR: same for faith track, try to show special pope fields
