@@ -105,6 +105,7 @@ public class Game implements Publisher<MVEvent> {
 
     public String describeDevCardMatrix() {
         //Todo should show only the first card of each row ?
+        StringBuilder stringBuilder = new StringBuilder();
         int order = 1;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
@@ -113,7 +114,7 @@ public class Game implements Publisher<MVEvent> {
                 order++;
             }
         }
-        return stringBuilder.toString(); null;
+        return stringBuilder.toString();
     }
 
     @Override
