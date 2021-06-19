@@ -3,10 +3,26 @@ package it.polimi.ingsw.model.enumclasses;
 import it.polimi.ingsw.model.Resources;
 
 public enum MarbleColor {
-    WHITE, BLUE, GREY, YELLOW, PURPLE, RED;
+    WHITE("\u001B[37m"),
+    BLUE("\u001B[34m"),
+    GREY("\u001B[37m"),
+    YELLOW("\u001B[33m"),
+    PURPLE("\u001B[35m"),
+    RED("\u001B[31m");
 
     public String getColor() {
         return (this.name());
+    }
+
+    private String ansiCode;
+    public static final String RESET = "\u001B[0m";
+    public String getAnsiCode() {
+        return ansiCode;
+    }
+
+    MarbleColor(String ansiCode)
+    {
+        this.ansiCode = ansiCode;
     }
 
     public MarbleColor getValue(){

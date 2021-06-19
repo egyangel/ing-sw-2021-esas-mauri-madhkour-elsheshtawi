@@ -94,27 +94,27 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public void sendMarketAndDevCardMatrixTo(Integer userID) {
-        String marketTrayString = market.describeMarketTray();
-        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, marketTrayString);
+//        String marketTrayString = market.describeMarketTray();
+//        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, marketTrayString);
+        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, market);
         publish(userID, marketUpdate);
         String devCardMatrixString = describeDevCardMatrix();
         MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, devCardMatrixString);
         publish(userID, devCardMatrixUpdate);
     }
 
-    //TODO FOR AMOR: return a single string that consists of top devcards in the 3x4 matrix
-    // it would be best if 3x4 view of the matrix can be preserved
     public String describeDevCardMatrix() {
         //Todo should show only the first card of each row ?
-        String description = "";
-        for (int x = 0; x < devCardMatrix.length; x++) {
-            for (int y = 0; y < devCardMatrix[x].length; y++) {
-                description = description + "\n" + devCardMatrix[x][y].peekTopCard().toString();
-
+        StringBuilder stringBuilder = new StringBuilder();
+        int order = 1;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                stringBuilder.append(order + ") " + devCardMatrix[i][j].peekTopCard().describeDevCard());
+                stringBuilder.append("\n");
+                order++;
             }
         }
-        return description;
-
+        return stringBuilder.toString();
     }
 
     @Override

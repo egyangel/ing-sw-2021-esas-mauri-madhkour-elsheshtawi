@@ -116,7 +116,8 @@ public class Shelf {
         return resources;
     }
     public int getNumberOfElements(){
-        return resources.size();
+        int size = resources.size();
+        return size;
     }
     public int shelfSize(){
         return maxSize;

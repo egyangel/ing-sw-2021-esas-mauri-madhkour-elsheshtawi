@@ -8,14 +8,14 @@ import it.polimi.ingsw.model.enumclasses.CliColors;
  * */
 public class DevCard {
 
-    public DevCard(CliColors[] values, int level, Resources lhs, Resources rhs, Resources cost, int victoryPoints) {
-        this.level = level;
-        LHS = lhs;
-        RHS = rhs;
-        this.cost = cost;
-        this.victoryPoints = victoryPoints;
-        color = null;
-    }
+//    public DevCard(CliColors[] values, int level, Resources lhs, Resources rhs, Resources cost, int victoryPoints) {
+//        this.level = level;
+//        LHS = lhs;
+//        RHS = rhs;
+//        this.cost = cost;
+//        this.victoryPoints = victoryPoints;
+//        color = null;
+//    }
 /*
     public static CliColors getFaith() {
         return CliColors.red;
@@ -152,6 +152,35 @@ public class DevCard {
 //        return this.colors+"|"+face+"|"+CliColors.colorReset;
 //        //return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
 //    }
+
+    public String describeDevCard(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(describeLevelAndColor());
+        stringBuilder.append(", ");
+        stringBuilder.append("Cost: " + cost.describeResource());
+        stringBuilder.append(", ");
+        stringBuilder.append("Prod: " + LHS.describeResource() + " —> " + RHS.describeResource());
+        stringBuilder.append(", ");
+        stringBuilder.append("VP: " + victoryPoints);
+        return stringBuilder.toString();
+    }
+
+    private String describeLevelAndColor(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Flag: ");
+        switch (level){
+            case 1:
+                stringBuilder.append(color.getAnsiCode() + "[" + "\u2680" + "]" + DevCard.CardColor.RESET);
+                break;
+            case 2:
+                stringBuilder.append(color.getAnsiCode() + "[" + "\u2681" + "]" + DevCard.CardColor.RESET);
+                break;
+            case 3:
+                stringBuilder.append(color.getAnsiCode() + "[" + "\u2682" + "]" + DevCard.CardColor.RESET);
+                break;
+        }
+        return stringBuilder.toString();
+    }
 
 
 

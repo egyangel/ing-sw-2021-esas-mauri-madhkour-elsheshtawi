@@ -77,7 +77,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayMarketTray", this::displayMarketTray);
 
         //TODO add used methods at the end
-//        displayNameMap.put("displayMarketTray", this::displayMarketTray);
+        displayNameMap.put("displayMarketTray", this::displayMarketTray);
+        displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
 //        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
 //        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
 //        displayNameMap.put("displayWarehouseAndStrongbox", this::displayWarehouseAndStrongbox);
@@ -261,7 +262,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayAllActionSelection() {
         VCEvent vcEvent;
         out.println("It is your turn now!");
-        out.println("Enter the index of the action you want to take:");
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
@@ -276,6 +276,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         // TODO maybe this option can be used for the users personal board too, so above display methods are not shown
         out.println("[12] View all personal boards");
         out.println("[13] End turn");
+        out.println("Enter the index of the action you want to take:");
         int index = InputConsumer.getANumberBetween(in, out, 1, 11);
         switch (index) {
             case 1:
@@ -962,46 +963,46 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             return false;
         }
 
-
-        @Override
-        public void update (Event event){
-            if (event instanceof CVEvent) {
-                CVEvent cvEvent = (CVEvent) event;
-                CVEvent.EventType eventType = cvEvent.getEventType();
-                if (eventType.equals(SELECT_ALL_ACTION)) {
-                    majorActionDone = false;
-                    addNextDisplay("displayAllActionSelection");
-                } else if (eventType.equals(TAKE_RES_FILL_CONTEXT)) {
-                    takeResContext = (TakeResActionContext) cvEvent.getEventPayload(TakeResActionContext.class);
-                    routeTakeResActionDisplay();
-                } else if (eventType.equals(BUY_DEVCARD_FILL_CONTEXT)) {
-                    buyDevCardContext = (BuyDevCardActionContext) cvEvent.getEventPayload(BuyDevCardActionContext.class);
-                    routeBuyDevCardActionDisplay();
-                } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)) {
-                    activateProdContext = (ActivateProdActionContext) cvEvent.getEventPayload(ActivateProdActionContext.class);
-                    routeActivateProdActionDisplay();
-                } else if (eventType.equals(ACTIVATE_LEADER_FILL_CONTEXT)) {
-                    activateLeaderContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
-                    routeActivateLeaderActionDisplay();
-                } else if (eventType.equals(SELECT_MINOR_ACTION)) {
-                    majorActionDone = true;
-                    addNextDisplay("displayMinorActionSelection");
-                } else {
-                    initialCVevent = cvEvent;
-                    routeInitialActionsDisplay();
-                }
-            } else if (event instanceof MVEvent) {
-                MVEvent mvEvent = (MVEvent) event;
-                Integer userIDofUpdatedBoard = mvEvent.getUserID();
-                switch (mvEvent.getEventType()) {
-                    case MARKET_TRAY_UPDATE:
-                        marketTrayDescription = mvEvent.getJsonContent();
-                    displayNameMap.put("displayMarketTray", this::displayMarketTray);
-                        break;
-                    case DEVCARD_MATRIX_UPDATE:
-                        devCardMatrixDescription = mvEvent.getJsonContent();
-                        break;
-                    case WAREHOUSE_UPDATE:
+    @Override
+    public void update(Event event) {
+        if (event instanceof CVEvent) {
+            CVEvent cvEvent = (CVEvent) event;
+            CVEvent.EventType eventType = cvEvent.getEventType();
+            if (eventType.equals(SELECT_ALL_ACTION)) {
+                majorActionDone = false;
+                addNextDisplay("displayAllActionSelection");
+            }
+            else if (eventType.equals(TAKE_RES_FILL_CONTEXT)){
+                takeResContext = (TakeResActionContext) cvEvent.getEventPayload(TakeResActionContext.class);
+                routeTakeResActionDisplay();
+            } else if (eventType.equals(BUY_DEVCARD_FILL_CONTEXT)) {
+                buyDevCardContext = (BuyDevCardActionContext) cvEvent.getEventPayload(BuyDevCardActionContext.class);
+                routeBuyDevCardActionDisplay();
+            } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)) {
+                activateProdContext = (ActivateProdActionContext) cvEvent.getEventPayload(ActivateProdActionContext.class);
+                routeActivateProdActionDisplay();
+            }else if (eventType.equals(ACTIVATE_LEADER_FILL_CONTEXT)) {
+                activateLeaderContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
+                routeActivateLeaderActionDisplay();
+            } else if (eventType.equals(SELECT_MINOR_ACTION)){
+                majorActionDone = true;
+                addNextDisplay("displayMinorActionSelection");
+            } else {
+                initialCVevent = cvEvent;
+                routeInitialActionsDisplay();
+            }
+        } else if (event instanceof MVEvent) {
+            MVEvent mvEvent = (MVEvent) event;
+            Integer userIDofUpdatedBoard = mvEvent.getUserID();
+            switch (mvEvent.getEventType()) {
+                case MARKET_TRAY_UPDATE:
+                    MarketTray marketTray = (MarketTray) mvEvent.getEventPayload(MarketTray.class);
+                    marketTrayDescription = marketTray.describeMarketTray();
+                    break;
+                case DEVCARD_MATRIX_UPDATE:
+                    devCardMatrixDescription = mvEvent.getJsonContent();
+                    break;
+                case WAREHOUSE_UPDATE:
                     //   userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
 
                     PersonalBoardDescription personalDescription = userIDtoBoardDescriptions.get(userIDofUpdatedBoard);
@@ -1012,21 +1013,21 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     } else {
                         userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
                     }
-                        break;
-                    case STRONGBOX_UPDATE:
-                        userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(mvEvent.getJsonContent());
-                        break;
-                    case DEVSLOTS_UPDATE:
-                        userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(mvEvent.getJsonContent());
-                        break;
-                    case FAITHPOINT_UPDATE:
-                        userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(mvEvent.getJsonContent());
-                        break;
-                }
-            } else {
-                out.println("Unidentified MV or CV event");
+                    break;
+                case STRONGBOX_UPDATE:
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(mvEvent.getJsonContent());
+                    break;
+                case DEVSLOTS_UPDATE:
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(mvEvent.getJsonContent());
+                    break;
+                case FAITHPOINT_UPDATE:
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(mvEvent.getJsonContent());
+                    break;
             }
+        } else {
+            out.println("Unidentified MV or CV event");
         }
+    }
 
         @Override
         public void subscribe (Listener < VCEvent > listener) {
