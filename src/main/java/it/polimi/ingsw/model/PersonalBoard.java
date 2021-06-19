@@ -68,18 +68,18 @@ public class PersonalBoard {
     }
 
     private boolean putFromTop(Resources.ResType resType, int size) {
-        if (checkEnoughSize(0, size) && checkSameType(0, resType)) {
+        if (checkEnoughSize(0, size) && (checkSameType(0, resType) || warehouse[0].isEmpty())) {
             warehouse[0].putResource(resType, size);
-        } else if (checkEnoughSize(1, size) && checkSameType(1, resType)) {
-            warehouse[0].putResource(resType, size);
-        } else if (checkEnoughSize(2, size) && checkSameType(2, resType)) {
-            warehouse[0].putResource(resType, size);
+        } else if (checkEnoughSize(1, size) && checkSameType(1, resType) || warehouse[1].isEmpty()) {
+            warehouse[1].putResource(resType, size);
+        } else if (checkEnoughSize(2, size) && checkSameType(2, resType) || warehouse[2].isEmpty()) {
+            warehouse[2].putResource(resType, size);
         } else return false;
         return true;
     }
 
     private boolean checkEnoughSize(int index, int size) {
-        return ((warehouse[index].getNumberOfElements()) + size < warehouse[index].shelfSize());
+        return ((warehouse[index].getNumberOfElements()) + size <= warehouse[index].shelfSize());
     }
 
     private boolean checkSameType(int index, Resources.ResType resType) {

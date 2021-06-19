@@ -123,19 +123,28 @@ public class MarketTray {
         }
     }
 
-    //TODO FOR AMOR: do the same as MarketTrayDraw but return the description rather than printing
     public String describeMarketTray() {
         StringBuilder sb = new StringBuilder();
-        sb.append("|\t");
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
-                sb.append(marketTray[i][j].getColor() + "\t");
-
-            }
-            sb.append("|" + "\n");
-            sb.append("|\t");
+        sb.append("\u2554");
+        for(int i = 0; i<14; i++){
+            sb.append("\u2550");
         }
+        sb.append(OutMarble.getAnsiCode() + " " +"\u2b24" + " " + MarbleColor.RESET);
+        sb.append("\n");
+        for (int i = 0; i < row; i++) {
+            sb.append("\u2551");
+            for (int j = 0; j < column; j++) {
+                sb.append(marketTray[i][j].getAnsiCode() + " " +"\u2b24" + " " + MarbleColor.RESET);
+            }
+            sb.append("\u2190" + "\n");
+        }
+        sb.append("   \u2191   \u2191   \u2191   \u2191");
         return sb.toString();
+    }
+
+    public static void main(String[] args){
+        MarketTray marketTray = new MarketTray();
+        System.out.println(marketTray.describeMarketTray());
     }
 
   /* public void ResourceDraw(){

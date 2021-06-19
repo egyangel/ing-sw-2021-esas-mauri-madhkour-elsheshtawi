@@ -61,6 +61,9 @@ public class Controller implements Listener<VCEvent> {
         TurnManager.assignTurnOrder();
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
             Integer userTurn = TurnManager.getOrderOfUserID(entry.getKey());
+            if (userTurn == 1) {
+                TurnManager.registerResponse(entry.getKey());   // first player doesnt choose init res, its lack of response counts as a response
+            }
             InitFatihPoints(entry.getKey(), userTurn);
             CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
             entry.getValue().update(turnAssignEvent);

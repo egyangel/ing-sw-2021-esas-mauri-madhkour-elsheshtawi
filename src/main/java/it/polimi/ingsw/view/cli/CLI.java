@@ -65,9 +65,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
         displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
         displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
-        displayNameMap.put("displayActionSelection", this::displayAllActionSelection);
+        displayNameMap.put("displayAllActionSelection", this::displayAllActionSelection);
         //TODO add used methods at the end
-//        displayNameMap.put("displayMarketTray", this::displayMarketTray);
+        displayNameMap.put("displayMarketTray", this::displayMarketTray);
+        displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
 //        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
 //        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
 //        displayNameMap.put("displayWarehouseAndStrongbox", this::displayWarehouseAndStrongbox);
@@ -248,7 +249,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayAllActionSelection() {
         VCEvent vcEvent;
         out.println("It is your turn now!");
-        out.println("Enter the index of the action you want to take:");
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
@@ -263,6 +263,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         // TODO maybe this option can be used for the users personal board too, so above display methods are not shown
         out.println("[12] View all personal boards");
         out.println("[13] End turn");
+        out.println("Enter the index of the action you want to take:");
         int index = InputConsumer.getANumberBetween(in, out, 1, 11);
         switch (index) {
             case 1:
@@ -964,9 +965,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             Integer userIDofUpdatedBoard = mvEvent.getUserID();
             switch (mvEvent.getEventType()) {
                 case MARKET_TRAY_UPDATE:
-                    marketTrayDescription = mvEvent.getJsonContent();
+                    MarketTray marketTray = (MarketTray) mvEvent.getEventPayload(MarketTray.class);
+                    marketTrayDescription = marketTray.describeMarketTray();
                     break;
                 case DEVCARD_MATRIX_UPDATE:
+                    // todo do the same of market tray update for devcard martix
                     devCardMatrixDescription = mvEvent.getJsonContent();
                     break;
                 case WAREHOUSE_UPDATE:
