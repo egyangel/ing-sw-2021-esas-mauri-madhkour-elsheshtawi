@@ -199,7 +199,7 @@ public class PersonalBoard {
 
     public DevCard getDevCardOnSlot(DevSlot place) {
         int index = place.getPlace().getIndexInBoard();
-        if(devSlots[index].isEmpty()){
+        if (devSlots[index].isEmpty()) {
             return null;
         }
         return devSlots[index].getTopDevCard();
@@ -245,8 +245,18 @@ public class PersonalBoard {
 
 
     public String describeWarehouse() {
-        String string = "Top Shelf: " + warehouse[0].describeShelf() + "\nMiddle Shelf: " + warehouse[1].describeShelf() + "\nBottom Shelf: " + warehouse[2].describeShelf();
+        // TODO something Wrong
+
+        String string = "";
+        if (!warehouse[0].getResource().isEmpty())
+            string = "Top Shelf: " + warehouse[0].describeShelf();
+        if (!warehouse[1].getResource().isEmpty())
+            string = string+ "\nMiddle Shelf: " +  warehouse[1].describeShelf() ;
+        if (!warehouse[2].getResource().isEmpty())
+            string =string+"\nBottom Shelf: " + warehouse[2].describeShelf();
+
         return string;
+
     }
 
     public String describeStrongbox() {
