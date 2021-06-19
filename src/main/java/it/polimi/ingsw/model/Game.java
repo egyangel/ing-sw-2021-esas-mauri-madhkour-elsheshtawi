@@ -104,7 +104,7 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public String describeDevCardMatrix() {
-        StringBuilder stringBuilder = new StringBuilder();
+        //Todo should show only the first card of each row ?
         int order = 1;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
@@ -113,7 +113,7 @@ public class Game implements Publisher<MVEvent> {
                 order++;
             }
         }
-        return stringBuilder.toString();
+        return stringBuilder.toString(); null;
     }
 
     @Override
@@ -157,7 +157,7 @@ public class Game implements Publisher<MVEvent> {
     /**
      * Init soloAction tokens
      */
-    public void initSoloActionTokens(){
+    public void initSoloActionTokens() {
 
     }
 

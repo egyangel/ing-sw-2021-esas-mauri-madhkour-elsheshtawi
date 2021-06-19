@@ -282,11 +282,23 @@ public class PersonalBoard {
 
 
     public String describeWarehouse() {
-        return "Top Shelf: " + warehouse[0].describeShelf() + "\nMiddle Shelf: " + warehouse[1].describeShelf() + "\nBottom Shelf: " + warehouse[2].describeShelf();
+
+
+        String string = "";
+        if (!warehouse[0].getResource().isEmpty())
+            string = "Top Shelf: " + warehouse[0].describeShelf();
+        if (!warehouse[1].getResource().isEmpty())
+            string = string+ "\nMiddle Shelf: " +  warehouse[1].describeShelf() ;
+        if (!warehouse[2].getResource().isEmpty())
+            string =string+"\nBottom Shelf: " + warehouse[2].describeShelf();
+
+        return string;
+
     }
 
     public String describeStrongbox() {
-        return "Resources inside strong box: " + strongbox.toString();
+        String string = "Resources inside strong box: " + strongbox.toString();
+        return string;
     }
 
     public String describeDevSlots() {

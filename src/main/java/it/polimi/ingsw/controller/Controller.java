@@ -125,7 +125,7 @@ public class Controller implements Listener<VCEvent> {
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
             case BUY_DEVCARD_CONTEXT_FILLED:
-                BuyDevCardActionContext buyDevContext = (BuyDevCardActionContext) vcEvent.getEventPayload(ActivateProdActionContext.class);
+                BuyDevCardActionContext buyDevContext = (BuyDevCardActionContext) vcEvent.getEventPayload(BuyDevCardActionContext.class);
                 handleBuyDevCardAction(userID, buyDevContext);
                 break;
             case ACTIVATE_PROD_ACTION_SELECTED:
