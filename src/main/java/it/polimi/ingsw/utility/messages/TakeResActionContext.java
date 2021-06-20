@@ -140,7 +140,7 @@ public class TakeResActionContext {
     public void removeResourcesPutToShelf(){
         for (Map.Entry<Shelf.shelfPlace, Boolean> entry : shelfToResultMap.entrySet()) {
             if (entry.getValue()){
-                Resources.ResType resType = shelfPlaceResTypeMap.get(entry.getValue());
+                Resources.ResType resType = shelfPlaceResTypeMap.get(entry.getKey());
                 this.resources.removeThisType(resType);
             }
         }

@@ -68,27 +68,21 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
         displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
         displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
-        displayNameMap.put("displayActionSelection", this::displayAllActionSelection);
         displayNameMap.put("displayAllActionSelection", this::displayAllActionSelection);
+        displayNameMap.put("displayMinorActionSelection", this::displayMinorActionSelection);
         displayNameMap.put("chooseLeaderAction", this::chooseLeaderAction);
         displayNameMap.put("chooseRowColumnNumber", this::chooseRowColumnNumber);
         displayNameMap.put("chooseShelvesToPut", this::chooseShelvesToPut);
         displayNameMap.put("chooseColorLevel", this::chooseColorLevel);
         displayNameMap.put("displayMarketTray", this::displayMarketTray);
-
-        //TODO add used methods at the end
-        displayNameMap.put("displayMarketTray", this::displayMarketTray);
         displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
         displayNameMap.put("displayWarehouse", this::displayWarehouse);
         displayNameMap.put("displayStrongbox", this::displayStrongbox);
-
-//        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
-//        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
-//        displayNameMap.put("displayDevSlots", this::displayDevSlots);
-//        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
-//        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
-//        displayNameMap.put("displayOtherPlayers", this::displayOtherPlayers);
-//        displayNameMap.put("displayEndTurn", this::displayEndTurn);
+        displayNameMap.put("displayDevSlots", this::displayDevSlots);
+        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
+        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
+        displayNameMap.put("displayOtherPersonalBoards", this::displayOtherPersonalBoards);
+        displayNameMap.put("displayEndTurn", this::displayEndTurn);
 
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
@@ -170,10 +164,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case ASSIGN_TURN_ORDER:
                 initEmptyPersonalBoards();
                 addNextDisplay("displayTurnAssign");
-                break;
-            case SELECT_ALL_ACTION:
-                majorActionDone = false;
-                addNextDisplay("displayAllActionSelection");
                 break;
         }
     }
@@ -282,8 +272,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[9] View development slots");
         out.println("[10] View faith track");
         out.println("[11] View leader cards");
-        // TODO maybe this option can be used for the users personal board too, so above display methods are not shown
-        out.println("[12] View all personal boards");
+        out.println("[12] View other personal boards");
         out.println("[13] End turn");
         out.println("Enter the index of the action you want to take:");
         int index = InputConsumer.getANumberBetween(in, out, 1, 11);
@@ -306,27 +295,35 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
             case 5:
                 addNextDisplay("displayMarketTray");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 6:
                 addNextDisplay("displayDevCardMatrix");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 7:
                 addNextDisplay("displayWarehouse");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 8:
                 addNextDisplay("displayStrongbox");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 9:
                 addNextDisplay("displayDevSlots");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 10:
                 addNextDisplay("displayFaithTrack");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 11:
                 addNextDisplay("displayLeaderCards");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 12:
-                addNextDisplay("displayAllPersonalBoards");
+                addNextDisplay("displayOtherPersonalBoards");
+                addNextDisplay("displayAllActionSelection");
         }
     }
 
@@ -339,37 +336,44 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("Do you want to execute any other action?");
         out.println("Enter the index of the action you want to take:");
         out.println("[1] View market tray");
-        //todo Omer why this action here, furthermore the case that handle it it is not connected to any methods
-        out.println("[2] View and modify warehouse");
+        out.println("[2] View warehouse");
         out.println("[3] View strongbox");
         out.println("[4] View development slots");
         out.println("[5] View faith track");
         out.println("[6] View leader cards");
-        out.println("[7] View other players");
-        //TODO omer why this action
+        out.println("[7] View other personal boards");
+        //TODO omer why this action?
+        // todo what do you mean?
         out.println("[8]ACTIVATE_PROD_ACTION_ENDED Turn");
         int index = InputConsumer.getANumberBetween(in, out, 1, 8);
         switch (index) {
             case 1:
                 addNextDisplay("displayMarketTray");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 2:
-                addNextDisplay("displayAskModifyWarehouse");
+                addNextDisplay("displayWarehouse");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 3:
                 addNextDisplay("displayStrongbox");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 4:
                 addNextDisplay("displayDevSlots");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 5:
                 addNextDisplay("displayFaithTrack");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 6:
                 addNextDisplay("displayLeaderCards");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 7:
-                addNextDisplay("displayOtherPlayers");
+                addNextDisplay("displayOtherPersonalBoards");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 8:
                 addNextDisplay("displayEndTurn");
@@ -379,37 +383,34 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     public void displayMarketTray() {
         out.println(marketTrayDescription);
-        returnToCorrectActionSelection();
     }
 
     public void displayDevCardMatrix() {
         out.println(devCardMatrixDescription);
-        returnToCorrectActionSelection();
     }
 
     public void displayWarehouse() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
-        returnToCorrectActionSelection();
     }
 
     public void displayStrongbox() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getStrongboxDescription());
-        returnToCorrectActionSelection();
     }
 
     public void displayDevSlots() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getDevSlotsDescription());
-        returnToCorrectActionSelection();
     }
 
     public void displayFaithTrack() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getFaithTrackDescription());
-        returnToCorrectActionSelection();
     }
 
     public void displayLeaderCards() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getLeaderCardsDescription());
-        returnToCorrectActionSelection();
+    }
+
+    public void displayEndTurn(){
+        out.println("Ending turn...");
     }
 
     public void displayBuyDevActionEnd() {
@@ -425,33 +426,25 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    public void displayAllPersonalBoards() {
+    public void displayOtherPersonalBoards() {
         LinkedList<Integer> userIDs = new LinkedList<>();
         userIDs.addAll(userIDtoBoardDescriptions.keySet());
         userIDs.remove(client.getUserID());
-        userIDs.addFirst(client.getUserID());
         int index = 0;
-        int numberOfPlayers = userIDtoBoardDescriptions.keySet().size();
-        out.println("Your personal board:");
-        out.println(userIDtoBoardDescriptions.get(userIDs.get(index)));
+        int numberOfOtherPlayers = userIDtoBoardDescriptions.keySet().size() - 1;
         out.println("Enter [1] for next board, [2] for previous board, [3] to choose action:");
         int input = InputConsumer.getANumberBetween(in, out, 1, 3);
-        // Variable 'input' is not updated inside loop so why loop statement
         while (input == 1 || input == 2) {
-            if (input == 1) index = (index + 1) % numberOfPlayers;
-            if (input == 2) index = (index - 1 + numberOfPlayers) % numberOfPlayers;
+            if (input == 1) index = (index + 1) % numberOfOtherPlayers;
+            if (input == 2) index = (index - 1 + numberOfOtherPlayers) % numberOfOtherPlayers;
             Integer userIDtoDisplay = userIDs.get(index);
             String usernameToDisplay = userIDtoUsernames.get(userIDtoDisplay);
             PersonalBoardDescription boardToDisplay = userIDtoBoardDescriptions.get(userIDtoDisplay);
             out.println(usernameToDisplay + "'s personal board:");
             out.println(boardToDisplay);
+            out.println("Enter [1] for next board, [2] for previous board, [3] to choose action:");
+            input = InputConsumer.getANumberBetween(in, out, 1, 3);
         }
-        returnToCorrectActionSelection();
-    }
-
-    private void returnToCorrectActionSelection() {
-        if (majorActionDone) addNextDisplay("displayMinorActionSelection");
-        else addNextDisplay("displayAllActionSelection");
     }
 
     /**
@@ -566,6 +559,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             resTypeList.addAll(resources.getResTypes());
             Map<Shelf.shelfPlace, Resources.ResType> shelfToResMap = new HashMap<>();
             for (Shelf.shelfPlace place : Shelf.shelfPlace.values()) {
+                out.println("Do you want to add a resource into " + place.toString() + " shelf?");
+                Boolean answer = InputConsumer.getYesOrNo(in, out);
+                if (!answer) continue;
+                if (resTypeList.isEmpty()) break;
                 out.println("Which type of resource you want to put into " + place.toString() + " shelf?");
                 Resources.ResType selectedType = InputConsumer.getATypeAmongSet(in, out, resTypeList);
                 resTypeList.remove(selectedType);

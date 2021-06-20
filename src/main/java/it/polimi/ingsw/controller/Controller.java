@@ -83,16 +83,24 @@ public class Controller implements Listener<VCEvent> {
     }
 
     private void sendInitPersonalBoardDescriptions(){
-        List<Shelf> shelves;
-        Resources strongbox;
         for(Integer userId: userIDtoVirtualViews.keySet()){
-            shelves = game.getPersonalBoard(userId).getShelves();
-            MVEvent warehouseUpdate = new MVEvent(userId, MVEvent.EventType.WAREHOUSE_UPDATE, shelves);
-            game.updateAllAboutChange(warehouseUpdate);
-            strongbox = game.getPersonalBoard(userId).getStrongboxResources();
-            MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
-            game.updateAllAboutChange(strongboxUpdate);
+            updateAboutWarehouseOfId(userId);
+            updateAboutStrongboxOfId(userId);
         }
+    }
+
+    private void updateAboutWarehouseOfId(Integer userId){
+        List<Shelf> shelves;
+        shelves = game.getPersonalBoard(userId).getShelves();
+        MVEvent warehouseUpdate = new MVEvent(userId, MVEvent.EventType.WAREHOUSE_UPDATE, shelves);
+        game.updateAllAboutChange(warehouseUpdate);
+    }
+
+    private void updateAboutStrongboxOfId(Integer userId){
+        Resources strongbox;
+        strongbox = game.getPersonalBoard(userId).getStrongboxResources();
+        MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
+        game.updateAllAboutChange(strongboxUpdate);
     }
 
     @Override
@@ -216,7 +224,8 @@ public class Controller implements Listener<VCEvent> {
         }
         if (whiteConverters.size() == 0 || whiteMarbles == 0){
             for(MarbleColor marble: marbleList){
-                resources.add(marble.getResourceType(),1);
+                if (marble.getResourceType() != null)
+                    resources.add(marble.getResourceType(),1);
             }
             context.setLastStep(CHOOSE_SHELVES);
         } else if(whiteConverters.size() == 1) {
@@ -249,18 +258,14 @@ public class Controller implements Listener<VCEvent> {
         int discarded = game.getPersonalBoard(userID).clearShelf(place);
         context.addDiscardedRes(discarded);
         context.setLastStep(CHOOSE_SHELVES);
-        String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-        MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-        game.updateAllAboutChange(warehouseEvent);
+        updateAboutWarehouseOfId(userID);
     }
     private void handleSwapShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace[] places = context.getShelves();
         int discarded = game.getPersonalBoard(userID).swapShelves(places);
         context.addDiscardedRes(discarded);
         context.setLastStep(CHOOSE_SHELVES);
-        String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-        MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-        game.updateAllAboutChange(warehouseEvent);
+        updateAboutWarehouseOfId(userID);
     }
     private void handlePutResourcesChosen(Integer userID, TakeResActionContext context){
         Map<Shelf.shelfPlace, Resources.ResType> map = context.getShelfPlaceResTypeMap();
@@ -275,9 +280,7 @@ public class Controller implements Listener<VCEvent> {
         context.setPutResultMap(shelfToResult);
         context.removeResourcesPutToShelf();
         context.setLastStep(CHOOSE_SHELVES); //choose shelves is correct, I did it this way intentionally
-        String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-        MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-        game.updateAllAboutChange(warehouseEvent);
+        updateAboutWarehouseOfId(userID);
     }
     //handle BuyDevCardAction
     private void handleBuyDevCardAction(Integer userID, BuyDevCardActionContext context){
