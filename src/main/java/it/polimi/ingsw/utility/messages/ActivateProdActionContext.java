@@ -24,14 +24,10 @@ public class ActivateProdActionContext {
     private List<DevSlot>  slotAvailable = new ArrayList<>();
     private List<DevCard>  selectedCard = new ArrayList<>();
     private DevCard  baseProductionCard;
-
     private Resources leaderLHS = new Resources();
     private Resources defautProdLHS = new Resources();
     private Resources devProdLHS = new Resources();
     private Resources totalRightCost = new Resources();
-    /*private boolean warehouseSelectedForLeader = false;
-    private boolean warehouseSelectedForDefault = false;
-    private boolean warehouseSelectedForDevslots = false;*/
     private Boolean baseProdPower = false ;
     private Boolean activationLeaderCardProduction= false;
 
@@ -56,19 +52,7 @@ public class ActivateProdActionContext {
         return this.baseProdPower ;
     }
 
-   /* public void setFromWhereToPayForDefault(boolean warehouseSelectedForDefault){ this.warehouseSelectedForDefault = warehouseSelectedForDefault; }
-    public boolean getFromWhereToPayForDefault(){
-        return this.warehouseSelectedForDefault ;
-    }
-    public void setFromWhereToPayForDevslots(boolean warehouseSelectedForDevslots){ this.warehouseSelectedForDevslots = warehouseSelectedForDevslots; }
-    public void setFromWhereToPayForLeader(boolean warehouseSelected){ this.warehouseSelectedForLeader = warehouseSelected; }
-
-
-    public boolean getActivationLeaderCardProduction(){
-        return this.activationLeaderCardProduction ;
-    }
-    */
-   public void setActivationLeaderCardProduction(boolean activationLeaderCard){ this.activationLeaderCardProduction = activationLeaderCard; }
+    public void setActivationLeaderCardProduction(boolean activationLeaderCard){ this.activationLeaderCardProduction = activationLeaderCard; }
     public void setSlotAvailable(List<DevSlot> slotAvailable){ this.slotAvailable.addAll(slotAvailable); }
     public List<DevSlot> getSlotAvailable(){ return this.slotAvailable; }
 
@@ -87,7 +71,6 @@ public class ActivateProdActionContext {
     public void setNumberOfActiveLeaderProduction (int numberOfCardActivated) { this.numberOfCardActivated = numberOfCardActivated; }
     public int getNumberOfActiveLeaderProduction() { return numberOfCardActivated; }
 
-
     public void resetActivationProduction() {
         this.slotChosen= null;
         this.leaderRHS.clear();
@@ -98,7 +81,6 @@ public class ActivateProdActionContext {
         this.totalRightCost.clear();
         this.baseProductionCard = null;
     }
-
 
     public void setRhlLeaderCard(Resources RHS) {
         this.leaderRHS.add(RHS);
@@ -114,11 +96,10 @@ public class ActivateProdActionContext {
     public Resources getTotalRightCost() {
         return this.totalRightCost;
     }
+    //toDO Amor
     public void resetTotalRightCost() {
         this.totalRightCost.clear();
     }
-
-
 
 
 }

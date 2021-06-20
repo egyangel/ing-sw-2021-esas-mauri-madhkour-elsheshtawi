@@ -25,11 +25,11 @@ public class PersonalBoard {
     private List<LeaderCard> activeLeaderCards;
     private int vaticanReportCallCounter = 0;
     private Map<PopeArea, Boolean> popeAreaMap;
-
-    private List<DevCard> ownedCards = new ArrayList<>();
+    private List<DevCard> ownedCards ;
 
     public PersonalBoard(Integer userID) {
         this.userID = userID;
+        ownedCards = new ArrayList<>();
         defProd = new DefaultProd();
         devSlots[0] = new DevSlot(DevSlot.slotPlace.LEFT);
         devSlots[1] = new DevSlot(DevSlot.slotPlace.CENTER);

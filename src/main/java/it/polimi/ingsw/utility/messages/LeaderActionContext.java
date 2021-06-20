@@ -3,6 +3,7 @@ package it.polimi.ingsw.utility.messages;
 import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class LeaderActionContext {
 
@@ -21,12 +22,9 @@ public class LeaderActionContext {
     private List<LeaderCard> discardedCard = new ArrayList<>();
     private List<LeaderCard> activeLeaderCard = new ArrayList<>();
     private Boolean activationLeaderCardBefore= false;
-
     private Resources totalResources= new Resources() ;
-    private boolean warehouseSelectedForLeader = false;
-    private int numberOfCardActivated;
     private ActionStep lastStep;
-    private List<DevSlot.slotPlace> placeList = new ArrayList<>();
+    private List<DevCard> ownedCards;
 
     public void setLastStep(ActionStep step){
         lastStep = step;
@@ -64,13 +62,13 @@ public class LeaderActionContext {
     }
     public void resetActivationLeaderCardBefore(){ this.activationLeaderCardBefore   = false ; }
 
-
+    public void setOwnedCard( List<DevCard> myCards) {
+        ownedCards = new ArrayList<>(myCards);
+    }
+    public  List<DevCard> getOwnedCard() {
+        return this.ownedCards;
+    }
    // public void setLeaderProd(List<LeaderCard> producerCard) { this.producerCard.addAll(producerCard); }
-
-
-    public int getNumberOfActiveLeader() { return numberOfCardActivated; }
-    public void setNumberOfActiveLeader (int numberOfCardActivated) { this.numberOfCardActivated = numberOfCardActivated; }
-
 
     public void setTotalResources(Resources totalResources) {
         this.totalResources = totalResources;

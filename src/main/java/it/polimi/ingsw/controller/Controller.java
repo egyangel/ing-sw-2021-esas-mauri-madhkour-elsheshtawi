@@ -155,6 +155,7 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case ACTIVATE_LEADER_CONTEXT_SELECTED:
                 LeaderActionContext emptyActivateLeaderContext = new LeaderActionContext();
+                emptyActivateLeaderContext.setOwnedCard(game.getPersonalBoard(userID).getOwnedCard());
                 emptyActivateLeaderContext.setPlayerCard(game.getPersonalBoard(userID).getInactiveLeaderCards());
                 emptyActivateLeaderContext.setTotalResources(game.getPersonalBoard(userID).getTotalResources());
                 emptyActivateLeaderContext.setLastStep(CHOOSE_ACTION);
@@ -171,7 +172,7 @@ public class Controller implements Listener<VCEvent> {
                 CVEvent cvEventTwo = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEventTwo);
                 break;
-        }//todo change the implementation of leader card action. put it as the other event,move everything in controller side
+        }
     }
     //handle TakeResAction
     private void handleTakeResAction(Integer userID, TakeResActionContext context){
@@ -202,7 +203,8 @@ public class Controller implements Listener<VCEvent> {
         else
             marbleList = game.getMarketTray().selectColumn(context.getIndex());
         List<LeaderCard> whiteConverters = new ArrayList<>();
-        //todo Omer also this part has something that doesn't convince me,inside getActiveLeaderCards there are only the owned cards and not the active one
+        //todo Omer also this part has something that doesn't convince me,inside getActiveLeaderCards there are only the owned cards
+        // and not the active one
         //todo Omer: it only checks active cards of type white converter, in personal board, there are two lists: activeLeaderCards and inactiveLeaderCards
         for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
             if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
@@ -427,6 +429,7 @@ public class Controller implements Listener<VCEvent> {
 
         if (totLeftCost.smallerOrEqual(game.getPersonalBoard(userID).getTotalResources()))
         {
+            //toDO Amor
             context.resetTotalRightCost();
             context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION);
         }
