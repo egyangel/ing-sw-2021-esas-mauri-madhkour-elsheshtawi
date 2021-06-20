@@ -23,13 +23,12 @@ public class PersonalBoard {
     private int faithPoints = 0;
     private List<LeaderCard> inactiveLeaderCards;
     private List<LeaderCard> activeLeaderCards;
-    private int vaticanReportCallCounter = 0;
     private Map<PopeArea, Boolean> popeAreaMap;
-    private List<DevCard> ownedCards ;
+
+    private List<DevCard> ownedCards = new ArrayList<>();
 
     public PersonalBoard(Integer userID) {
         this.userID = userID;
-        ownedCards = new ArrayList<>();
         defProd = new DefaultProd();
         devSlots[0] = new DevSlot(DevSlot.slotPlace.LEFT);
         devSlots[1] = new DevSlot(DevSlot.slotPlace.CENTER);
@@ -63,7 +62,7 @@ public class PersonalBoard {
         }
     }
 
-    public boolean putToWarehouse(Shelf.shelfPlace place, Resources res) {
+    public int putToWarehouse(Shelf.shelfPlace place, Resources res) {
         return warehouse[place.getIndexInWarehouse()].putResource(res);
     }
 
@@ -92,6 +91,23 @@ public class PersonalBoard {
 
     }
 
+//Todo Ask to omer about this, i did it in different way in the client side, i ask LHS and RHS and create a dev card and
+// in the controller side manage the convertion from LHS res to RhS res
+    public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R) {
+        System.out.println("Trying Default Prod: " + L1.toString() + " + " + L2.toString() + " = " + R.toString() + "\n");
+        if (L1 != L2) {
+            if (this.strongbox.isThereType(L1) && this.strongbox.isThereType(L2)) {
+                this.strongbox.subtract(L1, 1);
+                this.strongbox.subtract(L2, 1);
+                this.strongbox.add(R, 1);
+            }
+        } else {
+            if (this.strongbox.getNumberOfType(L1) >= 2) {
+                this.strongbox.subtract(L1, 2);
+                this.strongbox.add(R, 1);
+            }
+        }
+    }
     public void setOwnedCard(DevCard myCards) {
         this.ownedCards.add(myCards);
     }
@@ -102,30 +118,34 @@ public class PersonalBoard {
     public void countVictoryPoints(int victoryPoints) {
         this.victoryPoints+=victoryPoints;
     }
+
     public  int getVictoryPoints() {
         return this.victoryPoints;
     }
+
     public void increaseFaitPoint(int toAdd) {
+        if (faithPoints < 8 && (faithPoints+toAdd)>=8){
+            game.triggerVaticanReport(PopeArea.FIRST);
+        } else if (faithPoints < 16 && (faithPoints+toAdd)>=16){
+            game.triggerVaticanReport(PopeArea.SECOND);
+        } else if (faithPoints < 24 && (faithPoints+toAdd)>=24){
+            game.triggerVaticanReport(PopeArea.THIRD);
+        }
         faithPoints += toAdd;
     }
 
-    public void giveNextVaticanReport() {
-        if (vaticanReportCallCounter == 0 && faithPoints >= 5 && faithPoints <= 8) {
+    public Map<PopeArea, Boolean> getPopeAreaMap(){
+        return popeAreaMap;
+    }
+
+    public void giveVaticanReport(PopeArea area) {
+        if (area == PopeArea.FIRST && faithPoints >= 5 && faithPoints <= 8) {
             turnPopeFavorTile(PopeArea.FIRST);
-            vaticanReportCallCounter++;
-        } else if (vaticanReportCallCounter == 1 && faithPoints >= 12 && faithPoints <= 16) {
-            vaticanReportCallCounter++;
+        } else if (area == PopeArea.SECOND && faithPoints >= 12 && faithPoints <= 16) {
             turnPopeFavorTile(PopeArea.SECOND);
-        } else if (vaticanReportCallCounter == 2 && faithPoints >= 19 && faithPoints <= 24) {
-            vaticanReportCallCounter++;
+        } else if (area == PopeArea.THIRD && faithPoints >= 19 && faithPoints <= 24) {
             turnPopeFavorTile(PopeArea.THIRD);
         }
-
-    }//todo ending the faith track
-    public boolean endFaithTrack() {
-        if(this.faithPoints==24)
-            return true;
-        return false;
     }
 
     private void turnPopeFavorTile(PopeArea area) {
@@ -140,6 +160,7 @@ public class PersonalBoard {
             if (entry.getKey() == PopeArea.SECOND && entry.getValue()) temp += 3;
             if (entry.getKey() == PopeArea.THIRD && entry.getValue()) temp += 4;
         }
+
         return temp;
     }
 
@@ -233,13 +254,10 @@ public class PersonalBoard {
     }
 
     public int clearShelf(Shelf.shelfPlace place) {
-        // TODO send MV event through game, that includes string representation of changed object
-
         return warehouse[place.getIndexInWarehouse()].clearShelf();
     }
 
     public int swapShelves(Shelf.shelfPlace[] places) {
-        // TODO send MV event through game, that includes string representation of changed object
         return warehouse[places[0].getIndexInWarehouse()].swapShelf(warehouse[places[1].getIndexInWarehouse()]);
     }
 
@@ -289,7 +307,6 @@ public class PersonalBoard {
             string = string+ "\nMiddle Shelf: " +  warehouse[1].describeShelf() ;
         if (!warehouse[2].getResource().isEmpty())
             string =string+"\nBottom Shelf: " + warehouse[2].describeShelf();
-
         return string;
 
     }
@@ -306,35 +323,4 @@ public class PersonalBoard {
         }
         return string.toString().trim(); //removes one \n at the end
     }
-
-    //TODO FOR AMOR: same for faith track, try to show special pope fields
-    public String describeFaithTrack() {
-        return null;
-    }
-
-    //TODO
-    public String describeLeaderCards() {
-        return null;
-    }
-    // NO USE METHODS for now
-    //    public boolean swapShelves(List<Shelf.shelfPlace> list){
-//        int firstIndex = list.get(0).ordinal();
-//        int secondIndex = list.get(1).ordinal();
-//        boolean result =  warehouse[firstIndex].swapShelf(warehouse[secondIndex]);
-//        if (result){
-//            MVEvent mvEvent = new MVEvent(MVEvent.EventType.SWAPPED_SHELVES, this);
-//            game.publish(userID, mvEvent);
-//        }
-//        return result;
-//    }
-
-//    public boolean discardFromShelf(Shelf.shelfPlace place){
-//        int index = place.ordinal();
-//        boolean result =  warehouse[index].removeOneFromShelf();
-//        if (result){
-//            MVEvent mvEvent = new MVEvent(MVEvent.EventType.DISCARDED_FROM_SHELF, this);
-//            game.publish(userID, mvEvent);
-//        }
-//        return result;
-//    }
 }

@@ -33,7 +33,7 @@ public class TakeResActionContext {
     private int discardedRes = 0;
     private int faithPoints;
     private Shelf.shelfPlace place;
-    private Shelf.shelfPlace[] places;
+    private Shelf.shelfPlace[] places = new Shelf.shelfPlace[2];
     private Map<Shelf.shelfPlace, Resources.ResType> shelfPlaceResTypeMap = new HashMap<>();
     private Map<Shelf.shelfPlace, Boolean> shelfToResultMap = new HashMap<>();
 
@@ -100,8 +100,16 @@ public class TakeResActionContext {
         this.resources.subtract(Resources.ResType.FAITH, faithPoints);
     }
 
+    public int getFaithPoints(){
+        return faithPoints;
+    }
+
     public void addDiscardedRes(int number){
         this.discardedRes += number;
+    }
+
+    public int getDiscardedRes(){
+        return this.discardedRes;
     }
 
     public Shelf.shelfPlace getShelf() {
@@ -140,7 +148,7 @@ public class TakeResActionContext {
     public void removeResourcesPutToShelf(){
         for (Map.Entry<Shelf.shelfPlace, Boolean> entry : shelfToResultMap.entrySet()) {
             if (entry.getValue()){
-                Resources.ResType resType = shelfPlaceResTypeMap.get(entry.getValue());
+                Resources.ResType resType = shelfPlaceResTypeMap.get(entry.getKey());
                 this.resources.removeThisType(resType);
             }
         }

@@ -22,7 +22,9 @@ public class VCEvent extends Event{
 
         LEADER_CARDS_CHOOSEN,
         INIT_RES_CHOOSEN,
-        LEVEL_COLOR_DEVCARD_CHOOSEN
+        LEVEL_COLOR_DEVCARD_CHOOSEN,
+
+        END_TURN
     }
     private EventType eventType;
 

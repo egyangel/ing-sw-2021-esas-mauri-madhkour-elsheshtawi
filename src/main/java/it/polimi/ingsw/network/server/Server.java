@@ -112,6 +112,7 @@ public class Server implements Runnable {
                     controller.startMatch();
                 } else {
                     controller = new Controller(game, this);
+                    game.setController(controller);
                     respondmsg = new Message(Message.MsgType.FIRST_LOGIN_ACCEPTED, numberOfUsers);
                     senderHandler.sendMessage(respondmsg);
                 }

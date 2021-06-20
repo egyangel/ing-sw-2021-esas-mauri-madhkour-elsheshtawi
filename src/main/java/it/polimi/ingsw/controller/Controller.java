@@ -22,6 +22,7 @@ public class Controller implements Listener<VCEvent> {
     protected Game game;
     private Map<Integer, String> userIDtoUsernames = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
+    private List<Integer> userIDs = new ArrayList<>();
 
     public Controller(Game game, Server server) {
         this.game = game;
@@ -30,8 +31,8 @@ public class Controller implements Listener<VCEvent> {
 
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
         userIDtoUsernames.putAll(userIDtoNameMap);
-
-        for (Integer userID : userIDtoUsernames.keySet()) {
+        userIDs.addAll(userIDtoUsernames.keySet());
+        for (Integer userID : userIDs) {
             game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
             virtualView.subscribe(this);
@@ -83,16 +84,24 @@ public class Controller implements Listener<VCEvent> {
     }
 
     private void sendInitPersonalBoardDescriptions(){
-        List<Shelf> shelves;
-        Resources strongbox;
-        for(Integer userId: userIDtoVirtualViews.keySet()){
-            shelves = game.getPersonalBoard(userId).getShelves();
-            MVEvent warehouseUpdate = new MVEvent(userId, MVEvent.EventType.WAREHOUSE_UPDATE, shelves);
-            game.updateAllAboutChange(warehouseUpdate);
-            strongbox = game.getPersonalBoard(userId).getStrongboxResources();
-            MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
-            game.updateAllAboutChange(strongboxUpdate);
+        for(Integer userId: userIDs){
+            updateAboutWarehouseOfId(userId);
+            updateAboutStrongboxOfId(userId);
         }
+    }
+
+    private void updateAboutWarehouseOfId(Integer userId){
+        List<Shelf> shelves;
+        shelves = game.getPersonalBoard(userId).getShelves();
+        MVEvent warehouseUpdate = new MVEvent(userId, MVEvent.EventType.WAREHOUSE_UPDATE, shelves);
+        game.updateAllAboutChange(warehouseUpdate);
+    }
+
+    private void updateAboutStrongboxOfId(Integer userId){
+        Resources strongbox;
+        strongbox = game.getPersonalBoard(userId).getStrongboxResources();
+        MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
+        game.updateAllAboutChange(strongboxUpdate);
     }
 
     @Override
@@ -167,10 +176,38 @@ public class Controller implements Listener<VCEvent> {
                 handleActivateLeaderAction(userID, activateLeaderContext);
                 break;
             case TAKE_RES_ACTION_ENDED:
-            case BUY_DEVCARD_ACTION_ENDED:
-            case ACTIVATE_PROD_ACTION_ENDED:
+                TakeResActionContext takeResContextTwo = (TakeResActionContext) vcEvent.getEventPayload(TakeResActionContext.class);
+                game.getPersonalBoard(userID).increaseFaitPoint(takeResContextTwo.getFaithPoints());
+                //todo Omer process discarded res and increase faith point in other personal boards
+                // In the background, it may send vatican report updates to clients
+//                List<Integer> allUserIDs = new ArrayList<>();
+//                allUserIDs.addAll(userIDtoUsernames.keySet());
+//                if (game.getPersonalBoard(userID).hasPopeSpaceReached()) {
+//                    for (Integer aUserID: allUserIDs){
+//                        game.getPersonalBoard(aUserID).giveNextVaticanReport();
+//                    }
+//                }
+//                int discardedRes = takeResContextTwo.getDiscardedRes();
+//                List<Integer> otherUserIDs = new ArrayList<>();
+//                otherUserIDs.addAll(userIDtoUsernames.keySet());
+//                otherUserIDs.remove(userID);
+//                for (Integer otherUserID: otherUserIDs){
+//                    game.getPersonalBoard(otherUserID).increaseFaitPoint(discardedRes);
+//
+//                    MVEvent mvEventTwo = new MVEvent(otherUserID, MVEvent.EventType.FAITHPOINT_UPDATE,)
+//                }
                 CVEvent cvEventTwo = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEventTwo);
+            case BUY_DEVCARD_ACTION_ENDED:
+            case ACTIVATE_PROD_ACTION_ENDED:
+                CVEvent cvEventFour = new CVEvent(SELECT_MINOR_ACTION);
+                userIDtoVirtualViews.get(userID).update(cvEventFour);
+                break;
+            case END_TURN:
+                TurnManager.goToNextTurn();
+                Integer nextUserID = TurnManager.getCurrentPlayerID();
+                CVEvent cvEventThree = new CVEvent(SELECT_ALL_ACTION);
+                userIDtoVirtualViews.get(nextUserID).update(cvEventThree);
                 break;
         }
     }
@@ -216,7 +253,8 @@ public class Controller implements Listener<VCEvent> {
         }
         if (whiteConverters.size() == 0 || whiteMarbles == 0){
             for(MarbleColor marble: marbleList){
-                resources.add(marble.getResourceType(),1);
+                if (marble.getResourceType() != null)
+                    resources.add(marble.getResourceType(),1);
             }
             context.setLastStep(CHOOSE_SHELVES);
         } else if(whiteConverters.size() == 1) {
@@ -249,18 +287,14 @@ public class Controller implements Listener<VCEvent> {
         int discarded = game.getPersonalBoard(userID).clearShelf(place);
         context.addDiscardedRes(discarded);
         context.setLastStep(CHOOSE_SHELVES);
-        String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-        MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-        game.updateAllAboutChange(warehouseEvent);
+        updateAboutWarehouseOfId(userID);
     }
     private void handleSwapShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace[] places = context.getShelves();
         int discarded = game.getPersonalBoard(userID).swapShelves(places);
         context.addDiscardedRes(discarded);
         context.setLastStep(CHOOSE_SHELVES);
-        String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-        MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-        game.updateAllAboutChange(warehouseEvent);
+        updateAboutWarehouseOfId(userID);
     }
     private void handlePutResourcesChosen(Integer userID, TakeResActionContext context){
         Map<Shelf.shelfPlace, Resources.ResType> map = context.getShelfPlaceResTypeMap();
@@ -269,15 +303,17 @@ public class Controller implements Listener<VCEvent> {
         for (Map.Entry<Shelf.shelfPlace, Resources.ResType> entry : map.entrySet()) {
             Resources resToPut = new Resources();
             resToPut.add(entry.getValue(), context.getResources().getNumberOfType(entry.getValue()));
-            result = game.getPersonalBoard(userID).putToWarehouse(entry.getKey(), resToPut);
+            int discardedSameTypeRes = game.getPersonalBoard(userID).putToWarehouse(entry.getKey(), resToPut);
+            result = (discardedSameTypeRes >= 0);
+            if (result) {
+                context.addDiscardedRes(discardedSameTypeRes);
+            }
             shelfToResult.put(entry.getKey(), result);
         }
         context.setPutResultMap(shelfToResult);
         context.removeResourcesPutToShelf();
         context.setLastStep(CHOOSE_SHELVES); //choose shelves is correct, I did it this way intentionally
-        String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-        MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-        game.updateAllAboutChange(warehouseEvent);
+        updateAboutWarehouseOfId(userID);
     }
     //handle BuyDevCardAction
     private void handleBuyDevCardAction(Integer userID, BuyDevCardActionContext context){
@@ -558,5 +594,15 @@ public class Controller implements Listener<VCEvent> {
     public void handleGameMessage(Integer userID, Message msg) {
         userIDtoVirtualViews.get(userID).handleGameMessage(msg);
 
+    }
+
+    public void takeVaticanReports(PersonalBoard.PopeArea area){
+        Map<PersonalBoard.PopeArea, Boolean> map;
+        for(Integer userID: userIDs){
+            game.getPersonalBoard(userID).giveVaticanReport(area);
+            map = game.getPersonalBoard(userID).getPopeAreaMap();
+            // TODO omer check if it sends the map
+            MVEvent mvEvent = new MVEvent(userID, MVEvent.EventType.VATICAN_REPORT_TAKEN, map);
+        }
     }
 }

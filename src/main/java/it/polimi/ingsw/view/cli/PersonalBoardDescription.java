@@ -1,11 +1,17 @@
 package it.polimi.ingsw.view.cli;
 
+import it.polimi.ingsw.model.PersonalBoard;
+
+import java.util.Map;
+
 public class PersonalBoardDescription {
     private String warehouseDescription;
     private String strongboxDescription;
     private String devSlotsDescription;
     private String faithTrackDescription;
     private String leaderCardsDescription;
+    private int faithPoints;
+    private Map<PersonalBoard.PopeArea, Boolean> tileMap;
 
     public String getWarehouseDescription() {
         return warehouseDescription;
@@ -45,5 +51,21 @@ public class PersonalBoardDescription {
 
     public void setLeaderCardsDescription(String leaderCardsDescription) {
         this.leaderCardsDescription = leaderCardsDescription;
+    }
+
+    public int getFaithPoints() {
+        return faithPoints;
+    }
+
+    public void setFaithPoints(int faithPoints) {
+        this.faithPoints = faithPoints;
+    }
+
+    public Map<PersonalBoard.PopeArea, Boolean> getTileMap() {
+        return tileMap;
+    }
+
+    public void setTileMap(Map<PersonalBoard.PopeArea, Boolean> tileMap) {
+        this.tileMap = tileMap;
     }
 }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 
+import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.JsonConverter;
 import it.polimi.ingsw.utility.messages.Listener;
@@ -22,6 +23,9 @@ public class Game implements Publisher<MVEvent> {
     private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
     private DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
+    private Controller controller;
+    private Map<PersonalBoard.PopeArea, Boolean> popeAreaMapTrigger = new HashMap<>();
+    private boolean newPopeSpaceReached = false;
     private boolean soloMode;
 
     public void addPlayer(Integer userID) {
@@ -34,6 +38,9 @@ public class Game implements Publisher<MVEvent> {
         createDevCardDecks();
         createMarketTray();
         createLeaderCards();
+        popeAreaMapTrigger.put(PersonalBoard.PopeArea.FIRST, false);
+        popeAreaMapTrigger.put(PersonalBoard.PopeArea.SECOND, false);
+        popeAreaMapTrigger.put(PersonalBoard.PopeArea.THIRD, false);
     }
 
     private void createBoardForEachPlayer() {
@@ -176,6 +183,16 @@ public class Game implements Publisher<MVEvent> {
     public void setSoloActionToken() {
     }
 
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public void triggerVaticanReport(PersonalBoard.PopeArea area){
+        if (!popeAreaMapTrigger.get(area)){
+            popeAreaMapTrigger.replace(area, true);
+            this.controller.takeVaticanReports(area);
+        }
+    }
 
     // DEBUG METHODS
 
