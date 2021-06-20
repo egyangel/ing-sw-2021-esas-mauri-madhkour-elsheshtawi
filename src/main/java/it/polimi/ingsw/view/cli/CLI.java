@@ -411,6 +411,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     public void displayEndTurn(){
         out.println("Ending turn...");
+        VCEvent vcEvent = new VCEvent(END_TURN);
+        publish(vcEvent);
     }
 
     public void displayBuyDevActionEnd() {
@@ -572,7 +574,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             takeResContext.setLastStep(PUT_RESOURCES_CHOSEN);
         } else {
             out.println("Ending take resource action...");
-            VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED);
+            VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED, takeResContext);
             publish(vcEvent);
             return;
         }
@@ -1035,12 +1037,28 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(mvEvent.getJsonContent());
                     break;
                 case FAITHPOINT_UPDATE:
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(mvEvent.getJsonContent());
+                    Integer faithpoints = (Integer) mvEvent.getEventPayload(Integer.class);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithPoints(faithpoints);
+                    Map<PersonalBoard.PopeArea, Boolean> tileMap = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getTileMap();
+                    String faithTrackDescription = faithTrackPrinter(tileMap, faithpoints);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescription);
+                    break;
+                case VATICAN_REPORT_TAKEN:
+                    Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {}.getType();
+                    Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);
+                    int faithPointsTwo = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getFaithPoints();
+                    String faithTrackDescriptionTwo = faithTrackPrinter(tileMapTwo, faithPointsTwo);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescriptionTwo);
                     break;
             }
         } else {
             out.println("Unidentified MV or CV event");
         }
+    }
+
+    private String faithTrackPrinter(Map<PersonalBoard.PopeArea, Boolean> map, int faithPoints){
+//        todo omer will do this asap
+        return null;
     }
 
     private String  strongBoxPrinter(Resources res){

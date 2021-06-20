@@ -10,7 +10,8 @@ public class MVEvent extends Event{
         WAREHOUSE_UPDATE,
         STRONGBOX_UPDATE,
         DEVSLOTS_UPDATE,
-        FAITHPOINT_UPDATE
+        FAITHPOINT_UPDATE,
+        VATICAN_REPORT_TAKEN
     }
     private EventType eventType;
 

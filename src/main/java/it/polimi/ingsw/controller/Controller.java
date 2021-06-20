@@ -22,6 +22,7 @@ public class Controller implements Listener<VCEvent> {
     protected Game game;
     private Map<Integer, String> userIDtoUsernames = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
+    private List<Integer> userIDs = new ArrayList<>();
 
     public Controller(Game game, Server server) {
         this.game = game;
@@ -30,8 +31,8 @@ public class Controller implements Listener<VCEvent> {
 
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
         userIDtoUsernames.putAll(userIDtoNameMap);
-
-        for (Integer userID : userIDtoUsernames.keySet()) {
+        userIDs.addAll(userIDtoUsernames.keySet());
+        for (Integer userID : userIDs) {
             game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
             virtualView.subscribe(this);
@@ -83,7 +84,7 @@ public class Controller implements Listener<VCEvent> {
     }
 
     private void sendInitPersonalBoardDescriptions(){
-        for(Integer userId: userIDtoVirtualViews.keySet()){
+        for(Integer userId: userIDs){
             updateAboutWarehouseOfId(userId);
             updateAboutStrongboxOfId(userId);
         }
@@ -174,10 +175,38 @@ public class Controller implements Listener<VCEvent> {
                 handleActivateLeaderAction(userID, activateLeaderContext);
                 break;
             case TAKE_RES_ACTION_ENDED:
-            case BUY_DEVCARD_ACTION_ENDED:
-            case ACTIVATE_PROD_ACTION_ENDED:
+                TakeResActionContext takeResContextTwo = (TakeResActionContext) vcEvent.getEventPayload(TakeResActionContext.class);
+                game.getPersonalBoard(userID).increaseFaitPoint(takeResContextTwo.getFaithPoints());
+                //todo Omer process discarded res and increase faith point in other personal boards
+                // In the background, it may send vatican report updates to clients
+//                List<Integer> allUserIDs = new ArrayList<>();
+//                allUserIDs.addAll(userIDtoUsernames.keySet());
+//                if (game.getPersonalBoard(userID).hasPopeSpaceReached()) {
+//                    for (Integer aUserID: allUserIDs){
+//                        game.getPersonalBoard(aUserID).giveNextVaticanReport();
+//                    }
+//                }
+//                int discardedRes = takeResContextTwo.getDiscardedRes();
+//                List<Integer> otherUserIDs = new ArrayList<>();
+//                otherUserIDs.addAll(userIDtoUsernames.keySet());
+//                otherUserIDs.remove(userID);
+//                for (Integer otherUserID: otherUserIDs){
+//                    game.getPersonalBoard(otherUserID).increaseFaitPoint(discardedRes);
+//
+//                    MVEvent mvEventTwo = new MVEvent(otherUserID, MVEvent.EventType.FAITHPOINT_UPDATE,)
+//                }
                 CVEvent cvEventTwo = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEventTwo);
+            case BUY_DEVCARD_ACTION_ENDED:
+            case ACTIVATE_PROD_ACTION_ENDED:
+                CVEvent cvEventFour = new CVEvent(SELECT_MINOR_ACTION);
+                userIDtoVirtualViews.get(userID).update(cvEventFour);
+                break;
+            case END_TURN:
+                TurnManager.goToNextTurn();
+                Integer nextUserID = TurnManager.getCurrentPlayerID();
+                CVEvent cvEventThree = new CVEvent(SELECT_ALL_ACTION);
+                userIDtoVirtualViews.get(nextUserID).update(cvEventThree);
                 break;
         }//todo change the implementation of leader card action. put it as the other event,move everything in controller side
     }
@@ -274,7 +303,11 @@ public class Controller implements Listener<VCEvent> {
         for (Map.Entry<Shelf.shelfPlace, Resources.ResType> entry : map.entrySet()) {
             Resources resToPut = new Resources();
             resToPut.add(entry.getValue(), context.getResources().getNumberOfType(entry.getValue()));
-            result = game.getPersonalBoard(userID).putToWarehouse(entry.getKey(), resToPut);
+            int discardedSameTypeRes = game.getPersonalBoard(userID).putToWarehouse(entry.getKey(), resToPut);
+            result = (discardedSameTypeRes >= 0);
+            if (result) {
+                context.addDiscardedRes(discardedSameTypeRes);
+            }
             shelfToResult.put(entry.getKey(), result);
         }
         context.setPutResultMap(shelfToResult);
@@ -550,5 +583,15 @@ public class Controller implements Listener<VCEvent> {
     public void handleGameMessage(Integer userID, Message msg) {
         userIDtoVirtualViews.get(userID).handleGameMessage(msg);
 
+    }
+
+    public void takeVaticanReports(PersonalBoard.PopeArea area){
+        Map<PersonalBoard.PopeArea, Boolean> map;
+        for(Integer userID: userIDs){
+            game.getPersonalBoard(userID).giveVaticanReport(area);
+            map = game.getPersonalBoard(userID).getPopeAreaMap();
+            // TODO omer check if it sends the map
+            MVEvent mvEvent = new MVEvent(userID, MVEvent.EventType.VATICAN_REPORT_TAKEN, map);
+        }
     }
 }

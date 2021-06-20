@@ -29,29 +29,26 @@ public class Shelf {
         resources = new ArrayList<>();
     }
 
-    public void putResource(Resources.ResType resType, int size){
+    public int putResource(Resources.ResType resType, int size){
         List<Resources.ResType> list = new ArrayList<>();
         for (int i = 0; i < size; i++){
             list.add(resType);
         }
-        putResource(list);
+        return putResource(list);
     }
 
     //adding multiple elements each time
     public Integer putResource(List<Resources.ResType> resources) {
-
         int i=0;
             if (this.isEmpty() && this.shelfSize()>= resources.size()) {
                 this.resources.addAll(resources);
                 return 0;
             }else
                 if (this.isFull()) {
-
                     return resources.size();
                 }else {
                     if (!this.isEmpty()) {
                         if (!this.resources.get(0).equals(resources.get(0))) {
-
                             return resources.size();
                         }
                     }
@@ -62,11 +59,10 @@ public class Shelf {
                     return resources.size() - i;
                 }
     }
-    // method to be used in the game to return false if cannot put it
-    public boolean putResource(Resources res){
-        if (!res.isThisOneType() || (res.sumOfValues() + this.getNumberOfElements() > shelfSize())) return false;
-        this.putResource(res.getOnlyType(), res.sumOfValues());
-        return true;
+    // method to be used in the game to returns -1 if different type tried to be put
+    public int putResource(Resources res){
+        if (!res.isThisOneType()) return -1;
+        else return this.putResource(res.getOnlyType(), res.sumOfValues());
     }
 
     // modification of below method that returns discarded res number
