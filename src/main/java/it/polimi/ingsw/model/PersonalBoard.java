@@ -92,23 +92,6 @@ public class PersonalBoard {
 
     }
 
-//Todo Ask to omer about this, i did it in different way in the client side, i ask LHS and RHS and create a dev card and
-// in the controller side manage the convertion from LHS res to RhS res
-    public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R) {
-        System.out.println("Trying Default Prod: " + L1.toString() + " + " + L2.toString() + " = " + R.toString() + "\n");
-        if (L1 != L2) {
-            if (this.strongbox.isThereType(L1) && this.strongbox.isThereType(L2)) {
-                this.strongbox.subtract(L1, 1);
-                this.strongbox.subtract(L2, 1);
-                this.strongbox.add(R, 1);
-            }
-        } else {
-            if (this.strongbox.getNumberOfType(L1) >= 2) {
-                this.strongbox.subtract(L1, 2);
-                this.strongbox.add(R, 1);
-            }
-        }
-    }
     public void setOwnedCard(DevCard myCards) {
         this.ownedCards.add(myCards);
     }
@@ -129,12 +112,20 @@ public class PersonalBoard {
     public void giveNextVaticanReport() {
         if (vaticanReportCallCounter == 0 && faithPoints >= 5 && faithPoints <= 8) {
             turnPopeFavorTile(PopeArea.FIRST);
+            vaticanReportCallCounter++;
         } else if (vaticanReportCallCounter == 1 && faithPoints >= 12 && faithPoints <= 16) {
+            vaticanReportCallCounter++;
             turnPopeFavorTile(PopeArea.SECOND);
         } else if (vaticanReportCallCounter == 2 && faithPoints >= 19 && faithPoints <= 24) {
+            vaticanReportCallCounter++;
             turnPopeFavorTile(PopeArea.THIRD);
         }
-        vaticanReportCallCounter++;
+
+    }//todo ending the faith track
+    public boolean endFaithTrack() {
+        if(this.faithPoints==24)
+            return true;
+        return false;
     }
 
     private void turnPopeFavorTile(PopeArea area) {
@@ -149,7 +140,6 @@ public class PersonalBoard {
             if (entry.getKey() == PopeArea.SECOND && entry.getValue()) temp += 3;
             if (entry.getKey() == PopeArea.THIRD && entry.getValue()) temp += 4;
         }
-
         return temp;
     }
 

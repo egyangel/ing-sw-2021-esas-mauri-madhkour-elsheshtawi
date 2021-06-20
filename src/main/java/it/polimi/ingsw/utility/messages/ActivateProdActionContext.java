@@ -9,7 +9,7 @@ import java.util.List;
 public class ActivateProdActionContext {
     public enum ActionStep{
         // from client to server
-        DEV_SLOTS_CHOOSEN,
+        DEV_SLOTS_CHOSEN,
         PAY_PRODUCTION_FROM_WHERE_CHOSEN,
         // from server to client
         CHOOSE_DEV_SLOTS,
@@ -52,16 +52,18 @@ public class ActivateProdActionContext {
         return this.baseProdPower ;
     }
 
-    public void setActivationLeaderCardProduction(boolean activationLeaderCard){ this.activationLeaderCardProduction = activationLeaderCard; }
+
     public void setSlotAvailable(List<DevSlot> slotAvailable){ this.slotAvailable.addAll(slotAvailable); }
     public List<DevSlot> getSlotAvailable(){ return this.slotAvailable; }
 
     public void setSlots(List<DevSlot> slotChosen){ this.slotChosen.addAll(slotChosen); }
     public List<DevSlot> getSlots(){ return this.slotChosen;  }
 
+    public void setActivationLeaderCardProduction(boolean activationLeaderCard){ this.activationLeaderCardProduction = activationLeaderCard; }
     public boolean getActivationLeaderCardProduction(){
         return this.activationLeaderCardProduction ;
     }
+
     public void setSelectedCard( List<DevCard> selectedCard) {
         this.selectedCard.addAll(selectedCard);
     }
@@ -80,6 +82,7 @@ public class ActivateProdActionContext {
         this.baseProdPower = false;
         this.totalRightCost.clear();
         this.baseProductionCard = null;
+        this.activationLeaderCardProduction= false;
     }
 
     public void setRhlLeaderCard(Resources RHS) {
@@ -96,10 +99,5 @@ public class ActivateProdActionContext {
     public Resources getTotalRightCost() {
         return this.totalRightCost;
     }
-    //toDO Amor
-    public void resetTotalRightCost() {
-        this.totalRightCost.clear();
-    }
-
 
 }

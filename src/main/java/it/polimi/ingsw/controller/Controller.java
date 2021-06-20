@@ -203,9 +203,7 @@ public class Controller implements Listener<VCEvent> {
         else
             marbleList = game.getMarketTray().selectColumn(context.getIndex());
         List<LeaderCard> whiteConverters = new ArrayList<>();
-        //todo Omer also this part has something that doesn't convince me,inside getActiveLeaderCards there are only the owned cards
-        // and not the active one
-        //todo Omer: it only checks active cards of type white converter, in personal board, there are two lists: activeLeaderCards and inactiveLeaderCards
+
         for (LeaderCard leaderCard : game.getPersonalBoard(userID).getActiveLeaderCards()) {
             if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
                 whiteConverters.add(leaderCard);
@@ -365,12 +363,9 @@ public class Controller implements Listener<VCEvent> {
     //handle the activation of production
     private void handleActivateDevCardAction(Integer userID, ActivateProdActionContext context){
         switch (context.getLastStep()){
-            case DEV_SLOTS_CHOOSEN:
+            case DEV_SLOTS_CHOSEN:
                 handleActivateDevSlotsProductionChosen(userID, context);
                 break;
-            /*case PAY_PRODUCTION_FROM_WHERE_CHOSEN:
-                 handleCheckProductionPayment(userID, context);
-                 break;*/
         }
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
@@ -401,7 +396,7 @@ public class Controller implements Listener<VCEvent> {
             }
             context.setSelectedCard(selectedCard);
             handleCheckProductionPayment(userID, context);
-            //context.setLastStep(CHOOSE_PRODUCTION_COST_FROM_WHERE);
+
         }
     }
     //this method handle the activation phase of dev Card, it checks if there are enough resources for all cards;
@@ -409,6 +404,8 @@ public class Controller implements Listener<VCEvent> {
         int j = 0;
         Resources totLeftCost = new Resources();
         Resources totRightCost = new Resources();
+        Resources temp = new Resources();
+        int faithPoint = 0;
 
         // check if there are the total resources to activate all the things chosen from the player in the production action
         if (context.getBaseProdPower()) {
@@ -417,8 +414,15 @@ public class Controller implements Listener<VCEvent> {
         }
         if (context.getSlots().size() > 0) {
             while (j < context.getSlots().size()) {
+                temp.add(context.getSelectedCard().get(j).getRHS());
                 totLeftCost.add(context.getSelectedCard().get(j).getLHS());
-                totRightCost.add(context.getSelectedCard().get(j).getRHS());
+
+                if(temp.isThereType(Resources.ResType.FAITH)) {
+                    faithPoint += temp.getNumberOfType(Resources.ResType.FAITH);
+                    temp.removeThisType(Resources.ResType.FAITH);
+                }
+                totRightCost.add(temp);
+                temp.clear();
                 j++;
             }
         }
@@ -429,21 +433,21 @@ public class Controller implements Listener<VCEvent> {
 
         if (totLeftCost.smallerOrEqual(game.getPersonalBoard(userID).getTotalResources()))
         {
-            //toDO Amor
-            context.resetTotalRightCost();
+            totLeftCost.clear();
+            totRightCost.clear();
+            context.resetActivationProduction();
             context.setLastStep(NOT_ENOUGH_RES_FOR_PRODUCTION);
         }
         if (!context.getLastStep().equals(NOT_ENOUGH_RES_FOR_PRODUCTION) ) {
             context.setTotalRightCost(totRightCost);
-            handleProductionPayment(userID,context);
+            handleProductionPayment(userID,context,faithPoint);
         }
     }
-    private void handleProductionPayment(Integer userID, ActivateProdActionContext context){
-         int j=0;
+    private void handleProductionPayment(Integer userID, ActivateProdActionContext context,int faithPoint ){
+        int j=0;
         if(context.getActivationLeaderCardProduction()){
             handleActivationLeaderProductionPayment(userID,context);
         }
-
 
         if(context.getBaseProductionCard().getLHS().smallerOrEqual(game.getPersonalBoard(userID).getWarehouseResources()))
             game.getPersonalBoard(userID).subtractFromWarehouse(context.getBaseProductionCard().getLHS());
@@ -461,6 +465,9 @@ public class Controller implements Listener<VCEvent> {
             }
         }
         game.getPersonalBoard(userID).putResInStrongBox(context.getTotalRightCost());
+        if(faithPoint > 0)
+            game.getPersonalBoard(userID).increaseFaitPoint(faithPoint);
+        checkVaticanReport(userID);
         context.setLastStep(COST_PAID);
 
         String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
@@ -475,7 +482,6 @@ public class Controller implements Listener<VCEvent> {
 
         context.resetActivationProduction();
 
-
     }
     private void handleActivationLeaderProductionPayment(Integer userID, ActivateProdActionContext context) {
 
@@ -484,12 +490,7 @@ public class Controller implements Listener<VCEvent> {
         else
             game.getPersonalBoard(userID).subtractFromStrongbox(context.getLhlLeaderCard());
 
-        if(context.getNumberOfActiveLeaderProduction()==1)
-            game.getPersonalBoard(userID).increaseFaitPoint(1);
-        else
-            game.getPersonalBoard(userID).increaseFaitPoint(2);
-
-
+        game.getPersonalBoard(userID).increaseFaitPoint(context.getNumberOfActiveLeaderProduction());
     }
 
     //handle the activation of prodution
@@ -546,7 +547,14 @@ public class Controller implements Listener<VCEvent> {
 
     }
 
+    private void  checkVaticanReport(Integer userID) {
 
+       /* boolean b = game.getPersonalBoard(userID).endFaithTrack();
+        if (b == 0) {
+        } else if (b == 1) {
+        }*/
+
+    }
     public void handleGameMessage(Integer userID, Message msg) {
         userIDtoVirtualViews.get(userID).handleGameMessage(msg);
 

@@ -760,7 +760,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 activateProdContext.setBaseProductionCard(baseProd);
             }
             activateProdContext.setSlots(slotChosen);
-            activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
+            activateProdContext.setLastStep(DEV_SLOTS_CHOSEN);
             VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
             publish(vcEvent);
         }
