@@ -83,6 +83,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
         displayNameMap.put("displayOtherPersonalBoards", this::displayOtherPersonalBoards);
         displayNameMap.put("displayEndTurn", this::displayEndTurn);
+        displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
+        displayNameMap.put("choosePayDevCardCostFromWhere", this::choosePayDevCardCostFromWhere);
+
 
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
@@ -627,19 +630,27 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("choosePayDevCardCostFromWhere");
                 break;
             case COST_PAID_DEVCARD_PUT:
+                //general msg not needed
+                out.println("Your development slots now looks like:");
+                addNextDisplay("displayDevSlots");
+                VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
+                publish(vcEvent);
+                return;
+// TODO OMER:why is there leader card action(if it is for discount, it should be at the end, if for activation, why?)
 
-                if (activateLeaderContext.getActivationLeaderCardBefore())
-                    addNextDisplay("displayBuyDevActionEnd");
-                else {
-                    out.println("Do you want to play leader action? ");
-                    boolean leaderAction = InputConsumer.getYesOrNo(in, out);
-                    if(leaderAction) {
-                        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-                        publish(vcEvent);
-                    }else
-                        addNextDisplay("displayBuyDevActionEnd");
-                }
-                break;
+//                if (activateLeaderContext.getActivationLeaderCardBefore())
+//                    addNextDisplay("displayBuyDevActionEnd");
+//                else {
+//                    out.println("Do you want to play leader action? ");
+//                    boolean leaderAction = InputConsumer.getYesOrNo(in, out);
+//                    if(leaderAction) {
+//                        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+//                        publish(vcEvent);
+//                    }else
+//                        addNextDisplay("displayBuyDevActionEnd");
+//                }
+//                break
+// TODO ======================
         }
     }
 
@@ -1027,7 +1038,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     List<DevCard> topDevCards = (List<DevCard>) mvEvent.getEventPayload(devCardListType);
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i<12; i++){
-                        sb.append(i + ") " + topDevCards.get(i).describeDevCard());
+                        sb.append(i+1 + ") " + topDevCards.get(i).describeDevCard());
                         sb.append("\n");
                     }
                     devCardMatrixDescription = sb.toString();
@@ -1047,7 +1058,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(strongboxDescription);
                     break;
                 case DEVSLOTS_UPDATE:
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(mvEvent.getJsonContent());
+                    Type devSlotListType = new TypeToken<List<DevSlot>>() {}.getType();
+                    List<DevSlot> devSlots = (List<DevSlot>) mvEvent.getEventPayload(devSlotListType);
+                    StringBuilder sb2 = new StringBuilder();
+                    for (int i = 0; i<3; i++){
+                        sb2.append(devSlots.get(i).describeDevSlot() + "\n");
+                    }
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(sb2.toString());
                     break;
                 case FAITHPOINT_UPDATE:
                     Integer faithpoints = (Integer) mvEvent.getEventPayload(Integer.class);

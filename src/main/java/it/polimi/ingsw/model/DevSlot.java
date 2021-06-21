@@ -67,22 +67,50 @@ public class DevSlot {
     }
 
     public void putDevCard(DevCard card) {
-        devCards.addFirst(card); //same as push
+        devCards.addFirst(card); //same as push, level constraints are checked in controller in a previous step
     }
 
     public String describeDevSlot(){
-        String string = place.name() + " SLOT: ";
-        Iterator<DevCard> iterator = devCards.iterator();
+        StringBuilder sb = new StringBuilder();
+        sb.append(place.name() + " SLOT:  ");
+        Iterator<DevCard> iterator = devCards.descendingIterator();
         if (isEmpty()) {
-            string = "Empty";
+            sb.append("Empty");
         } else {
             DevCard card = iterator.next();
-            string += "Top Card: " + card.toString();
+            sb.append("Top Card:   " + card.describeDevCard());
             while(iterator.hasNext()){
-                string += "Card Below: Color: " + iterator.next().getColor() + " VP: " + iterator.next().getVictoryPoints();
+                card = iterator.next();
+                sb.append("\n\t\t\tBelow Card: " + card.describeDevCard());
             }
         }
-        return string;
+        return sb.toString();
     }
+
+//    public static void main(String[] args){
+//        DevSlot[] slots = new DevSlot[3];
+//        slots[0] = new DevSlot(slotPlace.LEFT);
+//        slots[1] = new DevSlot(slotPlace.CENTER);
+//        slots[2] = new DevSlot(slotPlace.RIGHT);
+//
+//        Game game = new Game();
+//        game.createDevCardDecks();
+//        DevCard devCard1 = game.peekTopDevCard(DevCard.CardColor.BLUE, 1);
+//        DevCard devCard2 = game.peekTopDevCard(DevCard.CardColor.BLUE, 2);
+//        DevCard devCard3 = game.peekTopDevCard(DevCard.CardColor.BLUE, 3);
+//        DevCard devCard11 = game.peekTopDevCard(DevCard.CardColor.GREEN, 1);
+//        slots[0].addDevCard(devCard1);
+//        slots[0].addDevCard(devCard2);
+//        slots[0].addDevCard(devCard3);
+//        slots[1].addDevCard(devCard1);
+////        slots[0].addDevCard(devCard1);
+//
+//        StringBuilder sb = new StringBuilder();
+//        for(int i=0; i<3; i++){
+//            sb.append(slots[i].describeDevSlot());
+//            sb.append("\n");
+//        }
+//        System.out.println(sb.toString());
+//    }
 
 }

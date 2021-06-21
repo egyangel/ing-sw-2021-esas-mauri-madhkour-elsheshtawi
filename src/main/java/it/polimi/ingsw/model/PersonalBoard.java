@@ -273,6 +273,14 @@ public class PersonalBoard {
         return shelves;
     }
 
+    public List<DevSlot> getDevSlots(){
+        List<DevSlot> slots = new ArrayList<>();
+        slots.add(devSlots[0]);
+        slots.add(devSlots[1]);
+        slots.add(devSlots[2]);
+        return slots;
+    }
+
     public void subtractFromWarehouse(Resources res) {
         List<Resources.ResType> resTypeList = new ArrayList<>();
         resTypeList.addAll(res.getResTypes());

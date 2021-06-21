@@ -53,11 +53,12 @@ public class Game implements Publisher<MVEvent> {
         }
     }
 
-    private void createDevCardDecks() {
+    public void createDevCardDecks() {
         List<DevCard> allDevCards = JsonConverter.deserializeDevCards();
         Iterator<DevCard> cardIterator = allDevCards.iterator();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
+                // DevCardDeck constructor argument order(color, level), devcardmatrix is reverse, it can stay like this
                 DevCardDeck deck = new DevCardDeck(DevCard.CardColor.values()[j], i + 1);
                 for (int k = 0; k < 4; k++) {
                     deck.putCard(cardIterator.next());
@@ -95,21 +96,27 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public DevCard peekTopDevCard(DevCard.CardColor color, int level) {
-        DevCard card = devCardMatrix[color.ordinal()][level].peekTopCard();
+        DevCard card = devCardMatrix[level-1][color.ordinal()].peekTopCard();
         return card;
     }
 
     public void removeTopDevCard(DevCard.CardColor color, int level) {
-        devCardMatrix[color.ordinal()][level].removeTopCard();
+        devCardMatrix[level-1][color.ordinal()].removeTopCard();
     }
 
     public void sendMarketAndDevCardMatrixTo(Integer userID) {
-//        String marketTrayString = market.describeMarketTray();
-//        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, marketTrayString);
-        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, market);
+        MVEvent marketUpdate = createMarketTrayMVEvent();
         publish(userID, marketUpdate);
-//        String devCardMatrixString = describeDevCardMatrix();
-//        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, devCardMatrixString);
+        MVEvent devCardMatrixUpdate = createDevCardMVEvent();
+        publish(userID, devCardMatrixUpdate);
+    }
+
+    public MVEvent createMarketTrayMVEvent(){
+        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, market);
+        return marketUpdate;
+    }
+
+    public MVEvent createDevCardMVEvent(){
         List<DevCard> topDevCards = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
@@ -117,7 +124,7 @@ public class Game implements Publisher<MVEvent> {
             }
         }
         MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, topDevCards);
-        publish(userID, devCardMatrixUpdate);
+        return devCardMatrixUpdate;
     }
 
     public String describeDevCardMatrix() {

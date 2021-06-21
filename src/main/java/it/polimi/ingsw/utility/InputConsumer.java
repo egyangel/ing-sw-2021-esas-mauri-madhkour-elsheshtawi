@@ -89,11 +89,18 @@ public class InputConsumer {
     }
 
     public static Integer  getANumberBetween(Scanner scanner, PrintWriter out, int min, int max) {
-        Integer input;
-        input = Integer.parseInt(scanner.nextLine());
+        Integer input = -1;
+        try{
+            input = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e){
+        }
         while (input < min || input > max) {
             out.println("Invalid input, please enter a number between " + min + " and " + max);
-            input = Integer.parseInt(scanner.nextLine());
+            try{
+                input = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e){
+                out.println("Invalid input, please enter a number between " + min + " and " + max);
+            }
         }
         return input;
     }
@@ -316,7 +323,7 @@ public class InputConsumer {
         //Todo here i think it is a mistake, it should be !placeList.contains(DevSlot.slotPlace.valueOf(input))
         // i fixed it band try it in the app Class(the test is already there and now work properly, before doesn't accept the right string
         //  while (!placeList.contains(DevSlot.slotPlace.getByName(input))){
-        while (placeList.contains(DevSlot.slotPlace.valueOf(input))){
+        while (!placeList.contains(DevSlot.slotPlace.valueOf(input))){
             out.println("Invalid input.");
             out.println("Please enter one of the options: " + placeString);
             input = in.nextLine().toUpperCase();
