@@ -92,42 +92,51 @@ public class Controller implements Listener<VCEvent> {
         }
     }
 
-    private void updateAboutWarehouseOfId(Integer userId){
+    protected void updateAboutWarehouseOfId(Integer userId){
         List<Shelf> shelves;
         shelves = game.getPersonalBoard(userId).getShelves();
         MVEvent warehouseUpdate = new MVEvent(userId, MVEvent.EventType.WAREHOUSE_UPDATE, shelves);
         game.updateAllAboutChange(warehouseUpdate);
     }
 
-    private void updateAboutStrongboxOfId(Integer userId){
+    protected void updateAboutStrongboxOfId(Integer userId){
         Resources strongbox;
         strongbox = game.getPersonalBoard(userId).getStrongboxResources();
         MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
         game.updateAllAboutChange(strongboxUpdate);
     }
 
-    private void updateAboutFaithPointOfId(Integer userId){
+    protected void updateAboutFaithPointOfId(Integer userId){
         Integer currentFaithPoints = game.getPersonalBoard(userId).getFaithPoints();
         MVEvent mvEventTwo = new MVEvent(userId, MVEvent.EventType.FAITHPOINT_UPDATE,currentFaithPoints);
         game.updateAllAboutChange(mvEventTwo);
     }
 
-    private void updateAboutFaithTrackofId(Integer userId){
+    protected void updateAboutFaithTrackofId(Integer userId){
         Map<PersonalBoard.PopeArea, Boolean> map = game.getPersonalBoard(userId).getPopeAreaMap();
         MVEvent mvEvent = new MVEvent(userId, MVEvent.EventType.VATICAN_REPORT_TAKEN, map);
         game.updateAllAboutChange(mvEvent);
     }
 
-    private void updateAboutDevCardMatrix(){
+    protected void updateAboutDevCardMatrix(){
         MVEvent mvEvent = game.createDevCardMVEvent();
         game.updateAllAboutChange(mvEvent);
     }
 
-    private void updateAboutDevSlotOfId(Integer userId){
+    protected void updateAboutDevSlotOfId(Integer userId){
         List<DevSlot> slots;
         slots = game.getPersonalBoard(userId).getDevSlots();
         MVEvent devSlotMVevent = new MVEvent(userId, MVEvent.EventType.DEVSLOTS_UPDATE, slots);
         game.updateAllAboutChange(devSlotMVevent);
+    }
+
+    protected void updateAboutLeaderCardsOfId(Integer userId){
+        List<LeaderCard> activeLeaders = game.getPersonalBoard(userId).getActiveLeaderCards();
+        List<LeaderCard> inActiveLeaders = game.getPersonalBoard(userId).getInactiveLeaderCards();
+        MVEvent activeLeaderMVEvent = new MVEvent(userId, MVEvent.EventType.ACTIVE_LEADER_CARD_UPDATE, activeLeaders);
+        game.updateAllAboutChange(activeLeaderMVEvent);
+        MVEvent inActiveLeaderMVEvent = new MVEvent(userId, MVEvent.EventType.INACTIVE_LEADER_CARD_UPDATE, inActiveLeaders);
+        game.updateAllAboutChange(inActiveLeaderMVEvent);
     }
 
     @Override
@@ -171,6 +180,13 @@ public class Controller implements Listener<VCEvent> {
                 //TODO FOR DEBUG init resources in strongbox
                 Resources newRes = new Resources(10,10,10,10);
                 game.getPersonalBoard(userID).setStrongbox(newRes);
+                List<LeaderCard> discountLeaderDebug = new ArrayList<>();
+                Requirement requirement = new Requirement(new Resources(1,0,0,0));
+                SpecialAbility discount = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.STONE);
+                discountLeaderDebug.add(new LeaderCard(requirement, 4, discount));
+                game.getPersonalBoard(userID).setActiveLeaderCards(discountLeaderDebug);
+                updateAboutLeaderCardsOfId(userID);
+                // todo debug ends here
                 BuyDevCardActionContext emptyBuyDevCardContext = new BuyDevCardActionContext();
                 emptyBuyDevCardContext.setLastStep(CHOOSE_COLOR_LEVEL);
                 cvEvent = new CVEvent(BUY_DEVCARD_FILL_CONTEXT, emptyBuyDevCardContext);
@@ -375,13 +391,6 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent = new CVEvent(BUY_DEVCARD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
-
-    private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){
-        DevCard selectedCard = context.getSelectedCard();
-        Resources costOfCard = selectedCard.getCost();
-        context.setRemainingCost(costOfCard);
-        context.setLastStep(CHOOSE_PAY_COST_FROM_WHERE);
-    }
     private void handleColorLevelChosen(Integer userID, BuyDevCardActionContext context){
         DevCard selectedCard = game.peekTopDevCard(context.getColor(), context.getLevel());
         context.setSelectedCard(selectedCard);
@@ -398,6 +407,23 @@ public class Controller implements Listener<VCEvent> {
             context.setLastStep(CHOOSE_DEV_SLOT);
             updateAboutDevCardMatrix();
         }
+    }
+    private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){
+        DevCard selectedCard = context.getSelectedCard();
+        Resources costToBePaid = new Resources();
+        Resources totalDiscount = new Resources();
+        costToBePaid.add(selectedCard.getCost());
+        List<LeaderCard> activeLeaders = game.getPersonalBoard(userID).getActiveLeaderCards();
+        for(LeaderCard leader: activeLeaders) {
+            if(leader.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT)
+                totalDiscount.add(leader.getAbility().getResType(),1);
+        }
+        if(!totalDiscount.isEmpty()){
+            costToBePaid.subtract(totalDiscount);
+            context.setTotalDiscount(totalDiscount);
+        }
+        context.setRemainingCost(costToBePaid);
+        context.setLastStep(CHOOSE_PAY_COST_FROM_WHERE);
     }
     private void handlePayFromWhereChosen(Integer userID, BuyDevCardActionContext context){
 

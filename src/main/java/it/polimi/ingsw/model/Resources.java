@@ -70,7 +70,7 @@ public class Resources {
     public void subtract(ResType type,Integer val){
         if (this.getNumberOfType(type) > val){
             values.put(type, this.getNumberOfType(type) - val);
-        } else if (this.getNumberOfType(type) == val){
+        } else {
             values.remove(type);
         }
     }

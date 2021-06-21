@@ -36,6 +36,8 @@ public class BuyDevCardActionContext {
     private Resources remainingCost;
     private Resources payFromWarehouse;
     private Resources payFromStrongbox;
+    private boolean isApplied = false;
+    private Resources discountApplied;
 
     public int getLevel() {
         return level;
@@ -117,6 +119,19 @@ public class BuyDevCardActionContext {
                                                 ActionStep.UNSUITABLE_FOR_DEVSLOTS_ERROR);
         if (errorSteps.contains(lastStep)) return true;
         else return false;
+    }
+
+    public boolean isDiscountApplied(){
+        return isApplied;
+    }
+
+    public void setTotalDiscount(Resources res){
+        isApplied = true;
+        discountApplied = res;
+    }
+
+    public Resources getTotalDiscount(){
+        return discountApplied;
     }
 }
 

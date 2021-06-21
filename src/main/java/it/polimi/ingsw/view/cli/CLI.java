@@ -41,8 +41,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
     private String marketTrayDescription;
     private String devCardMatrixDescription;
-    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<>();
-    private Map<Integer, String> userIDtoUsernames =  new HashMap<>();
+    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<Integer, PersonalBoardDescription>();
+    private Map<Integer, String> userIDtoUsernames = new HashMap<Integer, String>();
     private boolean majorActionDone;
 
     /**
@@ -74,7 +74,26 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("chooseRowColumnNumber", this::chooseRowColumnNumber);
         displayNameMap.put("chooseShelvesToPut", this::chooseShelvesToPut);
         displayNameMap.put("chooseColorLevel", this::chooseColorLevel);
+        displayNameMap.put("displayWarehouse", this::displayWarehouse);
         displayNameMap.put("displayMarketTray", this::displayMarketTray);
+        displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
+        displayNameMap.put("displayMinorActionSelection", this::displayMinorActionSelection);
+        displayNameMap.put("displayStrongbox", this::displayStrongbox);
+        displayNameMap.put("displayDevSlots", this::displayDevSlots);
+        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
+        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
+        displayNameMap.put("displayAllPersonalBoards", this::displayAllPersonalBoards);
+
+        //TODO add used methods at the end
+
+//        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
+//        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
+//        displayNameMap.put("displayWarehouseAndStrongbox", this::displayWarehouseAndStrongbox);
+//
+//
+//
+//        displayNameMap.put("displayOtherPlayers", this::displayOtherPlayers);
+//        displayNameMap.put("displayEndTurn", this::displayEndTurn);
         displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
         displayNameMap.put("displayWarehouse", this::displayWarehouse);
         displayNameMap.put("displayStrongbox", this::displayStrongbox);
@@ -83,6 +102,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
         displayNameMap.put("displayOtherPersonalBoards", this::displayOtherPersonalBoards);
         displayNameMap.put("displayEndTurn", this::displayEndTurn);
+        displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
+        displayNameMap.put("choosePayDevCardCostFromWhere", this::choosePayDevCardCostFromWhere);
+
 
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
@@ -133,9 +155,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public void displayFirstLogin() {
         out.println("Choose a username:");
-        String username = InputConsumer.getUserName(in, out);
+        // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
+//        String username = InputConsumer.getUserName(in, out);
+        String username = "omer";
         out.println("Choose number of players you would like to play with:");
-        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
+//        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
+        Integer numberOfPlayers = 2;
         Map<String, String> firstLoginMap = new HashMap<>();
         firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
         firstLoginMap.put("username", username);
@@ -146,9 +171,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public void displayLogin() {
         out.println("Choose a username:");
-        String username = InputConsumer.getUserName(in, out);
-        //TODO OMer here we may ask gor the number so that we know a priori the number of player and then change for an arbitrary number
-        out.println("Choose number of players you would like to play with:");
+        // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
+//        String username = InputConsumer.getUserName(in, out);
+        String username = "John";
         Message loginmsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
         client.sendToServer(loginmsg);
     }
@@ -196,9 +221,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             out.println(i + 1 + ") " + fourLeaderCards.get(i).describeLeaderCard());
         }
         out.println("Enter the index of first leader card to keep:");
-        Integer firstIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
+        // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
+//        Integer firstIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
+        Integer firstIndex = 1;
         out.println("Enter the index of second leader card to keep:");
-        Integer secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
+//        Integer secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
+        Integer secondIndex = 2;
         while (firstIndex.equals(secondIndex)) {
             out.println("Please enter a different index than first selection:");
             secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
@@ -230,7 +258,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case 2:
                 out.println("You are the second player.");
                 out.println("You will have one initial resource of your choosing in the warehouse.");
-                Resources.ResType initResType = InputConsumer.getResourceType(in, out);
+                // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
+//                Resources.ResType initResType = InputConsumer.getResourceType(in, out);
+                Resources.ResType initResType = Resources.ResType.COIN;
                 Resources initResource = new Resources(initResType, 1);
                 VCEvent vcEvent = new VCEvent(INIT_RES_CHOOSEN, initResource);
                 publish(vcEvent);
@@ -270,6 +300,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
+        // TODO write a more descriptive sentence, like activate/deactivate leader card
         out.println("[4] Leader action");
         out.println("[5] View market tray");
         out.println("[6] View development card matrix");
@@ -281,7 +312,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[12] View other personal boards");
         out.println("[13] End turn");
         out.println("Enter the index of the action you want to take:");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 11);
+        int index = InputConsumer.getANumberBetween(in, out, 1, 13);
         switch (index) {
             case 1:
                 vcEvent = new VCEvent(TAKE_RES_ACTION_SELECTED);
@@ -330,6 +361,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case 12:
                 addNextDisplay("displayOtherPersonalBoards");
                 addNextDisplay("displayAllActionSelection");
+                break;
+            case 13:
+                addNextDisplay("displayEndTurn");
+                break;
         }
     }
 
@@ -380,6 +415,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
             case 8:
                 addNextDisplay("displayEndTurn");
+                break;
+            case 9:
+                //TODO recheck after merge
+                VCEvent vcEvent = new VCEvent(END_TURN);
+                publish(vcEvent);
                 break;
         }
     }
@@ -481,6 +521,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * event that check and manage the transformation
      */
     public void chooseRowColumnNumber() {
+        out.println(this.marketTrayDescription);
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
         char firstLetter = rowColumnNumber.charAt(0);
         int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(2)));
@@ -560,9 +601,15 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             takeResContext.setLastStep(SWAP_SHELVES_CHOSEN);
         } else if (index == 3) {
             List<Resources.ResType> resTypeList = new ArrayList<>();
-            resTypeList.addAll(resources.getResTypes());
+            List<Resources.ResType> resType = null;
+            if (resources != null)
+                resType = resources.getResTypes();
+            if (resType != null)
+                resTypeList.addAll(resources.getResTypes());
             Map<Shelf.shelfPlace, Resources.ResType> shelfToResMap = new HashMap<>();
             for (Shelf.shelfPlace place : Shelf.shelfPlace.values()) {
+                if (resTypeList.isEmpty())
+                    continue;
                 out.println("Do you want to add a resource into " + place.toString() + " shelf?");
                 Boolean answer = InputConsumer.getYesOrNo(in, out);
                 if (!answer) continue;
@@ -627,19 +674,27 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("choosePayDevCardCostFromWhere");
                 break;
             case COST_PAID_DEVCARD_PUT:
+                //general msg not needed
+                out.println("Your development slots now looks like:");
+                addNextDisplay("displayDevSlots");
+                VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
+                publish(vcEvent);
+                return;
+// TODO OMER:why is there leader card action(if it is for discount, it should be at the end, if for activation, why?)
 
-                if (activateLeaderContext.getActivationLeaderCardBefore())
-                    addNextDisplay("displayBuyDevActionEnd");
-                else {
-                    out.println("Do you want to play leader action? ");
-                    boolean leaderAction = InputConsumer.getYesOrNo(in, out);
-                    if(leaderAction) {
-                        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-                        publish(vcEvent);
-                    }else
-                        addNextDisplay("displayBuyDevActionEnd");
-                }
-                break;
+//                if (activateLeaderContext.getActivationLeaderCardBefore())
+//                    addNextDisplay("displayBuyDevActionEnd");
+//                else {
+//                    out.println("Do you want to play leader action? ");
+//                    boolean leaderAction = InputConsumer.getYesOrNo(in, out);
+//                    if(leaderAction) {
+//                        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+//                        publish(vcEvent);
+//                    }else
+//                        addNextDisplay("displayBuyDevActionEnd");
+//                }
+//                break
+// TODO ======================
         }
     }
 
@@ -749,27 +804,27 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             }
             activateProdContext.setLhlLeaderCard(costLhsLeader);
         }
-        if(activateProdContext.getNumberOfActiveLeaderProduction() > 0){
-                out.println("Do want to use LeaderCard Production ability ? ");
-                boolean leaderActivate = InputConsumer.getYesOrNo(in, out);
-                if (leaderActivate) {
-                    activateProdContext.setActivationLeaderCardProduction(true);
-                    activateProdContext.setNumberOfActiveLeaderProduction(numberOfActiveProduceLeaderCard);
-                    chooseLeaderProdAction(numberOfActiveProduceLeaderCard);
-                }
+        if (activateProdContext.getNumberOfActiveLeaderProduction() > 0) {
+            out.println("Do want to use LeaderCard Production ability ? ");
+            boolean leaderActivate = InputConsumer.getYesOrNo(in, out);
+            if (leaderActivate) {
+                activateProdContext.setActivationLeaderCardProduction(true);
+                activateProdContext.setNumberOfActiveLeaderProduction(numberOfActiveProduceLeaderCard);
+                chooseLeaderProdAction(numberOfActiveProduceLeaderCard);
             }
-            out.println("Do want to activate base production power ? ");
-            boolean answer = InputConsumer.getYesOrNo(in, out);
-            if (answer) {
-                baseProd = InputConsumer.chooseBaseProdRes(in, out);
-                activateProdContext.setBaseProdPower(true);
-                activateProdContext.setBaseProductionCard(baseProd);
-            }
-            activateProdContext.setSlots(slotChosen);
-            activateProdContext.setLastStep(DEV_SLOTS_CHOSEN);
-            VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
-            publish(vcEvent);
         }
+        out.println("Do want to activate base production power ? ");
+        boolean answer = InputConsumer.getYesOrNo(in, out);
+        if (answer) {
+            baseProd = InputConsumer.chooseBaseProdRes(in, out);
+            activateProdContext.setBaseProdPower(true);
+            activateProdContext.setBaseProductionCard(baseProd);
+        }
+        activateProdContext.setSlots(slotChosen);
+            activateProdContext.setLastStep(DEV_SLOTS_CHOSEN);
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+        publish(vcEvent);
+    }
     /**
      * methods that handle the payment of production. Ask to the player from where paying for the production.
      * After the player fill the activateProdContext context  it publish an VC(view to controller)
@@ -813,7 +868,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             int numOfCard = InputConsumer.getANumberBetween(in, out, 1, numberOfActiveProduceCard);
             RHS.add(InputConsumer.chooseRhsLeaderCard(in, out, numOfCard));
             activateProdContext.setRhlLeaderCard(RHS);
-        }
+    }
 
     /**
      * methods that handle the Leader Action based on the CV event and last step of activateLeaderContext that has been set
@@ -897,42 +952,42 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * THen server update the personal board based on the choice.
      *
      * */
-    public void chooseLeaderActivationAction () {
-        int j = 0;
+        public void chooseLeaderActivationAction () {
+            int j = 0;
         Set<LeaderCard> activeLeaderCard = new HashSet<>();
         out.println("You can active  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
         if (activateLeaderContext.getPlayerCard().size() > 0) {
-            out.println("Your Leader Card:");
-             while (j < activateLeaderContext.getPlayerCard().size()) {
-                 out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
-                 if (InputConsumer.getYesOrNo(in, out)) {
-                     if (checkLeaderActivationAction(activateLeaderContext.getPlayerCard().get(j)))
-                         activeLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
-                     else
-                         out.println("You don't satisfy the requirement:");
-                 }
-                 j++;
-             }
-             if (activeLeaderCard.size() > 0) {
-                 activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
-             } else {
-                 activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);
-             }
+                    out.println("Your Leader Card:");
+                while (j < activateLeaderContext.getPlayerCard().size()) {
+                        out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
+                        if (InputConsumer.getYesOrNo(in, out)) {
+                            if (checkLeaderActivationAction(activateLeaderContext.getPlayerCard().get(j)))
+                                activeLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
+                            else
+                                out.println("You don't satisfy the requirement:");
+                        }
+                        j++;
+                    }
+                    if (activeLeaderCard.size() > 0) {
+                    activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
+                    } else {
+                    activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);
+                }
+            }
+            activateLeaderContext.setActiveLeaderCard(activeLeaderCard);
+            VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+            publish(vcEvent);
         }
-        activateLeaderContext.setActiveLeaderCard(activeLeaderCard);
-        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
-        publish(vcEvent);
-    }
 
     /**
      * methods that handle the check of the requirements of leader cards,
      * @param leaderToCheck is the card to check
      * */
-    private boolean checkLeaderActivationAction (LeaderCard leaderToCheck){
+        private boolean checkLeaderActivationAction (LeaderCard leaderToCheck){
         int discConvert =0;
         int firstCount = 0;
         int secondCount = 0;
-        int i = 0;
+            int i = 0;
         if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
             while(i < activateLeaderContext.getOwnedCard().size()){
                 if (leaderToCheck.getRequirement().getColor(0).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) &&
@@ -1027,7 +1082,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     List<DevCard> topDevCards = (List<DevCard>) mvEvent.getEventPayload(devCardListType);
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i<12; i++){
-                        sb.append(i + ") " + topDevCards.get(i).describeDevCard());
+                        sb.append(i+1 + ") " + topDevCards.get(i).describeDevCard());
                         sb.append("\n");
                     }
                     devCardMatrixDescription = sb.toString();
@@ -1047,7 +1102,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(strongboxDescription);
                     break;
                 case DEVSLOTS_UPDATE:
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(mvEvent.getJsonContent());
+                    Type devSlotListType = new TypeToken<List<DevSlot>>() {}.getType();
+                    List<DevSlot> devSlots = (List<DevSlot>) mvEvent.getEventPayload(devSlotListType);
+                    StringBuilder sb2 = new StringBuilder();
+                    for (int i = 0; i<3; i++){
+                        sb2.append(devSlots.get(i).describeDevSlot() + "\n");
+                    }
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(sb2.toString());
                     break;
                 case FAITHPOINT_UPDATE:
                     Integer faithpoints = (Integer) mvEvent.getEventPayload(Integer.class);
@@ -1409,4 +1470,5 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 out.println(username);
         }
 
+    }
     }
