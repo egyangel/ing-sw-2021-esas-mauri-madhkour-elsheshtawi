@@ -180,8 +180,8 @@ public class PersonalBoard {
     }
 
     public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
-     this.activeLeaderCards=activeLeaderCards;
-}
+         this.activeLeaderCards=activeLeaderCards;
+    }
     public List<LeaderCard> getActiveLeaderCards() {
         return this.activeLeaderCards;
     }

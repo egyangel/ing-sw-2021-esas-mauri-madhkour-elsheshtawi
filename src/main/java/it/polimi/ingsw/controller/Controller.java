@@ -209,9 +209,7 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case ACTIVATE_LEADER_CONTEXT_SELECTED:
                 LeaderActionContext emptyActivateLeaderContext = new LeaderActionContext();
-                emptyActivateLeaderContext.setOwnedCard(game.getPersonalBoard(userID).getOwnedCard());
                 emptyActivateLeaderContext.setPlayerCard(new HashSet<>(game.getPersonalBoard(userID).getInactiveLeaderCards()));
-                emptyActivateLeaderContext.setTotalResources(game.getPersonalBoard(userID).getTotalResources());
                 emptyActivateLeaderContext.setLastStep(CHOOSE_ACTION);
                 cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, emptyActivateLeaderContext);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
@@ -248,6 +246,17 @@ public class Controller implements Listener<VCEvent> {
                 CVEvent cvEventFive = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEventFive);
                 break;
+                //TODO Omer maybe it is better in the second way, they do the same works
+        /*
+                case BUY_DEVCARD_ACTION_ENDED:
+
+                case ACTIVATE_PROD_ACTION_ENDED:
+                // there is nothing to do when buy dev card ended
+                CVEvent cvEventFour = new CVEvent(SELECT_MINOR_ACTION);
+                userIDtoVirtualViews.get(userID).update(cvEventFour);
+                break;
+        */
+
             case END_TURN:
                 TurnManager.goToNextTurn();
                 Integer nextUserID = TurnManager.getCurrentPlayerID();
@@ -592,12 +601,12 @@ public class Controller implements Listener<VCEvent> {
                 context.setLastStep(END_LEADER_ACTION);
                 break;
             case LEADER_CARD_ACTIVATED_CHOOSEN:
-                handleActivateLeaderChoosen(userID, context);
+                handleActivationLeaderChosen(userID, context);
                 context.setLastStep(END_LEADER_ACTION);
                 break;
             case BOTH_ACTIONS:
                 handleDiscardLeaderChosen(userID, context);
-                handleActivateLeaderChoosen(userID, context);
+                handleActivationLeaderChosen(userID, context);
                 context.setLastStep(END_LEADER_ACTION);
                 break;
             case LEADER_CARD_NOT_ACTIVATED_CHOOSEN:
@@ -615,10 +624,59 @@ public class Controller implements Listener<VCEvent> {
 
     }
 
-    private void  handleActivateLeaderChoosen(Integer userID, LeaderActionContext context){
+    private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
         game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
+        checkLeaderActivationAction (userID,context);
+        //if( context.getActiveLeaderCard().size() > 0 )
     }
+    /**
+     * methods that handle the check of the requirements of leader cards,
+     * */
+    private void checkLeaderActivationAction (Integer userID, LeaderActionContext context){
+        int discConvert =0;
+        int firstCount = 0;
+        int secondCount = 0;
+        List<LeaderCard> activeLeaderCards= new ArrayList<>();
+        int i = 0;
+        int j = 0;
+        while (j < context.getLeadersToActivate().size()) {
+            if (context.getLeadersToActivate().get(j).getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
+                while (i < context.getOwnedCards().size()) {
+                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
+                            context.getOwnedCards().get(i).getLevel() == 2) {
+                        activeLeaderCards.add(context.getLeadersToActivate().get(j));
+                    }
+                    i++;
+                }
+            }
+            if (context.getLeadersToActivate().get(j).getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT) {
+                if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getLeadersToActivate().get(j).getRequirement().getResource().getOnlyType()) == 5)) {
+                    activeLeaderCards.add(context.getLeadersToActivate().get(j));
+                }
+            } else {
+                if (context.getLeadersToActivate().get(j).getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
+                    discConvert = 1;
+                } else {
+                    discConvert = 2;
+                }
+                while (i < game.getPersonalBoard(userID).getOwnedCard().size()) {
+                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
+                        firstCount++;
+                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(1).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
+                        secondCount++;
+                    i++;
+                }
+                if (firstCount >= 1 && secondCount >= 1 && discConvert == 1)
+                    activeLeaderCards.add(context.getLeadersToActivate().get(j));
 
+                if (firstCount >= 2 && secondCount >= 1 && discConvert == 2)
+                    activeLeaderCards.add(context.getLeadersToActivate().get(j));
+
+            }
+            j++;
+        }
+       context.setActiveLeaderCard(new HashSet<>(activeLeaderCards));
+    }
     private void computeVictoryPoint(Integer userID) {
 
         int respoint;
