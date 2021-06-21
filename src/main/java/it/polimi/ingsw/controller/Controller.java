@@ -87,6 +87,7 @@ public class Controller implements Listener<VCEvent> {
         for(Integer userId: userIDs){
             updateAboutWarehouseOfId(userId);
             updateAboutStrongboxOfId(userId);
+            updateAboutFaithPointOfId(userId);
         }
     }
 
@@ -102,6 +103,18 @@ public class Controller implements Listener<VCEvent> {
         strongbox = game.getPersonalBoard(userId).getStrongboxResources();
         MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
         game.updateAllAboutChange(strongboxUpdate);
+    }
+
+    private void updateAboutFaithPointOfId(Integer userId){
+        Integer currentFaithPoints = game.getPersonalBoard(userId).getFaithPoints();
+        MVEvent mvEventTwo = new MVEvent(userId, MVEvent.EventType.FAITHPOINT_UPDATE,currentFaithPoints);
+        game.updateAllAboutChange(mvEventTwo);
+    }
+
+    private void updateAboutFaithTrackofId(Integer userId){
+        Map<PersonalBoard.PopeArea, Boolean> map = game.getPersonalBoard(userId).getPopeAreaMap();
+        MVEvent mvEvent = new MVEvent(userId, MVEvent.EventType.VATICAN_REPORT_TAKEN, map);
+        game.updateAllAboutChange(mvEvent);
     }
 
     @Override
@@ -177,27 +190,23 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case TAKE_RES_ACTION_ENDED:
                 TakeResActionContext takeResContextTwo = (TakeResActionContext) vcEvent.getEventPayload(TakeResActionContext.class);
-                game.getPersonalBoard(userID).increaseFaitPoint(takeResContextTwo.getFaithPoints());
-                //todo Omer process discarded res and increase faith point in other personal boards
-                // In the background, it may send vatican report updates to clients
-//                List<Integer> allUserIDs = new ArrayList<>();
-//                allUserIDs.addAll(userIDtoUsernames.keySet());
-//                if (game.getPersonalBoard(userID).hasPopeSpaceReached()) {
-//                    for (Integer aUserID: allUserIDs){
-//                        game.getPersonalBoard(aUserID).giveNextVaticanReport();
-//                    }
-//                }
-//                int discardedRes = takeResContextTwo.getDiscardedRes();
-//                List<Integer> otherUserIDs = new ArrayList<>();
-//                otherUserIDs.addAll(userIDtoUsernames.keySet());
-//                otherUserIDs.remove(userID);
-//                for (Integer otherUserID: otherUserIDs){
-//                    game.getPersonalBoard(otherUserID).increaseFaitPoint(discardedRes);
-//
-//                    MVEvent mvEventTwo = new MVEvent(otherUserID, MVEvent.EventType.FAITHPOINT_UPDATE,)
-//                }
+                int faithPointsToAdd = takeResContextTwo.getFaithPoints();
+                if (faithPointsToAdd > 0){
+                    game.getPersonalBoard(userID).increaseFaitPoint(faithPointsToAdd);
+                    updateAboutFaithPointOfId(userID);
+                }
+                int discardedRes = takeResContextTwo.getDiscardedRes();
+                if (discardedRes > 0){
+                    userIDs.remove(userID);
+                    for(Integer anOtherUserId: userIDs){
+                        game.getPersonalBoard(anOtherUserId).increaseFaitPoint(discardedRes);
+                        updateAboutFaithPointOfId(anOtherUserId);
+                    }
+                    userIDs.add(userID);
+                }
                 CVEvent cvEventTwo = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEventTwo);
+                break;
             case BUY_DEVCARD_ACTION_ENDED:
             case ACTIVATE_PROD_ACTION_ENDED:
                 CVEvent cvEventFour = new CVEvent(SELECT_MINOR_ACTION);
@@ -297,6 +306,7 @@ public class Controller implements Listener<VCEvent> {
         updateAboutWarehouseOfId(userID);
     }
     private void handlePutResourcesChosen(Integer userID, TakeResActionContext context){
+        // todo omer do not put resources of same type to two different shelves
         Map<Shelf.shelfPlace, Resources.ResType> map = context.getShelfPlaceResTypeMap();
         Map<Shelf.shelfPlace, Boolean> shelfToResult = new HashMap<>();
         boolean result;
@@ -593,9 +603,7 @@ public class Controller implements Listener<VCEvent> {
         Map<PersonalBoard.PopeArea, Boolean> map;
         for(Integer userID: userIDs){
             game.getPersonalBoard(userID).giveVaticanReport(area);
-            map = game.getPersonalBoard(userID).getPopeAreaMap();
-            // TODO omer check if it sends the map
-            MVEvent mvEvent = new MVEvent(userID, MVEvent.EventType.VATICAN_REPORT_TAKEN, map);
+            updateAboutFaithTrackofId(userID);
         }
     }
 }

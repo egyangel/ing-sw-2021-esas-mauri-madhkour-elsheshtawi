@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.model.PersonalBoard;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PersonalBoardDescription {
@@ -11,7 +12,7 @@ public class PersonalBoardDescription {
     private String faithTrackDescription;
     private String leaderCardsDescription;
     private int faithPoints;
-    private Map<PersonalBoard.PopeArea, Boolean> tileMap;
+    private Map<PersonalBoard.PopeArea, Boolean> tileMap = new HashMap<>();
 
     public String getWarehouseDescription() {
         return warehouseDescription;
