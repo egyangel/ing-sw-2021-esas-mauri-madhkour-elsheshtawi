@@ -32,11 +32,11 @@ public class TurnManager {
     }
 
     public static Integer getNextPlayerID(){
+
         return turnOrderUserID.get(currentPlayerIndex+1);
     }
 
-    public static Integer getCurrentPlayerID() {
-        return turnOrderUserID.get(currentPlayerIndex);
+    public static Integer getCurrentPlayerID() {return turnOrderUserID.get(currentPlayerIndex);
     }
 
     public static Integer getCurrentPlayerIndex(){

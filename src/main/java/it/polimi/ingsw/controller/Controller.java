@@ -18,12 +18,11 @@ import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
 // ALSO IMPLEMENTS Publisher<CVEvent> but ABSTRACT OUT LATER
 public class Controller implements Listener<VCEvent> {
 
-    private Server server;
+    protected Server server;
     protected Game game;
-    private Map<Integer, String> userIDtoUsernames = new HashMap<>();
-    private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
+    protected Map<Integer, String> userIDtoUsernames = new HashMap<>();
+    protected Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
     private List<Integer> userIDs = new ArrayList<>();
-
     public Controller(Game game, Server server) {
         this.game = game;
         this.server = server;
@@ -58,7 +57,7 @@ public class Controller implements Listener<VCEvent> {
         }
     }
 
-    private void sendTurnOrderAssign() {
+    protected void sendTurnOrderAssign() {
         TurnManager.assignTurnOrder();
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
             Integer userTurn = TurnManager.getOrderOfUserID(entry.getKey());
@@ -76,7 +75,8 @@ public class Controller implements Listener<VCEvent> {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }
     }
-    private void beginTurn() {
+
+    protected void beginTurn() {
         Integer currentUserID = TurnManager.getCurrentPlayerID();
         // TODO models being updated as soon as they change is better, comment out below line later
         game.sendMarketAndDevCardMatrixTo(currentUserID);
@@ -293,16 +293,17 @@ public class Controller implements Listener<VCEvent> {
         }
         int whiteMarbles = 0;
         Resources resources = new Resources();
-        for(MarbleColor marble: marbleList) {
-            if(marble.getValue() == MarbleColor.WHITE) whiteMarbles++;
+        for (MarbleColor marble : marbleList) {
+            if (marble.getValue() == MarbleColor.WHITE) whiteMarbles++;
         }
-        if (whiteConverters.size() == 0 || whiteMarbles == 0){
-            for(MarbleColor marble: marbleList){
-                if (marble.getResourceType() != null)
-                    resources.add(marble.getResourceType(),1);
+        if (whiteConverters.size() == 0 || whiteMarbles == 0) {
+            for (MarbleColor marble : marbleList) {
+                Resources.ResType resType = marble.getResourceType();
+                if (resType != null)
+                    resources.add(resType, 1);
             }
             context.setLastStep(CHOOSE_SHELVES);
-        } else if(whiteConverters.size() == 1) {
+        } else if (whiteConverters.size() == 1) {
             for (MarbleColor marble : marbleList) {
                 Resources.ResType resType = marble.getResourceType();
                 if (resType == null) {
@@ -311,11 +312,11 @@ public class Controller implements Listener<VCEvent> {
                 resources.add(resType, 1);
             }
             context.setLastStep(CHOOSE_SHELVES);
-        } else if(whiteConverters.size() == 2){
-            for(MarbleColor marble: marbleList){
+        } else if (whiteConverters.size() == 2) {
+            for (MarbleColor marble : marbleList) {
                 Resources.ResType resType = marble.getResourceType();
                 if (resType != null)
-                    resources.add(resType,1);
+                    resources.add(resType, 1);
             }
             context.setLastStep(CHOOSE_LEADER_TO_CONVERT_WHITE);
             context.setWhiteConverters(whiteConverters);
@@ -361,6 +362,19 @@ public class Controller implements Listener<VCEvent> {
         context.setLastStep(CHOOSE_SHELVES); //choose shelves is correct, I did it this way intentionally
         updateAboutWarehouseOfId(userID);
     }
+
+    protected void endTurn(Integer userId){
+        //TODO to implement all checks
+
+         TurnManager.registerResponse(userId);
+         TurnManager.goToNextTurn();
+        Integer currentUserID = TurnManager.getCurrentPlayerID();
+        game.sendMarketAndDevCardMatrixTo(currentUserID);
+        CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
+        userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
+
+    }
+
     //handle BuyDevCardAction
     private void handleBuyDevCardAction(Integer userID, BuyDevCardActionContext context){
         switch (context.getLastStep()){

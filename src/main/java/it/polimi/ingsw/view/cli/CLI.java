@@ -41,8 +41,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
     private String marketTrayDescription;
     private String devCardMatrixDescription;
-    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<>();
-    private Map<Integer, String> userIDtoUsernames =  new HashMap<>();
+    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<Integer, PersonalBoardDescription>();
+    private Map<Integer, String> userIDtoUsernames = new HashMap<Integer, String>();
     private boolean majorActionDone;
 
     /**
@@ -74,7 +74,26 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("chooseRowColumnNumber", this::chooseRowColumnNumber);
         displayNameMap.put("chooseShelvesToPut", this::chooseShelvesToPut);
         displayNameMap.put("chooseColorLevel", this::chooseColorLevel);
+        displayNameMap.put("displayWarehouse", this::displayWarehouse);
         displayNameMap.put("displayMarketTray", this::displayMarketTray);
+        displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
+        displayNameMap.put("displayMinorActionSelection", this::displayMinorActionSelection);
+        displayNameMap.put("displayStrongbox", this::displayStrongbox);
+        displayNameMap.put("displayDevSlots", this::displayDevSlots);
+        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
+        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
+        displayNameMap.put("displayAllPersonalBoards", this::displayAllPersonalBoards);
+
+        //TODO add used methods at the end
+
+//        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
+//        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
+//        displayNameMap.put("displayWarehouseAndStrongbox", this::displayWarehouseAndStrongbox);
+//
+//
+//
+//        displayNameMap.put("displayOtherPlayers", this::displayOtherPlayers);
+//        displayNameMap.put("displayEndTurn", this::displayEndTurn);
         displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
         displayNameMap.put("displayWarehouse", this::displayWarehouse);
         displayNameMap.put("displayStrongbox", this::displayStrongbox);
@@ -397,6 +416,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case 8:
                 addNextDisplay("displayEndTurn");
                 break;
+            case 9:
+                //TODO recheck after merge
+                VCEvent vcEvent = new VCEvent(END_TURN);
+                publish(vcEvent);
+                break;
         }
     }
 
@@ -498,6 +522,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * event that check and manage the transformation
      */
     public void chooseRowColumnNumber() {
+        out.println(this.marketTrayDescription);
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
         char firstLetter = rowColumnNumber.charAt(0);
         int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(2)));
@@ -577,9 +602,15 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             takeResContext.setLastStep(SWAP_SHELVES_CHOSEN);
         } else if (index == 3) {
             List<Resources.ResType> resTypeList = new ArrayList<>();
-            resTypeList.addAll(resources.getResTypes());
+            List<Resources.ResType> resType = null;
+            if (resources != null)
+                resType = resources.getResTypes();
+            if (resType != null)
+                resTypeList.addAll(resources.getResTypes());
             Map<Shelf.shelfPlace, Resources.ResType> shelfToResMap = new HashMap<>();
             for (Shelf.shelfPlace place : Shelf.shelfPlace.values()) {
+                if (resTypeList.isEmpty())
+                    continue;
                 out.println("Do you want to add a resource into " + place.toString() + " shelf?");
                 Boolean answer = InputConsumer.getYesOrNo(in, out);
                 if (!answer) continue;
@@ -763,27 +794,27 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             }
             activateProdContext.setLhlLeaderCard(costLhsLeader);
         }
-        if(activateProdContext.getNumberOfActiveLeaderProduction() > 0){
-                out.println("Do want to use LeaderCard Production ability ? ");
-                boolean leaderActivate = InputConsumer.getYesOrNo(in, out);
-                if (leaderActivate) {
-                    activateProdContext.setActivationLeaderCardProduction(true);
-                    activateProdContext.setNumberOfActiveLeaderProduction(numberOfActiveProduceLeaderCard);
-                    chooseLeaderProdAction(numberOfActiveProduceLeaderCard);
-                }
+        if (activateProdContext.getNumberOfActiveLeaderProduction() > 0) {
+            out.println("Do want to use LeaderCard Production ability ? ");
+            boolean leaderActivate = InputConsumer.getYesOrNo(in, out);
+            if (leaderActivate) {
+                activateProdContext.setActivationLeaderCardProduction(true);
+                activateProdContext.setNumberOfActiveLeaderProduction(numberOfActiveProduceLeaderCard);
+                chooseLeaderProdAction(numberOfActiveProduceLeaderCard);
             }
-            out.println("Do want to activate base production power ? ");
-            boolean answer = InputConsumer.getYesOrNo(in, out);
-            if (answer) {
-                baseProd = InputConsumer.chooseBaseProdRes(in, out);
-                activateProdContext.setBaseProdPower(true);
-                activateProdContext.setBaseProductionCard(baseProd);
-            }
-            activateProdContext.setSlots(slotChosen);
-            activateProdContext.setLastStep(DEV_SLOTS_CHOSEN);
-            VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
-            publish(vcEvent);
         }
+        out.println("Do want to activate base production power ? ");
+        boolean answer = InputConsumer.getYesOrNo(in, out);
+        if (answer) {
+            baseProd = InputConsumer.chooseBaseProdRes(in, out);
+            activateProdContext.setBaseProdPower(true);
+            activateProdContext.setBaseProductionCard(baseProd);
+        }
+        activateProdContext.setSlots(slotChosen);
+            activateProdContext.setLastStep(DEV_SLOTS_CHOSEN);
+        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+        publish(vcEvent);
+    }
     /**
      * methods that handle the payment of production. Ask to the player from where paying for the production.
      * After the player fill the activateProdContext context  it publish an VC(view to controller)
@@ -827,7 +858,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             int numOfCard = InputConsumer.getANumberBetween(in, out, 1, numberOfActiveProduceCard);
             RHS.add(InputConsumer.chooseRhsLeaderCard(in, out, numOfCard));
             activateProdContext.setRhlLeaderCard(RHS);
-        }
+    }
 
     /**
      * methods that handle the Leader Action based on the CV event and last step of activateLeaderContext that has been set
@@ -911,42 +942,42 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * THen server update the personal board based on the choice.
      *
      * */
-    public void chooseLeaderActivationAction () {
-        int j = 0;
+        public void chooseLeaderActivationAction () {
+            int j = 0;
         Set<LeaderCard> activeLeaderCard = new HashSet<>();
         out.println("You can active  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
         if (activateLeaderContext.getPlayerCard().size() > 0) {
-            out.println("Your Leader Card:");
-             while (j < activateLeaderContext.getPlayerCard().size()) {
-                 out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
-                 if (InputConsumer.getYesOrNo(in, out)) {
-                     if (checkLeaderActivationAction(activateLeaderContext.getPlayerCard().get(j)))
-                         activeLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
-                     else
-                         out.println("You don't satisfy the requirement:");
-                 }
-                 j++;
-             }
-             if (activeLeaderCard.size() > 0) {
-                 activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
-             } else {
-                 activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);
-             }
+                    out.println("Your Leader Card:");
+                while (j < activateLeaderContext.getPlayerCard().size()) {
+                        out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
+                        if (InputConsumer.getYesOrNo(in, out)) {
+                            if (checkLeaderActivationAction(activateLeaderContext.getPlayerCard().get(j)))
+                                activeLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
+                            else
+                                out.println("You don't satisfy the requirement:");
+                        }
+                        j++;
+                    }
+                    if (activeLeaderCard.size() > 0) {
+                    activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
+                    } else {
+                    activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);
+                }
+            }
+            activateLeaderContext.setActiveLeaderCard(activeLeaderCard);
+            VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+            publish(vcEvent);
         }
-        activateLeaderContext.setActiveLeaderCard(activeLeaderCard);
-        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
-        publish(vcEvent);
-    }
 
     /**
      * methods that handle the check of the requirements of leader cards,
      * @param leaderToCheck is the card to check
      * */
-    private boolean checkLeaderActivationAction (LeaderCard leaderToCheck){
+        private boolean checkLeaderActivationAction (LeaderCard leaderToCheck){
         int discConvert =0;
         int firstCount = 0;
         int secondCount = 0;
-        int i = 0;
+            int i = 0;
         if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
             while(i < activateLeaderContext.getOwnedCard().size()){
                 if (leaderToCheck.getRequirement().getColor(0).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) &&
@@ -1457,4 +1488,5 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 out.println(username);
         }
 
+    }
     }
