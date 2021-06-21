@@ -155,9 +155,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public void displayFirstLogin() {
         out.println("Choose a username:");
-        String username = InputConsumer.getUserName(in, out);
+        // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
+//        String username = InputConsumer.getUserName(in, out);
+        String username = "omer";
         out.println("Choose number of players you would like to play with:");
-        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
+//        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
+        Integer numberOfPlayers = 2;
         Map<String, String> firstLoginMap = new HashMap<>();
         firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
         firstLoginMap.put("username", username);
@@ -168,9 +171,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     @Override
     public void displayLogin() {
         out.println("Choose a username:");
-        String username = InputConsumer.getUserName(in, out);
-        //TODO OMer here we may ask gor the number so that we know a priori the number of player and then change for an arbitrary number
-        out.println("Choose number of players you would like to play with:");
+        // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
+//        String username = InputConsumer.getUserName(in, out);
+        String username = "John";
         Message loginmsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
         client.sendToServer(loginmsg);
     }
@@ -218,9 +221,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             out.println(i + 1 + ") " + fourLeaderCards.get(i).describeLeaderCard());
         }
         out.println("Enter the index of first leader card to keep:");
-        Integer firstIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
+        // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
+//        Integer firstIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
+        Integer firstIndex = 1;
         out.println("Enter the index of second leader card to keep:");
-        Integer secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
+//        Integer secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
+        Integer secondIndex = 2;
         while (firstIndex.equals(secondIndex)) {
             out.println("Please enter a different index than first selection:");
             secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
@@ -252,7 +258,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case 2:
                 out.println("You are the second player.");
                 out.println("You will have one initial resource of your choosing in the warehouse.");
-                Resources.ResType initResType = InputConsumer.getResourceType(in, out);
+                // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
+//                Resources.ResType initResType = InputConsumer.getResourceType(in, out);
+                Resources.ResType initResType = Resources.ResType.COIN;
                 Resources initResource = new Resources(initResType, 1);
                 VCEvent vcEvent = new VCEvent(INIT_RES_CHOOSEN, initResource);
                 publish(vcEvent);
@@ -292,6 +300,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
+        // TODO write a more descriptive sentence, like activate/deactivate leader card
         out.println("[4] Leader action");
         out.println("[5] View market tray");
         out.println("[6] View development card matrix");
@@ -303,7 +312,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[12] View other personal boards");
         out.println("[13] End turn");
         out.println("Enter the index of the action you want to take:");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 11);
+        int index = InputConsumer.getANumberBetween(in, out, 1, 13);
         switch (index) {
             case 1:
                 vcEvent = new VCEvent(TAKE_RES_ACTION_SELECTED);
@@ -352,6 +361,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case 12:
                 addNextDisplay("displayOtherPersonalBoards");
                 addNextDisplay("displayAllActionSelection");
+                break;
+            case 13:
+                addNextDisplay("displayEndTurn");
+                break;
         }
     }
 

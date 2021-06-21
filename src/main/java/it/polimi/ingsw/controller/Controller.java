@@ -169,7 +169,7 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case BUY_DEVCARD_ACTION_SELECTED:
                 //TODO FOR DEBUG init resources in strongbox
-                Resources newRes = new Resources(5,5,5,5);
+                Resources newRes = new Resources(10,10,10,10);
                 game.getPersonalBoard(userID).setStrongbox(newRes);
                 BuyDevCardActionContext emptyBuyDevCardContext = new BuyDevCardActionContext();
                 emptyBuyDevCardContext.setLastStep(CHOOSE_COLOR_LEVEL);
