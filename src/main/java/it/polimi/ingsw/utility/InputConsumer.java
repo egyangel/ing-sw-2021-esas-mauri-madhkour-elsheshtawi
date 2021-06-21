@@ -80,25 +80,27 @@ public class InputConsumer {
 
     public static Integer getNumberOfPlayers(Scanner scanner, PrintWriter out) {
         Integer input;
-        try {
+        input = Integer.parseInt(scanner.nextLine());
+        while (input < 1 || input > 4) {
+            out.println("Invalid number of players, please enter a number between 1 and 4:");
             input = Integer.parseInt(scanner.nextLine());
-            while (input < 1 || input > 4) {
-                out.println("Invalid number of players, please enter a number between 1 and 4:");
-                input = Integer.parseInt(scanner.nextLine());
-            }
-            return input;
-        }catch (Exception e){
-            return getNumberOfPlayers(scanner, out);
         }
-
+        return input;
     }
 
     public static Integer getANumberBetween(Scanner scanner, PrintWriter out, int min, int max) {
-        Integer input;
-        input = Integer.parseInt(scanner.nextLine());
+        Integer input = -1;
+        try {
+            input = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+        }
         while (input < min || input > max) {
             out.println("Invalid input, please enter a number between " + min + " and " + max);
-            input = Integer.parseInt(scanner.nextLine());
+            try {
+                input = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                out.println("Invalid input, please enter a number between " + min + " and " + max);
+            }
         }
         return input;
     }
@@ -135,7 +137,6 @@ public class InputConsumer {
     }
 
     public static String getMarketRowColumnIndex(Scanner in, PrintWriter out) {
-
         out.println("[C-1] [C-2] [C-3] [C-4] [R-1] [R-2] [R-3]");
         out.println("Enter column/row and index as shown above, indexes start at left column and top row:");
         String input;
@@ -318,18 +319,11 @@ public class InputConsumer {
         int number = Integer.parseInt(level);
         while (!(DevCard.CardColor.contains(color) && (number >= 1) && (number <= 3))) {
             out.println("Invalid input, please enter an input as shown in examples without brackets");
-            out.println("Example inputs: [BLUE-1] [GREEN-2] [YELLOW-3] [PURPLE-1]; Write back to exite");
-
-            input = in.nextLine().toUpperCase();
+            out.println("Example inputs: [BLUE-1] [GREEN-2] [YELLOW-3] [PURPLE-1]");
             parts = input.split("-");
             color = parts[0];
-            if (color == "back")
-                return input;
-
-            if (parts.length == 1)
-                number = -1;
-            else
-                number = Integer.parseInt(parts[1]);
+            level = parts[1];
+            number = Integer.parseInt(level);
         }
         return input;
     }

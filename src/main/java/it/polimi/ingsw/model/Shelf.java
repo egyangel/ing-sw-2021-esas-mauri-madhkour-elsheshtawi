@@ -29,29 +29,26 @@ public class Shelf {
         resources = new ArrayList<>();
     }
 
-    public void putResource(Resources.ResType resType, int size){
+    public int putResource(Resources.ResType resType, int size){
         List<Resources.ResType> list = new ArrayList<>();
         for (int i = 0; i < size; i++){
             list.add(resType);
         }
-        putResource(list);
+        return putResource(list);
     }
 
     //adding multiple elements each time
     public Integer putResource(List<Resources.ResType> resources) {
-
         int i=0;
             if (this.isEmpty() && this.shelfSize()>= resources.size()) {
                 this.resources.addAll(resources);
                 return 0;
             }else
                 if (this.isFull()) {
-
                     return resources.size();
                 }else {
                     if (!this.isEmpty()) {
                         if (!this.resources.get(0).equals(resources.get(0))) {
-
                             return resources.size();
                         }
                     }
@@ -62,11 +59,10 @@ public class Shelf {
                     return resources.size() - i;
                 }
     }
-    // method to be used in the game to return false if cannot put it
-    public boolean putResource(Resources res){
-        if (!res.isThisOneType() || (res.sumOfValues() + this.getNumberOfElements() > shelfSize())) return false;
-        this.putResource(res.getOnlyType(), res.sumOfValues());
-        return true;
+    // method to be used in the game to returns -1 if different type tried to be put
+    public int putResource(Resources res){
+        if (!res.isThisOneType()) return -1;
+        else return this.putResource(res.getOnlyType(), res.sumOfValues());
     }
 
     // modification of below method that returns discarded res number
@@ -134,6 +130,67 @@ public class Shelf {
         String string = this.getNumberOfElements()+" of "+ this.getShelfResType();
         return string;
     }
+    public String describeShelfFancy(){
+        StringBuilder sb = new StringBuilder();
+        switch(place){
+            case TOP:
+                sb.append("      \u2571 \u2572\n");
+                if (resources.isEmpty()){
+                    sb.append("    \u2571  -  \u2572");
+                }
+                else {
+                    sb.append("    \u2571 " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                }
+                sb.append("\n");
+                break;
+            case MIDDLE:
+                sb.append("  \u2571");
+                if (resources.isEmpty()){
+                    sb.append("  -   -  \u2572");
+                }
+                else if(resources.size() == 1){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  \u2572");
+                } else if(resources.size() == 2){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                }
+                sb.append("\n");
+                break;
+            case BOTTOM:
+                sb.append("\u2571");
+                if (resources.isEmpty()){
+                    sb.append("  -   -   -  \u2572");
+                }
+                else if(resources.size() == 1){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  -   \u2572");
+                } else if(resources.size() == 2){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  \u2572");
+                } else if(resources.size() == 3){
+                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                }
+                sb.append("\n");
+                for(int i = 0; i<15; i++){
+                    sb.append("\u2500");
+                }
+                break;
+        }
+        return sb.toString();
+    }
+
+//    public static void main(String[] args){
+//        Shelf[] warehouse = new Shelf[3];
+//        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
+//        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
+//        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
+//        warehouse[0].putResource(Resources.ResType.COIN, 1);
+//        warehouse[1].putResource(Resources.ResType.SHIELD, 1);
+//        warehouse[2].putResource(Resources.ResType.SERVANT, 3);
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(warehouse[0].describeShelfFancy());
+//        sb.append(warehouse[1].describeShelfFancy());
+//        sb.append(warehouse[2].describeShelfFancy());
+//        System.out.println(sb.toString());
+//    }
+
     public boolean removeOneFromShelf(){
         return this.resources.remove(this.resources.get(0));
     }

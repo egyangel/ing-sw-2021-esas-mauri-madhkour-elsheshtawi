@@ -63,6 +63,7 @@ public class Resources {
     }
 
     public void add(ResType type,Integer val){
+        if (val <= 0) return;
         this.values.put(type, this.getNumberOfType(type) + val); //replaces by default if type exists before
     }
 
@@ -136,15 +137,35 @@ public class Resources {
         else return null;
     }
 
-    // true if smallerOrEqual.compareTo(bigger)
+    // true if smallerOrEqual.compareTo(bigger), SUBSETOF
     public boolean smallerOrEqual(Resources otherRes){
-        for(ResType resType: this.getResTypes()){
+        for(ResType resType: Resources.ResType.values()){
             if (this.getNumberOfType(resType) > otherRes.getNumberOfType(resType)){
                 return false;
             }
         }
         return true;
     }
+
+    public boolean includes(Resources otherRes){
+        for(ResType resType: Resources.ResType.values()){
+            if (otherRes.getNumberOfType(resType) > this.getNumberOfType(resType)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+//    public static void main(String[] args){
+//        Resources x = new Resources();
+//        x.add(ResType.STONE, 2);
+//        x.add(ResType.COIN, 2);
+//        Resources y = new Resources();
+//        y.add(ResType.STONE, 2);
+//        y.add(ResType.COIN, 1);
+//        y.add(ResType.SHIELD, 1);
+//        System.out.println(x.includes(y));
+//    }
 
     @Override
     public String toString() {
@@ -154,7 +175,7 @@ public class Resources {
     public Resources() {}
 
     public Resources(ResType resource, int number) {
-        values.put(resource,number);
+        if (number >=0) values.put(resource,number);
     }
 
     public String describeResource(){
@@ -168,12 +189,10 @@ public class Resources {
     // DEBUG METHODS
 
     //    Over-loading constructor
-    public Resources(int stone, int shield, int servant, int coin, int faith){
-        this.values = new HashMap<>();
+    public Resources(int stone, int shield, int servant, int coin){
         this.values.put(ResType.STONE, stone);
         this.values.put(ResType.SHIELD, shield);
         this.values.put(ResType.SERVANT, servant);
         this.values.put(ResType.COIN, coin);
-        this.values.put(ResType.FAITH, faith);
     }
 }

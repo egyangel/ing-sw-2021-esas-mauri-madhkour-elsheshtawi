@@ -18,9 +18,13 @@ public class Game implements Publisher<MVEvent> {
     private Map<Integer, PersonalBoard> userIDtoBoards = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
+    private SoloActionToken[] soloActionToken = new SoloActionToken[6];
     private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
-    protected DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
+    private DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
+    private Controller controller;
+    private Map<PersonalBoard.PopeArea, Boolean> popeAreaMapTrigger = new HashMap<>();
+    private boolean newPopeSpaceReached = false;
     private boolean soloMode;
 
     public void addPlayer(Integer userID) {
@@ -33,20 +37,27 @@ public class Game implements Publisher<MVEvent> {
         createDevCardDecks();
         createMarketTray();
         createLeaderCards();
+        popeAreaMapTrigger.put(PersonalBoard.PopeArea.FIRST, false);
+        popeAreaMapTrigger.put(PersonalBoard.PopeArea.SECOND, false);
+        popeAreaMapTrigger.put(PersonalBoard.PopeArea.THIRD, false);
     }
 
     private void createBoardForEachPlayer() {
-        this.soloMode = userIDtoPlayers.size() > 1;
+        // todo I changed solo mode cheking condition, it was (this.soloMode = userIDtoPlayers.size() > 1;)
+        this.soloMode = userIDtoPlayers.size() == 1;
         for (Map.Entry<Integer, Player> entry : userIDtoPlayers.entrySet()) {
-            userIDtoBoards.put(entry.getKey(), new PersonalBoard(entry.getKey(), soloMode));
+            PersonalBoard pb = new PersonalBoard(entry.getKey(), soloMode);
+            pb.setGame(this);
+            userIDtoBoards.put(entry.getKey(), pb);
         }
     }
 
-    private void createDevCardDecks() {
+    public void createDevCardDecks() {
         List<DevCard> allDevCards = JsonConverter.deserializeDevCards();
         Iterator<DevCard> cardIterator = allDevCards.iterator();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
+                // DevCardDeck constructor argument order(color, level), devcardmatrix is reverse, it can stay like this
                 DevCardDeck deck = new DevCardDeck(DevCard.CardColor.values()[j], i + 1);
                 for (int k = 0; k < 4; k++) {
                     deck.putCard(cardIterator.next());
@@ -84,22 +95,35 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public DevCard peekTopDevCard(DevCard.CardColor color, int level) {
-        DevCard card = devCardMatrix[color.ordinal()][level].peekTopCard();
+        DevCard card = devCardMatrix[level-1][color.ordinal()].peekTopCard();
         return card;
     }
 
     public void removeTopDevCard(DevCard.CardColor color, int level) {
-        devCardMatrix[color.ordinal()][level].removeTopCard();
+        devCardMatrix[level-1][color.ordinal()].removeTopCard();
     }
 
     public void sendMarketAndDevCardMatrixTo(Integer userID) {
-//        String marketTrayString = market.describeMarketTray();
-//        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, marketTrayString);
-        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, market);
+        MVEvent marketUpdate = createMarketTrayMVEvent();
         publish(userID, marketUpdate);
-        String devCardMatrixString = describeDevCardMatrix();
-        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, devCardMatrixString);
+        MVEvent devCardMatrixUpdate = createDevCardMVEvent();
         publish(userID, devCardMatrixUpdate);
+    }
+
+    public MVEvent createMarketTrayMVEvent(){
+        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, market);
+        return marketUpdate;
+    }
+
+    public MVEvent createDevCardMVEvent(){
+        List<DevCard> topDevCards = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                topDevCards.add(devCardMatrix[i][j].peekTopCard());
+            }
+        }
+        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, topDevCards);
+        return devCardMatrixUpdate;
     }
 
     public String describeDevCardMatrix() {
@@ -178,6 +202,16 @@ public class Game implements Publisher<MVEvent> {
         return false;
     }
 
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public void triggerVaticanReport(PersonalBoard.PopeArea area){
+        if (!popeAreaMapTrigger.get(area)){
+            popeAreaMapTrigger.replace(area, true);
+            this.controller.takeVaticanReports(area);
+        }
+    }
 
     // DEBUG METHODS
 

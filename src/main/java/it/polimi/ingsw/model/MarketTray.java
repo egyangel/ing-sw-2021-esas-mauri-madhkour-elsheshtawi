@@ -112,17 +112,6 @@ public class MarketTray {
 
     }
 
-    //TODO: FOR AMOR: optional: add "C-1" "C-2" and "R-3" etc label words in appropriate places
-    public void MarketTrayDraw() {
-        System.out.println(String.format("%70s", OutMarble.getColor()));
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
-                System.out.print(String.format("%-16s", marketTray[i][j].getColor()));
-            }
-            System.out.println(" ");
-        }
-    }
-
     public String describeMarketTray() {
         StringBuilder sb = new StringBuilder();
         sb.append("\u2554");
@@ -141,17 +130,4 @@ public class MarketTray {
         sb.append("   \u2191   \u2191   \u2191   \u2191");
         return sb.toString();
     }
-
-    public static void main(String[] args){
-        MarketTray marketTray = new MarketTray();
-        System.out.println(marketTray.describeMarketTray());
-    }
-
-  /* public void ResourceDraw(){
-      System.out.println("Resources that you have to take from the market are:");
-       for (Resources.ResType resource : resources.getResTypes()) {
-            System.out.print(String.format("%-16s", resource));
-        }
-        System.out.println(" "); }
-    */
 }

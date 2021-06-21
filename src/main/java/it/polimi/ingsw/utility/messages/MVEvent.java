@@ -10,7 +10,8 @@ public class MVEvent extends Event{
         WAREHOUSE_UPDATE,
         STRONGBOX_UPDATE,
         DEVSLOTS_UPDATE,
-        FAITHPOINT_UPDATE
+        FAITHPOINT_UPDATE,
+        VATICAN_REPORT_TAKEN
     }
     private EventType eventType;
 
@@ -23,7 +24,12 @@ public class MVEvent extends Event{
     public MVEvent(EventType eventType, Object object){
         super(object);
         this.eventType = eventType;
-        this.jsonContent = JsonConverter.toJson(object);
+    }
+
+    public MVEvent(Integer userIDofUpdatedBoard, EventType eventType, Object object){
+        super(object);
+        this.userID = userIDofUpdatedBoard;
+        this.eventType = eventType;
     }
 
     public EventType getEventType() {

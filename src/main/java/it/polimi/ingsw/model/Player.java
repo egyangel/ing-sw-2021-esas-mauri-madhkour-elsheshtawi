@@ -8,8 +8,8 @@ public class Player {
     private PersonalBoard personalBoard;
 
     //    DEBUG methods
-    public void giveInitialStrongboxResources(int stone, int shield, int servant, int coin, int faith){
-        this.personalBoard.setStrongbox(new Resources(stone, shield, servant, coin, faith));
+    public void giveInitialStrongboxResources(int stone, int shield, int servant, int coin){
+        this.personalBoard.setStrongbox(new Resources(stone, shield, servant, coin));
     }
 }
 

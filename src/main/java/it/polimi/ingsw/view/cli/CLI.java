@@ -69,6 +69,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
         displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
         displayNameMap.put("displayAllActionSelection", this::displayAllActionSelection);
+        displayNameMap.put("displayMinorActionSelection", this::displayMinorActionSelection);
         displayNameMap.put("chooseLeaderAction", this::chooseLeaderAction);
         displayNameMap.put("chooseRowColumnNumber", this::chooseRowColumnNumber);
         displayNameMap.put("chooseShelvesToPut", this::chooseShelvesToPut);
@@ -93,6 +94,17 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 //
 //        displayNameMap.put("displayOtherPlayers", this::displayOtherPlayers);
 //        displayNameMap.put("displayEndTurn", this::displayEndTurn);
+        displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
+        displayNameMap.put("displayWarehouse", this::displayWarehouse);
+        displayNameMap.put("displayStrongbox", this::displayStrongbox);
+        displayNameMap.put("displayDevSlots", this::displayDevSlots);
+        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
+        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
+        displayNameMap.put("displayOtherPersonalBoards", this::displayOtherPersonalBoards);
+        displayNameMap.put("displayEndTurn", this::displayEndTurn);
+        displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
+        displayNameMap.put("choosePayDevCardCostFromWhere", this::choosePayDevCardCostFromWhere);
+
 
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
@@ -106,7 +118,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
         while (!stop) {
             if (displayTransitionQueue.peek() == null) {
-                displayNameMap.get("displayIdle").run();
+                // for debug display idle cancel, maybe for demo too
+//                displayNameMap.get("displayIdle").run();
             } else {
                 displayTransitionQueue.poll().run();
             }
@@ -172,12 +185,22 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayFourLeaderCard");
                 break;
             case ASSIGN_TURN_ORDER:
+                initEmptyPersonalBoards();
                 addNextDisplay("displayTurnAssign");
                 break;
-            case SELECT_ALL_ACTION:
-                majorActionDone = false;
-                addNextDisplay("displayAllActionSelection");
-                break;
+        }
+    }
+
+    private void initEmptyPersonalBoards(){
+        for(Integer userID: userIDtoUsernames.keySet()){
+            PersonalBoardDescription pbd = new PersonalBoardDescription();
+            Map<PersonalBoard.PopeArea, Boolean> map = new HashMap<>();
+            map.put(PersonalBoard.PopeArea.FIRST, false);
+            map.put(PersonalBoard.PopeArea.SECOND, false);
+            map.put(PersonalBoard.PopeArea.THIRD, false);
+            pbd.setTileMap(map);
+            pbd.setFaithPoints(0); //initial faith point will be given if necessary after turn assign
+            userIDtoBoardDescriptions.put(userID, pbd);
         }
     }
 
@@ -212,7 +235,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     /**
      * method that handle the assign of the order of the players and give them based on the order the initial resources
      */
-
     public void displayTurnAssign() {
         Integer turn = (Integer) initialCVevent.getEventPayload(Integer.class);
         switch (turn) {
@@ -258,7 +280,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-
     /**
      * methods that handle the menu of the player's actions and based on the action chosen call respectively
      * the method that handle, except for the 3 normal actions and the leader card activation.
@@ -279,8 +300,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[9] View development slots");
         out.println("[10] View faith track");
         out.println("[11] View leader cards");
-        // TODO maybe this option can be used for the users personal board too, so above display methods are not shown
-        out.println("[12] View all personal boards");
+        out.println("[12] View other personal boards");
         out.println("[13] End turn");
         out.println("Enter the index of the action you want to take:");
         int index = InputConsumer.getANumberBetween(in, out, 1, 11);
@@ -303,27 +323,35 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
             case 5:
                 addNextDisplay("displayMarketTray");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 6:
                 addNextDisplay("displayDevCardMatrix");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 7:
                 addNextDisplay("displayWarehouse");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 8:
                 addNextDisplay("displayStrongbox");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 9:
                 addNextDisplay("displayDevSlots");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 10:
                 addNextDisplay("displayFaithTrack");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 11:
                 addNextDisplay("displayLeaderCards");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case 12:
-                addNextDisplay("displayAllPersonalBoards");
+                addNextDisplay("displayOtherPersonalBoards");
+                addNextDisplay("displayAllActionSelection");
         }
     }
 
@@ -331,48 +359,52 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * method that handle a further menu of minor action, to allow the player to make more
      * action during the game. It is only a display method of the personal board
      */
-
     public void displayMinorActionSelection() {
         out.println("Do you want to execute any other action?");
         out.println("Enter the index of the action you want to take:");
         out.println("[1] View market tray");
-        //todo Omer why this action here, furthermore the case that handle it it is not connected to any methods
-        out.println("[2] View and modify warehouse");
+        out.println("[2] View warehouse");
         out.println("[3] View strongbox");
         out.println("[4] View development slots");
         out.println("[5] View faith track");
         out.println("[6] View leader cards");
-        out.println("[7] View other players");
-        //TODO omer why this action
-        out.println("[8]ACTIVATE_PROD_ACTION_ENDED Turn");
-        out.println("[9] End Turn");
+        out.println("[7] View other personal boards");
+        out.println("[8] End Turn");
         int index = InputConsumer.getANumberBetween(in, out, 1, 8);
         switch (index) {
             case 1:
                 addNextDisplay("displayMarketTray");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 2:
-                addNextDisplay("displayAskModifyWarehouse"); // TODO to implement
+                addNextDisplay("displayWarehouse");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 3:
                 addNextDisplay("displayStrongbox");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 4:
                 addNextDisplay("displayDevSlots");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 5:
                 addNextDisplay("displayFaithTrack");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 6:
                 addNextDisplay("displayLeaderCards");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 7:
-                addNextDisplay("displayOtherPlayers");
+                addNextDisplay("displayOtherPersonalBoards");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 8:
                 addNextDisplay("displayEndTurn");
                 break;
             case 9:
+                //TODO recheck after merge
                 VCEvent vcEvent = new VCEvent(END_TURN);
                 publish(vcEvent);
                 break;
@@ -381,45 +413,36 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     public void displayMarketTray() {
         out.println(marketTrayDescription);
-        returnToCorrectActionSelection();
     }
 
     public void displayDevCardMatrix() {
         out.println(devCardMatrixDescription);
-        returnToCorrectActionSelection();
     }
 
     public void displayWarehouse() {
-        // TODO userIDtoBoardDescriptions is not setted so it's thrown an exception
-        // returnToCorrectActionSelection() in catch for test perpose
-        try {
-            out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
-            returnToCorrectActionSelection();
-
-        } catch (Exception e) {
-            throw e;
-        }
-
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
     }
 
     public void displayStrongbox() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getStrongboxDescription());
-        returnToCorrectActionSelection();
     }
 
     public void displayDevSlots() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getDevSlotsDescription());
-        returnToCorrectActionSelection();
     }
 
     public void displayFaithTrack() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getFaithTrackDescription());
-        returnToCorrectActionSelection();
     }
 
     public void displayLeaderCards() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getLeaderCardsDescription());
-        returnToCorrectActionSelection();
+    }
+
+    public void displayEndTurn(){
+        out.println("Ending turn...");
+        VCEvent vcEvent = new VCEvent(END_TURN);
+        publish(vcEvent);
     }
 
     public void displayBuyDevActionEnd() {
@@ -435,33 +458,25 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    public void displayAllPersonalBoards() {
+    public void displayOtherPersonalBoards() {
         LinkedList<Integer> userIDs = new LinkedList<>();
         userIDs.addAll(userIDtoBoardDescriptions.keySet());
         userIDs.remove(client.getUserID());
-        userIDs.addFirst(client.getUserID());
         int index = 0;
-        int numberOfPlayers = userIDtoBoardDescriptions.keySet().size();
-        out.println("Your personal board:");
-        out.println(userIDtoBoardDescriptions.get(userIDs.get(index)));
+        int numberOfOtherPlayers = userIDtoBoardDescriptions.keySet().size() - 1;
         out.println("Enter [1] for next board, [2] for previous board, [3] to choose action:");
         int input = InputConsumer.getANumberBetween(in, out, 1, 3);
-        // Variable 'input' is not updated inside loop so why loop statement
         while (input == 1 || input == 2) {
-            if (input == 1) index = (index + 1) % numberOfPlayers;
-            if (input == 2) index = (index - 1 + numberOfPlayers) % numberOfPlayers;
+            if (input == 1) index = (index + 1) % numberOfOtherPlayers;
+            if (input == 2) index = (index - 1 + numberOfOtherPlayers) % numberOfOtherPlayers;
             Integer userIDtoDisplay = userIDs.get(index);
             String usernameToDisplay = userIDtoUsernames.get(userIDtoDisplay);
             PersonalBoardDescription boardToDisplay = userIDtoBoardDescriptions.get(userIDtoDisplay);
             out.println(usernameToDisplay + "'s personal board:");
             out.println(boardToDisplay);
+            out.println("Enter [1] for next board, [2] for previous board, [3] to choose action:");
+            input = InputConsumer.getANumberBetween(in, out, 1, 3);
         }
-        returnToCorrectActionSelection();
-    }
-
-    private void returnToCorrectActionSelection() {
-        if (majorActionDone) addNextDisplay("displayMinorActionSelection");
-        else addNextDisplay("displayAllActionSelection");
     }
 
     /**
@@ -471,7 +486,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * -handle the activation of the white converter leader card
      * -handle in which shelves the player put the resources
      */
-    //Handle the TakeResAction
     private void routeTakeResActionDisplay() {
         switch (takeResContext.getLastStep()) {
             case CHOOSE_ROW_COLUMN:
@@ -543,8 +557,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      */
     public void chooseShelvesToPut() {
         out.println("Your warehouse looks like:");
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
-
+        displayWarehouse();
         Resources resources = takeResContext.getResources();
         String resourceString = " Nothing";
         if (resources != null)
@@ -584,6 +597,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             for (Shelf.shelfPlace place : Shelf.shelfPlace.values()) {
                 if (resTypeList.isEmpty())
                     continue;
+                out.println("Do you want to add a resource into " + place.toString() + " shelf?");
+                Boolean answer = InputConsumer.getYesOrNo(in, out);
+                if (!answer) continue;
+                if (resTypeList.isEmpty()) break;
                 out.println("Which type of resource you want to put into " + place.toString() + " shelf?");
                 Resources.ResType selectedType = InputConsumer.getATypeAmongSet(in, out, resTypeList);
                 resTypeList.remove(selectedType);
@@ -592,8 +609,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             takeResContext.setShelftoResTypeMap(shelfToResMap);
             takeResContext.setLastStep(PUT_RESOURCES_CHOSEN);
         } else {
+            takeResContext.addDiscardedRes(takeResContext.getResources().sumOfValues());
             out.println("Ending take resource action...");
-            VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED);
+            VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED, takeResContext);
             publish(vcEvent);
             return;
         }
@@ -602,11 +620,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     /**
-     * methods that handle the dev card buying. Based on the CV event and last step of BuyCardContext that has been was set
+     * methods that handle the dev card buying. Based on the CV event and last step of BuyCardContext
+     * that has been set
      * in the server side this methods call the action that correspond to that event.
      */
-
-    //Handle the BuyDevCardAction
     private void routeBuyDevCardActionDisplay() {
         switch (buyDevCardContext.getLastStep()) {
             case CHOOSE_COLOR_LEVEL:
@@ -644,14 +661,27 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("choosePayDevCardCostFromWhere");
                 break;
             case COST_PAID_DEVCARD_PUT:
+                //general msg not needed
+                out.println("Your development slots now looks like:");
+                addNextDisplay("displayDevSlots");
+                VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
+                publish(vcEvent);
+                return;
+// TODO OMER:why is there leader card action(if it is for discount, it should be at the end, if for activation, why?)
 
-                if (activateLeaderContext.getActivationLeaderCardBefore())
-                    addNextDisplay("displayBuyDevActionEnd");
-                else {
-                    VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-                    publish(vcEvent);
-                }
-                break;
+//                if (activateLeaderContext.getActivationLeaderCardBefore())
+//                    addNextDisplay("displayBuyDevActionEnd");
+//                else {
+//                    out.println("Do you want to play leader action? ");
+//                    boolean leaderAction = InputConsumer.getYesOrNo(in, out);
+//                    if(leaderAction) {
+//                        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+//                        publish(vcEvent);
+//                    }else
+//                        addNextDisplay("displayBuyDevActionEnd");
+//                }
+//                break
+// TODO ======================
         }
     }
 
@@ -713,7 +743,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    //handle ActivateProdAction
+    /**
+     * methods that handle the Activate Prod Action. Based on the CV event and last step of activateProdContext
+     * that has been set
+     * in the server side this methods call the action that correspond to that event.
+     */
     private void routeActivateProdActionDisplay() {
         switch (activateProdContext.getLastStep()) {
             case CHOOSE_DEV_SLOTS:
@@ -725,12 +759,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("chooseDevSlots");
                 break;
             case COST_PAID:
-                if (activateLeaderContext.getActivationLeaderCardBefore())
-                    addNextDisplay("displayActivationProdActionEnd ");
-                else {
-                    VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-                    publish(vcEvent);
-                }
+                checkFurtherAction(2);
                 break;
         }
     }
@@ -779,7 +808,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             activateProdContext.setBaseProductionCard(baseProd);
         }
         activateProdContext.setSlots(slotChosen);
-        activateProdContext.setLastStep(DEV_SLOTS_CHOOSEN);
+            activateProdContext.setLastStep(DEV_SLOTS_CHOSEN);
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
         publish(vcEvent);
     }
@@ -816,47 +845,45 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     /**
      * methods that handle the usage of leader cards with additional production. Ask to the player
      * the number of cards that he has to use and the res that he want to get from the production.
-     *
      * @param numberOfActiveProduceCard is the number of available card on the player board with that ability
-     */
-    public void chooseLeaderProdAction(int numberOfActiveProduceCard) {
+     * */
+    public void chooseLeaderProdAction ( int numberOfActiveProduceCard){
 
-        Resources RHS = new Resources();
-        out.println("You have " + numberOfActiveProduceCard + " active produce leader cards ");
-        out.println("How many Leader card with produce ability do you want to use?  ");
-        int numOfCard = InputConsumer.getANumberBetween(in, out, 1, numberOfActiveProduceCard);
-        RHS.add(InputConsumer.chooseRhsLeaderCard(in, out, numOfCard));
-        activateProdContext.setRhlLeaderCard(RHS);
-
+            Resources RHS = new Resources();
+            out.println("You have " + numberOfActiveProduceCard + " active produce leader cards ");
+            out.println("How many Leader card with produce ability do you want to use?  ");
+            int numOfCard = InputConsumer.getANumberBetween(in, out, 1, numberOfActiveProduceCard);
+            RHS.add(InputConsumer.chooseRhsLeaderCard(in, out, numOfCard));
+            activateProdContext.setRhlLeaderCard(RHS);
     }
 
     /**
      * methods that handle the Leader Action based on the CV event and last step of activateLeaderContext that has been set
      * in the server side after the player chose this action in his turn.This methods call the action that correspond to that event.
-     */
+     * */
     //handle ActivateLeaderAction
-    private void routeActivateLeaderActionDisplay() {
+    private void routeActivateLeaderActionDisplay () {
         activateLeaderContext.setActivationLeaderCardBefore(true);
-        switch (activateLeaderContext.getLastStep()) {
-            case CHOOSE_ACTION:
-                addNextDisplay("chooseLeaderAction");
-                break;
+            switch (activateLeaderContext.getLastStep()) {
+                case CHOOSE_ACTION:
+                    addNextDisplay("chooseLeaderAction");
+                    break;
             case END_LEADER_ACTION:
 //todo add  a var that check if a normal action it is played so that we can terminate the player turn
-                break;
+                    break;
+            }
         }
-    }
 
     /**
      * methods that handle the Leader Action. Only ask to the player which action between discard, activate or both and then based on the
      * choice call the method that handle the choice.If the player choice to activate both first call the discard methods then the activation.
-     */
-    public void chooseLeaderAction() {
+     * */
+    public void chooseLeaderAction () {
 
         out.println("What Leader action do you want to make? ");
         out.println("[1]Discard,[2]Activation [3]both?  ");
         int numOfActionChoosen = InputConsumer.getANumberBetween(in, out, 1, 3);
-        if (activateLeaderContext.getPlayerCard().size() > 0)
+        if(activateLeaderContext.getPlayerCard().size()>0)
             switch (numOfActionChoosen) {
                 case 1:
                 case 3:
@@ -872,18 +899,17 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * methods that handle the Discard Leader Action. Ask to the player which Cards want to discard, fill the activateLeaderContext.
      * After the player fill the  context  it publish an VC(view to controller)
      * THen server update the personal board based on the choice.
-     *
-     * @param numOfActionChoosen it is used to distinguish the discard action([1]) from the both action([3]).
-     *                           if both call then activation methods
-     */
-    public void chooseDiscardLeaderAction(int numOfActionChoosen) {
-        int j = 0;
-        List<LeaderCard> discardedLeaderCard = new ArrayList<>();
+     * @param numOfActionChoosen  it is used to distinguish the discard action([1]) from the both action([3]).
+     *                            if both call then activation methods
+     * */
+    public void chooseDiscardLeaderAction(int numOfActionChoosen ) {
+        int j=0;
+        Set<LeaderCard> discardedLeaderCard = new HashSet<>();
         out.println("Do want to Discard LeaderCard ? ");
         boolean discard = InputConsumer.getYesOrNo(in, out);
 
-        if (discard && activateLeaderContext.getPlayerCard().size() > 0) {
-            out.println("You can discard  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
+        if (discard && activateLeaderContext.getPlayerCard().size() > 0 ) {
+            out.println("You can discard  " +activateLeaderContext.getPlayerCard().size()+ "  leader cards ");
             out.println("Your Leader Card:");
             while (j < activateLeaderContext.getPlayerCard().size()) {
                 out.println("Do you want to discard this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
@@ -895,98 +921,113 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         activateLeaderContext.setDiscardedPlayerCard(discardedLeaderCard);
         activateLeaderContext.changePlayerCard(discardedLeaderCard);
 
-        if (numOfActionChoosen == 3 && discardedLeaderCard.size() < 2) {
+        if(numOfActionChoosen==3 && discardedLeaderCard.size()<2){
             activateLeaderContext.setLastStep(BOTH_ACTIONS);
             chooseLeaderActivationAction();
-        } else {
+        }else {
             activateLeaderContext.setLastStep(DISCARD_LEADER_CARD);
             VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
             publish(vcEvent);
         }
 
     }
-
     /**
      * methods that handle the Activation Leader Action. Ask to the player which Cards want to Activate based on the card that has in his hands,
      * this methods used another one that check if the requirements are satisfied or not by the player ,
      * fill the activateLeaderContext with thee choice.
      * After the player fill the  context  it publish an VC(view to controller)
      * THen server update the personal board based on the choice.
-     */
-    public void chooseLeaderActivationAction() {
-        int j = 0;
-        List<LeaderCard> activeLeaderCard = new ArrayList<>();
+     *
+     * */
+        public void chooseLeaderActivationAction () {
+            int j = 0;
+        Set<LeaderCard> activeLeaderCard = new HashSet<>();
         out.println("You can active  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
         if (activateLeaderContext.getPlayerCard().size() > 0) {
-            out.println("Your Leader Card:");
-            while (j < activateLeaderContext.getPlayerCard().size()) {
-                out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
-                if (InputConsumer.getYesOrNo(in, out)) {
-                    if (checkLeaderActivationAction(activateLeaderContext.getPlayerCard().get(j)))
-                        activeLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
-                    else
-                        out.println("You don't satisfy the requirement:");
+                    out.println("Your Leader Card:");
+                while (j < activateLeaderContext.getPlayerCard().size()) {
+                        out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
+                        if (InputConsumer.getYesOrNo(in, out)) {
+                            if (checkLeaderActivationAction(activateLeaderContext.getPlayerCard().get(j)))
+                                activeLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
+                            else
+                                out.println("You don't satisfy the requirement:");
+                        }
+                        j++;
+                    }
+                    if (activeLeaderCard.size() > 0) {
+                    activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
+                    } else {
+                    activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);
                 }
-                j++;
             }
-            if (activeLeaderCard.size() > 0) {
-                activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
-            } else {
-                activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);
-            }
+            activateLeaderContext.setActiveLeaderCard(activeLeaderCard);
+            VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+            publish(vcEvent);
         }
-        activateLeaderContext.setActiveLeaderCard(activeLeaderCard);
-        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
-        publish(vcEvent);
-    }
 
     /**
      * methods that handle the check of the requirements of leader cards,
-     *
      * @param leaderToCheck is the card to check
-     */
-    private boolean checkLeaderActivationAction(LeaderCard leaderToCheck) {
-        int numberOfSlotAvailable = activateProdContext.getSlotAvailable().size();
-        List<DevSlot> slotAvailable = activateProdContext.getSlotAvailable();
-        int count = 0;
-        int i = 0;
-        while (i < numberOfSlotAvailable) {
-            if (activateProdContext.getSlotAvailable().get(i).getTopDevCard() != null) {
-                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
-                    if (leaderToCheck.getRequirement().getColor(0).equals(slotAvailable.get(i).getTopDevCard().getColor()) &&
-                            slotAvailable.get(i).getTopDevCard().getLevel() == 2) {
-                        return true;
-                    }
-                }
-                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT) {
-                    if (count == 2)
-                        return true;
-                    if (leaderToCheck.getRequirement().getColor(0).equals(activateProdContext.getSlotAvailable().get(i).getTopDevCard().getColor())
-                            || leaderToCheck.getRequirement().getColor(1).equals(activateProdContext.getSlotAvailable().get(i).getTopDevCard().getColor())) {
-                        count++;
-                    }
-                }
-                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT) {
-                    Resources totalRes = new Resources();
-                    totalRes.add(activateLeaderContext.getTotalResources());
-                    if ((totalRes.getResTypes().contains(leaderToCheck.getRequirement().getResource().getOnlyType()))
-                            && (totalRes.getNumberOfType(leaderToCheck.getRequirement().getResource().getOnlyType()) == 5)) {
-                        return true;
-                    }
-                }
-                //todo ask to omer
-                if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
-                    if (leaderToCheck.getRequirement().getColor(0).equals(slotAvailable.get(i).getTopDevCard().getColor()) &&
-                            slotAvailable.get(i).getTopDevCard().getLevel() == 2) {
-                        return true;
-                    }
-                }
+     * */
+        private boolean checkLeaderActivationAction (LeaderCard leaderToCheck){
+        int discConvert =0;
+        int firstCount = 0;
+        int secondCount = 0;
+            int i = 0;
+        if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
+            while(i < activateLeaderContext.getOwnedCard().size()){
+                if (leaderToCheck.getRequirement().getColor(0).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) &&
+                        activateLeaderContext.getOwnedCard().get(i).getLevel() == 2) {
+                    return true;
+                }i++;
             }
-            i++;
+        }
+        if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT) {
+            Resources totalRes = new Resources();
+            totalRes.add(activateLeaderContext.getTotalResources());
+            if ((totalRes.getNumberOfType(leaderToCheck.getRequirement().getResource().getOnlyType()) == 5)) {
+                return true;
+            }
+        }else {
+            if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
+                discConvert = 1;
+            }else {
+                discConvert = 2;
+            }
+           while (i < activateLeaderContext.getOwnedCard().size()) {
+                if (leaderToCheck.getRequirement().getColor(0).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) && activateLeaderContext.getOwnedCard().get(i).getLevel() == 1)
+                    firstCount++;
+                if (leaderToCheck.getRequirement().getColor(1).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) && activateLeaderContext.getOwnedCard().get(i).getLevel() == 1)
+                    secondCount++;
+
+               if (firstCount >= 1 && secondCount >= 1 && discConvert == 1)
+                   return true;
+
+               if (firstCount >= 2 && secondCount >= 1 && discConvert == 2)
+                   return true;
+
+               i++;
+           }
+
         }
         return false;
     }
+    public void checkFurtherAction(int i) {
 
+            out.println("Do you want to play leader action? ");
+            boolean leaderAction = InputConsumer.getYesOrNo(in, out);
+            if(leaderAction && !activateLeaderContext.getActivationLeaderCardBefore()) {
+                VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+                publish(vcEvent);
+            }else {
+                setGeneralMsg("You selected more resources from warehouse than you can pay from there!");
+                addNextDisplay("displayActivationProdActionEnd ");
+            }
+
+
+
+    }
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent) {
@@ -995,7 +1036,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             if (eventType.equals(SELECT_ALL_ACTION)) {
                 majorActionDone = false;
                 addNextDisplay("displayAllActionSelection");
-            } else if (eventType.equals(TAKE_RES_FILL_CONTEXT)) {
+            }
+            else if (eventType.equals(TAKE_RES_FILL_CONTEXT)){
                 takeResContext = (TakeResActionContext) cvEvent.getEventPayload(TakeResActionContext.class);
                 routeTakeResActionDisplay();
             } else if (eventType.equals(BUY_DEVCARD_FILL_CONTEXT)) {
@@ -1004,10 +1046,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)) {
                 activateProdContext = (ActivateProdActionContext) cvEvent.getEventPayload(ActivateProdActionContext.class);
                 routeActivateProdActionDisplay();
-            } else if (eventType.equals(ACTIVATE_LEADER_FILL_CONTEXT)) {
+            }else if (eventType.equals(ACTIVATE_LEADER_FILL_CONTEXT)) {
                 activateLeaderContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
                 routeActivateLeaderActionDisplay();
-            } else if (eventType.equals(SELECT_MINOR_ACTION)) {
+            } else if (eventType.equals(SELECT_MINOR_ACTION)){
                 majorActionDone = true;
                 addNextDisplay("displayMinorActionSelection");
             } else {
@@ -1023,26 +1065,51 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     marketTrayDescription = marketTray.describeMarketTray();
                     break;
                 case DEVCARD_MATRIX_UPDATE:
-                    devCardMatrixDescription = mvEvent.getJsonContent();
+                    Type devCardListType = new TypeToken<List<DevCard>>() {}.getType();
+                    List<DevCard> topDevCards = (List<DevCard>) mvEvent.getEventPayload(devCardListType);
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i<12; i++){
+                        sb.append(i+1 + ") " + topDevCards.get(i).describeDevCard());
+                        sb.append("\n");
+                    }
+                    devCardMatrixDescription = sb.toString();
                     break;
                 case WAREHOUSE_UPDATE:
-                    PersonalBoardDescription personalDescription = userIDtoBoardDescriptions.get(userIDofUpdatedBoard);
-                    if (personalDescription == null) {
-                        personalDescription = new PersonalBoardDescription();
-                        personalDescription.setWarehouseDescription(mvEvent.getJsonContent());
-                        this.userIDtoBoardDescriptions.put(userIDofUpdatedBoard, personalDescription);
-                    } else {
-                        userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
+                    Type shelfListType = new TypeToken<List<Shelf>>() {}.getType();
+                    List<Shelf> shelves = (List<Shelf>) mvEvent.getEventPayload(shelfListType);
+                    StringBuilder sb1 = new StringBuilder();
+                    for (int i = 0; i<3; i++){
+                        sb1.append(shelves.get(i).describeShelfFancy());
                     }
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(sb1.toString());
                     break;
                 case STRONGBOX_UPDATE:
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(mvEvent.getJsonContent());
+                    Resources strongboxRes = (Resources) mvEvent.getEventPayload(Resources.class);
+                    String strongboxDescription = strongBoxPrinter(strongboxRes);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(strongboxDescription);
                     break;
                 case DEVSLOTS_UPDATE:
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(mvEvent.getJsonContent());
+                    Type devSlotListType = new TypeToken<List<DevSlot>>() {}.getType();
+                    List<DevSlot> devSlots = (List<DevSlot>) mvEvent.getEventPayload(devSlotListType);
+                    StringBuilder sb2 = new StringBuilder();
+                    for (int i = 0; i<3; i++){
+                        sb2.append(devSlots.get(i).describeDevSlot() + "\n");
+                    }
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(sb2.toString());
                     break;
                 case FAITHPOINT_UPDATE:
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(mvEvent.getJsonContent());
+                    Integer faithpoints = (Integer) mvEvent.getEventPayload(Integer.class);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithPoints(faithpoints);
+                    Map<PersonalBoard.PopeArea, Boolean> tileMap = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getTileMap();
+                    String faithTrackDescription = faithTrackPrinter(tileMap, faithpoints);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescription);
+                    break;
+                case VATICAN_REPORT_TAKEN:
+                    Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {}.getType();
+                    Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);
+                    int faithPointsTwo = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getFaithPoints();
+                    String faithTrackDescriptionTwo = faithTrackPrinter(tileMapTwo, faithPointsTwo);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescriptionTwo);
                     break;
             }
         } else {
@@ -1050,102 +1117,345 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    @Override
-    public void subscribe(Listener<VCEvent> listener) {
-        listenerList.add(listener);
-    }
-
-    @Override
-    public void unsubscribe(Listener<VCEvent> listener) {
-        listenerList.remove(listener);
-    }
-
-    @Override
-    public void publish(VCEvent event) {
-        for (Listener<VCEvent> listener : listenerList)
-            listener.update(event);
-    }
-
-    @Override
-    public synchronized void displayIdle() {
-        try {
-            this.wait(2000);
-        } catch (InterruptedException e) {
+    private static String faithTrackPrinter(Map<PersonalBoard.PopeArea, Boolean> map, int faithPoints){
+        StringBuilder sb = new StringBuilder();
+        String resetAnsi = "\u001B[0m";
+        String redAnsi = "\u001B[35m";
+        String greyAnsi = "\033[1;37m";
+        String crossAnsi = "\u271e";
+        sb.append(faithTrackDrawVP());
+        sb.append("\n");
+        sb.append(faithTrackDrawTopPart());
+        for(int i=0; i<10; i++){
+            sb.append("\u2502");
+            if (i == faithPoints)
+                sb.append(" " + redAnsi + " " + crossAnsi + resetAnsi + " ");
+            else
+                sb.append(" " + greyAnsi + " " + i + resetAnsi + " ");
+            sb.append("\u2502");
         }
-        String idleSymbols = "✞⨎⌬☺⌺";
-        String backSpace = "\b";
-        StringBuilder idleSymbolBar = new StringBuilder();
-        int symbolIndex = 0;
-        boolean appendtoRight = true;
-        int lastBarSize = 0;
-        out.print("Waiting for the other players... ");
-        out.flush();
+        for(int i=10; i<25; i++){
+            sb.append("\u2502");
+            if (i == faithPoints)
+                sb.append(" " + redAnsi + " " + crossAnsi + resetAnsi + " ");
+            else
+                sb.append(" " + greyAnsi  + i + resetAnsi + " ");
+            sb.append("\u2502");
+        }
+        sb.append("\n");
+        sb.append(faithTrackDrawBottomPart());
+        sb.append("\n");
+        sb.append(faithTrackDrawVaticanReport(map));
+        return sb.toString();
+    }
 
-        while (!shouldStopDisplayIdle()) {
-            out.print(idleSymbolBar);
-            out.flush();
-            lastBarSize = idleSymbolBar.length();
+    private static String faithTrackDrawVP(){
+        StringBuilder sb = new StringBuilder();
+        String empty = " ";
+        for(int i=0; i<20; i++){
+            sb.append(empty);
+        }
+        sb.append("1VP");
+        for(int i=0; i<15; i++){
+            sb.append(empty);
+        }
+        sb.append("2VP");
+        for(int i=0; i<15; i++){
+            sb.append(empty);
+        }
+        sb.append("4VP");
+        for(int i=0; i<15; i++){
+            sb.append(empty);
+        }
+        sb.append("6VP");
+        for(int i=0; i<15; i++){
+            sb.append(empty);
+        }
+        sb.append("9VP");
+        for(int i=0; i<14; i++){
+            sb.append(empty);
+        }
+        sb.append("12VP");
+        for(int i=0; i<14; i++){
+            sb.append(empty);
+        }
+        sb.append("16VP");
+        for(int i=0; i<14; i++){
+            sb.append(empty);
+        }
+        sb.append("20VP");
+        return sb.toString();
+    }
 
+    private static String faithTrackDrawTopPart(){
+        StringBuilder sb = new StringBuilder();
+        String yellowAnsi = "\u001B[33m";
+        String redAnsi = "\u001B[35m";
+        String whiteAnsi = "";
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(redAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(redAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi)); //18
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(redAnsi));
+        sb.append("\n");
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawOneTop(String colorCode){
+        StringBuilder sb = new StringBuilder();
+        String resetAnsi = "\u001B[0m";
+        sb.append(colorCode + "\u2552\u2550\u2550\u2550\u2550\u2555" + resetAnsi);
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawBottomPart(){
+        StringBuilder sb = new StringBuilder();
+        String yellowAnsi = "\u001B[33m";
+        String redAnsi = "\u001B[35m";
+        String whiteAnsi = "";
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(redAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(redAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi)); //18
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(redAnsi));
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawOneBottom(String colorCode){
+        StringBuilder sb = new StringBuilder();
+        String resetAnsi = "\u001B[0m";
+        sb.append(colorCode + "\u2558\u2550\u2550\u2550\u2550\u255b" + resetAnsi);
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawVaticanReport(Map<PersonalBoard.PopeArea, Boolean> map){
+        StringBuilder sb = new StringBuilder();
+        String empty = " ";
+        String opening = "\u250d";
+        String straight = "\u2501";
+        String closing = "\u2511";
+        String redAnsi = "\u001B[35m";
+        String resetAnsi = "\u001B[0m";
+        String tick = "\u2714";
+        String cross = "\u2718";
+        for(int i=0; i<30; i++){
+            sb.append(empty);
+        }
+        sb.append(redAnsi + opening);
+        for(int i=0; i<22; i++){
+            sb.append(straight);
+        }
+        sb.append(closing + resetAnsi);
+        for(int i=0; i<18; i++){
+            sb.append(empty);
+        }
+        sb.append(redAnsi + opening);
+        for(int i=0; i<28; i++){
+            sb.append(straight);
+        }
+        sb.append(closing + resetAnsi);
+        for(int i=0; i<12; i++){
+            sb.append(empty);
+        }
+        sb.append(redAnsi + opening);
+        for(int i=0; i<34; i++){
+            sb.append(straight);
+        }
+        sb.append(closing + resetAnsi);
+        sb.append("\n");
+        for(int i=0; i<39; i++){
+            sb.append(empty);
+        }
+        sb.append("2VP ");
+        if(map.get(PersonalBoard.PopeArea.FIRST))
+            sb.append(tick);
+        else
+            sb.append(cross);
+        for(int i=0; i<40; i++){
+            sb.append(empty);
+        }
+        sb.append("3VP ");
+        if(map.get(PersonalBoard.PopeArea.SECOND))
+            sb.append(tick);
+        else
+            sb.append(cross);
+        for(int i=0; i<40; i++){
+            sb.append(empty);
+        }
+        sb.append("4VP ");
+        if(map.get(PersonalBoard.PopeArea.THIRD))
+            sb.append(tick);
+        else
+            sb.append(cross);
+
+        return sb.toString();
+    }
+
+//    public static void main(String[] args){
+//        Map<PersonalBoard.PopeArea, Boolean> map = new HashMap<>();
+//        map.put(PersonalBoard.PopeArea.FIRST, true);
+//        map.put(PersonalBoard.PopeArea.SECOND, false);
+//        map.put(PersonalBoard.PopeArea.THIRD, false);
+//        int faithpoints = 15;
+//        System.out.println(faithTrackPrinter(map, faithpoints));
+//    }
+
+    private String  strongBoxPrinter(Resources res){
+        Resources res1 = res.cloneThisType(Resources.ResType.COIN);
+        Resources res2 = res.cloneThisType(Resources.ResType.STONE);
+        Resources res3 = res.cloneThisType(Resources.ResType.SHIELD);
+        Resources res4 = res.cloneThisType(Resources.ResType.SERVANT);
+        StringBuilder sb = new StringBuilder();
+        sb.append("  ");
+        for(int i = 0; i<13; i++){
+            sb.append("\u2509");
+        }
+        sb.append("\n\u254f " + res1.describeResource() + "  " + res2.describeResource() + " \u254f\n");
+        sb.append("\u254f " + res3.describeResource() + "  " + res4.describeResource() + " \u254f\n");
+        sb.append("  ");
+        for(int i = 0; i<13; i++){
+            sb.append("\u2509");
+        }
+        return sb.toString();
+    }
+
+        @Override
+        public void subscribe (Listener < VCEvent > listener) {
+            listenerList.add(listener);
+        }
+
+        @Override
+        public void unsubscribe (Listener < VCEvent > listener) {
+            listenerList.remove(listener);
+        }
+
+        @Override
+        public void publish (VCEvent event){
+            for (Listener<VCEvent> listener : listenerList)
+                listener.update(event);
+        }
+
+        @Override
+        public synchronized void displayIdle () {
             try {
-                this.wait(400);
+            this.wait(2000);
             } catch (InterruptedException e) {
             }
-            if (appendtoRight) {
-                idleSymbolBar.append(idleSymbols.charAt(symbolIndex));
-                if (idleSymbolBar.length() == 6) {
-                    appendtoRight = false;
-                    symbolIndex = (symbolIndex + 1) % idleSymbols.length();
+            String idleSymbols = "✞⨎⌬☺⌺";
+            String backSpace = "\b";
+            StringBuilder idleSymbolBar = new StringBuilder();
+            int symbolIndex = 0;
+            boolean appendtoRight = true;
+            int lastBarSize = 0;
+            out.print("Waiting for the other players... ");
+            out.flush();
+
+            while (!shouldStopDisplayIdle()) {
+                out.print(idleSymbolBar);
+                out.flush();
+                lastBarSize = idleSymbolBar.length();
+
+                try {
+                    this.wait(400);
+                } catch (InterruptedException e) {
                 }
-            } else {
-                if (idleSymbolBar.length() > 0)
-                    idleSymbolBar.deleteCharAt(idleSymbolBar.length() - 1);
-                else {
-                    appendtoRight = true;
+                if (appendtoRight) {
                     idleSymbolBar.append(idleSymbols.charAt(symbolIndex));
+                    if (idleSymbolBar.length() == 6) {
+                        appendtoRight = false;
+                        symbolIndex = (symbolIndex + 1) % idleSymbols.length();
+                    }
+                } else {
+                    if (idleSymbolBar.length() > 0)
+                        idleSymbolBar.deleteCharAt(idleSymbolBar.length() - 1);
+                    else {
+                        appendtoRight = true;
+                        idleSymbolBar.append(idleSymbols.charAt(symbolIndex));
+                    }
+                }
+                for (int i = 0; i < lastBarSize; i++) {
+                    out.print(backSpace);
                 }
             }
-            for (int i = 0; i < lastBarSize; i++) {
+
+            stopIdle = false;
+            for (int i = 0; i < lastBarSize + 15; i++)
                 out.print(backSpace);
-            }
+            out.flush();
         }
 
-        stopIdle = false;
-        for (int i = 0; i < lastBarSize + 15; i++)
-            out.print(backSpace);
-        out.flush();
-    }
+        @Override
+        public synchronized boolean shouldStopDisplayIdle () {
+            return stopIdle;
+        }
 
-    @Override
-    public synchronized boolean shouldStopDisplayIdle() {
-        return stopIdle;
-    }
+        @Override
+        public synchronized void stopDisplayIdle () {
+            stopIdle = true;
+            notifyAll();
+        }
 
-    @Override
-    public synchronized void stopDisplayIdle() {
-        stopIdle = true;
-        notifyAll();
-    }
+        @Override
+        public synchronized void displayGeneralMsg () {
+            out.println(generalmsg);
+        }
 
-    @Override
-    public synchronized void displayGeneralMsg() {
-        out.println(generalmsg);
-    }
+        @Override
+        public void setGeneralMsg (String msg){
+            generalmsg = msg;
+        }
 
-    @Override
-    public void setGeneralMsg(String msg) {
-        generalmsg = msg;
-    }
+        public void setUserIDtoUsernames (Map < Integer, String > userIDtoUsernames){
+            this.userIDtoUsernames = userIDtoUsernames;
+        }
 
-    public void setUserIDtoUsernames(Map<Integer, String> userIDtoUsernames) {
-        this.userIDtoUsernames = userIDtoUsernames;
-    }
+        // METHODS THAT WON'T BE USED
+        @Override
+        public synchronized void displayLobby () {
+            out.println("Waiting users in the lobby are:");
+            for (String username : client.getUserIDtoUserNames().values())
+                out.println(username);
+        }
 
-    // METHODS THAT WON'T BE USED
-    @Override
-    public synchronized void displayLobby() {
-        out.println("Waiting users in the lobby are:");
-        for (String username : client.getUserIDtoUserNames().values())
-            out.println(username);
     }
-
-}
+    }
