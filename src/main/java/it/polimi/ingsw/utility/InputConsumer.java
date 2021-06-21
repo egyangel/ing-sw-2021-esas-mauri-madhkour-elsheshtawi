@@ -308,6 +308,7 @@ public class InputConsumer {
         while(!(DevCard.CardColor.contains(color) && (number >= 1) && (number <= 3))){
             out.println("Invalid input, please enter an input as shown in examples without brackets");
             out.println("Example inputs: [BLUE-1] [GREEN-2] [YELLOW-3] [PURPLE-1]");
+            input = in.nextLine().toUpperCase();
             parts = input.split("-");
             color = parts[0];
             level = parts[1];

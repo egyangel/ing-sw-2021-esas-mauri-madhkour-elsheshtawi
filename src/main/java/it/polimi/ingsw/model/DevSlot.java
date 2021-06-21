@@ -53,7 +53,7 @@ public class DevSlot {
 
     public DevCard getTopDevCard(){
         if (this.devCards.isEmpty()) return null;
-        else return this.devCards.getFirst();
+        else return this.devCards.getLast();
     }
 
     public int getLevelOfTopCard(){
@@ -67,18 +67,18 @@ public class DevSlot {
     }
 
     public void putDevCard(DevCard card) {
-        devCards.addFirst(card); //same as push, level constraints are checked in controller in a previous step
+        devCards.add(card); //same as push, level constraints are checked in controller in a previous step
     }
 
     public String describeDevSlot(){
         StringBuilder sb = new StringBuilder();
-        sb.append(place.name() + " SLOT:  ");
+        sb.append(place.name() + " SLOT: ");
         Iterator<DevCard> iterator = devCards.descendingIterator();
         if (isEmpty()) {
             sb.append("Empty");
         } else {
             DevCard card = iterator.next();
-            sb.append("Top Card:   " + card.describeDevCard());
+            sb.append("Top Card: " + card.describeDevCard());
             while(iterator.hasNext()){
                 card = iterator.next();
                 sb.append("\n\t\t\tBelow Card: " + card.describeDevCard());
