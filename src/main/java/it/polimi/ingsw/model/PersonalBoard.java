@@ -138,6 +138,10 @@ public class PersonalBoard {
         return popeAreaMap;
     }
 
+    public int getFaithPoints(){
+        return faithPoints;
+    }
+
     public void giveVaticanReport(PopeArea area) {
         if (area == PopeArea.FIRST && faithPoints >= 5 && faithPoints <= 8) {
             turnPopeFavorTile(PopeArea.FIRST);
@@ -290,16 +294,15 @@ public class PersonalBoard {
         this.strongbox.subtract(res);
     }
 
-
-    // DEBUG methods
     public void setStrongbox(Resources strongbox) {
         this.strongbox = strongbox;
     }
 
+    public void setGame(Game game){
+        this.game = game;
+    }
 
     public String describeWarehouse() {
-
-
         String string = "";
         if (!warehouse[0].getResource().isEmpty())
             string = "Top Shelf: " + warehouse[0].describeShelf();
@@ -308,7 +311,6 @@ public class PersonalBoard {
         if (!warehouse[2].getResource().isEmpty())
             string =string+"\nBottom Shelf: " + warehouse[2].describeShelf();
         return string;
-
     }
 
     public String describeStrongbox() {

@@ -96,7 +96,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
         while (!stop) {
             if (displayTransitionQueue.peek() == null) {
-                displayNameMap.get("displayIdle").run();
+                // for debug display idle cancel, maybe for demo too
+//                displayNameMap.get("displayIdle").run();
             } else {
                 displayTransitionQueue.poll().run();
             }
@@ -170,7 +171,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     private void initEmptyPersonalBoards(){
         for(Integer userID: userIDtoUsernames.keySet()){
-            userIDtoBoardDescriptions.put(userID, new PersonalBoardDescription());
+            PersonalBoardDescription pbd = new PersonalBoardDescription();
+            Map<PersonalBoard.PopeArea, Boolean> map = new HashMap<>();
+            map.put(PersonalBoard.PopeArea.FIRST, false);
+            map.put(PersonalBoard.PopeArea.SECOND, false);
+            map.put(PersonalBoard.PopeArea.THIRD, false);
+            pbd.setTileMap(map);
+            pbd.setFaithPoints(0); //initial faith point will be given if necessary after turn assign
+            userIDtoBoardDescriptions.put(userID, pbd);
         }
     }
 
@@ -342,9 +350,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[5] View faith track");
         out.println("[6] View leader cards");
         out.println("[7] View other personal boards");
-        //TODO omer why this action?
-        // todo what do you mean?
-        out.println("[8]ACTIVATE_PROD_ACTION_ENDED Turn");
+        out.println("[8] End Turn");
         int index = InputConsumer.getANumberBetween(in, out, 1, 8);
         switch (index) {
             case 1:
@@ -573,6 +579,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             takeResContext.setShelftoResTypeMap(shelfToResMap);
             takeResContext.setLastStep(PUT_RESOURCES_CHOSEN);
         } else {
+            takeResContext.addDiscardedRes(takeResContext.getResources().sumOfValues());
             out.println("Ending take resource action...");
             VCEvent vcEvent = new VCEvent(TAKE_RES_ACTION_ENDED, takeResContext);
             publish(vcEvent);
@@ -1017,16 +1024,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                         sb1.append(shelves.get(i).describeShelfFancy());
                     }
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(sb1.toString());
-                    //   userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
-
-//                    PersonalBoardDescription personalDescription = userIDtoBoardDescriptions.get(userIDofUpdatedBoard);
-//                    if (personalDescription == null) {
-//                        personalDescription = new PersonalBoardDescription();
-//                        personalDescription.setWarehouseDescription(mvEvent.getJsonContent());
-//                        this.userIDtoBoardDescriptions.put(userIDofUpdatedBoard, personalDescription);
-//                    } else {
-//                        userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(mvEvent.getJsonContent());
-//                    }
                     break;
                 case STRONGBOX_UPDATE:
                     Resources strongboxRes = (Resources) mvEvent.getEventPayload(Resources.class);
@@ -1056,10 +1053,228 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
     }
 
-    private String faithTrackPrinter(Map<PersonalBoard.PopeArea, Boolean> map, int faithPoints){
-//        todo omer will do this asap
-        return null;
+    private static String faithTrackPrinter(Map<PersonalBoard.PopeArea, Boolean> map, int faithPoints){
+        StringBuilder sb = new StringBuilder();
+        String resetAnsi = "\u001B[0m";
+        String redAnsi = "\u001B[35m";
+        String greyAnsi = "\033[1;37m";
+        String crossAnsi = "\u271e";
+        sb.append(faithTrackDrawVP());
+        sb.append("\n");
+        sb.append(faithTrackDrawTopPart());
+        for(int i=0; i<10; i++){
+            sb.append("\u2502");
+            if (i == faithPoints)
+                sb.append(" " + redAnsi + " " + crossAnsi + resetAnsi + " ");
+            else
+                sb.append(" " + greyAnsi + " " + i + resetAnsi + " ");
+            sb.append("\u2502");
+        }
+        for(int i=10; i<25; i++){
+            sb.append("\u2502");
+            if (i == faithPoints)
+                sb.append(" " + redAnsi + " " + crossAnsi + resetAnsi + " ");
+            else
+                sb.append(" " + greyAnsi  + i + resetAnsi + " ");
+            sb.append("\u2502");
+        }
+        sb.append("\n");
+        sb.append(faithTrackDrawBottomPart());
+        sb.append("\n");
+        sb.append(faithTrackDrawVaticanReport(map));
+        return sb.toString();
     }
+
+    private static String faithTrackDrawVP(){
+        StringBuilder sb = new StringBuilder();
+        String empty = " ";
+        for(int i=0; i<20; i++){
+            sb.append(empty);
+        }
+        sb.append("1VP");
+        for(int i=0; i<15; i++){
+            sb.append(empty);
+        }
+        sb.append("2VP");
+        for(int i=0; i<15; i++){
+            sb.append(empty);
+        }
+        sb.append("4VP");
+        for(int i=0; i<15; i++){
+            sb.append(empty);
+        }
+        sb.append("6VP");
+        for(int i=0; i<15; i++){
+            sb.append(empty);
+        }
+        sb.append("9VP");
+        for(int i=0; i<14; i++){
+            sb.append(empty);
+        }
+        sb.append("12VP");
+        for(int i=0; i<14; i++){
+            sb.append(empty);
+        }
+        sb.append("16VP");
+        for(int i=0; i<14; i++){
+            sb.append(empty);
+        }
+        sb.append("20VP");
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawTopPart(){
+        StringBuilder sb = new StringBuilder();
+        String yellowAnsi = "\u001B[33m";
+        String redAnsi = "\u001B[35m";
+        String whiteAnsi = "";
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(redAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(redAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi)); //18
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(yellowAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(whiteAnsi));
+        sb.append(faithTrackDrawOneTop(redAnsi));
+        sb.append("\n");
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawOneTop(String colorCode){
+        StringBuilder sb = new StringBuilder();
+        String resetAnsi = "\u001B[0m";
+        sb.append(colorCode + "\u2552\u2550\u2550\u2550\u2550\u2555" + resetAnsi);
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawBottomPart(){
+        StringBuilder sb = new StringBuilder();
+        String yellowAnsi = "\u001B[33m";
+        String redAnsi = "\u001B[35m";
+        String whiteAnsi = "";
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(redAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(redAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi)); //18
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(yellowAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(whiteAnsi));
+        sb.append(faithTrackDrawOneBottom(redAnsi));
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawOneBottom(String colorCode){
+        StringBuilder sb = new StringBuilder();
+        String resetAnsi = "\u001B[0m";
+        sb.append(colorCode + "\u2558\u2550\u2550\u2550\u2550\u255b" + resetAnsi);
+        return sb.toString();
+    }
+
+    private static String faithTrackDrawVaticanReport(Map<PersonalBoard.PopeArea, Boolean> map){
+        StringBuilder sb = new StringBuilder();
+        String empty = " ";
+        String opening = "\u250d";
+        String straight = "\u2501";
+        String closing = "\u2511";
+        String redAnsi = "\u001B[35m";
+        String resetAnsi = "\u001B[0m";
+        String tick = "\u2714";
+        String cross = "\u2718";
+        for(int i=0; i<30; i++){
+            sb.append(empty);
+        }
+        sb.append(redAnsi + opening);
+        for(int i=0; i<22; i++){
+            sb.append(straight);
+        }
+        sb.append(closing + resetAnsi);
+        for(int i=0; i<18; i++){
+            sb.append(empty);
+        }
+        sb.append(redAnsi + opening);
+        for(int i=0; i<28; i++){
+            sb.append(straight);
+        }
+        sb.append(closing + resetAnsi);
+        for(int i=0; i<12; i++){
+            sb.append(empty);
+        }
+        sb.append(redAnsi + opening);
+        for(int i=0; i<34; i++){
+            sb.append(straight);
+        }
+        sb.append(closing + resetAnsi);
+        sb.append("\n");
+        for(int i=0; i<39; i++){
+            sb.append(empty);
+        }
+        sb.append("2VP ");
+        if(map.get(PersonalBoard.PopeArea.FIRST))
+            sb.append(tick);
+        else
+            sb.append(cross);
+        for(int i=0; i<40; i++){
+            sb.append(empty);
+        }
+        sb.append("3VP ");
+        if(map.get(PersonalBoard.PopeArea.SECOND))
+            sb.append(tick);
+        else
+            sb.append(cross);
+        for(int i=0; i<40; i++){
+            sb.append(empty);
+        }
+        sb.append("4VP ");
+        if(map.get(PersonalBoard.PopeArea.THIRD))
+            sb.append(tick);
+        else
+            sb.append(cross);
+
+        return sb.toString();
+    }
+
+//    public static void main(String[] args){
+//        Map<PersonalBoard.PopeArea, Boolean> map = new HashMap<>();
+//        map.put(PersonalBoard.PopeArea.FIRST, true);
+//        map.put(PersonalBoard.PopeArea.SECOND, false);
+//        map.put(PersonalBoard.PopeArea.THIRD, false);
+//        int faithpoints = 15;
+//        System.out.println(faithTrackPrinter(map, faithpoints));
+//    }
 
     private String  strongBoxPrinter(Resources res){
         Resources res1 = res.cloneThisType(Resources.ResType.COIN);

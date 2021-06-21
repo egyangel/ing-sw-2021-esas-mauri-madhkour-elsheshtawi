@@ -44,9 +44,12 @@ public class Game implements Publisher<MVEvent> {
     }
 
     private void createBoardForEachPlayer() {
-        this.soloMode = userIDtoPlayers.size() > 1;
+        // todo I changed solo mode cheking condition, it was (this.soloMode = userIDtoPlayers.size() > 1;)
+        this.soloMode = userIDtoPlayers.size() == 1;
         for (Map.Entry<Integer, Player> entry : userIDtoPlayers.entrySet()) {
-            userIDtoBoards.put(entry.getKey(), new PersonalBoard(entry.getKey(), soloMode));
+            PersonalBoard pb = new PersonalBoard(entry.getKey(), soloMode);
+            pb.setGame(this);
+            userIDtoBoards.put(entry.getKey(), pb);
         }
     }
 
