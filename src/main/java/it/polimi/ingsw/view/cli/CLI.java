@@ -281,8 +281,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
-        // TODO write a more descriptive sentence, like activate/deactivate leader card
-        out.println("[4] Leader action");
+        out.println("[4] Activate a leader card");
         out.println("[5] View market tray");
         out.println("[6] View development card matrix");
         out.println("[7] View warehouse");
@@ -308,6 +307,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 publish(vcEvent);
                 break;
             case 4:
+                // todo AMOR leader card starts here
                 vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
                 publish(vcEvent);
                 break;
@@ -361,7 +361,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[3] View strongbox");
         out.println("[4] View development slots");
         out.println("[5] View faith track");
-        out.println("[6] View leader cards");
+        out.println("[6] View or modify leader cards");
         out.println("[7] View other personal boards");
         out.println("[8] End Turn");
         int index = InputConsumer.getANumberBetween(in, out, 1, 8);
@@ -425,7 +425,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayLeaderCards() {
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getLeaderCardsDescription());
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getActiveLeaderCardsDescription());
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getInactiveLeaderCardsDescription());
     }
 
     public void displayEndTurn(){
@@ -648,22 +649,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayDevSlots");
                 VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
                 publish(vcEvent);
-                return;
-// TODO OMER:why is there leader card action(if it is for discount, it should be at the end, if for activation, why?)
-
-//                if (activateLeaderContext.getActivationLeaderCardBefore())
-//                    addNextDisplay("displayBuyDevActionEnd");
-//                else {
-//                    out.println("Do you want to play leader action? ");
-//                    boolean leaderAction = InputConsumer.getYesOrNo(in, out);
-//                    if(leaderAction) {
-//                        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-//                        publish(vcEvent);
-//                    }else
-//                        addNextDisplay("displayBuyDevActionEnd");
-//                }
-//                break
-// TODO ======================
+                break;
         }
     }
 
@@ -704,6 +690,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * THen server check if the payment action it is correct based on the rule and the PLAYER personal board event
      */
     public void choosePayDevCardCostFromWhere() {
+        if(buyDevCardContext.isDiscountApplied()){
+            out.println("Total discount of " + buyDevCardContext.getTotalDiscount().describeResource() + " applied!");
+        }
         out.println("Select warehouse or strongbox to pay the cost of the selected development card.");
         Resources remainingCost = buyDevCardContext.getRemainingCost();
         Resources payFromWarehouse = new Resources();
@@ -733,6 +722,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private void routeActivateProdActionDisplay() {
         switch (activateProdContext.getLastStep()) {
             case CHOOSE_DEV_SLOTS:
+                // TODO maybe add pay from where for activate production
                 addNextDisplay("chooseDevSlots");
                 break;
             case NOT_ENOUGH_RES_FOR_PRODUCTION:
@@ -862,8 +852,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * */
     public void chooseLeaderAction () {
 
-        out.println("What Leader action do you want to make? ");
-        out.println("[1]Discard,[2]Activation [3]both?  ");
+        out.println("What do you want to do with the leader cards?");
+        out.println("[1]Discard\n[2]Activation\n[3]Both?");
         int numOfActionChoosen = InputConsumer.getANumberBetween(in, out, 1, 3);
         if(activateLeaderContext.getPlayerCard().size()>0)
             switch (numOfActionChoosen) {
@@ -1093,10 +1083,38 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     String faithTrackDescriptionTwo = faithTrackPrinter(tileMapTwo, faithPointsTwo);
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescriptionTwo);
                     break;
+                    //TODO OMER I am going to write code for leader card update because it is needed for checking if discount works
+                case ACTIVE_LEADER_CARD_UPDATE:
+                    Type activeLeaderListType = new TypeToken<List<LeaderCard>>() {}.getType();
+                    List<LeaderCard> activeLeaderList = (List<LeaderCard>) mvEvent.getEventPayload(activeLeaderListType);
+                    String activeLeaderDescription = leaderListPrinter(activeLeaderList, true);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setActiveLeaderCardsDescription(activeLeaderDescription);
+                    break;
+                case INACTIVE_LEADER_CARD_UPDATE:
+                    Type inactiveLeaderListType = new TypeToken<List<LeaderCard>>() {}.getType();
+                    List<LeaderCard> inactiveLeaderList = (List<LeaderCard>) mvEvent.getEventPayload(inactiveLeaderListType);
+                    String inactiveLeaderDescription = leaderListPrinter(inactiveLeaderList, false);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setInactiveLeaderCardsDescription(inactiveLeaderDescription);
+                    break;
             }
         } else {
             out.println("Unidentified MV or CV event");
         }
+    }
+
+    private static String leaderListPrinter(List<LeaderCard> list, boolean active){
+        StringBuilder sb = new StringBuilder();
+        if (list.isEmpty()) {
+            if (active) sb.append("You don't have active leader cards...");
+            else sb.append("You don't have inactive leader cards...");
+        } else {
+            if (active) sb.append("Active Leader Cards:");
+            else sb.append("Inactive Leader Cards:");
+            for(LeaderCard card: list){
+                sb.append("\n" + card.describeLeaderCard());
+            }
+        }
+        return sb.toString();
     }
 
     private static String faithTrackPrinter(Map<PersonalBoard.PopeArea, Boolean> map, int faithPoints){

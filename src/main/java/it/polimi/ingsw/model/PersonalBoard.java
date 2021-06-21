@@ -209,7 +209,14 @@ public class PersonalBoard {
 
     public boolean isThereEnoughRes(DevCard card) {
         Resources totalRes = getTotalResources();
-        Resources cost = card.getCost();
+        Resources cost = new Resources();
+        cost.add(card.getCost());
+        for(LeaderCard leaderCard: activeLeaderCards){
+            if(leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT){
+                Resources.ResType discountType = leaderCard.getAbility().getResType();
+                cost.subtract(discountType,1);
+            }
+        }
         if (cost.smallerOrEqual(totalRes)) return true;
         else return false;
     }
@@ -308,29 +315,5 @@ public class PersonalBoard {
 
     public void setGame(Game game){
         this.game = game;
-    }
-
-    public String describeWarehouse() {
-        String string = "";
-        if (!warehouse[0].getResource().isEmpty())
-            string = "Top Shelf: " + warehouse[0].describeShelf();
-        if (!warehouse[1].getResource().isEmpty())
-            string = string+ "\nMiddle Shelf: " +  warehouse[1].describeShelf() ;
-        if (!warehouse[2].getResource().isEmpty())
-            string =string+"\nBottom Shelf: " + warehouse[2].describeShelf();
-        return string;
-    }
-
-    public String describeStrongbox() {
-        String string = "Resources inside strong box: " + strongbox.toString();
-        return string;
-    }
-
-    public String describeDevSlots() {
-        StringBuilder string = new StringBuilder();
-        for (DevSlot slot : devSlots) {
-            string.append(slot.describeDevSlot()).append("\n");
-        }
-        return string.toString().trim(); //removes one \n at the end
     }
 }

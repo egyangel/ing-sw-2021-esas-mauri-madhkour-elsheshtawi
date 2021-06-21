@@ -11,6 +11,8 @@ public class PersonalBoardDescription {
     private String devSlotsDescription;
     private String faithTrackDescription;
     private String leaderCardsDescription;
+    private String activeLeaderCardsDescription;
+    private String inactiveLeaderCardsDescription;
     private int faithPoints;
     private Map<PersonalBoard.PopeArea, Boolean> tileMap = new HashMap<>();
 
@@ -68,5 +70,21 @@ public class PersonalBoardDescription {
 
     public void setTileMap(Map<PersonalBoard.PopeArea, Boolean> tileMap) {
         this.tileMap = tileMap;
+    }
+
+    public String getActiveLeaderCardsDescription() {
+        return activeLeaderCardsDescription;
+    }
+
+    public void setActiveLeaderCardsDescription(String activeLeaderCardsDescription) {
+        this.activeLeaderCardsDescription = activeLeaderCardsDescription;
+    }
+
+    public String getInactiveLeaderCardsDescription() {
+        return inactiveLeaderCardsDescription;
+    }
+
+    public void setInactiveLeaderCardsDescription(String inactiveLeaderCardsDescription) {
+        this.inactiveLeaderCardsDescription = inactiveLeaderCardsDescription;
     }
 }
