@@ -2,6 +2,7 @@ package it.polimi.ingsw.utility.messages;
 
 import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,13 +19,13 @@ public class LeaderActionContext {
         CHOOSE_ACTION,
         END_LEADER_ACTION
     }
-    private List<LeaderCard> playerCard = new ArrayList<>();
-    private List<LeaderCard> discardedCard = new ArrayList<>();
-    private List<LeaderCard> activeLeaderCard = new ArrayList<>();
+    private Set<LeaderCard> playerCard = new HashSet<>();
+    private Set<LeaderCard> discardedCard = new HashSet<>();
+    private Set<LeaderCard> activeLeaderCard = new HashSet<>();
     private Boolean activationLeaderCardBefore= false;
     private Resources totalResources= new Resources() ;
     private ActionStep lastStep;
-    private List<DevCard> ownedCards;
+    private Set<DevCard> ownedCards= new HashSet<>();
 
     public void setLastStep(ActionStep step){
         lastStep = step;
@@ -33,28 +34,33 @@ public class LeaderActionContext {
         return lastStep;
     }
 
-    public void setPlayerCard(List<LeaderCard> playerCard){
+    public void setPlayerCard(Set<LeaderCard> playerCard){
         this.playerCard.addAll(playerCard);
     }
-    public List<LeaderCard> getPlayerCard(){ return this.playerCard; }
+    public List<LeaderCard> getPlayerCard(){  return new ArrayList<>(this.playerCard); }
 
-    public void setDiscardedPlayerCard(List<LeaderCard> discardedCard){
+    public void setDiscardedPlayerCard(Set<LeaderCard> discardedCard){
         this.discardedCard.addAll(discardedCard);
     }
-    public List<LeaderCard> discardedPlayerCard(){ return this.discardedCard; }
+    public List<LeaderCard> discardedPlayerCard(){ return new ArrayList<>(this.discardedCard); }
 
-    public void changePlayerCard(List<LeaderCard> discardCard){
+    public void changePlayerCard(Set<LeaderCard> discardCard){
         int i = 0;
         while(i < discardCard.size()){
-            playerCard.remove(this.playerCard.indexOf(discardCard.get(i)));
+            playerCard.removeAll(discardCard);
             i++;
         }
     }
 
-    public void setActiveLeaderCard(List<LeaderCard> activeLeaderCard){
+    public void setActiveLeaderCard(Set<LeaderCard> activeLeaderCard){
         this.activeLeaderCard.addAll(activeLeaderCard);
     }
-    public List<LeaderCard> getActiveLeaderCard(){ return this.activeLeaderCard; }
+
+    public List<DevCard> getOwnedCards() {
+        return  new ArrayList<>(ownedCards);
+    }
+
+    public List<LeaderCard> getActiveLeaderCard(){ return new ArrayList<>(this.activeLeaderCard); }
 
     public void setActivationLeaderCardBefore(boolean activationLeaderCardBefore){ this.activationLeaderCardBefore = activationLeaderCardBefore; }
     public boolean getActivationLeaderCardBefore(){
@@ -63,10 +69,10 @@ public class LeaderActionContext {
     public void resetActivationLeaderCardBefore(){ this.activationLeaderCardBefore   = false ; }
 
     public void setOwnedCard( List<DevCard> myCards) {
-        ownedCards = new ArrayList<>(myCards);
+        ownedCards.addAll(myCards);
     }
     public  List<DevCard> getOwnedCard() {
-        return this.ownedCards;
+        return new ArrayList<>(this.ownedCards);
     }
    // public void setLeaderProd(List<LeaderCard> producerCard) { this.producerCard.addAll(producerCard); }
 

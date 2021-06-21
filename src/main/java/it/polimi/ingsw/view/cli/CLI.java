@@ -624,8 +624,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 if (activateLeaderContext.getActivationLeaderCardBefore())
                     addNextDisplay("displayBuyDevActionEnd");
                 else {
-                    VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-                    publish(vcEvent);
+                    out.println("Do you want to play leader action? ");
+                    boolean leaderAction = InputConsumer.getYesOrNo(in, out);
+                    if(leaderAction) {
+                        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+                        publish(vcEvent);
+                    }else
+                        addNextDisplay("displayBuyDevActionEnd");
                 }
                 break;
         }
@@ -705,12 +710,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("chooseDevSlots");
                 break;
             case COST_PAID:
-                if (activateLeaderContext.getActivationLeaderCardBefore())
-                    addNextDisplay("displayActivationProdActionEnd ");
-                else {
-                    VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-                    publish(vcEvent);
-                }
+                checkFurtherAction(2);
                 break;
         }
     }
@@ -855,7 +855,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * */
     public void chooseDiscardLeaderAction(int numOfActionChoosen ) {
         int j=0;
-        List<LeaderCard> discardedLeaderCard = new ArrayList<>();
+        Set<LeaderCard> discardedLeaderCard = new HashSet<>();
         out.println("Do want to Discard LeaderCard ? ");
         boolean discard = InputConsumer.getYesOrNo(in, out);
 
@@ -892,7 +892,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * */
     public void chooseLeaderActivationAction () {
         int j = 0;
-        List<LeaderCard> activeLeaderCard = new ArrayList<>();
+        Set<LeaderCard> activeLeaderCard = new HashSet<>();
         out.println("You can active  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
         if (activateLeaderContext.getPlayerCard().size() > 0) {
             out.println("Your Leader Card:");
@@ -922,7 +922,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * @param leaderToCheck is the card to check
      * */
     private boolean checkLeaderActivationAction (LeaderCard leaderToCheck){
-
+        int discConvert =0;
         int firstCount = 0;
         int secondCount = 0;
         int i = 0;
@@ -934,38 +934,51 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 }i++;
             }
         }
-        if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT) {
-            if (firstCount >= 1 && secondCount >= 1)
-                return true;
-            while(i < activateLeaderContext.getOwnedCard().size()) {
-                if (leaderToCheck.getRequirement().getColor(0).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) && activateLeaderContext.getOwnedCard().get(i).getLevel() == 1)
-                    firstCount++;
-                if (leaderToCheck.getRequirement().getColor(1).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) && activateLeaderContext.getOwnedCard().get(i).getLevel() == 1)
-                    secondCount++;
-                i++;
-            }
-        }
         if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT) {
             Resources totalRes = new Resources();
             totalRes.add(activateLeaderContext.getTotalResources());
             if ((totalRes.getNumberOfType(leaderToCheck.getRequirement().getResource().getOnlyType()) == 5)) {
                 return true;
             }
-        }
-        if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
-            if (firstCount >= 2 && secondCount >= 1)
-                return true;
-            while(i < activateLeaderContext.getOwnedCard().size()) {
+        }else {
+            if (leaderToCheck.getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
+                discConvert = 1;
+            }else {
+                discConvert = 2;
+            }
+           while (i < activateLeaderContext.getOwnedCard().size()) {
                 if (leaderToCheck.getRequirement().getColor(0).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) && activateLeaderContext.getOwnedCard().get(i).getLevel() == 1)
                     firstCount++;
                 if (leaderToCheck.getRequirement().getColor(1).equals(activateLeaderContext.getOwnedCard().get(i).getColor()) && activateLeaderContext.getOwnedCard().get(i).getLevel() == 1)
                     secondCount++;
-                i++;
-            }
+
+               if (firstCount >= 1 && secondCount >= 1 && discConvert == 1)
+                   return true;
+
+               if (firstCount >= 2 && secondCount >= 1 && discConvert == 2)
+                   return true;
+
+               i++;
+           }
+
         }
         return false;
     }
+    public void checkFurtherAction(int i) {
 
+            out.println("Do you want to play leader action? ");
+            boolean leaderAction = InputConsumer.getYesOrNo(in, out);
+            if(leaderAction && !activateLeaderContext.getActivationLeaderCardBefore()) {
+                VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+                publish(vcEvent);
+            }else {
+                setGeneralMsg("You selected more resources from warehouse than you can pay from there!");
+                addNextDisplay("displayActivationProdActionEnd ");
+            }
+
+
+
+    }
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent) {

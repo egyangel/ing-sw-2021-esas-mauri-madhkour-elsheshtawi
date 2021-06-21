@@ -165,7 +165,7 @@ public class Controller implements Listener<VCEvent> {
             case ACTIVATE_LEADER_CONTEXT_SELECTED:
                 LeaderActionContext emptyActivateLeaderContext = new LeaderActionContext();
                 emptyActivateLeaderContext.setOwnedCard(game.getPersonalBoard(userID).getOwnedCard());
-                emptyActivateLeaderContext.setPlayerCard(game.getPersonalBoard(userID).getInactiveLeaderCards());
+                emptyActivateLeaderContext.setPlayerCard(new HashSet<>(game.getPersonalBoard(userID).getInactiveLeaderCards()));
                 emptyActivateLeaderContext.setTotalResources(game.getPersonalBoard(userID).getTotalResources());
                 emptyActivateLeaderContext.setLastStep(CHOOSE_ACTION);
                 cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, emptyActivateLeaderContext);
@@ -503,7 +503,7 @@ public class Controller implements Listener<VCEvent> {
         game.getPersonalBoard(userID).putResInStrongBox(context.getTotalRightCost());
         if(faithPoint > 0)
             game.getPersonalBoard(userID).increaseFaitPoint(faithPoint);
-        checkVaticanReport(userID);
+
         context.setLastStep(COST_PAID);
 
         String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
@@ -583,14 +583,7 @@ public class Controller implements Listener<VCEvent> {
 
     }
 
-    private void  checkVaticanReport(Integer userID) {
 
-       /* boolean b = game.getPersonalBoard(userID).endFaithTrack();
-        if (b == 0) {
-        } else if (b == 1) {
-        }*/
-
-    }
     public void handleGameMessage(Integer userID, Message msg) {
         userIDtoVirtualViews.get(userID).handleGameMessage(msg);
 
