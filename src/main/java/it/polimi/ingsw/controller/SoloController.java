@@ -106,9 +106,8 @@ public class SoloController extends Controller {
             CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
             entry.getValue().update(turnAssignEvent);
         }
-        String warehouseDescription = game.getPersonalBoard(userID).describeWarehouse();
-        MVEvent warehouseEvent = new MVEvent(userID, MVEvent.EventType.WAREHOUSE_UPDATE, warehouseDescription);
-        game.updateAllAboutChange(warehouseEvent);
+        //todo Omer: I updated mv event about warehouse
+        updateAboutWarehouseOfId(userID);
         beginTurn();
 
 

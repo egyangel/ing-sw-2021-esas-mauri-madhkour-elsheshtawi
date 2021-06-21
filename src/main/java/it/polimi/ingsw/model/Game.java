@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 
+import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.JsonConverter;
 import it.polimi.ingsw.utility.messages.Listener;
@@ -18,13 +19,11 @@ public class Game implements Publisher<MVEvent> {
     private Map<Integer, PersonalBoard> userIDtoBoards = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
-    private SoloActionToken[] soloActionToken = new SoloActionToken[6];
     private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
     private DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
     private Controller controller;
     private Map<PersonalBoard.PopeArea, Boolean> popeAreaMapTrigger = new HashMap<>();
-    private boolean newPopeSpaceReached = false;
     private boolean soloMode;
 
     public void addPlayer(Integer userID) {

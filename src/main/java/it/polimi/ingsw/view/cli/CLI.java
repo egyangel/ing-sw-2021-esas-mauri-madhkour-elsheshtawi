@@ -77,12 +77,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayWarehouse", this::displayWarehouse);
         displayNameMap.put("displayMarketTray", this::displayMarketTray);
         displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
-        displayNameMap.put("displayMinorActionSelection", this::displayMinorActionSelection);
         displayNameMap.put("displayStrongbox", this::displayStrongbox);
         displayNameMap.put("displayDevSlots", this::displayDevSlots);
         displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
         displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
-        displayNameMap.put("displayAllPersonalBoards", this::displayAllPersonalBoards);
 
         //TODO add used methods at the end
 
@@ -94,12 +92,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 //
 //        displayNameMap.put("displayOtherPlayers", this::displayOtherPlayers);
 //        displayNameMap.put("displayEndTurn", this::displayEndTurn);
-        displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
-        displayNameMap.put("displayWarehouse", this::displayWarehouse);
-        displayNameMap.put("displayStrongbox", this::displayStrongbox);
-        displayNameMap.put("displayDevSlots", this::displayDevSlots);
-        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
-        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
         displayNameMap.put("displayOtherPersonalBoards", this::displayOtherPersonalBoards);
         displayNameMap.put("displayEndTurn", this::displayEndTurn);
         displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
@@ -1488,5 +1480,4 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 out.println(username);
         }
 
-    }
     }

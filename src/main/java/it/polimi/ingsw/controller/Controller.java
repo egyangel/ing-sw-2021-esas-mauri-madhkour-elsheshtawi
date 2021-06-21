@@ -92,45 +92,45 @@ public class Controller implements Listener<VCEvent> {
         }
     }
 
-    private void updateAboutWarehouseOfId(Integer userId){
+    protected void updateAboutWarehouseOfId(Integer userId){
         List<Shelf> shelves;
         shelves = game.getPersonalBoard(userId).getShelves();
         MVEvent warehouseUpdate = new MVEvent(userId, MVEvent.EventType.WAREHOUSE_UPDATE, shelves);
         game.updateAllAboutChange(warehouseUpdate);
     }
 
-    private void updateAboutStrongboxOfId(Integer userId){
+    protected void updateAboutStrongboxOfId(Integer userId){
         Resources strongbox;
         strongbox = game.getPersonalBoard(userId).getStrongboxResources();
         MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
         game.updateAllAboutChange(strongboxUpdate);
     }
 
-    private void updateAboutFaithPointOfId(Integer userId){
+    protected void updateAboutFaithPointOfId(Integer userId){
         Integer currentFaithPoints = game.getPersonalBoard(userId).getFaithPoints();
         MVEvent mvEventTwo = new MVEvent(userId, MVEvent.EventType.FAITHPOINT_UPDATE,currentFaithPoints);
         game.updateAllAboutChange(mvEventTwo);
     }
 
-    private void updateAboutFaithTrackofId(Integer userId){
+    protected void updateAboutFaithTrackofId(Integer userId){
         Map<PersonalBoard.PopeArea, Boolean> map = game.getPersonalBoard(userId).getPopeAreaMap();
         MVEvent mvEvent = new MVEvent(userId, MVEvent.EventType.VATICAN_REPORT_TAKEN, map);
         game.updateAllAboutChange(mvEvent);
     }
 
-    private void updateAboutDevCardMatrix(){
+    protected void updateAboutDevCardMatrix(){
         MVEvent mvEvent = game.createDevCardMVEvent();
         game.updateAllAboutChange(mvEvent);
     }
 
-    private void updateAboutDevSlotOfId(Integer userId){
+    protected void updateAboutDevSlotOfId(Integer userId){
         List<DevSlot> slots;
         slots = game.getPersonalBoard(userId).getDevSlots();
         MVEvent devSlotMVevent = new MVEvent(userId, MVEvent.EventType.DEVSLOTS_UPDATE, slots);
         game.updateAllAboutChange(devSlotMVevent);
     }
 
-    private void updateAboutLeaderCardsOfId(Integer userId){
+    protected void updateAboutLeaderCardsOfId(Integer userId){
         List<LeaderCard> activeLeaders = game.getPersonalBoard(userId).getActiveLeaderCards();
         List<LeaderCard> inActiveLeaders = game.getPersonalBoard(userId).getInactiveLeaderCards();
         MVEvent activeLeaderMVEvent = new MVEvent(userId, MVEvent.EventType.ACTIVE_LEADER_CARD_UPDATE, activeLeaders);
