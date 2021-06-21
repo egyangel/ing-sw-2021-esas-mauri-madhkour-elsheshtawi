@@ -33,7 +33,7 @@ public class TakeResActionContext {
     private int discardedRes = 0;
     private int faithPoints;
     private Shelf.shelfPlace place;
-    private Shelf.shelfPlace[] places;
+    private Shelf.shelfPlace[] places = new Shelf.shelfPlace[3];
     private Map<Shelf.shelfPlace, Resources.ResType> shelfPlaceResTypeMap = new HashMap<>();
     private Map<Shelf.shelfPlace, Boolean> shelfToResultMap = new HashMap<>();
 

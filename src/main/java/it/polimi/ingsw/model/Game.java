@@ -18,10 +18,9 @@ public class Game implements Publisher<MVEvent> {
     private Map<Integer, PersonalBoard> userIDtoBoards = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
-    private SoloActionToken[] soloActionToken = new SoloActionToken[6];
     private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
-    private DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
+    protected DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
     private boolean soloMode;
 
     public void addPlayer(Integer userID) {
@@ -154,19 +153,29 @@ public class Game implements Publisher<MVEvent> {
         return playersNumber;
     }
 
+    public boolean discardLowerCard(DevCard.CardColor cardColor, Integer numberOfCardsToDiscard) {
+        List<DevCard> devCards = new ArrayList<DevCard>();
+        HashMap<Integer, Integer> devCardsIndexs = new HashMap<>();
+        for (int i = 0; i < this.devCardMatrix.length || devCards.size() == numberOfCardsToDiscard; i++) {
 
-    /**
-     * Init soloAction tokens
-     */
-    public void initSoloActionTokens() {
+            for (int j = 0; j < this.devCardMatrix.length || devCards.size() == numberOfCardsToDiscard; j++) {
+                DevCard card = devCardMatrix[j][j].peekBottomCard();
+                if (card.getColor() == cardColor) {
+                    devCards.add(card);
+                    devCardsIndexs.put(i, j);
 
-    }
+                }
+            }
+        }
+        if (devCards.size() == numberOfCardsToDiscard) {
+            for (Integer i = 0; i < devCardsIndexs.size(); i++) {
+                Integer j = devCardsIndexs.get(i);
+                this.devCardMatrix[i][j].discardButtomCard();
+            }
+            return true;
 
-    /**
-     * shuffle and place solo action token
-     */
-
-    public void setSoloActionToken() {
+        }
+        return false;
     }
 
 

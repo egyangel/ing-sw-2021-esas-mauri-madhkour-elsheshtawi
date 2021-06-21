@@ -80,12 +80,17 @@ public class InputConsumer {
 
     public static Integer getNumberOfPlayers(Scanner scanner, PrintWriter out) {
         Integer input;
-        input = Integer.parseInt(scanner.nextLine());
-        while (input < 1 || input > 4) {
-            out.println("Invalid number of players, please enter a number between 1 and 4:");
+        try {
             input = Integer.parseInt(scanner.nextLine());
+            while (input < 1 || input > 4) {
+                out.println("Invalid number of players, please enter a number between 1 and 4:");
+                input = Integer.parseInt(scanner.nextLine());
+            }
+            return input;
+        }catch (Exception e){
+            return getNumberOfPlayers(scanner, out);
         }
-        return input;
+
     }
 
     public static Integer getANumberBetween(Scanner scanner, PrintWriter out, int min, int max) {
@@ -130,6 +135,7 @@ public class InputConsumer {
     }
 
     public static String getMarketRowColumnIndex(Scanner in, PrintWriter out) {
+
         out.println("[C-1] [C-2] [C-3] [C-4] [R-1] [R-2] [R-3]");
         out.println("Enter column/row and index as shown above, indexes start at left column and top row:");
         String input;

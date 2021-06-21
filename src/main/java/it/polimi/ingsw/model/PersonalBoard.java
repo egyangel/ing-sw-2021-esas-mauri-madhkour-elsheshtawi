@@ -124,7 +124,11 @@ public class PersonalBoard {
     }
     public void increaseFaitPoint(int toAdd) {
         faithPoints += toAdd;
+        //TODO implemnt faithPoints to activate vatican report to all players
+
     }
+
+
 
     public void giveNextVaticanReport() {
         if (vaticanReportCallCounter == 0 && faithPoints >= 5 && faithPoints <= 8) {
