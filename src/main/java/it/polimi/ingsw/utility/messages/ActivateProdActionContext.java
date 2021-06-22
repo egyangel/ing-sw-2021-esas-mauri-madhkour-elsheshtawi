@@ -25,8 +25,7 @@ public class ActivateProdActionContext {
     private List<DevCard>  selectedCard = new ArrayList<>();
     private DevCard  baseProductionCard;
     private Resources leaderLHS = new Resources();
-    private Resources defautProdLHS = new Resources();
-    private Resources devProdLHS = new Resources();
+
     private Resources totalRightCost = new Resources();
     private Boolean baseProdPower = false ;
     private Boolean activationLeaderCardProduction= false;
@@ -76,9 +75,7 @@ public class ActivateProdActionContext {
     public void resetActivationProduction() {
         this.slotChosen= null;
         this.leaderRHS.clear();
-        this.devProdLHS.clear();
         this.selectedCard = null;
-        this.defautProdLHS.clear();
         this.baseProdPower = false;
         this.totalRightCost.clear();
         this.baseProductionCard = null;
@@ -99,5 +96,10 @@ public class ActivateProdActionContext {
     public Resources getTotalRightCost() {
         return this.totalRightCost;
     }
-
+/*
+    public void setLhlLeaderCard(Resources LHS) { this.leaderLHS.add(LHS); }
+    public Resources getLhlLeaderCard() { return leaderLHS; }
+    public Resources getLhlLeaderCard() { return leaderLHS; }
+    */
+ 
 }

@@ -19,6 +19,7 @@ public class LeaderActionContext {
         CHOOSE_ACTION,
         END_LEADER_ACTION
     }
+
     private Set<LeaderCard> playerCard = new HashSet<>();
     private Set<LeaderCard> discardedCard = new HashSet<>();
     private Set<LeaderCard> leaderToActiveCards = new HashSet<>();

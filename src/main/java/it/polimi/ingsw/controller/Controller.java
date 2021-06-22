@@ -551,24 +551,34 @@ public class Controller implements Listener<VCEvent> {
             handleProductionPayment(userID,context,faithPoint);
         }
     }
+
     private void handleProductionPayment(Integer userID, ActivateProdActionContext context,int faithPoint ){
         int j=0;
         if(context.getActivationLeaderCardProduction()){
             handleActivationLeaderProductionPayment(userID,context);
         }
-
+        Resources remainingCost = game.getPersonalBoard(userID).getRemainingCostFromWarehouse(context.getBaseProductionCard().getLHS());
+        if(!remainingCost.isEmpty()){
+            game.getPersonalBoard(userID).subtractFromStrongbox(remainingCost);
+        }
+        /*
         if(context.getBaseProductionCard().getLHS().smallerOrEqual(game.getPersonalBoard(userID).getWarehouseResources()))
             game.getPersonalBoard(userID).subtractFromWarehouse(context.getBaseProductionCard().getLHS());
         else
             game.getPersonalBoard(userID).subtractFromStrongbox(context.getBaseProductionCard().getLHS());
-
+        */
         if (context.getSelectedCard().size() > 0) {
             while (j < context.getSelectedCard().size()) {
+                remainingCost =  game.getPersonalBoard(userID).getRemainingCostFromWarehouse(context.getSelectedCard().get(j).getLHS());
+                if(!remainingCost.isEmpty()){
+                    game.getPersonalBoard(userID).subtractFromStrongbox(remainingCost);
+                }
+                /*
                 if(context.getSelectedCard().get(j).getLHS().smallerOrEqual(game.getPersonalBoard(userID).getWarehouseResources()))
                     game.getPersonalBoard(userID).subtractFromWarehouse(context.getSelectedCard().get(j).getLHS());
                 else
                     game.getPersonalBoard(userID).subtractFromStrongbox(context.getSelectedCard().get(j).getLHS());
-
+*/
                 j++;
             }
         }
@@ -580,7 +590,6 @@ public class Controller implements Listener<VCEvent> {
         updateAboutWarehouseOfId(userID);
         updateAboutStrongboxOfId(userID);
         updateAboutDevSlotOfId(userID);
-
         context.resetActivationProduction();
     }
     private void handleActivationLeaderProductionPayment(Integer userID, ActivateProdActionContext context) {

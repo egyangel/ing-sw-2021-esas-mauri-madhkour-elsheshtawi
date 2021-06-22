@@ -276,6 +276,28 @@ public class PersonalBoard {
             }
         }
     }
+//todo Ask to omer if he think we can maintain both or what
+    public Resources getRemainingCostFromWarehouse(Resources res) {
+        List<Resources.ResType> resTypeList = new ArrayList<>();
+        Resources remainingCost = new Resources();
+        int numOfRemainingCost;
+        resTypeList.addAll(res.getResTypes());
+        for (int i = 0; i < 3; i++) {
+            for (Resources.ResType resType : resTypeList) {
+                if (warehouse[i].getShelfResType().equals(resType)) {
+                    int number = res.getNumberOfType(resType);
+                    if(warehouse[i].getNumberOfElements()< number) {
+                        numOfRemainingCost = number - warehouse[i].getNumberOfElements();
+                        remainingCost.add(resType, numOfRemainingCost);
+                        number -= warehouse[i].getNumberOfElements();
+                    }
+                    warehouse[i].removeFromShelf(number);
+
+                }
+            }
+        }
+        return remainingCost;
+    }
 
     public void putResInStrongBox(Resources res) {
         this.strongbox.add(res);
