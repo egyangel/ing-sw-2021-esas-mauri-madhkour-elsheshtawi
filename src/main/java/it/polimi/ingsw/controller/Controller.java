@@ -14,7 +14,13 @@ import static it.polimi.ingsw.utility.messages.ActivateProdActionContext.ActionS
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
+/**
+ *  Controller class , Accepts input and converts it to commands for the model or view.
+ *
+ *   @author
 
+ *
+ * */
 // ALSO IMPLEMENTS Publisher<CVEvent> but ABSTRACT OUT LATER
 public class Controller implements Listener<VCEvent> {
 
@@ -23,11 +29,22 @@ public class Controller implements Listener<VCEvent> {
     protected Map<Integer, String> userIDtoUsernames = new HashMap<>();
     protected Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
     private List<Integer> userIDs = new ArrayList<>();
+    /**
+     * Constructor of the class
+     *
+     *@param game game object, it is the the model
+     *@param server server object for managing connections with clients
+     */
     public Controller(Game game, Server server) {
         this.game = game;
         this.server = server;
     }
+    /**
+     * method that create the game
+     *
+     *@param userIDtoNameMap it is the map of all user that are in the game
 
+     */
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
         userIDtoUsernames.putAll(userIDtoNameMap);
         userIDs.addAll(userIDtoUsernames.keySet());
@@ -41,13 +58,17 @@ public class Controller implements Listener<VCEvent> {
         }
         game.createGameObjects();
     }
-
+    /**
+     * method that handle the beginning of the match of leader cards and send them to the player w.r.t. the rule game
+     */
     public void startMatch() {
         game.shuffleLeaderCards();
         sendFourLeaderCards();
     }
 
-
+    /**
+     * method that send  the four leader cards to the player  at the beginning of a match
+     */
     private void sendFourLeaderCards() {
         int calls = 0;
         for (VirtualView virtualView : userIDtoVirtualViews.values()) {
@@ -56,7 +77,9 @@ public class Controller implements Listener<VCEvent> {
             virtualView.update(leaderCardEvent);
         }
     }
-
+    /**
+     * method that manages the assignment of the order of the players
+     */
     protected void sendTurnOrderAssign() {
         TurnManager.assignTurnOrder();
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
@@ -69,13 +92,18 @@ public class Controller implements Listener<VCEvent> {
             entry.getValue().update(turnAssignEvent);
         }
     }
-
+    /**
+     * method that assign faith point to the 3rd and 4th player at the beginning of the game as written in the rule
+     */
     protected void InitFatihPoints(Integer userID, Integer userTurn) {
         if (userTurn == 3 || userTurn == 4) {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }
     }
-
+    //todo ask to omer what actually this methods do
+    /**
+     * method that handle the begin of the game
+     */
     protected void beginTurn() {
         Integer currentUserID = TurnManager.getCurrentPlayerID();
         // TODO models being updated as soon as they change is better, comment out below line later
@@ -83,7 +111,9 @@ public class Controller implements Listener<VCEvent> {
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
     }
-
+    /**
+     * method that show the initial personal board description
+     */
     private void sendInitPersonalBoardDescriptions(){
         for(Integer userId: userIDs){
             updateAboutWarehouseOfId(userId);
@@ -91,45 +121,65 @@ public class Controller implements Listener<VCEvent> {
             updateAboutFaithPointOfId(userId);
         }
     }
-
+    /**
+     * method showing the updated warehouse
+     * @param userId  player id
+     */
     protected void updateAboutWarehouseOfId(Integer userId){
         List<Shelf> shelves;
         shelves = game.getPersonalBoard(userId).getShelves();
         MVEvent warehouseUpdate = new MVEvent(userId, MVEvent.EventType.WAREHOUSE_UPDATE, shelves);
         game.updateAllAboutChange(warehouseUpdate);
     }
-
+    /**
+     * method showing the updated strongbox
+     * @param userId  player id
+     */
     protected void updateAboutStrongboxOfId(Integer userId){
         Resources strongbox;
         strongbox = game.getPersonalBoard(userId).getStrongboxResources();
         MVEvent strongboxUpdate = new MVEvent(userId, MVEvent.EventType.STRONGBOX_UPDATE, strongbox);
         game.updateAllAboutChange(strongboxUpdate);
     }
-
+    /**
+     * method showing the updated faith point
+     * @param userId  player id
+     */
     protected void updateAboutFaithPointOfId(Integer userId){
         Integer currentFaithPoints = game.getPersonalBoard(userId).getFaithPoints();
         MVEvent mvEventTwo = new MVEvent(userId, MVEvent.EventType.FAITHPOINT_UPDATE,currentFaithPoints);
         game.updateAllAboutChange(mvEventTwo);
     }
-
+    /**
+     * method showing the updated faith point track
+     * @param userId  player id
+     */
     protected void updateAboutFaithTrackofId(Integer userId){
         Map<PersonalBoard.PopeArea, Boolean> map = game.getPersonalBoard(userId).getPopeAreaMap();
         MVEvent mvEvent = new MVEvent(userId, MVEvent.EventType.VATICAN_REPORT_TAKEN, map);
         game.updateAllAboutChange(mvEvent);
     }
-
+    /**
+     * method showing the updated development card matrix
+     */
     protected void updateAboutDevCardMatrix(){
         MVEvent mvEvent = game.createDevCardMVEvent();
         game.updateAllAboutChange(mvEvent);
     }
-
+    /**
+     * method showing the updated development slot of the player
+     * @param userId  player id
+     */
     protected void updateAboutDevSlotOfId(Integer userId){
         List<DevSlot> slots;
         slots = game.getPersonalBoard(userId).getDevSlots();
         MVEvent devSlotMVevent = new MVEvent(userId, MVEvent.EventType.DEVSLOTS_UPDATE, slots);
         game.updateAllAboutChange(devSlotMVevent);
     }
-
+    /**
+     * method showing the updated leader cards of the player
+     * @param userId  player id
+     */
     protected void updateAboutLeaderCardsOfId(Integer userId){
         List<LeaderCard> activeLeaders = game.getPersonalBoard(userId).getActiveLeaderCards();
         List<LeaderCard> inActiveLeaders = game.getPersonalBoard(userId).getInactiveLeaderCards();
@@ -265,7 +315,11 @@ public class Controller implements Listener<VCEvent> {
                 break;
         }
     }
-    //handle TakeResAction
+    /**
+     * method that based on the choice of the player related to the take res action compute the related action
+     * @param userID player id
+     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleTakeResAction(Integer userID, TakeResActionContext context){
         switch (context.getLastStep()){
             case ROW_COLUMN_CHOSEN:
@@ -287,6 +341,11 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent = new CVEvent(TAKE_RES_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
+    /**
+     * method that handle the index of the row/column chooses by the player. It draw the related res from the market tray based on player's choice
+     * @param userID player id
+     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleRowColumnIndex(Integer userID, TakeResActionContext context){
         List<MarbleColor> marbleList;
         if(context.isRow())
@@ -337,6 +396,11 @@ public class Controller implements Listener<VCEvent> {
         context.setResources(resources);
         context.convertResIntoFaith();
     }
+    /**
+     * method that clear the shelf on player's personal board
+     * @param userID player id
+     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleClearShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace place = context.getShelf();
         int discarded = game.getPersonalBoard(userID).clearShelf(place);
@@ -344,6 +408,11 @@ public class Controller implements Listener<VCEvent> {
         context.setLastStep(CHOOSE_SHELVES);
         updateAboutWarehouseOfId(userID);
     }
+    /**
+     * method that handle the swap shelf action
+     * @param userID player id
+     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleSwapShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace[] places = context.getShelves();
         int discarded = game.getPersonalBoard(userID).swapShelves(places);
@@ -351,6 +420,11 @@ public class Controller implements Listener<VCEvent> {
         context.setLastStep(CHOOSE_SHELVES);
         updateAboutWarehouseOfId(userID);
     }
+    /**
+     * method that handle the insertion of resources inside the shelf and update the
+     * @param userID player id
+     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handlePutResourcesChosen(Integer userID, TakeResActionContext context){
         // todo omer do not put resources of same type to two different shelves
         Map<Shelf.shelfPlace, Resources.ResType> map = context.getShelfPlaceResTypeMap();
@@ -383,7 +457,11 @@ public class Controller implements Listener<VCEvent> {
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
 
     }
-
+    /**
+     * method that based on the choice of the player related to buying development action showing the updated leader cards of the player
+     * @param userID player id
+     * @param context it the context of buying development action. it is filled in both view and controller side with info needed to complete the action
+     */
     //handle BuyDevCardAction
     private void handleBuyDevCardAction(Integer userID, BuyDevCardActionContext context){
         switch (context.getLastStep()){
@@ -400,6 +478,11 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent = new CVEvent(BUY_DEVCARD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
+    /**
+     * method that handle the development card purchase action. it check if the requirement for the card are satisfied
+     * @param userID player id
+     * @param context it the context of buy card context. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleColorLevelChosen(Integer userID, BuyDevCardActionContext context){
         DevCard selectedCard = game.peekTopDevCard(context.getColor(), context.getLevel());
         context.setSelectedCard(selectedCard);
@@ -417,6 +500,11 @@ public class Controller implements Listener<VCEvent> {
             updateAboutDevCardMatrix();
         }
     }
+    /**
+     * method that handle the insertion of development card inside the personal board's slot .
+     * @param userID player id
+     * @param context it the context of buy card context. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){
         DevCard selectedCard = context.getSelectedCard();
         Resources costToBePaid = new Resources();
@@ -434,6 +522,11 @@ public class Controller implements Listener<VCEvent> {
         context.setRemainingCost(costToBePaid);
         context.setLastStep(CHOOSE_PAY_COST_FROM_WHERE);
     }
+    /**
+     * method that handle the payment of development card. it removes the res from personal board shelves/strongbox
+     * @param userID player id
+     * @param context it the context of buy card context. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handlePayFromWhereChosen(Integer userID, BuyDevCardActionContext context){
 
         Resources payFromWarehouse = context.getPayFromWarehouse();
@@ -589,7 +682,8 @@ public class Controller implements Listener<VCEvent> {
 
         updateAboutWarehouseOfId(userID);
         updateAboutStrongboxOfId(userID);
-        updateAboutDevSlotOfId(userID);
+        updateAboutFaithPointOfId(userID);
+        updateAboutFaithTrackofId(userID);
         context.resetActivationProduction();
     }
     private void handleActivationLeaderProductionPayment(Integer userID, ActivateProdActionContext context) {
@@ -622,6 +716,7 @@ public class Controller implements Listener<VCEvent> {
                 context.setLastStep(END_LEADER_ACTION);
                 break;
         }
+
         updateAboutLeaderCardsOfId(userID);
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);

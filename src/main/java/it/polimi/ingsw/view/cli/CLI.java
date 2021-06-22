@@ -47,9 +47,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     /**
      * Constructor of the class
-     *
+     * initialize the in and out stream.
      * @param client player object
-     *               also initialize the in and out stream.
+     *
      */
     public CLI(Client client) {
         this.client = client;
@@ -181,8 +181,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     /**
-     * method that handle the beginning aspect of the game like choosing the leader  card,
-     * assigning order of the players, and displaying the player menu
+     * method that handle the beginning of the game like choosing the leader  cards,
+     * assigning order of the players
      */
     private void routeInitialActionsDisplay() {
         switch (initialCVevent.getEventType()) {
