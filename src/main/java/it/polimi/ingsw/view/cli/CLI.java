@@ -261,7 +261,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 out.println("You are the second player.");
                 out.println("You will have one initial resource of your choosing in the warehouse.");
                 // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
-//                Resources.ResType initResType = InputConsumer.getResourceType(in, out);
+            // Resources.ResType initResType = InputConsumer.getResourceType(in, out);
                 Resources.ResType initResType = Resources.ResType.COIN;
                 Resources initResource = new Resources(initResType, 1);
                 VCEvent vcEvent = new VCEvent(INIT_RES_CHOOSEN, initResource);
@@ -855,8 +855,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 case CHOOSE_ACTION:
                     addNextDisplay("chooseLeaderAction");
                     break;
-            case END_LEADER_ACTION:
-//todo add  a var that check if a normal action it is played so that we can terminate the player turn
+                case END_LEADER_ACTION:
+                    VCEvent vcEvent = new VCEvent( ACTIVATE_LEADER_ACTION_ENDED);
+                    publish(vcEvent);
                     break;
             }
         }

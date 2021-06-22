@@ -180,7 +180,7 @@ public class Controller implements Listener<VCEvent> {
                 //TODO FOR DEBUG init resources in strongbox
                 Resources newRes = new Resources(10,10,10,10);
                 game.getPersonalBoard(userID).setStrongbox(newRes);
-                List<LeaderCard> discountLeaderDebug = new ArrayList<>();
+                Set<LeaderCard> discountLeaderDebug = new HashSet<>();
                 Requirement requirement = new Requirement(new Resources(1,0,0,0));
                 SpecialAbility discount = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.STONE);
                 discountLeaderDebug.add(new LeaderCard(requirement, 4, discount));
@@ -199,7 +199,7 @@ public class Controller implements Listener<VCEvent> {
             case ACTIVATE_PROD_ACTION_SELECTED:
                 ActivateProdActionContext emptyActivateDevCardContext = new ActivateProdActionContext();
                 emptyActivateDevCardContext.setLastStep(CHOOSE_DEV_SLOTS);
-                handleSlotAvailableChoosen(userID,emptyActivateDevCardContext);
+                handleSlotAvailableChosen(userID,emptyActivateDevCardContext);
                 cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, emptyActivateDevCardContext);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
@@ -375,8 +375,8 @@ public class Controller implements Listener<VCEvent> {
     protected void endTurn(Integer userId){
         //TODO to implement all checks
 
-         TurnManager.registerResponse(userId);
-         TurnManager.goToNextTurn();
+        TurnManager.registerResponse(userId);
+        TurnManager.goToNextTurn();
         Integer currentUserID = TurnManager.getCurrentPlayerID();
         game.sendMarketAndDevCardMatrixTo(currentUserID);
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
@@ -478,7 +478,7 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
-    private void  handleSlotAvailableChoosen(Integer userID, ActivateProdActionContext context){
+    private void  handleSlotAvailableChosen(Integer userID, ActivateProdActionContext context){
         int j = 0 ;
         List<DevSlot>  slotAvailable = new ArrayList<>();
         List<DevSlot.slotPlace> placeList = new ArrayList<>( Arrays.asList(DevSlot.slotPlace.LEFT,DevSlot.slotPlace.CENTER,DevSlot.slotPlace.RIGHT));
@@ -593,7 +593,7 @@ public class Controller implements Listener<VCEvent> {
         game.getPersonalBoard(userID).increaseFaitPoint(context.getNumberOfActiveLeaderProduction());
     }
 
-    //handle the activation of prodution
+    //handle the activation of production
     private void handleActivateLeaderAction(Integer userID, LeaderActionContext context){
         switch (context.getLastStep()){
             case DISCARD_LEADER_CARD:
@@ -613,27 +613,28 @@ public class Controller implements Listener<VCEvent> {
                 context.setLastStep(END_LEADER_ACTION);
                 break;
         }
+        updateAboutLeaderCardsOfId(userID);
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
 
     private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
-
        game.getPersonalBoard(userID).changePlayerCard(context.discardedPlayerCard());
        game.getPersonalBoard(userID).increaseFaitPoint(context.discardedPlayerCard().size());
-
     }
 
     private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
-        game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
-        checkLeaderActivationAction (userID,context);
-        //if( context.getActiveLeaderCard().size() > 0 )
+       checkLeaderActivationAction(userID,context);
+       game.getPersonalBoard(userID).setActiveLeaderCards(new HashSet<>(context.getActiveLeaderCard()));
+       game.getPersonalBoard(userID).changePlayerCard(context.getActiveLeaderCard());
+
     }
     /**
-     * methods that handle the check of the requirements of leader cards,
-     * */
+     * methods that handle the check of the requirements of leader cards
+     *
+     */
     private void checkLeaderActivationAction (Integer userID, LeaderActionContext context){
-        int discConvert =0;
+        int discConvert;
         int firstCount = 0;
         int secondCount = 0;
         List<LeaderCard> activeLeaderCards= new ArrayList<>();

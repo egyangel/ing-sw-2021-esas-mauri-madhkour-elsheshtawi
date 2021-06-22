@@ -17,7 +17,6 @@ public class LeaderActionContext {
 
         // from server to client
         CHOOSE_ACTION,
-        REQUIREMENT_NOT_SATISFIED,
         END_LEADER_ACTION
     }
     private Set<LeaderCard> playerCard = new HashSet<>();
@@ -25,7 +24,6 @@ public class LeaderActionContext {
     private Set<LeaderCard> leaderToActiveCards = new HashSet<>();
     private Set<LeaderCard> activeLeaderCard = new HashSet<>();
     private Boolean activationLeaderCardBefore= false;
-    private Resources totalResources= new Resources() ;
     private ActionStep lastStep;
     private Set<DevCard> ownedCards= new HashSet<>();
 

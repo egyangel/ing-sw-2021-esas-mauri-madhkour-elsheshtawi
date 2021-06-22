@@ -1,11 +1,10 @@
 package it.polimi.ingsw.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PersonalBoard {
+    private Object IllegalStateException;
+
     public enum PopeArea {
         FIRST,
         SECOND,
@@ -15,21 +14,19 @@ public class PersonalBoard {
     private Integer userID;
     private Game game;
     private int victoryPoints = 0;
-    private DefaultProd defProd;
     private DevSlot[] devSlots = new DevSlot[3];
     private Shelf[] warehouse = new Shelf[3];
     private Resources strongbox;
 
     private int faithPoints = 0;
     private List<LeaderCard> inactiveLeaderCards;
-    private List<LeaderCard> activeLeaderCards;
+    private Set<LeaderCard> activeLeaderCards;
     private Map<PopeArea, Boolean> popeAreaMap;
 
     private List<DevCard> ownedCards = new ArrayList<>();
 
     public PersonalBoard(Integer userID) {
         this.userID = userID;
-        defProd = new DefaultProd();
         devSlots[0] = new DevSlot(DevSlot.slotPlace.LEFT);
         devSlots[1] = new DevSlot(DevSlot.slotPlace.CENTER);
         devSlots[2] = new DevSlot(DevSlot.slotPlace.RIGHT);
@@ -39,7 +36,7 @@ public class PersonalBoard {
         strongbox = new Resources();
         popeAreaMap = new HashMap<>();
         inactiveLeaderCards = new ArrayList<>();
-        activeLeaderCards = new ArrayList<>();
+        activeLeaderCards = new HashSet<>();
         popeAreaMap.put(PopeArea.FIRST, false);
         popeAreaMap.put(PopeArea.SECOND, false);
         popeAreaMap.put(PopeArea.THIRD, false);
@@ -89,24 +86,6 @@ public class PersonalBoard {
         }
 
 
-    }
-
-//Todo Ask to omer about this, i did it in different way in the client side, i ask LHS and RHS and create a dev card and
-// in the controller side manage the convertion from LHS res to RhS res
-    public void useDefProd(Resources.ResType L1, Resources.ResType L2, Resources.ResType R) {
-        System.out.println("Trying Default Prod: " + L1.toString() + " + " + L2.toString() + " = " + R.toString() + "\n");
-        if (L1 != L2) {
-            if (this.strongbox.isThereType(L1) && this.strongbox.isThereType(L2)) {
-                this.strongbox.subtract(L1, 1);
-                this.strongbox.subtract(L2, 1);
-                this.strongbox.add(R, 1);
-            }
-        } else {
-            if (this.strongbox.getNumberOfType(L1) >= 2) {
-                this.strongbox.subtract(L1, 2);
-                this.strongbox.add(R, 1);
-            }
-        }
     }
     public void setOwnedCard(DevCard myCards) {
         this.ownedCards.add(myCards);
@@ -169,21 +148,18 @@ public class PersonalBoard {
     }
 
     public void putSelectedLeaderCards(List<LeaderCard> selectedCards) { inactiveLeaderCards.addAll(selectedCards); }
-    public List<LeaderCard> getInactiveLeaderCards() { return this.inactiveLeaderCards; }
+    public List<LeaderCard> getInactiveLeaderCards() { return new ArrayList<>(this.inactiveLeaderCards); }
 
-    public void changePlayerCard(List<LeaderCard> discardCard){
-        int i = 0;
-        while(i < discardCard.size()){
-            inactiveLeaderCards.remove(this.inactiveLeaderCards.indexOf(discardCard.get(i)));
-            i++;
-        }
+    public void changePlayerCard(List<LeaderCard> Cards){
+            inactiveLeaderCards.removeAll(Cards);
     }
 
-    public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
-         this.activeLeaderCards=activeLeaderCards;
+    public void setActiveLeaderCards(Set<LeaderCard> activeLeaderCards) {
+         this.activeLeaderCards.addAll(activeLeaderCards);
     }
+
     public List<LeaderCard> getActiveLeaderCards() {
-        return this.activeLeaderCards;
+        return new ArrayList<>(this.activeLeaderCards);
     }
 
     public Resources getTotalResources() {
