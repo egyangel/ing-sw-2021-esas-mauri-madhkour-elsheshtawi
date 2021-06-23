@@ -358,10 +358,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[3] View strongbox");
         out.println("[4] View development slots");
         out.println("[5] View faith track");
-        out.println("[6] Perform a Leader action");
-        out.println("[7] View other personal boards");
-        out.println("[8] End Turn");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 8);
+        out.println("[6] View leader cards");
+        out.println("[7] Perform a Leader action");
+        out.println("[8] View other personal boards");
+        out.println("[9] End Turn");
+        int index = InputConsumer.getANumberBetween(in, out, 1, 9);
         switch (index) {
             case 1:
                 addNextDisplay("displayMarketTray");
@@ -388,16 +389,20 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayMinorActionSelection");
                 break;
             case 7:
+                VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+                publish(vcEvent);
+                break;
+            case 8:
                 addNextDisplay("displayOtherPersonalBoards");
                 addNextDisplay("displayMinorActionSelection");
                 break;
-            case 8:
+            case 9:
                 addNextDisplay("displayEndTurn");
                 break;
-            case 9:
+            case 10:
                 //TODO recheck after merge
-                VCEvent vcEvent = new VCEvent(END_TURN);
-                publish(vcEvent);
+                VCEvent vcEventTwo = new VCEvent(END_TURN);
+                publish(vcEventTwo);
                 break;
         }
     }
@@ -827,17 +832,16 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * */
     //handle ActivateLeaderAction
     private void routeActivateLeaderActionDisplay () {
-        activateLeaderContext.setActivationLeaderCardBefore(true);
-            switch (activateLeaderContext.getLastStep()) {
-                case CHOOSE_ACTION:
-                    addNextDisplay("chooseLeaderAction");
-                    break;
-                case END_LEADER_ACTION:
-                    VCEvent vcEvent = new VCEvent( ACTIVATE_LEADER_ACTION_ENDED);
-                    publish(vcEvent);
-                    break;
-            }
+       switch (activateLeaderContext.getLastStep()) {
+            case CHOOSE_ACTION:
+                addNextDisplay("chooseLeaderAction");
+                break;
+            case END_LEADER_ACTION:
+                VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_ACTION_ENDED);
+                publish(vcEvent);
+                break;
         }
+    }
 
     /**
      * methods that handle the Leader Action. Only ask to the player which action between discard, activate or both and then based on the
@@ -864,16 +868,15 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * methods that handle the Discard Leader Action. Ask to the player which Cards want to discard, fill the activateLeaderContext.
      * After the player fill the  context  it publish an VC(view to controller)
      * THen server update the personal board based on the choice.
-     * @param numOfActionChoosen  it is used to distinguish the discard action([1]) from the both action([3]).
+     * @param numOfActionChosen  it is used to distinguish the discard action([1]) from the both action([3]).
      *                            if both call then activation methods
      * */
-    public void chooseDiscardLeaderAction(int numOfActionChoosen ) {
+    public void chooseDiscardLeaderAction(int numOfActionChosen ) {
         int j=0;
         Set<LeaderCard> discardedLeaderCard = new HashSet<>();
-        out.println("Do want to Discard LeaderCard ? ");
-        boolean discard = InputConsumer.getYesOrNo(in, out);
 
-        if (discard && activateLeaderContext.getPlayerCard().size() > 0 ) {
+
+        if (activateLeaderContext.getPlayerCard().size() > 0 ) {
             out.println("You can discard  " +activateLeaderContext.getPlayerCard().size()+ "  leader cards ");
             out.println("Your Leader Card:");
             while (j < activateLeaderContext.getPlayerCard().size()) {
@@ -886,12 +889,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         activateLeaderContext.setDiscardedPlayerCard(discardedLeaderCard);
         activateLeaderContext.changePlayerCard(discardedLeaderCard);
 
-        if(numOfActionChoosen==3 && discardedLeaderCard.size()<2){
+        if(numOfActionChosen==3 && discardedLeaderCard.size()<2){
             activateLeaderContext.setLastStep(BOTH_ACTIONS);
             chooseLeaderActivationAction();
         }else {
             activateLeaderContext.setLastStep(DISCARD_LEADER_CARD);
-            VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+            VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_FILLED, activateLeaderContext);
             publish(vcEvent);
         }
 
@@ -918,12 +921,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             }
         }
         if (activeLeaderCard.size() > 0)
-            activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOOSEN);
+            activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOSEN);
         else
-            activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOOSEN);
+            activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOSEN);
 
         activateLeaderContext.setLeadersToActivate(activeLeaderCard);
-        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
+        VCEvent vcEvent = new VCEvent( ACTIVATE_LEADER_CONTEXT_FILLED, activateLeaderContext);
         publish(vcEvent);
     }
 

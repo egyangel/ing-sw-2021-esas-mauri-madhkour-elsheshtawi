@@ -369,6 +369,10 @@ public class Controller implements Listener<VCEvent> {
                 CVEvent cvEventFive = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEventFive);
                 break;
+            case ACTIVATE_LEADER_ACTION_ENDED:
+                CVEvent cvEventSix = new CVEvent(SELECT_MINOR_ACTION);
+                userIDtoVirtualViews.get(userID).update(cvEventSix);
+                break;
                 //TODO Omer maybe it is better in the second way, they do the same works
         /*
                 case BUY_DEVCARD_ACTION_ENDED:
@@ -800,7 +804,7 @@ public class Controller implements Listener<VCEvent> {
                 handleDiscardLeaderChosen(userID, context);
                 context.setLastStep(END_LEADER_ACTION);
                 break;
-            case LEADER_CARD_ACTIVATED_CHOOSEN:
+            case LEADER_CARD_ACTIVATED_CHOSEN:
                 handleActivationLeaderChosen(userID, context);
                 context.setLastStep(END_LEADER_ACTION);
                 break;
@@ -809,13 +813,13 @@ public class Controller implements Listener<VCEvent> {
                 handleActivationLeaderChosen(userID, context);
                 context.setLastStep(END_LEADER_ACTION);
                 break;
-            case LEADER_CARD_NOT_ACTIVATED_CHOOSEN:
+            case LEADER_CARD_NOT_ACTIVATED_CHOSEN:
                 context.setLastStep(END_LEADER_ACTION);
                 break;
         }
 
         updateAboutLeaderCardsOfId(userID);
-        CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
+        CVEvent cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
     /**
@@ -834,6 +838,10 @@ public class Controller implements Listener<VCEvent> {
      */
     private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
        checkLeaderActivationAction(userID,context);
+       int i=0;
+       while(i<context.getActiveLeaderCard().size()){
+           System.out.println(context.getActiveLeaderCard().get(i));
+       }
        game.getPersonalBoard(userID).setActiveLeaderCards(new HashSet<>(context.getActiveLeaderCard()));
        game.getPersonalBoard(userID).changePlayerCard(context.getActiveLeaderCard());
 
