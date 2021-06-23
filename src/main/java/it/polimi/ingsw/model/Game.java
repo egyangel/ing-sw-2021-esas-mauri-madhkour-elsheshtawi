@@ -177,23 +177,23 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public boolean discardLowerCard(DevCard.CardColor cardColor, Integer numberOfCardsToDiscard) {
-        List<DevCard> devCards = new ArrayList<DevCard>();
-        HashMap<Integer, Integer> devCardsIndexs = new HashMap<>();
+        List<DevCard> devCards = new ArrayList<>();
+        HashMap<Integer, Integer> devCardsIndexes = new HashMap<>();
         for (int i = 0; i < this.devCardMatrix.length || devCards.size() == numberOfCardsToDiscard; i++) {
 
             for (int j = 0; j < this.devCardMatrix.length || devCards.size() == numberOfCardsToDiscard; j++) {
                 DevCard card = devCardMatrix[j][j].peekBottomCard();
                 if (card.getColor() == cardColor) {
                     devCards.add(card);
-                    devCardsIndexs.put(i, j);
+                    devCardsIndexes.put(i, j);
 
                 }
             }
         }
         if (devCards.size() == numberOfCardsToDiscard) {
-            for (Integer i = 0; i < devCardsIndexs.size(); i++) {
-                Integer j = devCardsIndexs.get(i);
-                this.devCardMatrix[i][j].discardButtomCard();
+            for (int i = 0; i < devCardsIndexes.size(); i++) {
+                Integer j = devCardsIndexes.get(i);
+                this.devCardMatrix[i][j].discardBottomCard();
             }
             return true;
 

@@ -10,8 +10,8 @@ class LeaderCardTest {
     private Requirement requirement;
     private int victoryPoint;
     private SpecialAbility ability;
-    LeaderCard lcard;
-    LeaderCard lcard2;
+    LeaderCard card;
+    LeaderCard card2;
     private Requirement requirement1;
     private int victoryPoint1;
     private SpecialAbility ability1;
@@ -25,31 +25,31 @@ class LeaderCardTest {
         requirement1 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE );
         victoryPoint1 = 5 ;
         ability1 = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE,Resources.ResType.SERVANT);
-        lcard2= new LeaderCard(requirement1,victoryPoint1,ability1);
-        lcard = new LeaderCard(requirement,victoryPoint,ability);
+        card2= new LeaderCard(requirement1,victoryPoint1,ability1);
+        card = new LeaderCard(requirement,victoryPoint,ability);
     }
 
     @AfterEach
     void tearDown() {
         requirement = null;
         ability = null;
-        lcard = null;
+        card = null;
     }
 
     @Test
     void getAbility() {
-        assertEquals(ability,lcard.getAbility());
+        assertEquals(ability,card.getAbility());
     }
 
     @Test
     void getVictoryPoints() {
-        assertEquals(5,lcard.getVictoryPoints());
-        assertNotEquals(-1,lcard.getVictoryPoints());
+        assertEquals(5,card.getVictoryPoints());
+        assertNotEquals(-1,card.getVictoryPoints());
     }
 
     @Test
     void getRequirement() {
-        assertEquals(requirement,lcard.getRequirement());
-        assertNotEquals(lcard2.getRequirement(),lcard.getRequirement());
+        assertEquals(requirement,card.getRequirement());
+        assertNotEquals(card2.getRequirement(),card.getRequirement());
     }
 }

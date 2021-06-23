@@ -35,11 +35,12 @@ public class DevCardDeck {
     }
     public DevCard peekBottomCard() {
         if (stackOfDevCards.isEmpty()) return null;
-        else return stackOfDevCards.get(stackOfDevCards.size());
+        else return stackOfDevCards.get(stackOfDevCards.size()-1);
     }
-    public DevCard discardButtomCard() {
+    //why discard the bottom card
+    public DevCard discardBottomCard() {
         if (stackOfDevCards.isEmpty()) return null;
-        else return stackOfDevCards.remove(stackOfDevCards.size());
+        else return stackOfDevCards.remove(stackOfDevCards.size()-1);
     }
 
     public void removeTopCard(){

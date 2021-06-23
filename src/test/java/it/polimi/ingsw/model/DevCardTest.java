@@ -8,15 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DevCardTest {
 
-    private DevSlot slotL = new DevSlot(DevSlot.slotPlace.LEFT);
     private Resources Lhs = new Resources(Resources.ResType.STONE,2);
     private Resources Rhs= new Resources(Resources.ResType.SERVANT,1);
     private Resources cost= new Resources(Resources.ResType.STONE,2);
 
     private DevCard testCard = new DevCard(1, DevCard.CardColor.BLUE,Lhs,Rhs, cost,10);
-    private DevCard testCard2 = new DevCard(2, DevCard.CardColor.YELLOW,Lhs,Rhs, cost,5);
-    private DevCard testCard3 = new DevCard(3, DevCard.CardColor.GREEN,Lhs,Rhs, cost,8);
-    private
 
 
     @Test
@@ -36,7 +32,7 @@ class DevCardTest {
     @Test
     void getColor() {
         assertEquals(DevCard.CardColor.BLUE,testCard.getColor());
-        assertFalse(testCard.getColor().equals("WHITE"));
+        assertNotEquals(testCard.getColor(), "WHITE");
 
     }
 
@@ -59,7 +55,7 @@ class DevCardTest {
     @Test
     void getCost() {
         Resources test = new Resources(Resources.ResType.STONE,0);
-        Resources test2 = new Resources(Resources.ResType.STONE,2);
+
         assertNotEquals(null,testCard.getCost());
         assertNotEquals(test.getResTypes(),testCard.getRHS().getResTypes());
     }
