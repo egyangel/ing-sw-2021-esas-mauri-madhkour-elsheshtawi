@@ -451,7 +451,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayLeaderCards() {
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getLeaderCardsDescription());
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getActiveLeaderCardsDescription());
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getInactiveLeaderCardsDescription());
     }
 
     public void displayEndTurn(){
@@ -990,296 +991,55 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 case DEVCARD_MATRIX_UPDATE:
                     Type devCardListType = new TypeToken<List<DevCard>>() {}.getType();
                     List<DevCard> topDevCards = (List<DevCard>) mvEvent.getEventPayload(devCardListType);
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i<12; i++){
-                        sb.append(i+1 + ") " + topDevCards.get(i).describeDevCard());
-                        sb.append("\n");
-                    }
-                    devCardMatrixDescription = sb.toString();
+                    devCardMatrixDescription = ObjectPrinter.printDevCardMatrixAsList(topDevCards);;
                     break;
                 case WAREHOUSE_UPDATE:
                     Type shelfListType = new TypeToken<List<Shelf>>() {}.getType();
                     List<Shelf> shelves = (List<Shelf>) mvEvent.getEventPayload(shelfListType);
-                    StringBuilder sb1 = new StringBuilder();
-                    for (int i = 0; i<3; i++){
-                        sb1.append(shelves.get(i).describeShelfFancy());
-                    }
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(sb1.toString());
+                    String wareHouseDescription = ObjectPrinter.printWarehouse(shelves);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(wareHouseDescription);
                     break;
                 case STRONGBOX_UPDATE:
                     Resources strongboxRes = (Resources) mvEvent.getEventPayload(Resources.class);
-                    String strongboxDescription = strongBoxPrinter(strongboxRes);
+                    String strongboxDescription = ObjectPrinter.drawStrongBox(strongboxRes);
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(strongboxDescription);
                     break;
                 case DEVSLOTS_UPDATE:
                     Type devSlotListType = new TypeToken<List<DevSlot>>() {}.getType();
                     List<DevSlot> devSlots = (List<DevSlot>) mvEvent.getEventPayload(devSlotListType);
-                    StringBuilder sb2 = new StringBuilder();
-                    for (int i = 0; i<3; i++){
-                        sb2.append(devSlots.get(i).describeDevSlot() + "\n");
-                    }
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(sb2.toString());
+                    String devSlotDescription = ObjectPrinter.printDevSlots(devSlots);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(devSlotDescription);
                     break;
                 case FAITHPOINT_UPDATE:
                     Integer faithpoints = (Integer) mvEvent.getEventPayload(Integer.class);
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithPoints(faithpoints);
                     Map<PersonalBoard.PopeArea, Boolean> tileMap = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getTileMap();
-                    String faithTrackDescription = faithTrackPrinter(tileMap, faithpoints);
+                    String faithTrackDescription = ObjectPrinter.faithTrackPrinter(tileMap, faithpoints);
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescription);
                     break;
                 case VATICAN_REPORT_TAKEN:
                     Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {}.getType();
                     Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);
                     int faithPointsTwo = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getFaithPoints();
-                    String faithTrackDescriptionTwo = faithTrackPrinter(tileMapTwo, faithPointsTwo);
+                    String faithTrackDescriptionTwo = ObjectPrinter.faithTrackPrinter(tileMapTwo, faithPointsTwo);
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescriptionTwo);
+                    break;
+                case ACTIVE_LEADER_CARD_UPDATE:
+                    Type activeLeaderListType = new TypeToken<List<LeaderCard>>() {}.getType();
+                    List<LeaderCard> activeLeaders = (List<LeaderCard>) mvEvent.getEventPayload(activeLeaderListType);
+                    String activeLeaderDescription = ObjectPrinter.printLeaders(activeLeaders, true);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setActiveLeaderCardsDescription(activeLeaderDescription);
+                    break;
+                case INACTIVE_LEADER_CARD_UPDATE:
+                    Type inactiveLeaderListType = new TypeToken<List<LeaderCard>>() {}.getType();
+                    List<LeaderCard> inactiveLeaders = (List<LeaderCard>) mvEvent.getEventPayload(inactiveLeaderListType);
+                    String inactiveLeaderDescription = ObjectPrinter.printLeaders(inactiveLeaders, false);
+                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setInactiveLeaderCardsDescription(inactiveLeaderDescription);
                     break;
             }
         } else {
             out.println("Unidentified MV or CV event");
         }
-    }
-
-    private static String faithTrackPrinter(Map<PersonalBoard.PopeArea, Boolean> map, int faithPoints){
-        StringBuilder sb = new StringBuilder();
-        String resetAnsi = "\u001B[0m";
-        String redAnsi = "\u001B[35m";
-        String greyAnsi = "\033[1;37m";
-        String crossAnsi = "\u271e";
-        sb.append(faithTrackDrawVP());
-        sb.append("\n");
-        sb.append(faithTrackDrawTopPart());
-        for(int i=0; i<10; i++){
-            sb.append("\u2502");
-            if (i == faithPoints)
-                sb.append(" " + redAnsi + " " + crossAnsi + resetAnsi + " ");
-            else
-                sb.append(" " + greyAnsi + " " + i + resetAnsi + " ");
-            sb.append("\u2502");
-        }
-        for(int i=10; i<25; i++){
-            sb.append("\u2502");
-            if (i == faithPoints)
-                sb.append(" " + redAnsi + " " + crossAnsi + resetAnsi + " ");
-            else
-                sb.append(" " + greyAnsi  + i + resetAnsi + " ");
-            sb.append("\u2502");
-        }
-        sb.append("\n");
-        sb.append(faithTrackDrawBottomPart());
-        sb.append("\n");
-        sb.append(faithTrackDrawVaticanReport(map));
-        return sb.toString();
-    }
-
-    private static String faithTrackDrawVP(){
-        StringBuilder sb = new StringBuilder();
-        String empty = " ";
-        for(int i=0; i<20; i++){
-            sb.append(empty);
-        }
-        sb.append("1VP");
-        for(int i=0; i<15; i++){
-            sb.append(empty);
-        }
-        sb.append("2VP");
-        for(int i=0; i<15; i++){
-            sb.append(empty);
-        }
-        sb.append("4VP");
-        for(int i=0; i<15; i++){
-            sb.append(empty);
-        }
-        sb.append("6VP");
-        for(int i=0; i<15; i++){
-            sb.append(empty);
-        }
-        sb.append("9VP");
-        for(int i=0; i<14; i++){
-            sb.append(empty);
-        }
-        sb.append("12VP");
-        for(int i=0; i<14; i++){
-            sb.append(empty);
-        }
-        sb.append("16VP");
-        for(int i=0; i<14; i++){
-            sb.append(empty);
-        }
-        sb.append("20VP");
-        return sb.toString();
-    }
-
-    private static String faithTrackDrawTopPart(){
-        StringBuilder sb = new StringBuilder();
-        String yellowAnsi = "\u001B[33m";
-        String redAnsi = "\u001B[35m";
-        String whiteAnsi = "";
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(yellowAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(yellowAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(redAnsi));
-        sb.append(faithTrackDrawOneTop(yellowAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(yellowAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(yellowAnsi));
-        sb.append(faithTrackDrawOneTop(redAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(yellowAnsi)); //18
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(yellowAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(whiteAnsi));
-        sb.append(faithTrackDrawOneTop(redAnsi));
-        sb.append("\n");
-        return sb.toString();
-    }
-
-    private static String faithTrackDrawOneTop(String colorCode){
-        StringBuilder sb = new StringBuilder();
-        String resetAnsi = "\u001B[0m";
-        sb.append(colorCode + "\u2552\u2550\u2550\u2550\u2550\u2555" + resetAnsi);
-        return sb.toString();
-    }
-
-    private static String faithTrackDrawBottomPart(){
-        StringBuilder sb = new StringBuilder();
-        String yellowAnsi = "\u001B[33m";
-        String redAnsi = "\u001B[35m";
-        String whiteAnsi = "";
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(yellowAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(yellowAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(redAnsi));
-        sb.append(faithTrackDrawOneBottom(yellowAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(yellowAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(yellowAnsi));
-        sb.append(faithTrackDrawOneBottom(redAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(yellowAnsi)); //18
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(yellowAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(whiteAnsi));
-        sb.append(faithTrackDrawOneBottom(redAnsi));
-        return sb.toString();
-    }
-
-    private static String faithTrackDrawOneBottom(String colorCode){
-        StringBuilder sb = new StringBuilder();
-        String resetAnsi = "\u001B[0m";
-        sb.append(colorCode + "\u2558\u2550\u2550\u2550\u2550\u255b" + resetAnsi);
-        return sb.toString();
-    }
-
-    private static String faithTrackDrawVaticanReport(Map<PersonalBoard.PopeArea, Boolean> map){
-        StringBuilder sb = new StringBuilder();
-        String empty = " ";
-        String opening = "\u250d";
-        String straight = "\u2501";
-        String closing = "\u2511";
-        String redAnsi = "\u001B[35m";
-        String resetAnsi = "\u001B[0m";
-        String tick = "\u2714";
-        String cross = "\u2718";
-        for(int i=0; i<30; i++){
-            sb.append(empty);
-        }
-        sb.append(redAnsi + opening);
-        for(int i=0; i<22; i++){
-            sb.append(straight);
-        }
-        sb.append(closing + resetAnsi);
-        for(int i=0; i<18; i++){
-            sb.append(empty);
-        }
-        sb.append(redAnsi + opening);
-        for(int i=0; i<28; i++){
-            sb.append(straight);
-        }
-        sb.append(closing + resetAnsi);
-        for(int i=0; i<12; i++){
-            sb.append(empty);
-        }
-        sb.append(redAnsi + opening);
-        for(int i=0; i<34; i++){
-            sb.append(straight);
-        }
-        sb.append(closing + resetAnsi);
-        sb.append("\n");
-        for(int i=0; i<39; i++){
-            sb.append(empty);
-        }
-        sb.append("2VP ");
-        if(map.get(PersonalBoard.PopeArea.FIRST))
-            sb.append(tick);
-        else
-            sb.append(cross);
-        for(int i=0; i<40; i++){
-            sb.append(empty);
-        }
-        sb.append("3VP ");
-        if(map.get(PersonalBoard.PopeArea.SECOND))
-            sb.append(tick);
-        else
-            sb.append(cross);
-        for(int i=0; i<40; i++){
-            sb.append(empty);
-        }
-        sb.append("4VP ");
-        if(map.get(PersonalBoard.PopeArea.THIRD))
-            sb.append(tick);
-        else
-            sb.append(cross);
-
-        return sb.toString();
-    }
-
-//    public static void main(String[] args){
-//        Map<PersonalBoard.PopeArea, Boolean> map = new HashMap<>();
-//        map.put(PersonalBoard.PopeArea.FIRST, true);
-//        map.put(PersonalBoard.PopeArea.SECOND, false);
-//        map.put(PersonalBoard.PopeArea.THIRD, false);
-//        int faithpoints = 15;
-//        System.out.println(faithTrackPrinter(map, faithpoints));
-//    }
-
-    private String  strongBoxPrinter(Resources res){
-        Resources res1 = res.cloneThisType(Resources.ResType.COIN);
-        Resources res2 = res.cloneThisType(Resources.ResType.STONE);
-        Resources res3 = res.cloneThisType(Resources.ResType.SHIELD);
-        Resources res4 = res.cloneThisType(Resources.ResType.SERVANT);
-        StringBuilder sb = new StringBuilder();
-        sb.append("  ");
-        for(int i = 0; i<13; i++){
-            sb.append("\u2509");
-        }
-        sb.append("\n\u254f " + res1.describeResource() + "  " + res2.describeResource() + " \u254f\n");
-        sb.append("\u254f " + res3.describeResource() + "  " + res4.describeResource() + " \u254f\n");
-        sb.append("  ");
-        for(int i = 0; i<13; i++){
-            sb.append("\u2509");
-        }
-        return sb.toString();
     }
 
         @Override

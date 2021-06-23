@@ -110,6 +110,8 @@ public class Controller implements Listener<VCEvent> {
         game.sendMarketAndDevCardMatrixTo(currentUserID);
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
+        //TODO FOR DEBUG
+//        debugInitializer(currentUserID);
     }
     /**
      * method that show the initial personal board description
@@ -189,6 +191,18 @@ public class Controller implements Listener<VCEvent> {
         game.updateAllAboutChange(inActiveLeaderMVEvent);
     }
 
+    private void debugInitializer(Integer userID){
+        Resources newRes = new Resources(10,10,10,10);
+        game.getPersonalBoard(userID).setStrongbox(newRes);
+        updateAboutStrongboxOfId(userID);
+        Set<LeaderCard> discountLeaderDebug = new HashSet<>();
+        Requirement requirement = new Requirement(new Resources(0,0,0,1));
+        SpecialAbility discount = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.STONE);
+        discountLeaderDebug.add(new LeaderCard(requirement, 4, discount));
+        game.getPersonalBoard(userID).setActiveLeaderCards(discountLeaderDebug);
+        updateAboutLeaderCardsOfId(userID);
+    }
+
     @Override
     public void update(VCEvent vcEvent) {
         Integer userID = vcEvent.getUserID();
@@ -227,16 +241,6 @@ public class Controller implements Listener<VCEvent> {
                 handleTakeResAction(userID, takeResContext);
                 break;
             case BUY_DEVCARD_ACTION_SELECTED:
-                //TODO FOR DEBUG init resources in strongbox
-                Resources newRes = new Resources(10,10,10,10);
-                game.getPersonalBoard(userID).setStrongbox(newRes);
-                Set<LeaderCard> discountLeaderDebug = new HashSet<>();
-                Requirement requirement = new Requirement(new Resources(1,0,0,0));
-                SpecialAbility discount = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.STONE);
-                discountLeaderDebug.add(new LeaderCard(requirement, 4, discount));
-                game.getPersonalBoard(userID).setActiveLeaderCards(discountLeaderDebug);
-                updateAboutLeaderCardsOfId(userID);
-                // todo debug ends here
                 BuyDevCardActionContext emptyBuyDevCardContext = new BuyDevCardActionContext();
                 emptyBuyDevCardContext.setLastStep(CHOOSE_COLOR_LEVEL);
                 cvEvent = new CVEvent(BUY_DEVCARD_FILL_CONTEXT, emptyBuyDevCardContext);

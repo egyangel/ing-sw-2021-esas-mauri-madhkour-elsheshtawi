@@ -48,14 +48,6 @@ public class PersonalBoardDescription {
         this.faithTrackDescription = faithTrackDescription;
     }
 
-    public String getLeaderCardsDescription() {
-        return leaderCardsDescription;
-    }
-
-    public void setLeaderCardsDescription(String leaderCardsDescription) {
-        this.leaderCardsDescription = leaderCardsDescription;
-    }
-
     public int getFaithPoints() {
         return faithPoints;
     }
