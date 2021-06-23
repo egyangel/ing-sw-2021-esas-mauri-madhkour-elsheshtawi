@@ -131,8 +131,10 @@ public class SoloController extends Controller {
         currentActionTokenIndex = (currentActionTokenIndex + 1) % actionTokens.size();
         TurnManager.registerResponse(userId);
         TurnManager.goToNextTurn();
+        // todo Note from Omer: I deleted the commented out methods in two line of code below, they are updated automatically now
+//        game.sendMarketAndDevCardMatrixTo(currentUserID);
+        //
         Integer currentUserID = TurnManager.getCurrentPlayerID();
-        game.sendMarketAndDevCardMatrixTo(currentUserID);
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
     }

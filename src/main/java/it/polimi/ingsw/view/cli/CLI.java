@@ -190,13 +190,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayFourLeaderCard");
                 break;
             case ASSIGN_TURN_ORDER:
-                initEmptyPersonalBoards();
                 addNextDisplay("displayTurnAssign");
                 break;
         }
     }
 
-    private void initEmptyPersonalBoards(){
+    public void initEmptyPersonalBoards(){
         for(Integer userID: userIDtoUsernames.keySet()){
             PersonalBoardDescription pbd = new PersonalBoardDescription();
             Map<PersonalBoard.PopeArea, Boolean> map = new HashMap<>();
@@ -1017,7 +1016,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     String faithTrackDescription = ObjectPrinter.faithTrackPrinter(tileMap, faithpoints);
                     userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescription);
                     break;
-                case VATICAN_REPORT_TAKEN:
+                case FAITHTRACK_UPDATE:
                     Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {}.getType();
                     Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);
                     int faithPointsTwo = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getFaithPoints();

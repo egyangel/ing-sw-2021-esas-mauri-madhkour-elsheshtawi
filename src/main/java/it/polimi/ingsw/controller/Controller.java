@@ -62,8 +62,16 @@ public class Controller implements Listener<VCEvent> {
      * method that handle the beginning of the match of leader cards and send them to the player w.r.t. the rule game
      */
     public void startMatch() {
+        sendInitPersonalBoardDescriptions();
+        updateAboutMarketTray();
+        updateAboutDevCardMatrix();
         game.shuffleLeaderCards();
-        sendFourLeaderCards();
+        //TODO FOR DEBUG, DONT FORGET TO REMOVE COMMENT FROM sendFourLeaderCards();
+        debugInitilizeWarehouse();
+        debugInitializeStrongbox();
+        debugAutoChooseTwoLeadersToAll();
+        debugPutDevCardsOnSlots();
+//        sendFourLeaderCards();
     }
 
     /**
@@ -77,6 +85,72 @@ public class Controller implements Listener<VCEvent> {
             virtualView.update(leaderCardEvent);
         }
     }
+    private void debugInitilizeWarehouse(){
+        Resources topres = new Resources(Resources.ResType.STONE,1 );
+        Resources midres = new Resources(Resources.ResType.SHIELD, 2);
+        Resources bottomres = new Resources(Resources.ResType.COIN, 3);
+        // initialize only with one-type res, zero values does not work
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.TOP, topres);
+            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.MIDDLE, midres);
+            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.BOTTOM, bottomres);
+            updateAboutWarehouseOfId(entry.getKey());
+        }
+    }
+
+    private void debugInitializeStrongbox(){
+        Resources strongboxres = new Resources(10,10,10,10);;
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+            game.getPersonalBoard(entry.getKey()).putResInStrongBox(strongboxres);
+            updateAboutStrongboxOfId(entry.getKey());
+        }
+    }
+
+    private void debugAutoChooseTwoLeadersToAll(){
+        List<LeaderCard> list1 = new ArrayList<>();
+        Requirement requirement = new Requirement(new Resources(0,0,0,5));
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.COIN);
+        list1.add(new LeaderCard(requirement, 4, ability));
+        requirement = new Requirement(new Resources(0,5,0,5));
+        ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SERVANT);
+        list1.add(new LeaderCard(requirement, 4, ability));
+
+        List<LeaderCard> list2 = new ArrayList<>();
+        requirement = new Requirement(new Resources(10,10,10,10));
+        ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.STONE);
+        list2.add(new LeaderCard(requirement, 4, ability));
+        requirement = new Requirement(new Resources(3,0,0,5));
+        ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SHIELD);
+        list2.add(new LeaderCard(requirement, 4, ability));
+
+        List<List<LeaderCard>> twoList = new ArrayList<>();
+        twoList.add(list1);
+        twoList.add(list2);
+        int calls = 0;
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+            CVEvent leaderCardEvent = new CVEvent(CVEvent.EventType.CHOOSE_TWO_LEADER_CARD, twoList.get(calls));
+            calls++;
+            entry.getValue().update(leaderCardEvent);
+        }
+    }
+
+    private void debugPutDevCardsOnSlots(){
+        DevSlot.slotPlace place = DevSlot.slotPlace.LEFT;
+        Resources cost = new Resources(Resources.ResType.COIN,3);
+        Resources LHS = new Resources(Resources.ResType.SHIELD, 1);
+        LHS.add(Resources.ResType.STONE, 2);
+        Resources RHS = new Resources(Resources.ResType.SHIELD,1);
+        RHS.add(Resources.ResType.FAITH,1);
+        int VP = 4;
+        int level = 1;
+        DevCard card = new DevCard(level, DevCard.CardColor.BLUE, LHS,RHS,cost, VP);
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+            game.getPersonalBoard(entry.getKey()).putDevCardOnSlot(card, place);
+            updateAboutDevSlotOfId(entry.getKey());
+        }
+    }
+
+
     /**
      * method that manages the assignment of the order of the players
      */
@@ -106,12 +180,8 @@ public class Controller implements Listener<VCEvent> {
      */
     protected void beginTurn() {
         Integer currentUserID = TurnManager.getCurrentPlayerID();
-        // TODO models being updated as soon as they change is better, comment out below line later
-        game.sendMarketAndDevCardMatrixTo(currentUserID);
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
-        //TODO FOR DEBUG
-//        debugInitializer(currentUserID);
     }
     /**
      * method that show the initial personal board description
@@ -121,7 +191,24 @@ public class Controller implements Listener<VCEvent> {
             updateAboutWarehouseOfId(userId);
             updateAboutStrongboxOfId(userId);
             updateAboutFaithPointOfId(userId);
+            updateAboutFaithTrackofId(userId);
+            updateAboutLeaderCardsOfId(userId);
+            updateAboutDevSlotOfId(userId);
         }
+    }
+    /**
+     * method showing the updated market tray
+     */
+    protected void updateAboutMarketTray(){
+        MVEvent marketTrayEvent = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, game.getMarketTray());
+        game.updateAllAboutChange(marketTrayEvent);
+    }
+    /**
+     * method showing the updated development card matrix
+     */
+    protected void updateAboutDevCardMatrix(){
+        MVEvent mvEvent = game.createDevCardMVEvent();
+        game.updateAllAboutChange(mvEvent);
     }
     /**
      * method showing the updated warehouse
@@ -158,14 +245,7 @@ public class Controller implements Listener<VCEvent> {
      */
     protected void updateAboutFaithTrackofId(Integer userId){
         Map<PersonalBoard.PopeArea, Boolean> map = game.getPersonalBoard(userId).getPopeAreaMap();
-        MVEvent mvEvent = new MVEvent(userId, MVEvent.EventType.VATICAN_REPORT_TAKEN, map);
-        game.updateAllAboutChange(mvEvent);
-    }
-    /**
-     * method showing the updated development card matrix
-     */
-    protected void updateAboutDevCardMatrix(){
-        MVEvent mvEvent = game.createDevCardMVEvent();
+        MVEvent mvEvent = new MVEvent(userId, MVEvent.EventType.FAITHTRACK_UPDATE, map);
         game.updateAllAboutChange(mvEvent);
     }
     /**
@@ -191,18 +271,6 @@ public class Controller implements Listener<VCEvent> {
         game.updateAllAboutChange(inActiveLeaderMVEvent);
     }
 
-    private void debugInitializer(Integer userID){
-        Resources newRes = new Resources(10,10,10,10);
-        game.getPersonalBoard(userID).setStrongbox(newRes);
-        updateAboutStrongboxOfId(userID);
-        Set<LeaderCard> discountLeaderDebug = new HashSet<>();
-        Requirement requirement = new Requirement(new Resources(0,0,0,1));
-        SpecialAbility discount = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.STONE);
-        discountLeaderDebug.add(new LeaderCard(requirement, 4, discount));
-        game.getPersonalBoard(userID).setActiveLeaderCards(discountLeaderDebug);
-        updateAboutLeaderCardsOfId(userID);
-    }
-
     @Override
     public void update(VCEvent vcEvent) {
         Integer userID = vcEvent.getUserID();
@@ -216,6 +284,7 @@ public class Controller implements Listener<VCEvent> {
                 }.getType();
                 List<LeaderCard> selectedCards = (List<LeaderCard>) vcEvent.getEventPayload(type1);
                 game.getPersonalBoard(userID).putSelectedLeaderCards(selectedCards);
+                updateAboutLeaderCardsOfId(userID);
                 TurnManager.registerResponse(userID);
                 if (TurnManager.hasAllClientsResponded()) {
                     sendTurnOrderAssign();
@@ -224,9 +293,9 @@ public class Controller implements Listener<VCEvent> {
             case INIT_RES_CHOOSEN:
                 resources = (Resources) vcEvent.getEventPayload(Resources.class);
                 game.getPersonalBoard(userID).putToWarehouseWithoutCheck(resources);
+                updateAboutWarehouseOfId(userID);
                 TurnManager.registerResponse(userID);
                 if (TurnManager.hasAllClientsResponded()) {
-                    sendInitPersonalBoardDescriptions();
                     beginTurn();
                 }
                 break;
@@ -394,9 +463,7 @@ public class Controller implements Listener<VCEvent> {
             context.setWhiteConverters(whiteConverters);
             context.setWhiteMarbleNumber(whiteMarbles);
         }
-        // sending market tray description doesnt work for colored text because of escape characters and JSON etc, sending markettray object works fine
-        MVEvent marketTrayEvent = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, game.getMarketTray());
-        game.updateAllAboutChange(marketTrayEvent);
+        updateAboutMarketTray();
         context.setResources(resources);
         context.convertResIntoFaith();
     }
@@ -456,7 +523,6 @@ public class Controller implements Listener<VCEvent> {
         TurnManager.registerResponse(userId);
         TurnManager.goToNextTurn();
         Integer currentUserID = TurnManager.getCurrentPlayerID();
-        game.sendMarketAndDevCardMatrixTo(currentUserID);
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
 
