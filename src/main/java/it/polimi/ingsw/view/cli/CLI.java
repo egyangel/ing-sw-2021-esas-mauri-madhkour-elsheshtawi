@@ -77,27 +77,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayWarehouse", this::displayWarehouse);
         displayNameMap.put("displayMarketTray", this::displayMarketTray);
         displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
-        displayNameMap.put("displayMinorActionSelection", this::displayMinorActionSelection);
-        displayNameMap.put("displayStrongbox", this::displayStrongbox);
-        displayNameMap.put("displayDevSlots", this::displayDevSlots);
-        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
-        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
-        //todo  method was removed by ...
-        //displayNameMap.put("displayAllPersonalBoards", this::displayAllPersonalBoards);
-
-
-        //TODO add used methods at the end
-
-//        displayNameMap.put("displayBuyDevCardAction", this::displayBuyDevCardAction);
-//        displayNameMap.put("displayActivateProdAction", this::displayActivateProdAction);
-//        displayNameMap.put("displayWarehouseAndStrongbox", this::displayWarehouseAndStrongbox);
-//
-//
-//
-//        displayNameMap.put("displayOtherPlayers", this::displayOtherPlayers);
-//        displayNameMap.put("displayEndTurn", this::displayEndTurn);
-        displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
-        displayNameMap.put("displayWarehouse", this::displayWarehouse);
         displayNameMap.put("displayStrongbox", this::displayStrongbox);
         displayNameMap.put("displayDevSlots", this::displayDevSlots);
         displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
@@ -106,7 +85,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayEndTurn", this::displayEndTurn);
         displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
         displayNameMap.put("choosePayDevCardCostFromWhere", this::choosePayDevCardCostFromWhere);
-
 
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
@@ -301,8 +279,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
-        // TODO write a more descriptive sentence, like activate/deactivate leader card
-        out.println("[4] Perform a Leader action");
+        out.println("[4] Activate a leader card");
         out.println("[5] View market tray");
         out.println("[6] View development card matrix");
         out.println("[7] View warehouse");

@@ -64,8 +64,8 @@ public class Controller implements Listener<VCEvent> {
     public void startMatch() {
         sendInitPersonalBoardDescriptions();
         updateAboutMarketTray();
-        updateAboutDevCardMatrix();
         game.shuffleLeaderCards();
+        updateAboutDevCardMatrix();
         //TODO FOR DEBUG, DONT FORGET TO REMOVE COMMENT FROM sendFourLeaderCards();
         debugInitilizeWarehouse();
         debugInitializeStrongbox();
