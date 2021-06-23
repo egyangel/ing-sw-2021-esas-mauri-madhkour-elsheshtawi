@@ -176,8 +176,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
 //        String username = InputConsumer.getUserName(in, out);
         String username = "John";
-        Message loginmsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
-        client.sendToServer(loginmsg);
+        Message loginMsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
+        client.sendToServer(loginMsg);
     }
 
     /**

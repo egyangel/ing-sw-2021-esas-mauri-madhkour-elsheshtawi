@@ -318,7 +318,7 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that based on the choice of the player related to the take res action compute the related action
      * @param userID player id
-     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     * @param context is the context of take res action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handleTakeResAction(Integer userID, TakeResActionContext context){
         switch (context.getLastStep()){
@@ -344,7 +344,7 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that handle the index of the row/column chooses by the player. It draw the related res from the market tray based on player's choice
      * @param userID player id
-     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     * @param context is the context of take res action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handleRowColumnIndex(Integer userID, TakeResActionContext context){
         List<MarbleColor> marbleList;
@@ -399,7 +399,7 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that clear the shelf on player's personal board
      * @param userID player id
-     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     * @param context is the context of take res action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handleClearShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace place = context.getShelf();
@@ -411,7 +411,7 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that handle the swap shelf action
      * @param userID player id
-     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     * @param context is the context of take res action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handleSwapShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace[] places = context.getShelves();
@@ -423,7 +423,7 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that handle the insertion of resources inside the shelf and update the
      * @param userID player id
-     * @param context it the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     * @param context  is the context of take res action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handlePutResourcesChosen(Integer userID, TakeResActionContext context){
         // todo omer do not put resources of same type to two different shelves
@@ -460,9 +460,8 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that based on the choice of the player related to buying development action showing the updated leader cards of the player
      * @param userID player id
-     * @param context it the context of buying development action. it is filled in both view and controller side with info needed to complete the action
+     * @param context  is the context of buy card action. it is filled in both view and controller side with info needed to complete the action
      */
-    //handle BuyDevCardAction
     private void handleBuyDevCardAction(Integer userID, BuyDevCardActionContext context){
         switch (context.getLastStep()){
             case COLOR_LEVEL_CHOSEN:
@@ -481,7 +480,7 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that handle the development card purchase action. it check if the requirement for the card are satisfied
      * @param userID player id
-     * @param context it the context of buy card context. it is filled in both view and controller side with info needed to complete the action
+     * @param context  is the context of buy card action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handleColorLevelChosen(Integer userID, BuyDevCardActionContext context){
         DevCard selectedCard = game.peekTopDevCard(context.getColor(), context.getLevel());
@@ -503,7 +502,7 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that handle the insertion of development card inside the personal board's slot .
      * @param userID player id
-     * @param context it the context of buy card context. it is filled in both view and controller side with info needed to complete the action
+     * @param context  is the context of buy card action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){
         DevCard selectedCard = context.getSelectedCard();
@@ -525,7 +524,7 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that handle the payment of development card. it removes the res from personal board shelves/strongbox
      * @param userID player id
-     * @param context it the context of buy card context. it is filled in both view and controller side with info needed to complete the action
+     * @param context  is the context of buy card action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handlePayFromWhereChosen(Integer userID, BuyDevCardActionContext context){
 
@@ -560,7 +559,11 @@ public class Controller implements Listener<VCEvent> {
             }
         }
     }
-
+    /**
+     * method that handle the activation of production action.
+     * @param userID player id
+     * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
+     */
     //handle the activation of production
     private void handleActivateDevCardAction(Integer userID, ActivateProdActionContext context){
         switch (context.getLastStep()){
@@ -571,6 +574,11 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
+    /**
+     * method that fill the context with the available slots of the player's personal board .
+     * @param userID player id
+     * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void  handleSlotAvailableChosen(Integer userID, ActivateProdActionContext context){
         int j = 0 ;
         List<DevSlot>  slotAvailable = new ArrayList<>();
@@ -586,6 +594,11 @@ public class Controller implements Listener<VCEvent> {
         context.setSlotAvailable(slotAvailable);
         slotAvailable.clear();
     }
+    /**
+     * method that check if there are all the resources in the personal board to activate production
+     * @param userID player id
+     * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
+     */
 
     private void  handleActivateDevSlotsProductionChosen(Integer userID, ActivateProdActionContext context) {
         int j = 0;
@@ -645,6 +658,12 @@ public class Controller implements Listener<VCEvent> {
         }
     }
 
+    /**
+     * method that pick up the res from personal board for the activation production and put the right hand side
+     * of the card inside the strongbox
+     * @param userID player id
+     * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleProductionPayment(Integer userID, ActivateProdActionContext context,int faithPoint ){
         int j=0;
         if(context.getActivationLeaderCardProduction()){
@@ -686,6 +705,11 @@ public class Controller implements Listener<VCEvent> {
         updateAboutFaithTrackofId(userID);
         context.resetActivationProduction();
     }
+    /**
+     * method that handle usage of additional production leader cards
+     * @param userID player id
+     * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleActivationLeaderProductionPayment(Integer userID, ActivateProdActionContext context) {
 
         if(context.getLhlLeaderCard().smallerOrEqual(game.getPersonalBoard(userID).getWarehouseResources()))
@@ -695,8 +719,11 @@ public class Controller implements Listener<VCEvent> {
 
         game.getPersonalBoard(userID).increaseFaitPoint(context.getNumberOfActiveLeaderProduction());
     }
-
-    //handle the activation of production
+    /**
+     * method that handle the leader cards action like discard or activation leader cards.
+     * @param userID player id
+     * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleActivateLeaderAction(Integer userID, LeaderActionContext context){
         switch (context.getLastStep()){
             case DISCARD_LEADER_CARD:
@@ -721,12 +748,20 @@ public class Controller implements Listener<VCEvent> {
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
-
+    /**
+     * method that handle the discard of a leader card.
+     * @param userID player id
+     * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
+     */
     private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
        game.getPersonalBoard(userID).changePlayerCard(context.discardedPlayerCard());
        game.getPersonalBoard(userID).increaseFaitPoint(context.discardedPlayerCard().size());
     }
-
+    /**
+     * method that handle the activation of leader cards
+     * @param userID player id
+     * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
+     */
     private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
        checkLeaderActivationAction(userID,context);
        game.getPersonalBoard(userID).setActiveLeaderCards(new HashSet<>(context.getActiveLeaderCard()));
@@ -734,8 +769,9 @@ public class Controller implements Listener<VCEvent> {
 
     }
     /**
-     * methods that handle the check of the requirements of leader cards
-     *
+     * methods that check if the requirements of leader cards  are satisfied for activation
+     * @param userID player id
+     * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
      */
     private void checkLeaderActivationAction (Integer userID, LeaderActionContext context){
         int discConvert;
@@ -782,6 +818,11 @@ public class Controller implements Listener<VCEvent> {
         }
        context.setActiveLeaderCard(new HashSet<>(activeLeaderCards));
     }
+    /**
+     * method that compute the total victory point of the player
+     * @param userID player id
+     */
+
     private void computeVictoryPoint(Integer userID) {
 
         int respoint;
@@ -791,7 +832,10 @@ public class Controller implements Listener<VCEvent> {
 
         game.getPersonalBoard(userID).countVictoryPoints(respoint);
     }
-
+    /**
+     * method that trigger the event of the end of the game
+     * @param userID player id
+     */
     private void  triggerTheEndGame(Integer userID) {
 
         computeVictoryPoint(userID);
