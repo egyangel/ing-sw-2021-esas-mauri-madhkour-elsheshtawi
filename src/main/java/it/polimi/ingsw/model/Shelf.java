@@ -18,7 +18,6 @@ public class Shelf {
 
     private final int maxSize;
     private final shelfPlace place;
-    private List<Resources.ResType> resources;
     private int numberOfElements;
     private Resources.ResType resType;
 
@@ -44,28 +43,6 @@ public class Shelf {
         return discarded;
     }
 
-    //adding multiple elements each time
-//    public Integer putResource(List<Resources.ResType> resources) {
-//        int i=0;
-//            if (this.isEmpty() && this.shelfSize()>= resources.size()) {
-//                this.resources.addAll(resources);
-//                return 0;
-//            }else
-//                if (this.isFull()) {
-//                    return resources.size();
-//                }else {
-//                    if (!this.isEmpty()) {
-//                        if (!this.resources.get(0).equals(resources.get(0))) {
-//                            return resources.size();
-//                        }
-//                    }
-//                    while (this.resources.size() < maxSize) {
-//                        this.resources.add(resources.get(i));
-//                        i++;
-//                    }
-//                    return resources.size() - i;
-//                }
-//    }
     // method to be used in the game to returns -1 if different type tried to be put
     public int putResource(Resources res){
         if (!res.isThisOneType()) return -1;
@@ -163,21 +140,6 @@ public class Shelf {
         }
         return sb.toString();
     }
-
-//    public static void main(String[] args){
-//        Shelf[] warehouse = new Shelf[3];
-//        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
-//        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
-//        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
-//        warehouse[0].putResource(Resources.ResType.COIN, 1);
-//        warehouse[1].putResource(Resources.ResType.SHIELD, 1);
-//        warehouse[2].putResource(Resources.ResType.SERVANT, 3);
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(warehouse[0].describeShelfFancy());
-//        sb.append(warehouse[1].describeShelfFancy());
-//        sb.append(warehouse[2].describeShelfFancy());
-//        System.out.println(sb.toString());
-//    }
 
     public void removeFromShelf(int number){
         this.numberOfElements -= number;
