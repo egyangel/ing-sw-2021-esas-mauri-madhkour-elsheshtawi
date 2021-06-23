@@ -33,7 +33,7 @@ public class DevCardDeck {
         if (stackOfDevCards.isEmpty()) return null;
         else return stackOfDevCards.get(0);
     }
-    public DevCard peekBottomCard() {
+    public DevCard peekBottomCard () {
         if (stackOfDevCards.isEmpty()) return null;
         else return stackOfDevCards.get(stackOfDevCards.size()-1);
     }
