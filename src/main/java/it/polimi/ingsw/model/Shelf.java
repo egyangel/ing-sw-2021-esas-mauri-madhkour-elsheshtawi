@@ -19,6 +19,8 @@ public class Shelf {
     private final int maxSize;
     private final shelfPlace place;
     private List<Resources.ResType> resources;
+    private int numberOfElements;
+    private Resources.ResType resType;
 
 
     public Shelf(shelfPlace place) {
@@ -26,39 +28,44 @@ public class Shelf {
         if (place == shelfPlace.TOP) this.maxSize = 1;
         else if (place == shelfPlace.MIDDLE) this.maxSize = 2;
         else this.maxSize = 3;
-        resources = new ArrayList<>();
+        numberOfElements = 0;
     }
 
     public int putResource(Resources.ResType resType, int size){
-        List<Resources.ResType> list = new ArrayList<>();
-        for (int i = 0; i < size; i++){
-            list.add(resType);
+        if (size == 0) return 0;
+        this.resType = resType;
+        int discarded = 0;
+        if (numberOfElements + size > maxSize){
+            discarded = numberOfElements + size - maxSize;
+            numberOfElements = maxSize;
+        } else {
+            numberOfElements += size;
         }
-        return putResource(list);
+        return discarded;
     }
 
     //adding multiple elements each time
-    public Integer putResource(List<Resources.ResType> resources) {
-        int i=0;
-            if (this.isEmpty() && this.shelfSize()>= resources.size()) {
-                this.resources.addAll(resources);
-                return 0;
-            }else
-                if (this.isFull()) {
-                    return resources.size();
-                }else {
-                    if (!this.isEmpty()) {
-                        if (!this.resources.get(0).equals(resources.get(0))) {
-                            return resources.size();
-                        }
-                    }
-                    while (this.resources.size() < maxSize) {
-                        this.resources.add(resources.get(i));
-                        i++;
-                    }
-                    return resources.size() - i;
-                }
-    }
+//    public Integer putResource(List<Resources.ResType> resources) {
+//        int i=0;
+//            if (this.isEmpty() && this.shelfSize()>= resources.size()) {
+//                this.resources.addAll(resources);
+//                return 0;
+//            }else
+//                if (this.isFull()) {
+//                    return resources.size();
+//                }else {
+//                    if (!this.isEmpty()) {
+//                        if (!this.resources.get(0).equals(resources.get(0))) {
+//                            return resources.size();
+//                        }
+//                    }
+//                    while (this.resources.size() < maxSize) {
+//                        this.resources.add(resources.get(i));
+//                        i++;
+//                    }
+//                    return resources.size() - i;
+//                }
+//    }
     // method to be used in the game to returns -1 if different type tried to be put
     public int putResource(Resources res){
         if (!res.isThisOneType()) return -1;
@@ -69,103 +76,84 @@ public class Shelf {
     public int swapShelf(Shelf otherShelf){
         int thisMaxSize = this.maxSize;
         int otherMaxSize = otherShelf.maxSize;
-        int thisSize = this.resources.size();
-        int otherSize = otherShelf.resources.size();
-        int discarded = 0;
+        int thisSize = this.numberOfElements;
+        int otherSize = otherShelf.numberOfElements;
+        int discarded;
         if (thisSize > otherMaxSize){
             discarded = thisSize - otherSize;
-        }
-        if (otherSize > thisMaxSize){
+        } else if (otherSize > thisMaxSize){
             discarded = otherSize - thisMaxSize;
+        } else {
+            discarded = 0;
         }
-        List<Resources.ResType> resTypeList = new ArrayList<>();
-        resTypeList.addAll(otherShelf.shelf());
-        otherShelf.clearShelf();
-        otherShelf.putResource(this.shelf());
-        this.clearShelf();
-        this.putResource(resTypeList);
+        Resources.ResType tempType = otherShelf.resType;
+        otherShelf.resType = this.resType;
+        this.resType = tempType;
+        this.numberOfElements = otherSize;
+        otherShelf.numberOfElements = thisSize;
         return discarded;
     }
 
-//    public boolean swapShelf(Shelf otherShelf){
-//        if ( otherShelf.getNumberOfElements() > this.maxSize || this.getNumberOfElements() > otherShelf.shelfSize() )
-//            return false;
-//        else{
-//            List<Resources.ResType> resTypeList = new ArrayList<>();
-//            resTypeList.addAll(otherShelf.shelf());
-//            otherShelf.clearShelf();
-//            otherShelf.putResource(this.shelf());
-//            this.clearShelf();
-//            this.putResource(resTypeList);
-//            return true;
-//        }
-//    }
-
     public boolean isEmpty(){
-        return resources.isEmpty();
+        return (numberOfElements == 0);
     }
 
     public boolean isFull(){
-        return resources.size() == maxSize;
+        return numberOfElements == maxSize;
     }
-    private List<Resources.ResType> shelf(){
-        return resources;
-    }
+
     public int getNumberOfElements(){
-        return resources.size();
+        return numberOfElements;
 
     }
-    public int shelfSize(){
+    public int getShelfSize(){
         return maxSize;
     }
     public Resources.ResType getShelfResType(){
-        return this.resources.get(0);
+        return this.resType;
     }
     public int clearShelf(){
-        int size = resources.size();
-        this.resources.clear();
-        return size;
+        int temp = this.numberOfElements;
+        this.numberOfElements = 0;
+        return temp;
     }
-    public String describeShelf(){
-        String string = this.getNumberOfElements()+" of "+ this.getShelfResType();
-        return string;
-    }
+
     public String describeShelfFancy(){
         StringBuilder sb = new StringBuilder();
         switch(place){
             case TOP:
                 sb.append("      \u2571 \u2572\n");
-                if (resources.isEmpty()){
+                if (this.isEmpty()){
                     sb.append("    \u2571  -  \u2572");
                 }
                 else {
-                    sb.append("    \u2571 " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                    sb.append("    \u2571 " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + " \u2572");
                 }
                 sb.append("\n");
                 break;
             case MIDDLE:
                 sb.append("  \u2571");
-                if (resources.isEmpty()){
+                if (this.isEmpty()){
                     sb.append("  -   -  \u2572");
                 }
-                else if(resources.size() == 1){
-                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  \u2572");
-                } else if(resources.size() == 2){
-                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                else if(numberOfElements == 1){
+                    sb.append(" " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + "  -  \u2572");
+                } else if(numberOfElements == 2){
+                    sb.append(" " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + " " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + " \u2572");
                 }
                 sb.append("\n");
                 break;
             case BOTTOM:
                 sb.append("\u2571");
-                if (resources.isEmpty()){
+                if (this.isEmpty()){
                     sb.append("  -   -   -  \u2572");
                 }
-                else if(resources.size() == 1){
-                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  -   \u2572");
-                } else if(resources.size() == 2){
-                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + "  -  \u2572");
-                } else if(resources.size() == 3){
-                    sb.append(" " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " " + resources.get(0).getFirstAnsiPart() + resources.get(0).getSecondAnsiPart() + " \u2572");
+                else if(numberOfElements == 1){
+                    sb.append(" " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + "  -  -   \u2572");
+                } else if(numberOfElements == 2){
+                    sb.append(" " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + " " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + "  -  \u2572");
+                } else if(numberOfElements == 3){
+                    sb.append(" " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + " " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + " " + resType.getFirstAnsiPart() + resType.getSecondAnsiPart() + " \u2572");
                 }
                 sb.append("\n");
                 for(int i = 0; i<15; i++){
@@ -191,19 +179,12 @@ public class Shelf {
 //        System.out.println(sb.toString());
 //    }
 
-    public boolean removeOneFromShelf(){
-        return this.resources.remove(this.resources.get(0));
-    }
-
     public void removeFromShelf(int number){
-        while (number > 0){
-            removeOneFromShelf();
-            number--;
-        }
+        this.numberOfElements -= number;
     }
 
     public Resources getResource(){
         if (isEmpty()) return new Resources();
-        else return new Resources(resources.get(0), resources.size());
+        else return new Resources(resType, numberOfElements);
     }
 }

@@ -87,8 +87,8 @@ public class Controller implements Listener<VCEvent> {
     }
     private void debugInitilizeWarehouse(){
         Resources topres = new Resources(Resources.ResType.STONE,1 );
-        Resources midres = new Resources(Resources.ResType.SHIELD, 2);
-        Resources bottomres = new Resources(Resources.ResType.COIN, 3);
+        Resources midres = new Resources(Resources.ResType.SHIELD, 1);
+        Resources bottomres = new Resources(Resources.ResType.COIN, 1);
         // initialize only with one-type res, zero values does not work
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
             game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.TOP, topres);
@@ -99,7 +99,7 @@ public class Controller implements Listener<VCEvent> {
     }
 
     private void debugInitializeStrongbox(){
-        Resources strongboxres = new Resources(10,10,10,10);;
+        Resources strongboxres = new Resources(1,1,1,1);;
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
             game.getPersonalBoard(entry.getKey()).addToStrongBox(strongboxres);
             updateAboutStrongboxOfId(entry.getKey());
@@ -326,7 +326,7 @@ public class Controller implements Listener<VCEvent> {
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
             case ACTIVATE_PROD_CONTEXT_FILLED:
-                ActivateProdAlternativeContext ActivateDevContext = (ActivateProdAlternativeContext) vcEvent.getEventPayload(ActivateProdActionContext.class);
+                ActivateProdAlternativeContext ActivateDevContext = (ActivateProdAlternativeContext) vcEvent.getEventPayload(ActivateProdAlternativeContext.class);
                 handleActivateDevCardAction(userID, ActivateDevContext);
                 break;
             case ACTIVATE_LEADER_CONTEXT_SELECTED:
@@ -576,6 +576,7 @@ public class Controller implements Listener<VCEvent> {
      */
     private void handleDevSlotChosen(Integer userID, BuyDevCardActionContext context){
         DevCard selectedCard = context.getSelectedCard();
+        DevSlot.slotPlace selectedSlot = context.getSelectedSlot();
         Resources costToBePaid = new Resources();
         Resources totalDiscount = new Resources();
         costToBePaid.add(selectedCard.getCost());
@@ -589,58 +590,16 @@ public class Controller implements Listener<VCEvent> {
             context.setTotalDiscount(totalDiscount);
         }
         payCostFromPersonalBoard(userID, costToBePaid);
+        game.getPersonalBoard(userID).putDevCardOnSlot(selectedCard, selectedSlot);
         updateAboutWarehouseOfId(userID);
         updateAboutStrongboxOfId(userID);
         updateAboutLeaderCardsOfId(userID); //todo add extra slot representation on CLI
+        updateAboutDevSlotOfId(userID);
         context.setLastStep(COST_PAID_DEVCARD_PUT);
         if(game.getPersonalBoard(userID).getOwnedCard().size()== 7) {
             triggerTheEndGame(userID);
         }
     }
-    /**
-     * method that handle the payment of development card. it removes the res from personal board shelves/strongbox
-     * @param userID player id
-     * @param context  is the context of buy card action. it is filled in both view and controller side with info needed to complete the action
-     * @deprecated
-     */
-    private void handlePayFromWhereChosen(Integer userID, BuyDevCardActionContext context){
-
-        Resources payFromWarehouse = context.getPayFromWarehouse();
-        Resources payFromStrongbox = context.getPayFromStrongbox();
-        Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
-        Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
-
-        if (!warehouseRes.includes(payFromWarehouse)) {
-            context.setPayFromWarehouse(new Resources());
-            context.setPayFromStrongbox(new Resources());
-            context.setRemainingCost(context.getSelectedCard().getCost());
-//            context.setLastStep(NOT_ENOUGH_RES_IN_WAREHOUSE);
-        }else if(!strongboxRes.includes(payFromStrongbox)){
-            context.setPayFromWarehouse(new Resources());
-            context.setPayFromStrongbox(new Resources());
-            context.setRemainingCost(context.getSelectedCard().getCost());
-//            context.setLastStep(NOT_ENOUGH_RES_IN_STRONGBOX);
-        } else {
-            game.getPersonalBoard(userID).subtractFromWarehouse(payFromWarehouse);
-            game.getPersonalBoard(userID).subtractFromStrongbox(payFromStrongbox);
-            game.getPersonalBoard(userID).putDevCardOnSlot(context.getSelectedCard(), context.getSelectedSlot());
-            game.getPersonalBoard(userID).setOwnedCard(context.getSelectedCard());
-            game.getPersonalBoard(userID).countVictoryPoints(context.getSelectedCard().getVictoryPoints());
-
-            context.setLastStep(COST_PAID_DEVCARD_PUT);
-            updateAboutWarehouseOfId(userID);
-            updateAboutStrongboxOfId(userID);
-            updateAboutDevSlotOfId(userID);
-            if(game.getPersonalBoard(userID).getOwnedCard().size()== 7) {
-               triggerTheEndGame(userID);
-            }
-        }
-    }
-    /**
-     * method that handle the activation of production action.
-     * @param userID player id
-     * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
-     */
     //handle the activation of production
     private void handleActivateDevCardAction(Integer userID, ActivateProdAlternativeContext context){
         switch (context.getLastStep()){
@@ -726,6 +685,7 @@ public class Controller implements Listener<VCEvent> {
             game.getPersonalBoard(userID).addToStrongBox(totalProduction);
             updateAboutWarehouseOfId(userID);
             updateAboutStrongboxOfId(userID);
+            updateAboutFaithPointOfId(userID);
             updateAboutLeaderCardsOfId(userID); //todo add extra slot representation on CLI
             context.setLastStep(PRODUCTION_DONE);
         }

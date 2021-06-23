@@ -344,16 +344,4 @@ public class InputConsumer {
         }
         return DevSlot.slotPlace.valueOf(input);
     }
-
-    public static boolean getWorS(Scanner in, PrintWriter out) {
-        out.println("Enter 'W' for warehouse and 'S' for strongbox:");
-        String input = in.nextLine().toUpperCase();
-        while (!((input.equals("W")) || (input.equals("S")))) {
-            out.println("Invalid input.");
-            out.println("Enter 'W' for warehouse and 'S' for strongbox:");
-            input = in.nextLine().toUpperCase();
-        }
-        if (input.equals("W")) return true;
-        else return false;
-    }
 }

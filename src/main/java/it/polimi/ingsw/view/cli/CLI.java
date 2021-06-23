@@ -84,7 +84,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayOtherPersonalBoards", this::displayOtherPersonalBoards);
         displayNameMap.put("displayEndTurn", this::displayEndTurn);
         displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
-        displayNameMap.put("choosePayDevCardCostFromWhere", this::choosePayDevCardCostFromWhere);
         displayNameMap.put("chooseDevSlotsForProd", this::chooseDevSlotsForProd);
 
         addNextDisplay("displayGreet");
@@ -645,40 +644,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case CHOOSE_DEV_SLOT:
                 addNextDisplay("chooseDevSlotToPutDevCard");
                 break;
-            case CHOOSE_PAY_COST_FROM_WHERE:
-                addNextDisplay("choosePayDevCardCostFromWhere");
-                break;
-            case NOT_ENOUGH_RES_IN_WAREHOUSE:
-                setGeneralMsg("You selected more resources from warehouse than you can pay from there!");
-                addNextDisplay("displayGeneralMsg");
-                addNextDisplay("choosePayDevCardCostFromWhere");
-                break;
-            case NOT_ENOUGH_RES_IN_STRONGBOX:
-                setGeneralMsg("You selected more resources from strongbox than you can pay from there!");
-                addNextDisplay("displayGeneralMsg");
-                addNextDisplay("choosePayDevCardCostFromWhere");
-                break;
             case COST_PAID_DEVCARD_PUT:
                 //general msg not needed
                 out.println("Your development slots now looks like:");
                 addNextDisplay("displayDevSlots");
                 VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
                 publish(vcEvent);
-// TODO OMER:why is there leader card action(if it is for discount, it should be at the end, if for activation, why?)
-
-//                if (activateLeaderContext.getActivationLeaderCardBefore())
-//                    addNextDisplay("displayBuyDevActionEnd");
-//                else {
-//                    out.println("Do you want to play leader action? ");
-//                    boolean leaderAction = InputConsumer.getYesOrNo(in, out);
-//                    if(leaderAction) {
-//                        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-//                        publish(vcEvent);
-//                    }else
-//                        addNextDisplay("displayBuyDevActionEnd");
-//                }
-//                break
-// TODO ======================
         }
     }
 
@@ -714,33 +685,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     /**
-     * methods that handle the payment of dev cards. Only ask to the player from where paying for that card. where to put put the Development Card.
-     * After the player fill the buyDevCardContext context  it publish an VC(view to controller)
-     * THen server check if the payment action it is correct based on the rule and the PLAYER personal board event
-     */
-    public void choosePayDevCardCostFromWhere() {
-        out.println("Select warehouse or strongbox to pay the cost of the selected development card.");
-        Resources remainingCost = buyDevCardContext.getRemainingCost();
-        Resources payFromWarehouse = new Resources();
-        Resources payFromStrongbox = new Resources();
-        List<Resources.ResType> resTypeList = remainingCost.getResTypes(); //store list type in order to prevent modification of reamining cost while iterating it
-        for (Resources.ResType resType : resTypeList) {
-            while (remainingCost.getNumberOfType(resType) > 0) {
-                out.println("From where do you want to pay 1 " + resType.toString());
-                boolean warehouseSelected = InputConsumer.getWorS(in, out);
-                if (warehouseSelected) payFromWarehouse.add(resType, 1);
-                else payFromStrongbox.add(resType, 1);
-                remainingCost.subtract(resType, 1);
-            }
-        }
-        buyDevCardContext.setPayFromWarehouse(payFromWarehouse);
-        buyDevCardContext.setPayFromStrongbox(payFromStrongbox);
-        buyDevCardContext.setLastStep(PAY_FROM_WHERE_CHOSEN);
-        VCEvent vcEvent = new VCEvent(BUY_DEVCARD_CONTEXT_FILLED, buyDevCardContext);
-        publish(vcEvent);
-    }
-
-    /**
      * methods that handle the Activate Prod Action. Based on the CV event and last step of activateProdContext
      * that has been set
      * in the server side this methods call the action that correspond to that event.
@@ -756,9 +700,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayAllActionSelection");
                 break;
             case PRODUCTION_DONE:
-                out.println("Your warehouse now looks like:");
+                setGeneralMsg("Your warehouse now looks like:");
+                addNextDisplay("displayGeneralMsg");
                 addNextDisplay("displayWarehouse");
-                out.println("Your strongbox now looks like:");
+                setGeneralMsg("Your strongbox now looks like:");
+                addNextDisplay("displayGeneralMsg");
                 addNextDisplay("displayStrongbox");
                 VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_ACTION_ENDED);
                 publish(vcEvent);
@@ -967,7 +913,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 buyDevCardContext = (BuyDevCardActionContext) cvEvent.getEventPayload(BuyDevCardActionContext.class);
                 routeBuyDevCardActionDisplay();
             } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)) {
-                activateProdContext = (ActivateProdAlternativeContext) cvEvent.getEventPayload(ActivateProdActionContext.class);
+                activateProdContext = (ActivateProdAlternativeContext) cvEvent.getEventPayload(ActivateProdAlternativeContext.class);
                 routeActivateProdActionDisplay();
             }else if (eventType.equals(ACTIVATE_LEADER_FILL_CONTEXT)) {
                 activateLeaderContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
