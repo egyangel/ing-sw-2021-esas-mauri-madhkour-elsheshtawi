@@ -15,9 +15,9 @@ class DevSlotTest {
     DevCard testCard3 = new DevCard(3, DevCard.CardColor.GREEN,Lhs,Rhs, cost,8);
 
     @Test
-    void addDevCard() {
+    void putDevCard() {
         assertTrue(slotL.isEmpty());
-        slotL.addDevCard(testCard);
+        slotL.putDevCard(testCard);
         assertFalse(slotL.isEmpty());
         assertEquals(testCard,slotL.getTopDevCard());
 
@@ -25,7 +25,7 @@ class DevSlotTest {
 
     @Test
     void isEmpty() {
-        slotL.addDevCard(testCard);
+        slotL.putDevCard(testCard);
         assertFalse(slotL.isEmpty());
         slotL.clear();
         assertTrue(slotL.isEmpty());
@@ -34,10 +34,10 @@ class DevSlotTest {
 
     @Test
     void isFull() {
-        slotL.addDevCard(testCard);
+        slotL.putDevCard(testCard);
         assertFalse(slotL.isFull());
-        slotL.addDevCard(testCard2);
-        slotL.addDevCard(testCard3);
+        slotL.putDevCard(testCard2);
+        slotL.putDevCard(testCard3);
 
         assertTrue(slotL.isFull());
 
@@ -48,11 +48,11 @@ class DevSlotTest {
 
     @Test
     void getTopDevCard() {
-        slotL.addDevCard(testCard);
+        slotL.putDevCard(testCard);
         assertEquals(testCard,slotL.getTopDevCard());
-        slotL.addDevCard(testCard2);
+        slotL.putDevCard(testCard2);
         assertNotEquals(testCard,slotL.getTopDevCard());
-        slotL.addDevCard(testCard3);
+        slotL.putDevCard(testCard3);
         assertEquals(testCard3,slotL.getTopDevCard());
 
 

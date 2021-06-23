@@ -33,12 +33,6 @@ public class DevSlot {
         devCards = new ArrayDeque<>();
     }
 
-    public void addDevCard(DevCard devcard){
-        // code to check devcard constraints...
-        // instead of add(), I (omer) used push() to focus on the fact that it is a stack and not a list
-        this.devCards.add(devcard);
-    }
-
     public boolean isEmpty(){
         return this.devCards.isEmpty();
     }
@@ -67,7 +61,7 @@ public class DevSlot {
     }
 
     public void putDevCard(DevCard card) {
-        devCards.add(card); //same as push, level constraints are checked in controller in a previous step
+        devCards.add(card);
     }
 
     public String describeDevSlot(){
@@ -86,31 +80,4 @@ public class DevSlot {
         }
         return sb.toString();
     }
-
-//    public static void main(String[] args){
-//        DevSlot[] slots = new DevSlot[3];
-//        slots[0] = new DevSlot(slotPlace.LEFT);
-//        slots[1] = new DevSlot(slotPlace.CENTER);
-//        slots[2] = new DevSlot(slotPlace.RIGHT);
-//
-//        Game game = new Game();
-//        game.createDevCardDecks();
-//        DevCard devCard1 = game.peekTopDevCard(DevCard.CardColor.BLUE, 1);
-//        DevCard devCard2 = game.peekTopDevCard(DevCard.CardColor.BLUE, 2);
-//        DevCard devCard3 = game.peekTopDevCard(DevCard.CardColor.BLUE, 3);
-//        DevCard devCard11 = game.peekTopDevCard(DevCard.CardColor.GREEN, 1);
-//        slots[0].addDevCard(devCard1);
-//        slots[0].addDevCard(devCard2);
-//        slots[0].addDevCard(devCard3);
-//        slots[1].addDevCard(devCard1);
-////        slots[0].addDevCard(devCard1);
-//
-//        StringBuilder sb = new StringBuilder();
-//        for(int i=0; i<3; i++){
-//            sb.append(slots[i].describeDevSlot());
-//            sb.append("\n");
-//        }
-//        System.out.println(sb.toString());
-//    }
-
 }
