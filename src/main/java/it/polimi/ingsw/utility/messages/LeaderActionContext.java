@@ -10,8 +10,8 @@ public class LeaderActionContext {
 
     public enum ActionStep{
         // from client to server
-        LEADER_CARD_ACTIVATED_CHOOSEN,
-        LEADER_CARD_NOT_ACTIVATED_CHOOSEN,
+        LEADER_CARD_ACTIVATED_CHOSEN,
+        LEADER_CARD_NOT_ACTIVATED_CHOSEN,
         DISCARD_LEADER_CARD,
         BOTH_ACTIONS,
 

@@ -19,7 +19,7 @@ public class PersonalBoard {
     private Resources strongbox;
 
     private int faithPoints = 0;
-    private List<LeaderCard> inactiveLeaderCards;
+    private Set<LeaderCard> inactiveLeaderCards;
     private Set<LeaderCard> activeLeaderCards;
     private Map<PopeArea, Boolean> popeAreaMap;
 
@@ -35,7 +35,7 @@ public class PersonalBoard {
         warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
         strongbox = new Resources();
         popeAreaMap = new HashMap<>();
-        inactiveLeaderCards = new ArrayList<>();
+        inactiveLeaderCards = new HashSet<>();
         activeLeaderCards = new HashSet<>();
         popeAreaMap.put(PopeArea.FIRST, false);
         popeAreaMap.put(PopeArea.SECOND, false);
