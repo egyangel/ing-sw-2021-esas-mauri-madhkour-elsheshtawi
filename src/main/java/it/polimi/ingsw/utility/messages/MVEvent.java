@@ -11,7 +11,7 @@ public class MVEvent extends Event{
         STRONGBOX_UPDATE,
         DEVSLOTS_UPDATE,
         FAITHPOINT_UPDATE,
-        VATICAN_REPORT_TAKEN,
+        FAITHTRACK_UPDATE,
         ACTIVE_LEADER_CARD_UPDATE,
         INACTIVE_LEADER_CARD_UPDATE
     }

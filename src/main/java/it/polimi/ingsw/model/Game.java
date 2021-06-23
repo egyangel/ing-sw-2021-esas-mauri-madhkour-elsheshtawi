@@ -102,18 +102,6 @@ public class Game implements Publisher<MVEvent> {
         devCardMatrix[level-1][color.ordinal()].removeTopCard();
     }
 
-    public void sendMarketAndDevCardMatrixTo(Integer userID) {
-        MVEvent marketUpdate = createMarketTrayMVEvent();
-        publish(userID, marketUpdate);
-        MVEvent devCardMatrixUpdate = createDevCardMVEvent();
-        publish(userID, devCardMatrixUpdate);
-    }
-
-    public MVEvent createMarketTrayMVEvent(){
-        MVEvent marketUpdate = new MVEvent(MVEvent.EventType.MARKET_TRAY_UPDATE, market);
-        return marketUpdate;
-    }
-
     public MVEvent createDevCardMVEvent(){
         List<DevCard> topDevCards = new ArrayList<>();
         for (int i = 0; i < 3; i++) {

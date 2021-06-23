@@ -88,6 +88,7 @@ public class Client implements Runnable {
                 userIDtoUserNames = (Map<Integer, String>) msg.getObject(type);
                 CLI cli = (CLI) view;
                 cli.setUserIDtoUsernames(userIDtoUserNames);
+                cli.initEmptyPersonalBoards();
                 break;
         }
     }
