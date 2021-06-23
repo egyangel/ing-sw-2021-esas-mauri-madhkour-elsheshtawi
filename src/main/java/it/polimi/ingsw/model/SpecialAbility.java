@@ -32,6 +32,14 @@ public class SpecialAbility {
         }
     }
 
+    public Resources getResourcesAtSlot(){
+        return resourceHolder;
+    }
+
+    public void subtractFromExtraSlot(Resources res){
+        resourceHolder.subtract(res);
+    }
+
     private boolean hasEnoughSpace(int toBeAdded){
         return ((resourceHolder.sumOfValues() + toBeAdded) <= 2);
     }

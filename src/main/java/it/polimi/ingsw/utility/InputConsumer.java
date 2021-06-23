@@ -333,7 +333,11 @@ public class InputConsumer {
         String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
         out.println("Please enter one of the options: " + placeString);
         String input = in.nextLine().toUpperCase();
-        while (!placeList.contains(DevSlot.slotPlace.valueOf(input))) {
+        List<String> slotAsStrings = new ArrayList<>();
+        slotAsStrings.add((DevSlot.slotPlace.LEFT.name()));
+        slotAsStrings.add((DevSlot.slotPlace.CENTER.name()));
+        slotAsStrings.add((DevSlot.slotPlace.RIGHT.name()));
+        while(!slotAsStrings.contains(input) && !placeList.contains(DevSlot.slotPlace.valueOf(input))) {
             out.println("Invalid input.");
             out.println("Please enter one of the options: " + placeString);
             input = in.nextLine().toUpperCase();

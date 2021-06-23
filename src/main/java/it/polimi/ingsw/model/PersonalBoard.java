@@ -166,6 +166,7 @@ public class PersonalBoard {
         Resources res = new Resources();
         res.add(getWarehouseResources());
         res.add(getStrongboxResources());
+        res.add(getExtraSlotResources());
         return res;
     }
 
@@ -179,6 +180,16 @@ public class PersonalBoard {
         Resources res = new Resources();
         for (Shelf shelf : warehouse) {
             res.add(shelf.getResource());
+        }
+        return res;
+    }
+
+    public Resources getExtraSlotResources(){
+        Resources res = new Resources();
+        for(LeaderCard card:activeLeaderCards){
+            if(card.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT){
+                res.add(card.getAbility().getResourcesAtSlot());
+            }
         }
         return res;
     }
@@ -214,26 +225,13 @@ public class PersonalBoard {
         return places;
     }
 
-    public void spendOneFromWarehouse(Resources.ResType resType) {
-        for (Shelf shelf : warehouse) {
-            if (shelf.getShelfResType().equals(resType)) {
-                shelf.removeOneFromShelf();
-                return;
-            }
-        }
-    }
-
-    public void spendOneFromStrongbox(Resources.ResType resType) {
-        strongbox.subtract(resType, 1);
-    }
-
     public void putDevCardOnSlot(DevCard card, DevSlot.slotPlace place) {
         int index = place.getIndexInBoard();
         devSlots[index].putDevCard(card);
     }
 
-    public DevCard getDevCardOnSlot(DevSlot place) {
-        int index = place.getPlace().getIndexInBoard();
+    public DevCard getDevCardOnSlot(DevSlot.slotPlace place) {
+        int index = place.getIndexInBoard();
         if(devSlots[index].isEmpty()){
             return null;
         }
@@ -299,12 +297,20 @@ public class PersonalBoard {
         return remainingCost;
     }
 
-    public void putResInStrongBox(Resources res) {
+    public void addToStrongBox(Resources res) {
         this.strongbox.add(res);
     }
 
     public void subtractFromStrongbox(Resources res) {
         this.strongbox.subtract(res);
+    }
+
+    public void subtractFromExtraSlot(Resources res){
+        for(LeaderCard card: activeLeaderCards){
+            if(card.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT){
+                card.getAbility().subtractFromExtraSlot(res);
+            }
+        }
     }
 
     public void setStrongbox(Resources strongbox) {
