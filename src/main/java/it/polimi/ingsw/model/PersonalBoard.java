@@ -19,8 +19,8 @@ public class PersonalBoard {
     private Resources strongbox;
 
     private int faithPoints = 0;
-    private Set<LeaderCard> inactiveLeaderCards;
-    private Set<LeaderCard> activeLeaderCards;
+    private List<LeaderCard> inactiveLeaderCards;
+    private List<LeaderCard> activeLeaderCards;
     private Map<PopeArea, Boolean> popeAreaMap;
 
     private List<DevCard> ownedCards = new ArrayList<>();
@@ -35,8 +35,8 @@ public class PersonalBoard {
         warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
         strongbox = new Resources();
         popeAreaMap = new HashMap<>();
-        inactiveLeaderCards = new HashSet<>();
-        activeLeaderCards = new HashSet<>();
+        inactiveLeaderCards = new ArrayList<>();
+        activeLeaderCards = new ArrayList<>();
         popeAreaMap.put(PopeArea.FIRST, false);
         popeAreaMap.put(PopeArea.SECOND, false);
         popeAreaMap.put(PopeArea.THIRD, false);
@@ -147,19 +147,37 @@ public class PersonalBoard {
         return temp;
     }
 
-    public void putSelectedLeaderCards(List<LeaderCard> selectedCards) { inactiveLeaderCards.addAll(selectedCards); }
-    public List<LeaderCard> getInactiveLeaderCards() { return new ArrayList<>(this.inactiveLeaderCards); }
+    public void putSelectedLeaderCards(List<LeaderCard> selectedCards) { inactiveLeaderCards = selectedCards; }
+    public List<LeaderCard> getInactiveLeaderCards() {
 
-    public void changePlayerCard(List<LeaderCard> Cards){
-            inactiveLeaderCards.removeAll(Cards);
+        return this.inactiveLeaderCards; }
+
+    public void changePlayerCard(List<Boolean> Cards){
+        int j=0;
+
+        int countDiscard = 0;
+//todo fix this, doesn't work properly
+        while (j < Cards.size()) {
+            if (Cards.get(j).equals(true)) {
+                countDiscard++;
+
+
+                if (countDiscard == 2)
+                    inactiveLeaderCards.clear();
+                else
+                    inactiveLeaderCards.remove(j);
+            }
+            j++;
+        }
+
     }
 
-    public void setActiveLeaderCards(Set<LeaderCard> activeLeaderCards) {
+    public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
          this.activeLeaderCards.addAll(activeLeaderCards);
     }
 
     public List<LeaderCard> getActiveLeaderCards() {
-        return new ArrayList<>(this.activeLeaderCards);
+        return this.activeLeaderCards;
     }
 
     public Resources getTotalResources() {

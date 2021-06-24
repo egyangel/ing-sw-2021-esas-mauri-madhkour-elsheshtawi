@@ -108,18 +108,18 @@ public class Controller implements Listener<VCEvent> {
 
     private void debugAutoChooseTwoLeadersToAll(){
         List<LeaderCard> list1 = new ArrayList<>();
-        Requirement requirement = new Requirement(new Resources(0,0,0,5));
+        Requirement requirement = new Requirement(new Resources(Resources.ResType.COIN,5));
         SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.COIN);
         list1.add(new LeaderCard(requirement, 4, ability));
-        requirement = new Requirement(new Resources(0,5,0,5));
+        requirement = new Requirement(new Resources(Resources.ResType.SHIELD,5));
         ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SERVANT);
         list1.add(new LeaderCard(requirement, 4, ability));
 
         List<LeaderCard> list2 = new ArrayList<>();
-        requirement = new Requirement(new Resources(10,10,10,10));
+        requirement = new Requirement(new Resources(Resources.ResType.STONE,5));
         ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.STONE);
         list2.add(new LeaderCard(requirement, 4, ability));
-        requirement = new Requirement(new Resources(3,0,0,5));
+        requirement = new Requirement(new Resources(Resources.ResType.SERVANT,5));
         ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SHIELD);
         list2.add(new LeaderCard(requirement, 4, ability));
 
@@ -264,7 +264,21 @@ public class Controller implements Listener<VCEvent> {
      */
     protected void updateAboutLeaderCardsOfId(Integer userId){
         List<LeaderCard> activeLeaders = game.getPersonalBoard(userId).getActiveLeaderCards();
+        int j=0;
+        while(j< game.getPersonalBoard(userId).getActiveLeaderCards().size())
+        {
+            System.out.println("active"+game.getPersonalBoard(userId).getActiveLeaderCards().get(j));
+            j++;
+
+        }
         List<LeaderCard> inActiveLeaders = game.getPersonalBoard(userId).getInactiveLeaderCards();
+       /* j=0;
+        while(j< game.getPersonalBoard(userId).getInactiveLeaderCards().size())
+        {
+            System.out.println("inactiveControll"+game.getPersonalBoard(userId).getInactiveLeaderCards().get(j));
+            j++;
+
+        }*/
         MVEvent activeLeaderMVEvent = new MVEvent(userId, MVEvent.EventType.ACTIVE_LEADER_CARD_UPDATE, activeLeaders);
         game.updateAllAboutChange(activeLeaderMVEvent);
         MVEvent inActiveLeaderMVEvent = new MVEvent(userId, MVEvent.EventType.INACTIVE_LEADER_CARD_UPDATE, inActiveLeaders);
@@ -332,7 +346,7 @@ public class Controller implements Listener<VCEvent> {
                 break;
             case ACTIVATE_LEADER_CONTEXT_SELECTED:
                 LeaderActionContext emptyActivateLeaderContext = new LeaderActionContext();
-                emptyActivateLeaderContext.setPlayerCard(new HashSet<>(game.getPersonalBoard(userID).getInactiveLeaderCards()));
+                emptyActivateLeaderContext.setPlayerCard(game.getPersonalBoard(userID).getInactiveLeaderCards());
                 emptyActivateLeaderContext.setLastStep(CHOOSE_ACTION);
                 cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, emptyActivateLeaderContext);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
@@ -819,6 +833,8 @@ public class Controller implements Listener<VCEvent> {
         }
 
         updateAboutLeaderCardsOfId(userID);
+        updateAboutFaithPointOfId(userID);
+        updateAboutFaithTrackofId(userID);
         CVEvent cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
@@ -828,8 +844,12 @@ public class Controller implements Listener<VCEvent> {
      * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
      */
     private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
-       game.getPersonalBoard(userID).changePlayerCard(context.discardedPlayerCard());
-       game.getPersonalBoard(userID).increaseFaitPoint(context.discardedPlayerCard().size());
+
+        game.getPersonalBoard(userID).changePlayerCard(context.getDiscardedPlayerCard());
+
+        game.getPersonalBoard(userID).increaseFaitPoint(context.getDiscardedPlayerCard().size());
+
+
     }
     /**
      * method that handle the activation of leader cards
@@ -838,12 +858,10 @@ public class Controller implements Listener<VCEvent> {
      */
     private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
        checkLeaderActivationAction(userID,context);
-       int i=0;
-       while(i<context.getActiveLeaderCard().size()){
-           System.out.println(context.getActiveLeaderCard().get(i));
-       }
-       game.getPersonalBoard(userID).setActiveLeaderCards(new HashSet<>(context.getActiveLeaderCard()));
-       game.getPersonalBoard(userID).changePlayerCard(context.getActiveLeaderCard());
+
+       game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
+       //game.getPersonalBoard(userID).changePlayerCard(context.getActiveLeaderCard());
+
 
     }
     /**
@@ -851,6 +869,7 @@ public class Controller implements Listener<VCEvent> {
      * @param userID player id
      * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
      */
+    //todo for res requirement consider the possibility of extra slot of other leader cards
     private void checkLeaderActivationAction (Integer userID, LeaderActionContext context){
         int discConvert;
         int firstCount = 0;
@@ -859,7 +878,7 @@ public class Controller implements Listener<VCEvent> {
         int i = 0;
         int j = 0;
         while (j < context.getLeadersToActivate().size()) {
-            if (context.getLeadersToActivate().get(j).getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD) {
+            if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.LEVELTWOCARD) {
                 while (i < context.getOwnedCards().size()) {
                     if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
                             context.getOwnedCards().get(i).getLevel() == 2) {
@@ -868,12 +887,12 @@ public class Controller implements Listener<VCEvent> {
                     i++;
                 }
             }
-            if (context.getLeadersToActivate().get(j).getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT) {
-                if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getLeadersToActivate().get(j).getRequirement().getResource().getOnlyType()) == 5)) {
+            if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.RESOURCES) {
+                if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getLeadersToActivate().get(j).getRequirement().getResource().getOnlyType()) >= 5)) {
                     activeLeaderCards.add(context.getLeadersToActivate().get(j));
                 }
             } else {
-                if (context.getLeadersToActivate().get(j).getAbility().getAbilityType() == SpecialAbility.AbilityType.CONVERTWHITE) {
+                if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.THREECARD) {
                     discConvert = 1;
                 } else {
                     discConvert = 2;
@@ -894,7 +913,7 @@ public class Controller implements Listener<VCEvent> {
             }
             j++;
         }
-       context.setActiveLeaderCard(new HashSet<>(activeLeaderCards));
+       context.setActiveLeaderCard(activeLeaderCards);
     }
     /**
      * method that compute the total victory point of the player

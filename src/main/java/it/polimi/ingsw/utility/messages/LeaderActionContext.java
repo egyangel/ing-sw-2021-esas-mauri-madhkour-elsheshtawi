@@ -20,13 +20,12 @@ public class LeaderActionContext {
         END_LEADER_ACTION
     }
 
-    private Set<LeaderCard> playerCard = new HashSet<>();
-    private Set<LeaderCard> discardedCard = new HashSet<>();
-    private Set<LeaderCard> leaderToActiveCards = new HashSet<>();
-    private Set<LeaderCard> activeLeaderCard = new HashSet<>();
-    private Boolean activationLeaderCardBefore= false;
+    private List<LeaderCard> playerCard = new ArrayList<>();
+    private List<Boolean> discardedCard = new ArrayList<>();
+    private List<LeaderCard> leaderToActiveCards = new ArrayList<>();
+    private List<LeaderCard> activeLeaderCard = new ArrayList<>();
     private ActionStep lastStep;
-    private Set<DevCard> ownedCards= new HashSet<>();
+    private List<DevCard> ownedCards= new ArrayList<>();
 
     public void setLastStep(ActionStep step){
         lastStep = step;
@@ -35,38 +34,45 @@ public class LeaderActionContext {
         return lastStep;
     }
 
-    public void setPlayerCard(Set<LeaderCard> playerCard){
-        this.playerCard.addAll(playerCard);
+    public void setPlayerCard(List<LeaderCard> playerCard){
+        this.playerCard = playerCard;
     }
-    public List<LeaderCard> getPlayerCard(){  return new ArrayList<>(this.playerCard); }
+    public List<LeaderCard> getPlayerCard(){  return this.playerCard; }
 
-    public void setDiscardedPlayerCard(Set<LeaderCard> discardedCard){
-        this.discardedCard.addAll(discardedCard);
+    public void setDiscardedPlayerCard(List<Boolean> discardedCard){
+        this.discardedCard = discardedCard;
     }
-    public List<LeaderCard> discardedPlayerCard(){ return new ArrayList<>(this.discardedCard); }
+    public List<Boolean> getDiscardedPlayerCard(){ return (this.discardedCard); }
 
-    public void changePlayerCard(Set<LeaderCard> Card){
-            playerCard.removeAll(Card);
-    }
-    public void setActiveLeaderCard(Set<LeaderCard> Cards){
-        this.activeLeaderCard.addAll(Cards);
-    }
-    public List<LeaderCard> getActiveLeaderCard(){ return new ArrayList<>(this.activeLeaderCard); }
+    public void changePlayerCard(List<Boolean> Cards) {
+        int j = 0;
+        int countDiscard = 0;
+        while (j < Cards.size()) {
+            if (Cards.get(j).equals(true))
+                countDiscard++;
 
-    public void setLeadersToActivate(Set<LeaderCard> leaderToActiveCards){
-        this.leaderToActiveCards.addAll(leaderToActiveCards);
+
+            if (countDiscard == 2)
+                playerCard.clear();
+            else
+                playerCard.remove(j);
+            j++;
+        }
     }
-    public List<LeaderCard> getLeadersToActivate(){ return new ArrayList<>(this.leaderToActiveCards); }
+    public void setActiveLeaderCard(List<LeaderCard> Cards){
+
+            playerCard.addAll(Cards);
+    }
+    public List<LeaderCard> getActiveLeaderCard(){ return this.activeLeaderCard; }
+
+    public void setLeadersToActivate(List<LeaderCard> leaderToActiveCards){
+        this.leaderToActiveCards = leaderToActiveCards;
+    }
+    public List<LeaderCard> getLeadersToActivate(){ return this.leaderToActiveCards; }
 
     public List<DevCard> getOwnedCards() {
-        return  new ArrayList<>(ownedCards);
+        return ownedCards;
     }
-
-    public void setActivationLeaderCardBefore(boolean activationLeaderCardBefore){ this.activationLeaderCardBefore = activationLeaderCardBefore; }
-    public boolean getActivationLeaderCardBefore(){
-        return this.activationLeaderCardBefore ;
-    }
-    public void resetActivationLeaderCardBefore(){ this.activationLeaderCardBefore   = false ; }
 
 
 }

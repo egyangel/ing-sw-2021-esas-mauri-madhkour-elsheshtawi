@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.enumclasses.CliColors;
+import it.polimi.ingsw.utility.messages.LeaderActionContext;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -67,7 +68,7 @@ public class App {
             input = in.nextLine().toUpperCase();
         }*/
         //TODO  test of getDevSlotIndexs in Inputconsumer Class
-
+/*
         Scanner in = new Scanner(System.in);
         List<DevSlot.slotPlace>  slotAvailable = new ArrayList<>();
         int i = 0,j=0;
@@ -98,7 +99,6 @@ public class App {
             System.out.print( slotAvailable.get(u)+ " ");
         }
         System.out.println("");
-*/
 
          while(i < numberOfSlots){
             input = in.nextLine().toUpperCase();
@@ -111,9 +111,42 @@ public class App {
             }
 
         }
+*/
+
+        List<LeaderCard> list1 = new ArrayList<>();
+        Requirement requirement = new Requirement(new Resources(Resources.ResType.COIN, 5));
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.COIN);
+        list1.add(new LeaderCard(requirement, 4, ability));
+        requirement = new Requirement(new Resources(Resources.ResType.SHIELD, 5));
+        ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SERVANT);
+        list1.add(new LeaderCard(requirement, 4, ability));
+
+        List<Boolean> discard = new ArrayList<>();
+        discard.add(true);
+        discard.add(true);
 
 
+        LeaderActionContext context = new LeaderActionContext();
+        context.setPlayerCard(list1);
+        int j = 0;
+        while (j < context.getPlayerCard().size()) {
+            System.out.println("inactive" + context.getPlayerCard().get(j));
+            j++;
 
+        }
+
+
+        //context.changePlayerCard(discard);
+        j = 0;
+        if (context.getPlayerCard().size() > 0){
+            while (j < context.getPlayerCard().size()) {
+                System.out.println("new inactive" + context.getPlayerCard().get(j));
+                j++;
+
+            }
+    }else{
+            System.out.println("you don't have cards" );
+        }
 
 //        game.printSpecialAbilities();
 //        Requirement aReq = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.GREEN);

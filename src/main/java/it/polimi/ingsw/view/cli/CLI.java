@@ -873,16 +873,16 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * */
     public void chooseDiscardLeaderAction(int numOfActionChosen ) {
         int j=0;
-        Set<LeaderCard> discardedLeaderCard = new HashSet<>();
-
+        //List<LeaderCard> discardedLeaderCard = new ArrayList<>();
+        List<Boolean> discardedLeaderCard = new ArrayList<>();
 
         if (activateLeaderContext.getPlayerCard().size() > 0 ) {
             out.println("You can discard  " +activateLeaderContext.getPlayerCard().size()+ "  leader cards ");
             out.println("Your Leader Card:");
             while (j < activateLeaderContext.getPlayerCard().size()) {
                 out.println("Do you want to discard this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
-                if (InputConsumer.getYesOrNo(in, out))
-                    discardedLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
+                //if (InputConsumer.getYesOrNo(in, out))
+                    discardedLeaderCard.add(InputConsumer.getYesOrNo(in, out));
                 j++;
             }
         }
@@ -909,7 +909,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * */
     public void chooseLeaderActivationAction () {
         int j = 0;
-        Set<LeaderCard> activeLeaderCard = new HashSet<>();
+        List<LeaderCard> activeLeaderCard = new ArrayList<>();
         out.println("You can active  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
         if (activateLeaderContext.getPlayerCard().size() > 0) {
             out.println("Your Leader Card:");
