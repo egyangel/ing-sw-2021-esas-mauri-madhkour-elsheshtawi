@@ -790,46 +790,50 @@ public class Controller implements Listener<VCEvent> {
         int discConvert;
         int firstCount = 0;
         int secondCount = 0;
-        List<LeaderCard> activeLeaderCards= new ArrayList<>();
+        List<Boolean> activeLeaderCards= new ArrayList<>();
         int i = 0;
         int j = 0;
         while (j < context.getLeadersToActivate().size()) {
-            if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.LEVELTWOCARD) {
+            if(context.getLeadersToActivate().get(j))
+                if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.LEVELTWOCARD) {
+
                 while (i < context.getOwnedCards().size()) {
-                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
+                    if (context.getPlayerCard().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
                             context.getOwnedCards().get(i).getLevel() == 2) {
                         activeLeaderCards.add(context.getLeadersToActivate().get(j));
                     }
                     i++;
                 }
             }
-            if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.RESOURCES) {
-                if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getLeadersToActivate().get(j).getRequirement().getResource().getOnlyType()) >= 5)) {
-                    activeLeaderCards.add(context.getLeadersToActivate().get(j));
-                }
-            } else {
-                if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.THREECARD) {
-                    discConvert = 1;
+                if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.RESOURCES) {
+                    if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getPlayerCard().get(j).getRequirement().getResource().getOnlyType()) >= 5)) {
+                        activeLeaderCards.add(context.getLeadersToActivate().get(j));
+                    }
                 } else {
-                    discConvert = 2;
-                }
-                while (i < game.getPersonalBoard(userID).getOwnedCard().size()) {
-                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
-                        firstCount++;
-                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(1).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
-                        secondCount++;
-                    i++;
-                }
-                if (firstCount >= 1 && secondCount >= 1 && discConvert == 1)
-                    activeLeaderCards.add(context.getLeadersToActivate().get(j));
+                    if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.THREECARD) {
+                        discConvert = 1;
+                    } else {
+                        discConvert = 2;
+                    }
+                    while (i < game.getPersonalBoard(userID).getOwnedCard().size()) {
+                        if (context.getPlayerCard().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
+                            firstCount++;
+                        if (context.getPlayerCard().get(j).getRequirement().getColor(1).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
+                            secondCount++;
+                        i++;
+                    }
+                    if (firstCount >= 1 && secondCount >= 1 && discConvert == 1)
+                        activeLeaderCards.add(context.getLeadersToActivate().get(j));
 
-                if (firstCount >= 2 && secondCount >= 1 && discConvert == 2)
-                    activeLeaderCards.add(context.getLeadersToActivate().get(j));
+                    if (firstCount >= 2 && secondCount >= 1 && discConvert == 2)
+                        activeLeaderCards.add(context.getLeadersToActivate().get(j));
 
-            }
+                }
             j++;
         }
-       context.setActiveLeaderCard(activeLeaderCards);
+        context.setActiveLeaderCard(activeLeaderCards);
+        game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
+        game.getPersonalBoard(userID).changePlayerCard(activeLeaderCards);
     }
 
     protected void handleEndTurn(Integer userID){
