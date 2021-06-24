@@ -11,7 +11,6 @@ import static it.polimi.ingsw.utility.messages.LeaderActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.ActivateProdAlternativeContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
-import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
 import static it.polimi.ingsw.utility.messages.VCEvent.EventType.*;
 
 import java.io.PrintWriter;
@@ -37,12 +36,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private BuyDevCardActionContext buyDevCardContext;
     private ActivateProdAlternativeContext activateProdContext;
     private LeaderActionContext activateLeaderContext;
-    private CVEvent initialCVevent;
+    private CVEvent generalCVEvent;
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
     private String marketTrayDescription;
     private String devCardMatrixDescription;
     private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<Integer, PersonalBoardDescription>();
     private Map<Integer, String> userIDtoUsernames = new HashMap<Integer, String>();
+    private Map<String, Integer> resultMap;
     private boolean majorActionDone;
 
     /**
@@ -85,6 +85,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayEndTurn", this::displayEndTurn);
         displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
         displayNameMap.put("chooseDevSlotsForProd", this::chooseDevSlotsForProd);
+        displayNameMap.put("displayScoreBoard", this::displayScoreBoard);
 
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
@@ -158,21 +159,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         client.sendToServer(loginMsg);
     }
 
-    /**
-     * method that handle the beginning of the game like choosing the leader  cards,
-     * assigning order of the players
-     */
-    private void routeInitialActionsDisplay() {
-        switch (initialCVevent.getEventType()) {
-            case CHOOSE_TWO_LEADER_CARD:
-                addNextDisplay("displayFourLeaderCard");
-                break;
-            case ASSIGN_TURN_ORDER:
-                addNextDisplay("displayTurnAssign");
-                break;
-        }
-    }
-
     public void initEmptyPersonalBoards(){
         for(Integer userID: userIDtoUsernames.keySet()){
             PersonalBoardDescription pbd = new PersonalBoardDescription();
@@ -195,7 +181,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("Here are the four leader card options, select two of them:");
         Type type = new TypeToken<List<LeaderCard>>() {
         }.getType();
-        List<LeaderCard> fourLeaderCards = (List<LeaderCard>) initialCVevent.getEventPayload(type);
+        List<LeaderCard> fourLeaderCards = (List<LeaderCard>) generalCVEvent.getEventPayload(type);
         for (int i = 0; i < fourLeaderCards.size(); i++) {
             out.println(i + 1 + ") " + fourLeaderCards.get(i).describeLeaderCard());
         }
@@ -221,7 +207,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * method that handle the assign of the order of the players and give them based on the order the initial resources
      */
     public void displayTurnAssign() {
-        Integer turn = (Integer) initialCVevent.getEventPayload(Integer.class);
+        Integer turn = (Integer) generalCVEvent.getEventPayload(Integer.class);
         switch (turn) {
             case 0: // SOLO PLAYER
                 Resources.ResType initResTypeSolo = InputConsumer.getResourceType(in, out);
@@ -400,7 +386,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayEndTurn");
                 break;
             case 10:
-                //TODO recheck after merge
                 VCEvent vcEventTwo = new VCEvent(END_TURN);
                 publish(vcEventTwo);
                 break;
@@ -629,24 +614,24 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case EMPTY_DEVCARD_DECK_ERROR:
                 setGeneralMsg("There is no available development card in that color and level.");
                 addNextDisplay("displayGeneralMsg");
-                addNextDisplay("chooseColorLevel");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case NOT_ENOUGH_RES_FOR_DEVCARD_ERROR:
                 setGeneralMsg("You don't have enough resources to buy that development card.");
                 addNextDisplay("displayGeneralMsg");
-                addNextDisplay("chooseColorLevel");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case UNSUITABLE_FOR_DEVSLOTS_ERROR:
                 setGeneralMsg("There are no suitable slots on your personal board for you to put the selected card on.");
                 addNextDisplay("displayGeneralMsg");
-                addNextDisplay("chooseColorLevel");
+                addNextDisplay("displayAllActionSelection");
                 break;
             case CHOOSE_DEV_SLOT:
                 addNextDisplay("chooseDevSlotToPutDevCard");
                 break;
             case COST_PAID_DEVCARD_PUT:
-                //general msg not needed
-                out.println("Your development slots now looks like:");
+                setGeneralMsg("Your development slots now looks like:");
+                addNextDisplay("displayGeneralMsg");
                 addNextDisplay("displayDevSlots");
                 VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
                 publish(vcEvent);
@@ -695,6 +680,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("chooseDevSlotsForProd");
                 break;
             case NOT_ENOUGH_RES_ON_PERSONAL_BOARD:
+                // todo Omer it goes on to all menu in middle of action, if it is good, use it for buy dev card too!
                 setGeneralMsg("You do not have enough resources on your personal board!");
                 addNextDisplay("displayGeneralMsg");
                 addNextDisplay("displayAllActionSelection");
@@ -896,94 +882,141 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
+    private void displayScoreBoard(){
+        Type type = new TypeToken<Map<String,Integer>>() {}.getType();
+        Map<String,Integer> scoreboard = (Map<String,Integer>) generalCVEvent.getEventPayload(type);
+        out.println("The scoreboard is:");
+        for(Map.Entry<String, Integer> entry: scoreboard.entrySet()){
+            out.println("Username: "+ entry.getKey() + " Victory Points: " + entry.getValue());
+        }
+        client.closeServerConnection();
+    }
+
 
     @Override
     public void update(Event event) {
         if (event instanceof CVEvent) {
             CVEvent cvEvent = (CVEvent) event;
-            CVEvent.EventType eventType = cvEvent.getEventType();
-            if (eventType.equals(SELECT_ALL_ACTION)) {
-                majorActionDone = false;
-                addNextDisplay("displayAllActionSelection");
-            }
-            else if (eventType.equals(TAKE_RES_FILL_CONTEXT)){
-                takeResContext = (TakeResActionContext) cvEvent.getEventPayload(TakeResActionContext.class);
-                routeTakeResActionDisplay();
-            } else if (eventType.equals(BUY_DEVCARD_FILL_CONTEXT)) {
-                buyDevCardContext = (BuyDevCardActionContext) cvEvent.getEventPayload(BuyDevCardActionContext.class);
-                routeBuyDevCardActionDisplay();
-            } else if (eventType.equals(ACTIVATE_PROD_FILL_CONTEXT)) {
-                activateProdContext = (ActivateProdAlternativeContext) cvEvent.getEventPayload(ActivateProdAlternativeContext.class);
-                routeActivateProdActionDisplay();
-            }else if (eventType.equals(ACTIVATE_LEADER_FILL_CONTEXT)) {
-                activateLeaderContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
-                routeActivateLeaderActionDisplay();
-            } else if (eventType.equals(SELECT_MINOR_ACTION)){
-                majorActionDone = true;
-                addNextDisplay("displayMinorActionSelection");
-            } else {
-                initialCVevent = cvEvent;
-                routeInitialActionsDisplay();
-            }
+            handleCVEvent(cvEvent);
         } else if (event instanceof MVEvent) {
             MVEvent mvEvent = (MVEvent) event;
-            Integer userIDofUpdatedBoard = mvEvent.getUserID();
-            switch (mvEvent.getEventType()) {
-                case MARKET_TRAY_UPDATE:
-                    MarketTray marketTray = (MarketTray) mvEvent.getEventPayload(MarketTray.class);
-                    marketTrayDescription = marketTray.describeMarketTray();
-                    break;
-                case DEVCARD_MATRIX_UPDATE:
-                    Type devCardListType = new TypeToken<List<DevCard>>() {}.getType();
-                    List<DevCard> topDevCards = (List<DevCard>) mvEvent.getEventPayload(devCardListType);
-                    devCardMatrixDescription = ObjectPrinter.printDevCardMatrixAsList(topDevCards);;
-                    break;
-                case WAREHOUSE_UPDATE:
-                    Type shelfListType = new TypeToken<List<Shelf>>() {}.getType();
-                    List<Shelf> shelves = (List<Shelf>) mvEvent.getEventPayload(shelfListType);
-                    String wareHouseDescription = ObjectPrinter.printWarehouse(shelves);
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(wareHouseDescription);
-                    break;
-                case STRONGBOX_UPDATE:
-                    Resources strongboxRes = (Resources) mvEvent.getEventPayload(Resources.class);
-                    String strongboxDescription = ObjectPrinter.drawStrongBox(strongboxRes);
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(strongboxDescription);
-                    break;
-                case DEVSLOTS_UPDATE:
-                    Type devSlotListType = new TypeToken<List<DevSlot>>() {}.getType();
-                    List<DevSlot> devSlots = (List<DevSlot>) mvEvent.getEventPayload(devSlotListType);
-                    String devSlotDescription = ObjectPrinter.printDevSlots(devSlots);
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(devSlotDescription);
-                    break;
-                case FAITHPOINT_UPDATE:
-                    Integer faithpoints = (Integer) mvEvent.getEventPayload(Integer.class);
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithPoints(faithpoints);
-                    Map<PersonalBoard.PopeArea, Boolean> tileMap = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getTileMap();
-                    String faithTrackDescription = ObjectPrinter.faithTrackPrinter(tileMap, faithpoints);
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescription);
-                    break;
-                case FAITHTRACK_UPDATE:
-                    Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {}.getType();
-                    Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);
-                    int faithPointsTwo = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getFaithPoints();
-                    String faithTrackDescriptionTwo = ObjectPrinter.faithTrackPrinter(tileMapTwo, faithPointsTwo);
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescriptionTwo);
-                    break;
-                case ACTIVE_LEADER_CARD_UPDATE:
-                    Type activeLeaderListType = new TypeToken<List<LeaderCard>>() {}.getType();
-                    List<LeaderCard> activeLeaders = (List<LeaderCard>) mvEvent.getEventPayload(activeLeaderListType);
-                    String activeLeaderDescription = ObjectPrinter.printLeaders(activeLeaders, true);
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setActiveLeaderCardsDescription(activeLeaderDescription);
-                    break;
-                case INACTIVE_LEADER_CARD_UPDATE:
-                    Type inactiveLeaderListType = new TypeToken<List<LeaderCard>>() {}.getType();
-                    List<LeaderCard> inactiveLeaders = (List<LeaderCard>) mvEvent.getEventPayload(inactiveLeaderListType);
-                    String inactiveLeaderDescription = ObjectPrinter.printLeaders(inactiveLeaders, false);
-                    userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setInactiveLeaderCardsDescription(inactiveLeaderDescription);
-                    break;
-            }
+            handleMVEvent(mvEvent);
         } else {
             out.println("Unidentified MV or CV event");
+        }
+    }
+
+    private void handleCVEvent(CVEvent cvEvent){
+        switch (cvEvent.getEventType()) {
+            case SELECT_ALL_ACTION:
+                majorActionDone = false;
+                addNextDisplay("displayAllActionSelection");
+                break;
+            case TAKE_RES_FILL_CONTEXT:
+                takeResContext = (TakeResActionContext) cvEvent.getEventPayload(TakeResActionContext.class);
+                routeTakeResActionDisplay();
+                break;
+            case BUY_DEVCARD_FILL_CONTEXT:
+                buyDevCardContext = (BuyDevCardActionContext) cvEvent.getEventPayload(BuyDevCardActionContext.class);
+                routeBuyDevCardActionDisplay();
+                break;
+            case ACTIVATE_PROD_FILL_CONTEXT:
+                activateProdContext = (ActivateProdAlternativeContext) cvEvent.getEventPayload(ActivateProdAlternativeContext.class);
+                routeActivateProdActionDisplay();
+                break;
+            case ACTIVATE_LEADER_FILL_CONTEXT:
+                activateLeaderContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
+                routeActivateLeaderActionDisplay();
+                break;
+            case SELECT_MINOR_ACTION:
+                majorActionDone = true;
+                addNextDisplay("displayMinorActionSelection");
+                break;
+            case CHOOSE_TWO_LEADER_CARD:
+                generalCVEvent = cvEvent;
+                addNextDisplay("displayFourLeaderCard");
+                break;
+            case ASSIGN_TURN_ORDER:
+                generalCVEvent = cvEvent;
+                addNextDisplay("displayTurnAssign");
+                break;
+            case END_GAME_TRIGGERED:
+                generalmsg = "The end of the game is triggered, remaining players until the the player with inkwell will play their last turn!";
+                addNextDisplay("displayGeneralMsg");
+                break;
+            case END_RESULT:
+                generalmsg = (String) cvEvent.getEventPayload(String.class);
+                addNextDisplay("displayGeneralMsg");
+                break;
+            case END_VP_COUNTED:
+                generalCVEvent = cvEvent;
+                addNextDisplay("displayScoreBoard");
+                break;
+        }
+    }
+
+    private void handleMVEvent(MVEvent mvEvent) {
+        Integer userIDofUpdatedBoard = mvEvent.getUserID();
+        switch (mvEvent.getEventType()) {
+            case MARKET_TRAY_UPDATE:
+                MarketTray marketTray = (MarketTray) mvEvent.getEventPayload(MarketTray.class);
+                marketTrayDescription = marketTray.describeMarketTray();
+                break;
+            case DEVCARD_MATRIX_UPDATE:
+                Type devCardListType = new TypeToken<List<DevCard>>() {
+                }.getType();
+                List<DevCard> topDevCards = (List<DevCard>) mvEvent.getEventPayload(devCardListType);
+                devCardMatrixDescription = ObjectPrinter.printDevCardMatrixAsList(topDevCards);
+                ;
+                break;
+            case WAREHOUSE_UPDATE:
+                Type shelfListType = new TypeToken<List<Shelf>>() {
+                }.getType();
+                List<Shelf> shelves = (List<Shelf>) mvEvent.getEventPayload(shelfListType);
+                String wareHouseDescription = ObjectPrinter.printWarehouse(shelves);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setWarehouseDescription(wareHouseDescription);
+                break;
+            case STRONGBOX_UPDATE:
+                Resources strongboxRes = (Resources) mvEvent.getEventPayload(Resources.class);
+                String strongboxDescription = ObjectPrinter.drawStrongBox(strongboxRes);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setStrongboxDescription(strongboxDescription);
+                break;
+            case DEVSLOTS_UPDATE:
+                Type devSlotListType = new TypeToken<List<DevSlot>>() {
+                }.getType();
+                List<DevSlot> devSlots = (List<DevSlot>) mvEvent.getEventPayload(devSlotListType);
+                String devSlotDescription = ObjectPrinter.printDevSlots(devSlots);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setDevSlotsDescription(devSlotDescription);
+                break;
+            case FAITHPOINT_UPDATE:
+                Integer faithpoints = (Integer) mvEvent.getEventPayload(Integer.class);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithPoints(faithpoints);
+                Map<PersonalBoard.PopeArea, Boolean> tileMap = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getTileMap();
+                String faithTrackDescription = ObjectPrinter.faithTrackPrinter(tileMap, faithpoints);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescription);
+                break;
+            case FAITHTRACK_UPDATE:
+                Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {
+                }.getType();
+                Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);
+                int faithPointsTwo = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getFaithPoints();
+                String faithTrackDescriptionTwo = ObjectPrinter.faithTrackPrinter(tileMapTwo, faithPointsTwo);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescriptionTwo);
+                break;
+            case ACTIVE_LEADER_CARD_UPDATE:
+                Type activeLeaderListType = new TypeToken<List<LeaderCard>>() {
+                }.getType();
+                List<LeaderCard> activeLeaders = (List<LeaderCard>) mvEvent.getEventPayload(activeLeaderListType);
+                String activeLeaderDescription = ObjectPrinter.printLeaders(activeLeaders, true);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setActiveLeaderCardsDescription(activeLeaderDescription);
+                break;
+            case INACTIVE_LEADER_CARD_UPDATE:
+                Type inactiveLeaderListType = new TypeToken<List<LeaderCard>>() {
+                }.getType();
+                List<LeaderCard> inactiveLeaders = (List<LeaderCard>) mvEvent.getEventPayload(inactiveLeaderListType);
+                String inactiveLeaderDescription = ObjectPrinter.printLeaders(inactiveLeaders, false);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setInactiveLeaderCardsDescription(inactiveLeaderDescription);
+                break;
         }
     }
 
@@ -1084,6 +1117,4 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             for (String username : client.getUserIDtoUserNames().values())
                 out.println(username);
         }
-
-
     }

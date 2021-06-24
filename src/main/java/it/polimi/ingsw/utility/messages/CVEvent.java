@@ -9,13 +9,13 @@ public class CVEvent extends Event{
         BUY_DEVCARD_FILL_CONTEXT,
         ACTIVATE_PROD_FILL_CONTEXT,
         ACTIVATE_LEADER_FILL_CONTEXT,
-
         SELECT_MINOR_ACTION,
-
         CHOOSE_TWO_LEADER_CARD,
         ASSIGN_TURN_ORDER,
         SELECT_ALL_ACTION,
-        END_GAME
+        END_GAME_TRIGGERED,
+        END_RESULT,
+        END_VP_COUNTED
     }
     private EventType eventType;
 

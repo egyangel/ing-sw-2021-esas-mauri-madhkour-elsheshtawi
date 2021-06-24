@@ -23,7 +23,7 @@ public class PersonalBoard {
     private List<LeaderCard> activeLeaderCards;
     private Map<PopeArea, Boolean> popeAreaMap;
 
-    private List<DevCard> ownedCards = new ArrayList<>();
+    private List<DevCard> ownedDevCards = new ArrayList<>();
 
     public PersonalBoard(Integer userID) {
         this.userID = userID;
@@ -87,11 +87,8 @@ public class PersonalBoard {
 
 
     }
-    public void setOwnedCard(DevCard myCards) {
-        this.ownedCards.add(myCards);
-    }
     public  List<DevCard> getOwnedCard() {
-        return this.ownedCards;
+        return this.ownedDevCards;
     }
 
     public void countVictoryPoints(int victoryPoints) {
@@ -246,6 +243,7 @@ public class PersonalBoard {
     public void putDevCardOnSlot(DevCard card, DevSlot.slotPlace place) {
         int index = place.getIndexInBoard();
         devSlots[index].putDevCard(card);
+        this.ownedDevCards.add(card);
     }
 
     public DevCard getDevCardOnSlot(DevSlot.slotPlace place) {
@@ -292,28 +290,6 @@ public class PersonalBoard {
             }
         }
     }
-//todo Ask to omer if he think we can maintain both or what
-    public Resources getRemainingCostFromWarehouse(Resources res) {
-        List<Resources.ResType> resTypeList = new ArrayList<>();
-        Resources remainingCost = new Resources();
-        int numOfRemainingCost;
-        resTypeList.addAll(res.getResTypes());
-        for (int i = 0; i < 3; i++) {
-            for (Resources.ResType resType : resTypeList) {
-                if (warehouse[i].getShelfResType().equals(resType)) {
-                    int number = res.getNumberOfType(resType);
-                    if(warehouse[i].getNumberOfElements()< number) {
-                        numOfRemainingCost = number - warehouse[i].getNumberOfElements();
-                        remainingCost.add(resType, numOfRemainingCost);
-                        number -= warehouse[i].getNumberOfElements();
-                    }
-                    warehouse[i].removeFromShelf(number);
-
-                }
-            }
-        }
-        return remainingCost;
-    }
 
     public void addToStrongBox(Resources res) {
         this.strongbox.add(res);
@@ -337,5 +313,64 @@ public class PersonalBoard {
 
     public void setGame(Game game){
         this.game = game;
+    }
+
+    public int getVP(){
+        int VP = 0;
+        VP += getVPFromDevCards();
+        VP += getVPfromFaithTrack();
+        VP += getVPfromActiveLeaders();
+        VP += getVPfromAllResources();
+        return VP;
+    }
+    private int getVPFromDevCards(){
+        int VP = 0;
+        for(DevCard card: ownedDevCards){
+            VP += card.getVictoryPoints();
+        }
+        return VP;
+    }
+
+    private int getVPfromFaithTrack(){
+        int VP = 0;
+        if ((0 <= faithPoints) && (faithPoints < 3))
+            VP =  0;
+        else if ((3 <= faithPoints) && (faithPoints < 6))
+            VP = 1;
+        else if ((6 <= faithPoints) && (faithPoints < 9))
+            VP = 2;
+        else if ((9 <= faithPoints) && (faithPoints < 12))
+            VP = 4;
+        else if ((12 <= faithPoints) && (faithPoints < 15))
+            VP = 6;
+        else if ((15 <= faithPoints) && (faithPoints < 18))
+            VP = 9;
+        else if ((18 <= faithPoints) && (faithPoints < 21))
+            VP = 12;
+        else if ((21 <= faithPoints) && (faithPoints < 24))
+            VP = 16;
+        else if ((24 <= faithPoints))
+            VP = 20;
+
+        if(popeAreaMap.get(PopeArea.FIRST)) VP += 2;
+        if(popeAreaMap.get(PopeArea.SECOND)) VP += 3;
+        if(popeAreaMap.get(PopeArea.THIRD)) VP += 4;
+
+        return VP;
+    }
+
+    private int getVPfromActiveLeaders(){
+        int VP = 0;
+        for(LeaderCard card: activeLeaderCards){
+            VP += card.getVictoryPoints();
+        }
+        return VP;
+    }
+
+    private int getVPfromAllResources(){
+        Resources res = getTotalResources();
+        int VP = 0;
+        VP += Integer.valueOf(res.sumOfValues()/5);
+        return VP;
     }
 }

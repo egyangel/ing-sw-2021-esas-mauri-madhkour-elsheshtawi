@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.SoloController;
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.network.client.ServerHandler;
 import it.polimi.ingsw.utility.messages.*;
 
 import java.io.IOException;
@@ -22,9 +21,10 @@ public class Server implements Runnable {
     private static int numberOfUsers = 0;
     private Map<Integer, String> userIDtoUserNames = new HashMap<>();
     private Map<Integer, ClientHandler> userIDtoHandlers;
+    private List<Socket> socketList = new ArrayList<>();
+    private ServerSocket serverSocket;
     private Controller controller;
     private Game game;
-    private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -39,7 +39,6 @@ public class Server implements Runnable {
 //        System.out.println("Enter server port number:");
 //        int portNumber = InputConsumer.getPortNumber(scanner);
         int portNumber = 3000; //for debug
-        ServerSocket serverSocket;
         try {
             serverSocket = new ServerSocket(portNumber);
         } catch (IOException e) {
@@ -52,6 +51,7 @@ public class Server implements Runnable {
         while (true) {
             try {
                 socket = serverSocket.accept();
+                socketList.add(socket);
                 System.out.println("New client request received : " + socket);
 
                 if (numberOfConnectedUsers == 0 || numberOfConnectedUsers < numberOfUsers) {
@@ -140,5 +140,17 @@ public class Server implements Runnable {
 
     public ClientHandler getClientHandler(Integer userID) {
         return userIDtoHandlers.get(userID);
+    }
+
+    public void closeAllAndExit(){
+        try {
+            for(Socket socket: socketList){
+                socket.close();
+            }
+            serverSocket.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        System.exit(0);
     }
 }
