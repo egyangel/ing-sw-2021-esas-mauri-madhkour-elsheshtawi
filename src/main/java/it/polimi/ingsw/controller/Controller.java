@@ -99,9 +99,9 @@ public class Controller implements Listener<VCEvent> {
     }
 
     private void debugInitializeStrongbox(){
-        Resources strongboxres = new Resources(1,1,1,1);;
+        Resources strongBoxRes = new Resources(10,10,10,10);
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-            game.getPersonalBoard(entry.getKey()).addToStrongBox(strongboxres);
+            game.getPersonalBoard(entry.getKey()).addToStrongBox(strongBoxRes);
             updateAboutStrongboxOfId(entry.getKey());
         }
     }
@@ -776,11 +776,13 @@ public class Controller implements Listener<VCEvent> {
      * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
      */
     private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
-
+        int i=0;
         game.getPersonalBoard(userID).changePlayerCard(context.getDiscardedPlayerCard());
-
-        game.getPersonalBoard(userID).increaseFaitPoint(context.getDiscardedPlayerCard().size());
-
+        while(i<context.getDiscardedPlayerCard().size()) {
+            if(context.getDiscardedPlayerCard().get(i))
+                game.getPersonalBoard(userID).increaseFaitPoint(+1);
+            i++;
+         }
 
     }
     /**
@@ -790,10 +792,6 @@ public class Controller implements Listener<VCEvent> {
      */
     private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
        checkLeaderActivationAction(userID,context);
-
-       game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
-       //game.getPersonalBoard(userID).changePlayerCard(context.getActiveLeaderCard());
-
 
     }
     /**
@@ -806,33 +804,34 @@ public class Controller implements Listener<VCEvent> {
         int discConvert;
         int firstCount = 0;
         int secondCount = 0;
-        List<LeaderCard> activeLeaderCards= new ArrayList<>();
+        List<Boolean> activeLeaderCards= new ArrayList<>();
         int i = 0;
         int j = 0;
         while (j < context.getLeadersToActivate().size()) {
-            if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.LEVELTWOCARD) {
+            if(context.getLeadersToActivate().get(j))
+            if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.LEVELTWOCARD) {
                 while (i < context.getOwnedCards().size()) {
-                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
+                    if (context.getPlayerCard().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
                             context.getOwnedCards().get(i).getLevel() == 2) {
                         activeLeaderCards.add(context.getLeadersToActivate().get(j));
                     }
                     i++;
                 }
             }
-            if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.RESOURCES) {
-                if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getLeadersToActivate().get(j).getRequirement().getResource().getOnlyType()) >= 5)) {
+            if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.RESOURCES) {
+                if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getPlayerCard().get(j).getRequirement().getResource().getOnlyType()) >= 5)) {
                     activeLeaderCards.add(context.getLeadersToActivate().get(j));
                 }
             } else {
-                if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.THREECARD) {
+                if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.THREECARD) {
                     discConvert = 1;
                 } else {
                     discConvert = 2;
                 }
                 while (i < game.getPersonalBoard(userID).getOwnedCard().size()) {
-                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
+                    if (context.getPlayerCard().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
                         firstCount++;
-                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(1).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
+                    if (context.getPlayerCard().get(j).getRequirement().getColor(1).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
                         secondCount++;
                     i++;
                 }
@@ -845,7 +844,9 @@ public class Controller implements Listener<VCEvent> {
             }
             j++;
         }
-       context.setActiveLeaderCard(activeLeaderCards);
+        context.setActiveLeaderCard(activeLeaderCards);
+        game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
+        game.getPersonalBoard(userID).changePlayerCard(activeLeaderCards);
     }
     /**
      * method that compute the total victory point of the player
