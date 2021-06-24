@@ -64,18 +64,18 @@ public class PersonalBoard {
     }
 
     private boolean putFromTop(Resources.ResType resType, int size) {
-        if (checkEnoughSize(0, size) && (checkSameType(0, resType) || warehouse[0].isEmpty())) {
+        if ((checkEnoughSize(0, size) && (checkSameType(0, resType)) || warehouse[0].isEmpty())) {
             warehouse[0].putResource(resType, size);
-        } else if (checkEnoughSize(1, size) && checkSameType(1, resType) || warehouse[1].isEmpty()) {
+        } else if ((checkEnoughSize(1, size) && checkSameType(1, resType)) || warehouse[1].isEmpty()) {
             warehouse[1].putResource(resType, size);
-        } else if (checkEnoughSize(2, size) && checkSameType(2, resType) || warehouse[2].isEmpty()) {
+        } else if ((checkEnoughSize(2, size) && checkSameType(2, resType)) || warehouse[2].isEmpty()) {
             warehouse[2].putResource(resType, size);
         } else return false;
         return true;
     }
 
     private boolean checkEnoughSize(int index, int size) {
-        return ((warehouse[index].getNumberOfElements()) + size <= warehouse[index].shelfSize());
+        return ((warehouse[index].getNumberOfElements()) + size <= warehouse[index].getShelfSize());
     }
 
     private boolean checkSameType(int index, Resources.ResType resType) {
@@ -184,6 +184,7 @@ public class PersonalBoard {
         Resources res = new Resources();
         res.add(getWarehouseResources());
         res.add(getStrongboxResources());
+        res.add(getExtraSlotResources());
         return res;
     }
 
@@ -197,6 +198,16 @@ public class PersonalBoard {
         Resources res = new Resources();
         for (Shelf shelf : warehouse) {
             res.add(shelf.getResource());
+        }
+        return res;
+    }
+
+    public Resources getExtraSlotResources(){
+        Resources res = new Resources();
+        for(LeaderCard card:activeLeaderCards){
+            if(card.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT){
+                res.add(card.getAbility().getResourcesAtSlot());
+            }
         }
         return res;
     }
@@ -232,26 +243,13 @@ public class PersonalBoard {
         return places;
     }
 
-    public void spendOneFromWarehouse(Resources.ResType resType) {
-        for (Shelf shelf : warehouse) {
-            if (shelf.getShelfResType().equals(resType)) {
-                shelf.removeOneFromShelf();
-                return;
-            }
-        }
-    }
-
-    public void spendOneFromStrongbox(Resources.ResType resType) {
-        strongbox.subtract(resType, 1);
-    }
-
     public void putDevCardOnSlot(DevCard card, DevSlot.slotPlace place) {
         int index = place.getIndexInBoard();
         devSlots[index].putDevCard(card);
     }
 
-    public DevCard getDevCardOnSlot(DevSlot place) {
-        int index = place.getPlace().getIndexInBoard();
+    public DevCard getDevCardOnSlot(DevSlot.slotPlace place) {
+        int index = place.getIndexInBoard();
         if(devSlots[index].isEmpty()){
             return null;
         }
@@ -317,12 +315,20 @@ public class PersonalBoard {
         return remainingCost;
     }
 
-    public void putResInStrongBox(Resources res) {
+    public void addToStrongBox(Resources res) {
         this.strongbox.add(res);
     }
 
     public void subtractFromStrongbox(Resources res) {
         this.strongbox.subtract(res);
+    }
+
+    public void subtractFromExtraSlot(Resources res){
+        for(LeaderCard card: activeLeaderCards){
+            if(card.getAbility().getAbilityType() == SpecialAbility.AbilityType.EXTRASLOT){
+                card.getAbility().subtractFromExtraSlot(res);
+            }
+        }
     }
 
     public void setStrongbox(Resources strongbox) {

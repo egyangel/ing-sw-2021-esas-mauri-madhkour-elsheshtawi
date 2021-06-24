@@ -14,16 +14,12 @@ public class BuyDevCardActionContext {
         // from client to server
         COLOR_LEVEL_CHOSEN,
         DEVSLOT_CHOSEN,
-        PAY_FROM_WHERE_CHOSEN,
         // from server to client
         CHOOSE_COLOR_LEVEL,
         EMPTY_DEVCARD_DECK_ERROR,
         NOT_ENOUGH_RES_FOR_DEVCARD_ERROR,
         UNSUITABLE_FOR_DEVSLOTS_ERROR,
         CHOOSE_DEV_SLOT,
-        CHOOSE_PAY_COST_FROM_WHERE,
-        NOT_ENOUGH_RES_IN_WAREHOUSE,
-        NOT_ENOUGH_RES_IN_STRONGBOX,
         COST_PAID_DEVCARD_PUT;
     }
     private ActionStep lastStep;

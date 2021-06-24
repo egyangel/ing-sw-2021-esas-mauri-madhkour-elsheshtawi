@@ -333,23 +333,15 @@ public class InputConsumer {
         String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
         out.println("Please enter one of the options: " + placeString);
         String input = in.nextLine().toUpperCase();
-        while (!placeList.contains(DevSlot.slotPlace.valueOf(input))) {
+        List<String> slotAsStrings = new ArrayList<>();
+        slotAsStrings.add((DevSlot.slotPlace.LEFT.name()));
+        slotAsStrings.add((DevSlot.slotPlace.CENTER.name()));
+        slotAsStrings.add((DevSlot.slotPlace.RIGHT.name()));
+        while(!slotAsStrings.contains(input) && !placeList.contains(DevSlot.slotPlace.valueOf(input))) {
             out.println("Invalid input.");
             out.println("Please enter one of the options: " + placeString);
             input = in.nextLine().toUpperCase();
         }
         return DevSlot.slotPlace.valueOf(input);
-    }
-
-    public static boolean getWorS(Scanner in, PrintWriter out) {
-        out.println("Enter 'W' for warehouse and 'S' for strongbox:");
-        String input = in.nextLine().toUpperCase();
-        while (!((input.equals("W")) || (input.equals("S")))) {
-            out.println("Invalid input.");
-            out.println("Enter 'W' for warehouse and 'S' for strongbox:");
-            input = in.nextLine().toUpperCase();
-        }
-        if (input.equals("W")) return true;
-        else return false;
     }
 }

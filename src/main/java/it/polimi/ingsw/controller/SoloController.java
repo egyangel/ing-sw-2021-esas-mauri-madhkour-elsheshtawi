@@ -10,7 +10,7 @@ import it.polimi.ingsw.utility.messages.*;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static it.polimi.ingsw.utility.messages.ActivateProdActionContext.ActionStep.CHOOSE_DEV_SLOTS;
+import static it.polimi.ingsw.utility.messages.ActivateProdAlternativeContext.ActionStep.CHOOSE_DEV_SLOTS_FOR_PROD;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.CHOOSE_COLOR_LEVEL;
 import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
 import static it.polimi.ingsw.utility.messages.LeaderActionContext.ActionStep.CHOOSE_ACTION;
