@@ -56,6 +56,7 @@ public class Controller implements Listener<VCEvent> {
             userIDtoVirtualViews.put(userID, virtualView);
             TurnManager.putUserID(userID);
         }
+        TurnManager.setGame(game);
         game.createGameObjects();
     }
     /**
@@ -386,22 +387,8 @@ public class Controller implements Listener<VCEvent> {
                 CVEvent cvEventSix = new CVEvent(SELECT_MINOR_ACTION);
                 userIDtoVirtualViews.get(userID).update(cvEventSix);
                 break;
-                //TODO Omer maybe it is better in the second way, they do the same works
-        /*
-                case BUY_DEVCARD_ACTION_ENDED:
-
-                case ACTIVATE_PROD_ACTION_ENDED:
-                // there is nothing to do when buy dev card ended
-                CVEvent cvEventFour = new CVEvent(SELECT_MINOR_ACTION);
-                userIDtoVirtualViews.get(userID).update(cvEventFour);
-                break;
-        */
-
             case END_TURN:
-                TurnManager.goToNextTurn();
-                Integer nextUserID = TurnManager.getCurrentPlayerID();
-                CVEvent cvEventThree = new CVEvent(SELECT_ALL_ACTION);
-                userIDtoVirtualViews.get(nextUserID).update(cvEventThree);
+                handleEndTurn(userID);
                 break;
         }
     }
@@ -610,9 +597,6 @@ public class Controller implements Listener<VCEvent> {
         updateAboutLeaderCardsOfId(userID); //todo add extra slot representation on CLI
         updateAboutDevSlotOfId(userID);
         context.setLastStep(COST_PAID_DEVCARD_PUT);
-        if(game.getPersonalBoard(userID).getOwnedCard().size()== 7) {
-            triggerTheEndGame(userID);
-        }
     }
     //handle the activation of production
     private void handleActivateDevCardAction(Integer userID, ActivateProdAlternativeContext context){
@@ -776,13 +760,11 @@ public class Controller implements Listener<VCEvent> {
      * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
      */
     private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
-        int i=0;
+
         game.getPersonalBoard(userID).changePlayerCard(context.getDiscardedPlayerCard());
-        while(i<context.getDiscardedPlayerCard().size()) {
-            if(context.getDiscardedPlayerCard().get(i))
-                game.getPersonalBoard(userID).increaseFaitPoint(+1);
-            i++;
-         }
+
+        game.getPersonalBoard(userID).increaseFaitPoint(context.getDiscardedPlayerCard().size());
+
 
     }
     /**
@@ -792,6 +774,10 @@ public class Controller implements Listener<VCEvent> {
      */
     private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
        checkLeaderActivationAction(userID,context);
+
+       game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
+       //game.getPersonalBoard(userID).changePlayerCard(context.getActiveLeaderCard());
+
 
     }
     /**
@@ -804,34 +790,33 @@ public class Controller implements Listener<VCEvent> {
         int discConvert;
         int firstCount = 0;
         int secondCount = 0;
-        List<Boolean> activeLeaderCards= new ArrayList<>();
+        List<LeaderCard> activeLeaderCards= new ArrayList<>();
         int i = 0;
         int j = 0;
         while (j < context.getLeadersToActivate().size()) {
-            if(context.getLeadersToActivate().get(j))
-            if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.LEVELTWOCARD) {
+            if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.LEVELTWOCARD) {
                 while (i < context.getOwnedCards().size()) {
-                    if (context.getPlayerCard().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
+                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
                             context.getOwnedCards().get(i).getLevel() == 2) {
                         activeLeaderCards.add(context.getLeadersToActivate().get(j));
                     }
                     i++;
                 }
             }
-            if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.RESOURCES) {
-                if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getPlayerCard().get(j).getRequirement().getResource().getOnlyType()) >= 5)) {
+            if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.RESOURCES) {
+                if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getLeadersToActivate().get(j).getRequirement().getResource().getOnlyType()) >= 5)) {
                     activeLeaderCards.add(context.getLeadersToActivate().get(j));
                 }
             } else {
-                if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.THREECARD) {
+                if (context.getLeadersToActivate().get(j).getRequirement().getType() == Requirement.reqType.THREECARD) {
                     discConvert = 1;
                 } else {
                     discConvert = 2;
                 }
                 while (i < game.getPersonalBoard(userID).getOwnedCard().size()) {
-                    if (context.getPlayerCard().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
+                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
                         firstCount++;
-                    if (context.getPlayerCard().get(j).getRequirement().getColor(1).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
+                    if (context.getLeadersToActivate().get(j).getRequirement().getColor(1).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
                         secondCount++;
                     i++;
                 }
@@ -844,37 +829,43 @@ public class Controller implements Listener<VCEvent> {
             }
             j++;
         }
-        context.setActiveLeaderCard(activeLeaderCards);
-        game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
-        game.getPersonalBoard(userID).changePlayerCard(activeLeaderCards);
-    }
-    /**
-     * method that compute the total victory point of the player
-     * @param userID player id
-     */
-
-    private void computeVictoryPoint(Integer userID) {
-
-        int respoint;
-        game.getPersonalBoard(userID).countVictoryPoints(game.getPersonalBoard(userID).getTurnPopeFavorTile());
-        respoint =game.getPersonalBoard(userID).getTotalResources().sumOfValues();
-        respoint = respoint/5;
-
-        game.getPersonalBoard(userID).countVictoryPoints(respoint);
-    }
-    /**
-     * method that trigger the event of the end of the game
-     * @param userID player id
-     */
-    private void  triggerTheEndGame(Integer userID) {
-
-        computeVictoryPoint(userID);
-
-        CVEvent cvEvent = new CVEvent(END_GAME);
-        userIDtoVirtualViews.get(userID).update(cvEvent);
-
+       context.setActiveLeaderCard(activeLeaderCards);
     }
 
+    protected void handleEndTurn(Integer userID){
+        boolean isEndTriggeredBefore = TurnManager.checkIfEndOfGame(userID);
+        boolean isEndTriggeredJustNow = TurnManager.checkIfEndTriggered(userID);
+        if(!isEndTriggeredBefore){
+            if(isEndTriggeredJustNow){
+                for(Integer aUserID: userIDs){
+                    CVEvent cvEvent = new CVEvent(END_GAME_TRIGGERED);
+                    userIDtoVirtualViews.get(aUserID).update(cvEvent);
+                }
+            }
+            TurnManager.goToNextTurn();
+            Integer nextUserID = TurnManager.getCurrentPlayerID();
+            CVEvent cvEvent = new CVEvent(SELECT_ALL_ACTION);
+            userIDtoVirtualViews.get(nextUserID).update(cvEvent);
+        } else {
+            int remainingTurns = TurnManager.getRemainingNumberOfTurns();
+            if (remainingTurns > 0){
+                TurnManager.goToNextTurn();
+                Integer nextUserID = TurnManager.getCurrentPlayerID();
+                CVEvent cvEventThree = new CVEvent(SELECT_ALL_ACTION);
+                userIDtoVirtualViews.get(nextUserID).update(cvEventThree);
+            } else {
+                Map<Integer, Integer> userIDtoVP = computeVictoryPointsForAll();
+                Map<String, Integer> usernametoVP = new HashMap<>();
+                for (Map.Entry<Integer, Integer> entry : userIDtoVP.entrySet()) {
+                    usernametoVP.put(userIDtoUsernames.get(entry.getKey()), entry.getValue());
+                }
+                updateAllAboutRanks(userIDtoVP);
+                updateAllAboutVictoryPoints(usernametoVP);
+                // TODO how to handle server - client connection end?
+                server.closeAllAndExit();
+            }
+        }
+    }
 
     public void handleGameMessage(Integer userID, Message msg) {
         userIDtoVirtualViews.get(userID).handleGameMessage(msg);
@@ -886,6 +877,40 @@ public class Controller implements Listener<VCEvent> {
         for(Integer userID: userIDs){
             game.getPersonalBoard(userID).giveVaticanReport(area);
             updateAboutFaithTrackofId(userID);
+        }
+    }
+
+    /**
+     * method that compute the total victory point of the player
+     */
+    protected Map<Integer,Integer> computeVictoryPointsForAll(){
+        Map<Integer, Integer> userIDtoVP = new HashMap<>();
+        for (Integer userID: userIDs){
+            int VP = game.getPersonalBoard(userID).getVP();
+            userIDtoVP.put(userID, VP);
+        }
+        return userIDtoVP;
+    }
+
+    protected void updateAllAboutRanks(Map<Integer,Integer> userIDtoVPMap){
+        List<Integer> VPlist = new ArrayList<>(userIDtoVPMap.values());
+        int maxVP = Collections.max(VPlist);
+        CVEvent cvEvent;
+        for (Map.Entry<Integer, Integer> entry : userIDtoVPMap.entrySet()) {
+            Integer userID = entry.getKey();
+            if(entry.getValue() == maxVP){
+                cvEvent = new CVEvent(CVEvent.EventType.END_RESULT, "You win!");
+            } else {
+                cvEvent = new CVEvent(CVEvent.EventType.END_RESULT, "You lost!");
+            }
+            userIDtoVirtualViews.get(userID).update(cvEvent);
+        }
+    }
+
+    protected void updateAllAboutVictoryPoints(Map<String,Integer> usernametoVPMap){
+        for(Integer userId: userIDs){
+            CVEvent cvEvent = new CVEvent(CVEvent.EventType.END_VP_COUNTED, usernametoVPMap);
+            userIDtoVirtualViews.get(userId).update(cvEvent);
         }
     }
 }

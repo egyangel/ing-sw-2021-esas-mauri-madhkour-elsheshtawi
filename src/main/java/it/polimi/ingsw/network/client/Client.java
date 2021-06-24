@@ -23,6 +23,7 @@ public class Client implements Runnable {
     private IView view;
     public static final int MIN_PORT = SERVER_MIN_PORT;
     public static final int MAX_PORT = SERVER_MAX_PORT;
+    private Socket socket;
 
     private Integer userID;
     private Map<Integer, String> userIDtoUserNames;
@@ -49,7 +50,6 @@ public class Client implements Runnable {
     }
 
     public void connectToServer(String ip, int portNumber) {
-        Socket socket;
         try {
             socket = new Socket(ip, portNumber);
         } catch (IOException e) {
@@ -99,6 +99,15 @@ public class Client implements Runnable {
 
     public Integer getUserID(){
         return userID;
+    }
+
+    public void closeServerConnection(){
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
     }
 
     // METHODS THAT WON'T BE USED
