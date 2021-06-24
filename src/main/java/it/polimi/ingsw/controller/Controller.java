@@ -100,9 +100,9 @@ public class Controller implements Listener<VCEvent> {
     }
 
     private void debugInitializeStrongbox(){
-        Resources strongboxres = new Resources(3,3,3,3);;
+        Resources strongBoxRes = new Resources(10,10,10,10);
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-            game.getPersonalBoard(entry.getKey()).addToStrongBox(strongboxres);
+            game.getPersonalBoard(entry.getKey()).addToStrongBox(strongBoxRes);
             updateAboutStrongboxOfId(entry.getKey());
         }
     }

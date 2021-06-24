@@ -150,21 +150,13 @@ public class PersonalBoard {
         return this.inactiveLeaderCards; }
 
     public void changePlayerCard(List<Boolean> Cards){
-        int j=0;
+        int j=Cards.size()-1;
 
-        int countDiscard = 0;
-//todo fix this, doesn't work properly
-        while (j < Cards.size()) {
+        while (j >= 0) {
             if (Cards.get(j).equals(true)) {
-                countDiscard++;
-
-
-                if (countDiscard == 2)
-                    inactiveLeaderCards.clear();
-                else
-                    inactiveLeaderCards.remove(j);
+                inactiveLeaderCards.remove(j);
             }
-            j++;
+            j--;
         }
 
     }

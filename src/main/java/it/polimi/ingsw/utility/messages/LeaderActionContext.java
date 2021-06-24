@@ -22,7 +22,7 @@ public class LeaderActionContext {
 
     private List<LeaderCard> playerCard = new ArrayList<>();
     private List<Boolean> discardedCard = new ArrayList<>();
-    private List<LeaderCard> leaderToActiveCards = new ArrayList<>();
+    private List<Boolean> leaderToActiveCards = new ArrayList<>();
     private List<LeaderCard> activeLeaderCard = new ArrayList<>();
     private ActionStep lastStep;
     private List<DevCard> ownedCards= new ArrayList<>();
@@ -45,30 +45,34 @@ public class LeaderActionContext {
     public List<Boolean> getDiscardedPlayerCard(){ return (this.discardedCard); }
 
     public void changePlayerCard(List<Boolean> Cards) {
-        int j = 0;
-        int countDiscard = 0;
-        while (j < Cards.size()) {
-            if (Cards.get(j).equals(true))
-                countDiscard++;
 
+        int j=Cards.size()-1;
 
-            if (countDiscard == 2)
-                playerCard.clear();
-            else
+        while (j >= 0) {
+            if (Cards.get(j).equals(true)) {
                 playerCard.remove(j);
-            j++;
+            }
+            j--;
         }
     }
-    public void setActiveLeaderCard(List<LeaderCard> Cards){
+    public void setActiveLeaderCard(List<Boolean> Cards){
 
-            playerCard.addAll(Cards);
+        int j=0;
+
+        while (j < Cards.size()) {
+            if (Cards.get(j).equals(true)) {
+                activeLeaderCard.add( playerCard.get(j));
+            }
+            j++;
+        }
+        //activeLeaderCard.addAll(Cards);
     }
     public List<LeaderCard> getActiveLeaderCard(){ return this.activeLeaderCard; }
 
-    public void setLeadersToActivate(List<LeaderCard> leaderToActiveCards){
+    public void setLeadersToActivate(List<Boolean> leaderToActiveCards){
         this.leaderToActiveCards = leaderToActiveCards;
     }
-    public List<LeaderCard> getLeadersToActivate(){ return this.leaderToActiveCards; }
+    public List<Boolean> getLeadersToActivate(){ return this.leaderToActiveCards; }
 
     public List<DevCard> getOwnedCards() {
         return ownedCards;

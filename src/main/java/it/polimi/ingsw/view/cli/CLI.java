@@ -801,10 +801,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * */
     public void chooseLeaderAction () {
 
+
         out.println("What Leader action do you want to make? ");
         out.println("[1]Discard,[2]Activation [3]both?  ");
         int numOfActionChosen = InputConsumer.getANumberBetween(in, out, 1, 3);
-        if(activateLeaderContext.getPlayerCard().size()>0)
+        if(activateLeaderContext.getPlayerCard().size()>0) {
             switch (numOfActionChosen) {
                 case 1:
                 case 3:
@@ -814,6 +815,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                     chooseLeaderActivationAction();
                     break;
             }
+        }else{
+            VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_ACTION_ENDED);
+            publish(vcEvent);
+        }
     }
 
     /**
@@ -861,14 +866,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * */
     public void chooseLeaderActivationAction () {
         int j = 0;
-        List<LeaderCard> activeLeaderCard = new ArrayList<>();
-        out.println("You can active  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
+        List<Boolean> activeLeaderCard = new ArrayList<>();
         if (activateLeaderContext.getPlayerCard().size() > 0) {
+            out.println("You can active  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
             out.println("Your Leader Card:");
             while (j < activateLeaderContext.getPlayerCard().size()) {
                 out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
-                if (InputConsumer.getYesOrNo(in, out))
-                    activeLeaderCard.add(activateLeaderContext.getPlayerCard().get(j));
+               // if (InputConsumer.getYesOrNo(in, out))
+                    activeLeaderCard.add(InputConsumer.getYesOrNo(in, out));
                 j++;
             }
         }
