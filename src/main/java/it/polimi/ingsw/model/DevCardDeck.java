@@ -13,8 +13,7 @@ public class DevCardDeck {
     private int level;
     private List<DevCard> stackOfDevCards = new ArrayList<>();
     /**
-     * Constructor
-     *
+     * Constructor of the deck it set the color of that deck and the level
      * */
     public DevCardDeck(DevCard.CardColor color, int level) {
         this.color = color;

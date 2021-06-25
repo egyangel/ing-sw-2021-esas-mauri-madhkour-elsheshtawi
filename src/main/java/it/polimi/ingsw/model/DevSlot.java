@@ -27,7 +27,10 @@ public class DevSlot {
     }
     private Deque<DevCard> devCards;
     private final slotPlace place;
-
+    /**
+     * constructor that set the place of the slot Left/center/right
+     * @param place it the position of the slot on personal board
+     * */
     public DevSlot(slotPlace place){
         this.place = place;
         devCards = new ArrayDeque<>();
@@ -46,7 +49,6 @@ public class DevSlot {
     }
     /**
      * if the slot is not empty return the top card of the slot
-
      * */
     public DevCard getTopDevCard(){
         if (this.devCards.isEmpty()) return null;

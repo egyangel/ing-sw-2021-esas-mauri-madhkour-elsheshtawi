@@ -125,8 +125,6 @@ public class DevCard {
 
     }
 
-//    public CliColors getColors(){return colors;  }
-//    public void setColors(CliColors colors){this.colors=colors;}
     public int getLevel() {
         return this.level;
     }
@@ -145,13 +143,6 @@ public class DevCard {
     public Resources getCost() {
         return this.cost;
     }
-
-//    @Override
-//    public String toString(){
-//
-//        return this.colors+"|"+face+"|"+CliColors.colorReset;
-//        //return "Color: " + color + " Level: " + level + " RHS: " + RHS + " LHS: " + LHS + " Cost: " + cost + " VP: " + victoryPoints;
-//    }
 
     public String describeDevCard(){
         StringBuilder stringBuilder = new StringBuilder();
@@ -181,11 +172,4 @@ public class DevCard {
         }
         return stringBuilder.toString();
     }
-
-
-
-
-
-
-
 }

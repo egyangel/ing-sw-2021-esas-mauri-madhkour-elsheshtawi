@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model;
-
+/**
+ * class that represent the shelf
+ * @author
+ *
+ * */
 
 public class Shelf {
     public enum shelfPlace{
@@ -18,7 +22,11 @@ public class Shelf {
     private int numberOfElements;
     private Resources.ResType resType;
 
-
+    /**
+     * constructor that initialize the shelf based on its position inside the warehouse
+     * @param place is the position of the shelf inside the warehouse
+     *
+     * */
     public Shelf(shelfPlace place) {
         this.place = place;
         if (place == shelfPlace.TOP) this.maxSize = 1;
@@ -26,7 +34,12 @@ public class Shelf {
         else this.maxSize = 3;
         numberOfElements = 0;
     }
-
+    /**
+     * method that put res inside the shelf, return the number of extra res that it cannot be put inside the shelf
+     * @param resType the type of the resource
+     * @param size the quantity of re type that the player want to put inside the shelf
+     *
+     * */
     public int putResource(Resources.ResType resType, int size){
         if (size == 0) return 0;
         this.resType = resType;
@@ -39,13 +52,20 @@ public class Shelf {
         }
         return discarded;
     }
-
+    /**
+     * method to be used in the game to returns -1 if different type tried to be put otherwise put res inside the shelf
+     * @param res  the resource that should be added
+     * */
     // method to be used in the game to returns -1 if different type tried to be put
     public int putResource(Resources res){
         if (!res.isThisOneType()) return -1;
         else return this.putResource(res.getOnlyType(), res.sumOfValues());
     }
 
+    /**
+     * method that handle the swap between two shelves w.r.t. the rule of the game and return the number of discarded extra res
+     * @param otherShelf  the shelf that has to be swapped with this
+     * */
     // modification of below method that returns discarded res number
     public int swapShelf(Shelf otherShelf){
         int thisMaxSize = this.maxSize;

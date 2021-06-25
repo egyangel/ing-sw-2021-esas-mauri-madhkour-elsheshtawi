@@ -8,23 +8,15 @@ public class LeaderCard {
     private int victoryPoint;
     private SpecialAbility ability;
 /**
- * Constructor set the param of the card object *
- *
+ * Constructor set the param of the leader card object
+ * @param requirement is the requirement for activation phase of a leader
+ * @param vicPoints  the pint of the card
+ * @param specialAbility the ability of the leader card
  * */
     public LeaderCard(Requirement requirement, Integer vicPoints, SpecialAbility specialAbility ){
         this.requirement = requirement;
         this.victoryPoint = vicPoints;
         this.ability = specialAbility;
-
-//        if(specialAbility. getEffect().equals(AbilityType.DISCOUNT))
-//            this.ability = new Discount(specialAbility);
-//        if(specialAbility. getEffect().equals(AbilityType.ADDPROD))
-//            this.ability = new AdditionalProduction(specialAbility);
-//        if(specialAbility. getEffect().equals(AbilityType.EXSTRASLOT))
-//            this.ability = new ExstraSlot(specialAbility);
-//        if(specialAbility. getEffect().equals(AbilityType.CONVERTWHITE))
-//            this.ability = new ConvertWhiteMarble(specialAbility);
-
     }
 
     public SpecialAbility getAbility() { return this.ability;  }

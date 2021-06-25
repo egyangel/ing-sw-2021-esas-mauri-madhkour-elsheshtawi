@@ -63,18 +63,13 @@ public class MarketTray {
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("The push of the marbles into the tray brought an IndexOut");
         }
-
     }
 
-    /* @require row >=1 && row <=3
-    @ ensure markettray.lenght().equals(\old(markettray.lenght())
-    @ && !\result.equals(NULL)
-    */
     /**
      * Method that handle the selection of the row
      * It change the tray (matrix) configuration by shifting on the left the element in that row,
      * The first(lefter one) goes out
-     *
+     * @param row is the row selected by the player
      * */
     public List<MarbleColor> selectRow(int row) {
         List<MarbleColor> resources = new ArrayList<>();
@@ -89,29 +84,29 @@ public class MarketTray {
         } else
             return null;
     }
-    /* @require column >=1&& column <=4 */
-    /**
+
+   /**
      * Method that handle the selection of the column
      * It change the tray (matrix) configuration by shifting the element in that column,
      * The first(TOp one) goes out
-     *
+     * @param column is the column selected by the player
      * */
-    public List<MarbleColor> selectColumn(int column) {
-        List<MarbleColor> resources = new ArrayList<>();
-        MarbleColor temp;
-        if (column > 0 && column < 5) {
-            temp = marketTray[0][column - 1];
-            for (int i = 0; i < row; i++) resources.add(marketTray[i][column - 1]);
-            for (int i = 0; i < row - 1; i++) marketTray[i][column - 1] = marketTray[i + 1][column - 1];
-            marketTray[row - 1][column - 1] = OutMarble;
-            OutMarble = temp;
-            return resources;
-        } else
-            return null;
-
-
-    }
-
+   public List<MarbleColor> selectColumn(int column) {
+       List<MarbleColor> resources = new ArrayList<>();
+       MarbleColor temp;
+       if (column > 0 && column < 5) {
+           temp = marketTray[0][column - 1];
+           for (int i = 0; i < row; i++) resources.add(marketTray[i][column - 1]);
+           for (int i = 0; i < row - 1; i++) marketTray[i][column - 1] = marketTray[i + 1][column - 1];
+           marketTray[row - 1][column - 1] = OutMarble;
+           OutMarble = temp;
+           return resources;
+       } else
+           return null;
+   }
+    /**
+     * method that describe the market tray, show how it look like during the game
+     * */
     public String describeMarketTray() {
         StringBuilder sb = new StringBuilder();
         sb.append("\u2554");
