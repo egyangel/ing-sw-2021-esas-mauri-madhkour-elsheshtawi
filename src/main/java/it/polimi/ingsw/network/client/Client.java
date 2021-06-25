@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.client;
 
 import com.google.gson.reflect.TypeToken;
-import it.polimi.ingsw.model.*;
+
 import it.polimi.ingsw.utility.messages.Message;
 import it.polimi.ingsw.view.IView;
 import it.polimi.ingsw.view.cli.CLI;
@@ -13,7 +13,7 @@ import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.Socket;
-import java.util.List;
+
 import java.util.Map;
 
 public class Client implements Runnable {

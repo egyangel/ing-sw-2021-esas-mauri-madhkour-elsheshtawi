@@ -4,9 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.SoloController;
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.network.client.ServerHandler;
 import it.polimi.ingsw.utility.messages.*;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Type;
@@ -36,12 +34,12 @@ public class Server implements Runnable {
     private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 
     public static void main(String[] args) {
-        if(args.length>0 ) {
+       /* if(args.length>0 ) {
             String portString = args[0];
             port = Integer.parseInt(portString);
         }else{
             port = DEFAULT_PORT;
-        }
+        }*/
         Server server = new Server();
         server.run();
     }
@@ -53,10 +51,10 @@ public class Server implements Runnable {
         //Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter server port number:");
 //        int portNumber = InputConsumer.getPortNumber(scanner);
-        //int portNumber = 30000; //for debug
-        System.out.println("Start on port : "+port);
+        int portNumber = 30000; //for debug
+        System.out.println("Start on port : "+portNumber);
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(portNumber);
         } catch (IOException e) {
             System.out.println("Can't open server socket");
             System.exit(1);

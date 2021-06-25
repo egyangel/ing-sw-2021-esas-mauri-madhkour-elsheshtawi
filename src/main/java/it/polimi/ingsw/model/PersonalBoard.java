@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import java.util.*;
 
 public class PersonalBoard {
-    private Object IllegalStateException;
 
     public enum PopeArea {
         FIRST,
@@ -62,7 +61,7 @@ public class PersonalBoard {
     public int putToWarehouse(Shelf.shelfPlace place, Resources res) {
         return warehouse[place.getIndexInWarehouse()].putResource(res);
     }
-
+    //Todo what does this method do
     private boolean putFromTop(Resources.ResType resType, int size) {
         if ((checkEnoughSize(0, size) && (checkSameType(0, resType)) || warehouse[0].isEmpty())) {
             warehouse[0].putResource(resType, size);
