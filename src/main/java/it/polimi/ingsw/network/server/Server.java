@@ -40,7 +40,7 @@ public class Server implements Runnable {
         Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter server port number:");
 //        int portNumber = InputConsumer.getPortNumber(scanner);
-        int portNumber = 3000; //for debug
+        int portNumber = 30000; //for debug
         try {
             serverSocket = new ServerSocket(portNumber);
         } catch (IOException e) {
