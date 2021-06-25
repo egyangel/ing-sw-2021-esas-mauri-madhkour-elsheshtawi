@@ -219,3 +219,8 @@ $RECYCLE.BIN/
 
 #Javadoc
 JavaDocPSP05/*
+
+
+/target/
+/shade/
+

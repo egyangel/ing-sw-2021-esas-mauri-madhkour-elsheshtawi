@@ -127,7 +127,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 //        out.println("Enter port number of the server:");
 //        int portNumber = InputConsumer.getPortNumber(in);
         String ip = "localhost";
-        int portNumber = 3000; //for debug
+        int portNumber = 30000; //for debug
         out.println("Connecting to server...");
         client.connectToServer(ip, portNumber);
     }
@@ -144,8 +144,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         Map<String, String> firstLoginMap = new HashMap<>();
         firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
         firstLoginMap.put("username", username);
-        Message loginmsg = new Message(Message.MsgType.REQUEST_FIRST_LOGIN, firstLoginMap);
-        client.sendToServer(loginmsg);
+        Message loginMsg = new Message(Message.MsgType.REQUEST_FIRST_LOGIN, firstLoginMap);
+        client.sendToServer(loginMsg);
     }
 
     @Override
