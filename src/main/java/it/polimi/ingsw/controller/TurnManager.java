@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.utility.messages.CVEvent;
 
 import java.util.*;
 
@@ -9,6 +8,7 @@ public class TurnManager {
     private static Integer currentPlayerIndex = 0;
     private static List<Integer> turnOrderUserID;
     private static Map<Integer, Boolean> userIDtoCheck = new HashMap<>();
+    private static Map<Integer, Boolean> userIDtoMajorAction = new HashMap<>();
     private static Game game;
     private static boolean endTriggeredAlready = false;
 
@@ -23,6 +23,14 @@ public class TurnManager {
             System.out.println("Turn related register problem occured!");
     }
 
+    public static void registerMajorActionDone(Integer userID){
+        userIDtoMajorAction.replace(userID, true);
+    }
+
+    public static boolean isMajorActionDone(Integer userID){
+        return userIDtoMajorAction.get(userID);
+    }
+
     public static boolean hasAllClientsResponded(){
         for (Boolean hasEnded: userIDtoCheck.values()){
             if (!hasEnded) return false;
@@ -33,27 +41,24 @@ public class TurnManager {
 
     public static void assignTurnOrder() {
         turnOrderUserID = new ArrayList<>(userIDtoCheck.keySet());
+        for(Integer userID: turnOrderUserID){
+            userIDtoMajorAction.put(userID, false);
+        }
         Collections.shuffle(turnOrderUserID);
     }
 
-    public static Integer getNextPlayerID(){
-
-        return turnOrderUserID.get(currentPlayerIndex+1);
-    }
-
-    public static Integer getCurrentPlayerID() {return turnOrderUserID.get(currentPlayerIndex);
-    }
-
-    public static Integer getCurrentPlayerIndex(){
-        return currentPlayerIndex;
+    public static Integer getInkwellUserID() {return turnOrderUserID.get(0);
     }
 
     public static Integer getOrderOfUserID(Integer userID){
         return turnOrderUserID.indexOf(userID) + 1;
     }
 
-    public static void goToNextTurn(){
+    public static Integer goToNextTurn(){
+        int currentPlayerID = turnOrderUserID.get(currentPlayerIndex);
+        userIDtoMajorAction.replace(currentPlayerID, false);
         currentPlayerIndex = (currentPlayerIndex + 1) % turnOrderUserID.size();
+        return turnOrderUserID.get(currentPlayerIndex);
     }
 
     public static void setGame(Game game1){
@@ -62,7 +67,7 @@ public class TurnManager {
 
     public static boolean checkIfEndTriggered(Integer userID){
         //TODO convert to original end criteria
-        boolean endByDevCard = (game.getPersonalBoard(userID).getOwnedCard().size()== 3);
+        boolean endByDevCard = (game.getPersonalBoard(userID).getOwnedCards().size()== 7);
         boolean endByFaithPoints = (game.getPersonalBoard(userID).getFaithPoints() == 24);
         if(endByDevCard || endByFaithPoints) {
             endTriggeredAlready = true;

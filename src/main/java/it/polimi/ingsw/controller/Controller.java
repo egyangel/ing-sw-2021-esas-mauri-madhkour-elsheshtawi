@@ -9,7 +9,6 @@ import it.polimi.ingsw.utility.messages.*;
 
 import java.lang.reflect.Type;
 import java.util.*;
-import static it.polimi.ingsw.utility.messages.LeaderActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.ActivateProdAlternativeContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
@@ -109,20 +108,20 @@ public class Controller implements Listener<VCEvent> {
 
     private void debugAutoChooseTwoLeadersToAll(){
         List<LeaderCard> list1 = new ArrayList<>();
-        Requirement requirement = new Requirement(new Resources(Resources.ResType.COIN,5));
-        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.COIN);
-        list1.add(new LeaderCard(requirement, 4, ability));
-        requirement = new Requirement(new Resources(Resources.ResType.SHIELD,5));
-        ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SERVANT);
-        list1.add(new LeaderCard(requirement, 4, ability));
+        Requirement requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.YELLOW, DevCard.CardColor.GREEN);
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SERVANT);
+        list1.add(new LeaderCard(requirement, 2, ability));
+        requirement = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.YELLOW, DevCard.CardColor.BLUE);
+        ability = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE, Resources.ResType.SERVANT);
+        list1.add(new LeaderCard(requirement, 5, ability));
 
         List<LeaderCard> list2 = new ArrayList<>();
-        requirement = new Requirement(new Resources(Resources.ResType.STONE,5));
-        ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.STONE);
-        list2.add(new LeaderCard(requirement, 4, ability));
-        requirement = new Requirement(new Resources(Resources.ResType.SERVANT,5));
+        requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.PURPLE);
         ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SHIELD);
-        list2.add(new LeaderCard(requirement, 4, ability));
+        list2.add(new LeaderCard(requirement, 2, ability));
+        requirement = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE);
+        ability = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE, Resources.ResType.SHIELD);
+        list2.add(new LeaderCard(requirement, 5, ability));
 
         List<List<LeaderCard>> twoList = new ArrayList<>();
         twoList.add(list1);
@@ -137,17 +136,53 @@ public class Controller implements Listener<VCEvent> {
 
     private void debugPutDevCardsOnSlots(){
         DevSlot.slotPlace place = DevSlot.slotPlace.LEFT;
-        Resources cost = new Resources(Resources.ResType.COIN,3);
-        Resources LHS = new Resources(Resources.ResType.SHIELD, 1);
-        LHS.add(Resources.ResType.STONE, 2);
-        Resources RHS = new Resources(Resources.ResType.SHIELD,1);
-        RHS.add(Resources.ResType.FAITH,1);
-        int VP = 4;
+        Resources cost = new Resources(Resources.ResType.SHIELD,2);
+        Resources LHS = new Resources(Resources.ResType.COIN, 1);
+//        LHS.add(Resources.ResType.STONE, 2);
+        Resources RHS = new Resources(Resources.ResType.FAITH,1);
+//        RHS.add(Resources.ResType.FAITH,1);
+        int VP = 1;
         int level = 1;
-        DevCard card = new DevCard(level, DevCard.CardColor.BLUE, LHS,RHS,cost, VP);
-        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-            game.getPersonalBoard(entry.getKey()).putDevCardOnSlot(card, place);
-            updateAboutDevSlotOfId(entry.getKey());
+        DevCard card = new DevCard(level, DevCard.CardColor.GREEN, LHS,RHS,cost, VP);
+
+        DevSlot.slotPlace place2 = DevSlot.slotPlace.CENTER;
+        Resources cost2 = new Resources(Resources.ResType.COIN,3);
+        Resources LHS2 = new Resources(Resources.ResType.SHIELD, 1);
+        LHS2.add(Resources.ResType.STONE, 2);
+        Resources RHS2 = new Resources(Resources.ResType.SHIELD,1);
+        RHS2.add(Resources.ResType.FAITH,1);
+        int VP2 = 4;
+        int level2 = 1;
+        DevCard card2 = new DevCard(level2, DevCard.CardColor.YELLOW, LHS2,RHS2,cost2, VP2);
+
+        DevSlot.slotPlace place3 = DevSlot.slotPlace.RIGHT;
+        Resources cost3 = new Resources(Resources.ResType.COIN,3);
+        Resources LHS3 = new Resources(Resources.ResType.SHIELD, 1);
+        LHS3.add(Resources.ResType.STONE, 2);
+        Resources RHS3 = new Resources(Resources.ResType.SHIELD,1);
+        RHS3.add(Resources.ResType.FAITH,1);
+        int VP3 = 4;
+        int level3 = 1;
+        DevCard card3 = new DevCard(level3, DevCard.CardColor.PURPLE, LHS3,RHS3,cost3, VP3);
+
+        List<DevCard> devCardList = new ArrayList<>();
+        devCardList.add(card);
+        devCardList.add(card2);
+        devCardList.add(card3);
+
+        List<DevSlot.slotPlace> placeList = new ArrayList<>();
+        placeList.add(place);
+        placeList.add(place2);
+        placeList.add(place3);
+
+        for (Integer userID: userIDs) {
+            int calls = 0;
+            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
+            calls++;
+            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
+            calls++;
+            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
+            updateAboutDevSlotOfId(userID);
         }
     }
 
@@ -178,10 +213,19 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that handle the begin of the game
      */
-    protected void beginTurn() {
-        Integer currentUserID = TurnManager.getCurrentPlayerID();
-        CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
-        userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
+    protected void beginMatch() {
+        Integer inkwellUserID = TurnManager.getInkwellUserID();
+        sendAllActionDisplay(inkwellUserID);
+    }
+
+    protected void sendAllActionDisplay(Integer userID){
+        CVEvent cvEvent = new CVEvent(SELECT_ALL_ACTION);
+        userIDtoVirtualViews.get(userID).update(cvEvent);
+    }
+
+    protected void sendMinorActionDisplay(Integer userID){
+        CVEvent cvEvent = new CVEvent(SELECT_MINOR_ACTION);
+        userIDtoVirtualViews.get(userID).update(cvEvent);
     }
     /**
      * method that show the initial personal board description
@@ -264,21 +308,7 @@ public class Controller implements Listener<VCEvent> {
      */
     protected void updateAboutLeaderCardsOfId(Integer userId){
         List<LeaderCard> activeLeaders = game.getPersonalBoard(userId).getActiveLeaderCards();
-        int j=0;
-        while(j< game.getPersonalBoard(userId).getActiveLeaderCards().size())
-        {
-            System.out.println("active"+game.getPersonalBoard(userId).getActiveLeaderCards().get(j));
-            j++;
-
-        }
         List<LeaderCard> inActiveLeaders = game.getPersonalBoard(userId).getInactiveLeaderCards();
-       /* j=0;
-        while(j< game.getPersonalBoard(userId).getInactiveLeaderCards().size())
-        {
-            System.out.println("inactiveControll"+game.getPersonalBoard(userId).getInactiveLeaderCards().get(j));
-            j++;
-
-        }*/
         MVEvent activeLeaderMVEvent = new MVEvent(userId, MVEvent.EventType.ACTIVE_LEADER_CARD_UPDATE, activeLeaders);
         game.updateAllAboutChange(activeLeaderMVEvent);
         MVEvent inActiveLeaderMVEvent = new MVEvent(userId, MVEvent.EventType.INACTIVE_LEADER_CARD_UPDATE, inActiveLeaders);
@@ -296,7 +326,7 @@ public class Controller implements Listener<VCEvent> {
                 Type type1 = new TypeToken<List<LeaderCard>>() {
                 }.getType();
                 List<LeaderCard> selectedCards = (List<LeaderCard>) vcEvent.getEventPayload(type1);
-                game.getPersonalBoard(userID).putSelectedLeaderCards(selectedCards);
+                game.getPersonalBoard(userID).getInactiveLeaderCards().addAll(selectedCards);
                 updateAboutLeaderCardsOfId(userID);
                 TurnManager.registerResponse(userID);
                 if (TurnManager.hasAllClientsResponded()) {
@@ -309,7 +339,7 @@ public class Controller implements Listener<VCEvent> {
                 updateAboutWarehouseOfId(userID);
                 TurnManager.registerResponse(userID);
                 if (TurnManager.hasAllClientsResponded()) {
-                    beginTurn();
+                    beginMatch();
                 }
                 break;
             case TAKE_RES_ACTION_SELECTED:
@@ -344,16 +374,38 @@ public class Controller implements Listener<VCEvent> {
                 ActivateProdAlternativeContext ActivateDevContext = (ActivateProdAlternativeContext) vcEvent.getEventPayload(ActivateProdAlternativeContext.class);
                 handleActivateDevCardAction(userID, ActivateDevContext);
                 break;
-            case ACTIVATE_LEADER_CONTEXT_SELECTED:
-                LeaderActionContext emptyActivateLeaderContext = new LeaderActionContext();
-                emptyActivateLeaderContext.setPlayerCard(game.getPersonalBoard(userID).getInactiveLeaderCards());
-                emptyActivateLeaderContext.setLastStep(CHOOSE_ACTION);
-                cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, emptyActivateLeaderContext);
+            case ACTIVATE_LEADER_SELECTED:
+                LeaderActionContext emptyLeaderActionContext = new LeaderActionContext();
+                emptyLeaderActionContext.setInactiveCards(game.getPersonalBoard(userID).getInactiveLeaderCards());
+                cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, emptyLeaderActionContext);
+                userIDtoVirtualViews.get(userID).update(cvEvent);
+                break;
+            case DISCARD_LEADER_SELECTED:
+                LeaderActionContext emptyLeaderActionContextTwo = new LeaderActionContext();
+                emptyLeaderActionContextTwo.setInactiveCards(game.getPersonalBoard(userID).getInactiveLeaderCards());
+                emptyLeaderActionContextTwo.setActiveCards(game.getPersonalBoard(userID).getActiveLeaderCards());
+                cvEvent = new CVEvent(DISCARD_LEADER_FILL_CONTEXT, emptyLeaderActionContextTwo);
                 userIDtoVirtualViews.get(userID).update(cvEvent);
                 break;
             case ACTIVATE_LEADER_CONTEXT_FILLED:
-                LeaderActionContext activateLeaderContext = (LeaderActionContext) vcEvent.getEventPayload(LeaderActionContext.class);
-                handleActivateLeaderAction(userID, activateLeaderContext);
+                LeaderActionContext leaderActionContext = (LeaderActionContext) vcEvent.getEventPayload(LeaderActionContext.class);
+                handleActivateLeaderAction(userID, leaderActionContext);
+                updateAboutLeaderCardsOfId(userID);
+                if (!TurnManager.isMajorActionDone(userID)){
+                    sendAllActionDisplay(userID);
+                } else {
+                    sendMinorActionDisplay(userID);
+                }
+                break;
+            case DISCARD_LEADER_CONTEXT_FILLED:
+                LeaderActionContext leaderActionContextTwo = (LeaderActionContext) vcEvent.getEventPayload(LeaderActionContext.class);
+                handleDiscardLeaderAction(userID, leaderActionContextTwo);
+                updateAboutLeaderCardsOfId(userID);
+                if (!TurnManager.isMajorActionDone(userID)){
+                    sendAllActionDisplay(userID);
+                } else {
+                    sendMinorActionDisplay(userID);
+                }
                 break;
             case TAKE_RES_ACTION_ENDED:
                 TakeResActionContext takeResContextTwo = (TakeResActionContext) vcEvent.getEventPayload(TakeResActionContext.class);
@@ -371,21 +423,17 @@ public class Controller implements Listener<VCEvent> {
                     }
                     userIDs.add(userID);
                 }
-                CVEvent cvEventTwo = new CVEvent(SELECT_MINOR_ACTION);
-                userIDtoVirtualViews.get(userID).update(cvEventTwo);
+                TurnManager.registerMajorActionDone(userID);
+                sendMinorActionDisplay(userID);
                 break;
             case BUY_DEVCARD_ACTION_ENDED:
                 // there is nothing to do when buy dev card ended
-                CVEvent cvEventFour = new CVEvent(SELECT_MINOR_ACTION);
-                userIDtoVirtualViews.get(userID).update(cvEventFour);
+                TurnManager.registerMajorActionDone(userID);
+                sendMinorActionDisplay(userID);
                 break;
             case ACTIVATE_PROD_ACTION_ENDED:
                 CVEvent cvEventFive = new CVEvent(SELECT_MINOR_ACTION);
-                userIDtoVirtualViews.get(userID).update(cvEventFive);
-                break;
-            case ACTIVATE_LEADER_ACTION_ENDED:
-                CVEvent cvEventSix = new CVEvent(SELECT_MINOR_ACTION);
-                userIDtoVirtualViews.get(userID).update(cvEventSix);
+                sendMinorActionDisplay(userID);
                 break;
             case END_TURN:
                 handleEndTurn(userID);
@@ -521,16 +569,6 @@ public class Controller implements Listener<VCEvent> {
         updateAboutWarehouseOfId(userID);
     }
 
-    protected void endTurn(Integer userId){
-        //TODO to implement all checks
-
-        TurnManager.registerResponse(userId);
-        TurnManager.goToNextTurn();
-        Integer currentUserID = TurnManager.getCurrentPlayerID();
-        CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
-        userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
-
-    }
     /**
      * method that based on the choice of the player related to buying development action showing the updated leader cards of the player
      * @param userID player id
@@ -742,104 +780,48 @@ public class Controller implements Listener<VCEvent> {
      * @param userID player id
      * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
      */
-    private void handleActivateLeaderAction(Integer userID, LeaderActionContext context){
-        switch (context.getLastStep()){
-            case DISCARD_LEADER_CARD:
-                handleDiscardLeaderChosen(userID, context);
-                context.setLastStep(END_LEADER_ACTION);
-                break;
-            case LEADER_CARD_ACTIVATED_CHOSEN:
-                handleActivationLeaderChosen(userID, context);
-                context.setLastStep(END_LEADER_ACTION);
-                break;
-            case LEADER_CARD_NOT_ACTIVATED_CHOSEN:
-                context.setLastStep(END_LEADER_ACTION);
-                break;
-        }
-
-        updateAboutLeaderCardsOfId(userID);
-        updateAboutFaithPointOfId(userID);
-        updateAboutFaithTrackofId(userID);
-        CVEvent cvEvent = new CVEvent(ACTIVATE_LEADER_FILL_CONTEXT, context);
-        userIDtoVirtualViews.get(userID).update(cvEvent);
-    }
-    /**
-     * method that handle the discard of a leader card.
-     * @param userID player id
-     * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
-     */
-    private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
-        int i=0;
-        game.getPersonalBoard(userID).changePlayerCard(context.getDiscardedPlayerCard());
-        while(i<context.getDiscardedPlayerCard().size()) {
-            if(context.getDiscardedPlayerCard().get(i))
-                game.getPersonalBoard(userID).increaseFaitPoint(1);
-            i++;
-        }
-    }
-    /**
-     * method that handle the activation of leader cards
-     * @param userID player id
-     * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
-     */
-    private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
-       checkLeaderActivationAction(userID,context);
-
-    }
-    /**
-     * methods that check if the requirements of leader cards  are satisfied for activation
-     * @param userID player id
-     * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
-     */
-    //todo for res requirement consider the possibility of extra slot of other leader cards
-    private void checkLeaderActivationAction (Integer userID, LeaderActionContext context){
-        int discConvert;
-        int firstCount = 0;
-        int secondCount = 0;
-        List<Boolean> activeLeaderCards= new ArrayList<>();
-        int i = 0;
-        int j = 0;
-        while (j < context.getLeadersToActivate().size()) {
-            if(context.getLeadersToActivate().get(j))
-                if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.LEVELTWOCARD) {
-
-                while (i < context.getOwnedCards().size()) {
-                    if (context.getPlayerCard().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) &&
-                            context.getOwnedCards().get(i).getLevel() == 2) {
-                        activeLeaderCards.add(context.getLeadersToActivate().get(j));
-                    }
-                    i++;
-                }
+    protected void handleActivateLeaderAction(Integer userID, LeaderActionContext context){
+        // using indexes of cards instead of card objects, to use the correct hashcode of the leader card object during removal
+        List<Integer> cardIndexToActivateList =  context.getSelectedInactiveCardIndexes();
+        List<LeaderCard> inactiveLeaders = game.getPersonalBoard(userID).getInactiveLeaderCards();
+        for(int i = 0; i < cardIndexToActivateList.size(); i++){
+            LeaderCard card = inactiveLeaders.get(cardIndexToActivateList.get(i));
+            boolean okeyToActivate = RequirementChecker.check(game.getPersonalBoard(userID), card);
+            if (okeyToActivate){
+                inactiveLeaders.remove(card);
+                game.getPersonalBoard(userID).getActiveLeaderCards().add(card);
             }
-                if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.RESOURCES) {
-                    if ((game.getPersonalBoard(userID).getTotalResources().getNumberOfType(context.getPlayerCard().get(j).getRequirement().getResource().getOnlyType()) >= 5)) {
-                        activeLeaderCards.add(context.getLeadersToActivate().get(j));
-                    }
-                } else {
-                    if (context.getPlayerCard().get(j).getRequirement().getType() == Requirement.reqType.THREECARD) {
-                        discConvert = 1;
-                    } else {
-                        discConvert = 2;
-                    }
-                    while (i < game.getPersonalBoard(userID).getOwnedCard().size()) {
-                        if (context.getPlayerCard().get(j).getRequirement().getColor(0).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
-                            firstCount++;
-                        if (context.getPlayerCard().get(j).getRequirement().getColor(1).equals(game.getPersonalBoard(userID).getOwnedCard().get(i).getColor()) && game.getPersonalBoard(userID).getOwnedCard().get(i).getLevel() == 1)
-                            secondCount++;
-                        i++;
-                    }
-                    if (firstCount >= 1 && secondCount >= 1 && discConvert == 1)
-                        activeLeaderCards.add(context.getLeadersToActivate().get(j));
-
-                    if (firstCount >= 2 && secondCount >= 1 && discConvert == 2)
-                        activeLeaderCards.add(context.getLeadersToActivate().get(j));
-
-                }
-            j++;
         }
-        context.setActiveLeaderCard(activeLeaderCards);
-        game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
-        game.getPersonalBoard(userID).changePlayerCard(activeLeaderCards);
+    }
+
+    protected void handleDiscardLeaderAction(Integer userID, LeaderActionContext context){
+        // using indexes of cards instead of card objects, to use the correct hashcode of the leader card object during removal
+        List<Integer> activeCardIndexToDiscardList =  context.getSelectedActiveCardIndexes();
+        List<Integer> inactiveCardIndexToDiscardList =  context.getSelectedInactiveCardIndexes();
+        List<LeaderCard> activeLeaders = game.getPersonalBoard(userID).getActiveLeaderCards();
+        List<LeaderCard> inactiveLeaders = game.getPersonalBoard(userID).getInactiveLeaderCards();
+        int removedCards = 0;
+        if(activeCardIndexToDiscardList.size() == 1){
+            LeaderCard card = activeLeaders.get(activeCardIndexToDiscardList.get(0));
+            activeLeaders.remove(card);
+            removedCards++;
+        } else if (activeCardIndexToDiscardList.size() == 2){
+            activeLeaders.clear();
+            removedCards += 2;
+        }
+        if(inactiveCardIndexToDiscardList.size() == 1){
+            LeaderCard card = inactiveLeaders.get(inactiveCardIndexToDiscardList.get(0));
+            inactiveLeaders.remove(card);
+            removedCards++;
+        } else if (inactiveCardIndexToDiscardList.size() == 2){
+            inactiveLeaders.clear();
+            removedCards += 2;
+        }
+        if(removedCards > 0){
+            game.getPersonalBoard(userID).increaseFaitPoint(removedCards);
+            updateAboutFaithPointOfId(userID);
+        }
+
     }
 
     protected void handleEndTurn(Integer userID){
@@ -852,17 +834,11 @@ public class Controller implements Listener<VCEvent> {
                     userIDtoVirtualViews.get(aUserID).update(cvEvent);
                 }
             }
-            TurnManager.goToNextTurn();
-            Integer nextUserID = TurnManager.getCurrentPlayerID();
-            CVEvent cvEvent = new CVEvent(SELECT_ALL_ACTION);
-            userIDtoVirtualViews.get(nextUserID).update(cvEvent);
+            sendAllActionDisplay(TurnManager.goToNextTurn());
         } else {
             int remainingTurns = TurnManager.getRemainingNumberOfTurns();
             if (remainingTurns > 0){
-                TurnManager.goToNextTurn();
-                Integer nextUserID = TurnManager.getCurrentPlayerID();
-                CVEvent cvEventThree = new CVEvent(SELECT_ALL_ACTION);
-                userIDtoVirtualViews.get(nextUserID).update(cvEventThree);
+                sendAllActionDisplay(TurnManager.goToNextTurn());
             } else {
                 Map<Integer, Integer> userIDtoVP = computeVictoryPointsForAll();
                 Map<String, Integer> usernametoVP = new HashMap<>();

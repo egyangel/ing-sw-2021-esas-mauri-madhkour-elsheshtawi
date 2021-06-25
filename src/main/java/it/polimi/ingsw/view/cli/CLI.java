@@ -7,7 +7,6 @@ import it.polimi.ingsw.utility.InputConsumer;
 import it.polimi.ingsw.utility.messages.*;
 import it.polimi.ingsw.view.IView;
 
-import static it.polimi.ingsw.utility.messages.LeaderActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.ActivateProdAlternativeContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.*;
 import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.*;
@@ -35,15 +34,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private TakeResActionContext takeResContext;
     private BuyDevCardActionContext buyDevCardContext;
     private ActivateProdAlternativeContext activateProdContext;
-    private LeaderActionContext activateLeaderContext;
+    private LeaderActionContext leaderActionContext;
     private CVEvent generalCVEvent;
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
     private String marketTrayDescription;
     private String devCardMatrixDescription;
     private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<Integer, PersonalBoardDescription>();
     private Map<Integer, String> userIDtoUsernames = new HashMap<Integer, String>();
-    private Map<String, Integer> resultMap;
-    private boolean majorActionDone;
 
     /**
      * Constructor of the class
@@ -70,7 +67,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayTurnAssign", this::displayTurnAssign);
         displayNameMap.put("displayAllActionSelection", this::displayAllActionSelection);
         displayNameMap.put("displayMinorActionSelection", this::displayMinorActionSelection);
-        displayNameMap.put("chooseLeaderAction", this::chooseLeaderAction);
+        displayNameMap.put("chooseLeaderToActivate", this::chooseLeaderToActivate);
+        displayNameMap.put("chooseLeaderToDiscard", this::chooseLeaderToDiscard);
         displayNameMap.put("chooseRowColumnNumber", this::chooseRowColumnNumber);
         displayNameMap.put("chooseShelvesToPut", this::chooseShelvesToPut);
         displayNameMap.put("chooseColorLevel", this::chooseColorLevel);
@@ -86,6 +84,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
         displayNameMap.put("chooseDevSlotsForProd", this::chooseDevSlotsForProd);
         displayNameMap.put("displayScoreBoard", this::displayScoreBoard);
+        displayNameMap.put("chooseWhiteConverters", this::chooseWhiteConverters);
 
         addNextDisplay("displayGreet");
         addNextDisplay("displaySetup");
@@ -261,22 +260,23 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      */
     public void displayAllActionSelection() {
         VCEvent vcEvent;
-        out.println("It is your turn now!");
+        out.println("\nIt is your turn now!");
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
-        out.println("[4] Activate a leader card");
-        out.println("[5] View market tray");
-        out.println("[6] View development card matrix");
-        out.println("[7] View warehouse");
-        out.println("[8] View strongbox");
-        out.println("[9] View development slots");
-        out.println("[10] View faith track");
-        out.println("[11] View leader cards");
-        out.println("[12] View other personal boards");
-        out.println("[13] End turn");
+        out.println("[4] View market tray");
+        out.println("[5] View development card matrix");
+        out.println("[6] View warehouse");
+        out.println("[7] View strongbox");
+        out.println("[8] View development slots");
+        out.println("[9] View faith track");
+        out.println("[10] View leader cards");
+        out.println("[11] Activate a leader card");
+        out.println("[12] Discard a leader card");
+        out.println("[13] View other personal boards");
+        out.println("[14] End turn");
         out.println("Enter the index of the action you want to take:");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 13);
+        int index = InputConsumer.getANumberBetween(in, out, 1, 14);
         switch (index) {
             case 1:
                 vcEvent = new VCEvent(TAKE_RES_ACTION_SELECTED);
@@ -291,42 +291,46 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 publish(vcEvent);
                 break;
             case 4:
-                vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
-                publish(vcEvent);
-                break;
-            case 5:
                 addNextDisplay("displayMarketTray");
                 addNextDisplay("displayAllActionSelection");
                 break;
-            case 6:
+            case 5:
                 addNextDisplay("displayDevCardMatrix");
                 addNextDisplay("displayAllActionSelection");
                 break;
-            case 7:
+            case 6:
                 addNextDisplay("displayWarehouse");
                 addNextDisplay("displayAllActionSelection");
                 break;
-            case 8:
+            case 7:
                 addNextDisplay("displayStrongbox");
                 addNextDisplay("displayAllActionSelection");
                 break;
-            case 9:
+            case 8:
                 addNextDisplay("displayDevSlots");
                 addNextDisplay("displayAllActionSelection");
                 break;
-            case 10:
+            case 9:
                 addNextDisplay("displayFaithTrack");
                 addNextDisplay("displayAllActionSelection");
                 break;
-            case 11:
+            case 10:
                 addNextDisplay("displayLeaderCards");
                 addNextDisplay("displayAllActionSelection");
                 break;
+            case 11:
+                vcEvent = new VCEvent(ACTIVATE_LEADER_SELECTED);
+                publish(vcEvent);
+                break;
             case 12:
+                vcEvent = new VCEvent(DISCARD_LEADER_SELECTED);
+                publish(vcEvent);
+                break;
+            case 13:
                 addNextDisplay("displayOtherPersonalBoards");
                 addNextDisplay("displayAllActionSelection");
                 break;
-            case 13:
+            case 14:
                 addNextDisplay("displayEndTurn");
                 break;
         }
@@ -337,57 +341,63 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      * action during the game. It is only a display method of the personal board
      */
     public void displayMinorActionSelection() {
-        out.println("Do you want to execute any other action?");
+        out.println("\nDo you want to execute any other action?");
         out.println("Enter the index of the action you want to take:");
         out.println("[1] View market tray");
-        out.println("[2] View warehouse");
-        out.println("[3] View strongbox");
-        out.println("[4] View development slots");
-        out.println("[5] View faith track");
-        out.println("[6] View leader cards");
-        out.println("[7] Perform a Leader action");
-        out.println("[8] View other personal boards");
-        out.println("[9] End Turn");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 9);
+        out.println("[2] View development card matrix");
+        out.println("[3] View warehouse");
+        out.println("[4] View strongbox");
+        out.println("[5] View development slots");
+        out.println("[6] View faith track");
+        out.println("[7] View leader cards");
+        out.println("[8] Activate a leader card");
+        out.println("[9] Discard a leader card");
+        out.println("[10] View other personal boards");
+        out.println("[11] End Turn");
+        int index = InputConsumer.getANumberBetween(in, out, 1, 11);
         switch (index) {
             case 1:
                 addNextDisplay("displayMarketTray");
                 addNextDisplay("displayMinorActionSelection");
                 break;
             case 2:
+                addNextDisplay("displayDevCardMatrix");
+                addNextDisplay("displayAllActionSelection");
+                break;
+            case 3:
                 addNextDisplay("displayWarehouse");
                 addNextDisplay("displayMinorActionSelection");
                 break;
-            case 3:
+            case 4:
                 addNextDisplay("displayStrongbox");
                 addNextDisplay("displayMinorActionSelection");
                 break;
-            case 4:
+            case 5:
                 addNextDisplay("displayDevSlots");
                 addNextDisplay("displayMinorActionSelection");
                 break;
-            case 5:
+            case 6:
                 addNextDisplay("displayFaithTrack");
                 addNextDisplay("displayMinorActionSelection");
                 break;
-            case 6:
+            case 7:
                 addNextDisplay("displayLeaderCards");
                 addNextDisplay("displayMinorActionSelection");
                 break;
-            case 7:
-                VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_SELECTED);
+            case 8:
+                VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_SELECTED);
                 publish(vcEvent);
                 break;
-            case 8:
+            case 9:
+                VCEvent vcEventTwo = new VCEvent(DISCARD_LEADER_SELECTED);
+                publish(vcEventTwo);
+                break;
+            case 10:
                 addNextDisplay("displayOtherPersonalBoards");
                 addNextDisplay("displayMinorActionSelection");
                 break;
-            case 9:
+            case 11:
                 addNextDisplay("displayEndTurn");
-                break;
-            case 10:
-                VCEvent vcEventTwo = new VCEvent(END_TURN);
-                publish(vcEventTwo);
                 break;
         }
     }
@@ -424,19 +434,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayEndTurn(){
         out.println("Ending turn...");
         VCEvent vcEvent = new VCEvent(END_TURN);
-        publish(vcEvent);
-    }
-
-    public void displayBuyDevActionEnd() {
-        out.println("Ending buy development card action...");
-        VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
-        publish(vcEvent);
-    }
-
-    public void displayActivationProdActionEnd() {
-        out.println("Ending activation production phase...");
-
-        VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_ACTION_ENDED);
         publish(vcEvent);
     }
 
@@ -778,109 +775,40 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
-    /**
-     * methods that handle the Leader Action based on the CV event and last step of activateLeaderContext that has been set
-     * in the server side after the player chose this action in his turn.This methods call the action that correspond to that event.
-     * */
-    //handle ActivateLeaderAction
-    private void routeActivateLeaderActionDisplay () {
-       switch (activateLeaderContext.getLastStep()) {
-            case CHOOSE_ACTION:
-                addNextDisplay("chooseLeaderAction");
-                break;
-            case END_LEADER_ACTION:
-                VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_ACTION_ENDED);
-                publish(vcEvent);
-                break;
+    public void chooseLeaderToActivate(){
+        List<LeaderCard> cardList = leaderActionContext.getInactiveCards();
+        List<Integer> cardIndexToActivateList = new ArrayList<>();
+        for(int i = 0; i < cardList.size(); i++){
+            out.println("Do you want to activate this leader card: " + cardList.get(i).describeLeaderCard());
+            boolean answer = InputConsumer.getYesOrNo(in, out);
+            if(answer)
+                cardIndexToActivateList.add(i);
         }
-    }
-
-    /**
-     * methods that handle the Leader Action. Only ask to the player which action between discard, activate or both and then based on the
-     * choice call the method that handle the choice.If the player choice to activate both first call the discard methods then the activation.
-     * */
-    public void chooseLeaderAction () {
-
-
-        out.println("What Leader action do you want to make? ");
-        out.println("[1]Discard,[2]Activation [3]both?  ");
-        int numOfActionChosen = InputConsumer.getANumberBetween(in, out, 1, 3);
-        if(activateLeaderContext.getPlayerCard().size()>0) {
-            switch (numOfActionChosen) {
-                case 1:
-                case 3:
-                    chooseDiscardLeaderAction(numOfActionChosen);
-                    break;
-                case 2:
-                    chooseLeaderActivationAction();
-                    break;
-            }
-        }else{
-            VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_ACTION_ENDED);
-            publish(vcEvent);
-        }
-    }
-
-    /**
-     * methods that handle the Discard Leader Action. Ask to the player which Cards want to discard, fill the activateLeaderContext.
-     * After the player fill the  context  it publish an VC(view to controller)
-     * THen server update the personal board based on the choice.
-     * @param numOfActionChosen  it is used to distinguish the discard action([1]) from the both action([3]).
-     *                            if both call then activation methods
-     * */
-    public void chooseDiscardLeaderAction(int numOfActionChosen ) {
-        int j=0;
-        //List<LeaderCard> discardedLeaderCard = new ArrayList<>();
-        List<Boolean> discardedLeaderCard = new ArrayList<>();
-
-        if (activateLeaderContext.getPlayerCard().size() > 0 ) {
-            out.println("You can discard  " +activateLeaderContext.getPlayerCard().size()+ "  leader cards ");
-            out.println("Your Leader Card:");
-            while (j < activateLeaderContext.getPlayerCard().size()) {
-                out.println("Do you want to discard this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
-                //if (InputConsumer.getYesOrNo(in, out))
-                    discardedLeaderCard.add(InputConsumer.getYesOrNo(in, out));
-                j++;
-            }
-        }
-        activateLeaderContext.setDiscardedPlayerCard(discardedLeaderCard);
-        activateLeaderContext.changePlayerCard(discardedLeaderCard);
-
-
-        activateLeaderContext.setLastStep(DISCARD_LEADER_CARD);
-        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_FILLED, activateLeaderContext);
+        leaderActionContext.setSelectedInactiveCardIndexes(cardIndexToActivateList);
+        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_FILLED, leaderActionContext);
         publish(vcEvent);
-
-
     }
-    /**
-     * methods that handle the Activation Leader Action. Ask to the player which Cards want to Activate based on the card that has in his hands,
-     * this methods used another one that check if the requirements are satisfied or not by the player ,
-     * fill the activateLeaderContext with thee choice.
-     * After the player fill the  context  it publish an VC(view to controller)
-     * THen server update the personal board based on the choice.
-     *
-     * */
-    public void chooseLeaderActivationAction () {
-        int j = 0;
-        List<Boolean> activeLeaderCard = new ArrayList<>();
-        if (activateLeaderContext.getPlayerCard().size() > 0) {
-            out.println("You can active  " + activateLeaderContext.getPlayerCard().size() + "  leader cards ");
-            out.println("Your Leader Card:");
-            while (j < activateLeaderContext.getPlayerCard().size()) {
-                out.println("Do you want to activate this Leader Card:" + "[" + (j + 1) + "] :" + activateLeaderContext.getPlayerCard().get(j));
-               // if (InputConsumer.getYesOrNo(in, out))
-                    activeLeaderCard.add(InputConsumer.getYesOrNo(in, out));
-                j++;
-            }
-        }
-        if (activeLeaderCard.size() > 0)
-            activateLeaderContext.setLastStep(LEADER_CARD_ACTIVATED_CHOSEN);
-        else
-            activateLeaderContext.setLastStep(LEADER_CARD_NOT_ACTIVATED_CHOSEN);
 
-        activateLeaderContext.setLeadersToActivate(activeLeaderCard);
-        VCEvent vcEvent = new VCEvent( ACTIVATE_LEADER_CONTEXT_FILLED, activateLeaderContext);
+    public void chooseLeaderToDiscard(){
+        List<LeaderCard> activeCardList = leaderActionContext.getActiveCards();
+        List<LeaderCard> inactiveCardList = leaderActionContext.getInactiveCards();
+        List<Integer> activeCardIndexToActivateList = new ArrayList<>();
+        List<Integer> inactiveCardIndexToActivateList = new ArrayList<>();
+        for(int i = 0; i < activeCardList.size(); i++){
+            out.println("Do you want to discard this active leader card: " + activeCardList.get(i).describeLeaderCard());
+            boolean answer = InputConsumer.getYesOrNo(in, out);
+            if(answer)
+                activeCardIndexToActivateList.add(i);
+        }
+        for(int i = 0; i < inactiveCardList.size(); i++){
+            out.println("Do you want to discard this inactive leader card: " + inactiveCardList.get(i).describeLeaderCard());
+            boolean answer = InputConsumer.getYesOrNo(in, out);
+            if(answer)
+                inactiveCardIndexToActivateList.add(i);
+        }
+        leaderActionContext.setSelectedActiveCardIndexes(activeCardIndexToActivateList);
+        leaderActionContext.setSelectedInactiveCardIndexes(inactiveCardIndexToActivateList);
+        VCEvent vcEvent = new VCEvent(DISCARD_LEADER_CONTEXT_FILLED, leaderActionContext);
         publish(vcEvent);
     }
 
@@ -893,7 +821,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
         client.closeServerConnection();
     }
-
 
     @Override
     public void update(Event event) {
@@ -911,7 +838,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private void handleCVEvent(CVEvent cvEvent){
         switch (cvEvent.getEventType()) {
             case SELECT_ALL_ACTION:
-                majorActionDone = false;
                 addNextDisplay("displayAllActionSelection");
                 break;
             case TAKE_RES_FILL_CONTEXT:
@@ -927,11 +853,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 routeActivateProdActionDisplay();
                 break;
             case ACTIVATE_LEADER_FILL_CONTEXT:
-                activateLeaderContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
-                routeActivateLeaderActionDisplay();
+                leaderActionContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
+                addNextDisplay("chooseLeaderToActivate");
+                break;
+            case DISCARD_LEADER_FILL_CONTEXT:
+                leaderActionContext = (LeaderActionContext) cvEvent.getEventPayload(LeaderActionContext.class);
+                addNextDisplay("chooseLeaderToDiscard");
                 break;
             case SELECT_MINOR_ACTION:
-                majorActionDone = true;
                 addNextDisplay("displayMinorActionSelection");
                 break;
             case CHOOSE_TWO_LEADER_CARD:

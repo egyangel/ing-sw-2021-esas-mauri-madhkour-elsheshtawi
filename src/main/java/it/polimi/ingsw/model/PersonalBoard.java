@@ -87,7 +87,7 @@ public class PersonalBoard {
 
 
     }
-    public  List<DevCard> getOwnedCard() {
+    public  List<DevCard> getOwnedCards() {
         return this.ownedDevCards;
     }
 
@@ -144,29 +144,25 @@ public class PersonalBoard {
         return temp;
     }
 
-    public void putSelectedLeaderCards(List<LeaderCard> selectedCards) { inactiveLeaderCards = selectedCards; }
     public List<LeaderCard> getInactiveLeaderCards() {
-
-        return this.inactiveLeaderCards; }
-
-    public void changePlayerCard(List<Boolean> Cards){
-        int j=Cards.size()-1;
-
-        while (j >= 0) {
-            if (Cards.get(j).equals(true)) {
-                inactiveLeaderCards.remove(j);
-            }
-            j--;
-        }
-
+        return this.inactiveLeaderCards;
     }
 
-    public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
-         this.activeLeaderCards.addAll(activeLeaderCards);
-    }
 
     public List<LeaderCard> getActiveLeaderCards() {
         return this.activeLeaderCards;
+    }
+
+    public void setInactiveLeaderCards(List<LeaderCard> inactiveLeaderCards) {
+        this.inactiveLeaderCards = inactiveLeaderCards;
+    }
+
+    //    public void setInactiveLeaderCards(List<LeaderCard> inactiveLeaderCards) {
+//        this.inactiveLeaderCards = inactiveLeaderCards;
+//    }
+
+    public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
+        this.activeLeaderCards = activeLeaderCards;
     }
 
     public Resources getTotalResources() {

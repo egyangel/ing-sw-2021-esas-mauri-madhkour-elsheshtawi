@@ -241,11 +241,15 @@ public class ObjectPrinter {
 
     public static String printLeaders(List<LeaderCard> list, boolean active){
         StringBuilder sb = new StringBuilder();
-        if (active) sb.append("Active Leader Cards: ");
-        else sb.append("Inactive Leader Cards: ");
-        for (LeaderCard leader: list){
-            sb.append("\n");
-            sb.append(leader.describeLeaderCard());
+        if (active) sb.append("Active leader cards: ");
+        else sb.append("Inactive leader cards: ");
+        if (list.isEmpty()){
+            sb.append("none");
+        } else {
+            for (LeaderCard leader: list){
+                sb.append("\n");
+                sb.append(leader.describeLeaderCard());
+            }
         }
         return sb.toString();
     }

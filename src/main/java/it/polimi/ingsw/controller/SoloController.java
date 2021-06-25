@@ -1,20 +1,12 @@
 package it.polimi.ingsw.controller;
 
-import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.enumclasses.SoloActionTokenType;
 import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.messages.*;
 
-import java.lang.reflect.Type;
 import java.util.*;
-
-import static it.polimi.ingsw.utility.messages.ActivateProdAlternativeContext.ActionStep.CHOOSE_DEV_SLOTS_FOR_PROD;
-import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionStep.CHOOSE_COLOR_LEVEL;
-import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
-import static it.polimi.ingsw.utility.messages.LeaderActionContext.ActionStep.CHOOSE_ACTION;
-import static it.polimi.ingsw.utility.messages.TakeResActionContext.ActionStep.CHOOSE_ROW_COLUMN;
 
 
 public class SoloController extends Controller {
@@ -108,21 +100,21 @@ public class SoloController extends Controller {
         }
         //todo Omer: I updated mv event about warehouse
         updateAboutWarehouseOfId(userID);
-        beginTurn();
+        beginMatch();
 
 
     }
 
     @Override
-    protected void beginTurn() {
+    protected void beginMatch() {
         if (alreadyStarted)
             return;
         alreadyStarted = true;
-        super.beginTurn();
+        super.beginMatch();
 
     }
 
-    @Override
+//    @Override
     protected void endTurn(Integer userId) {
         // TODO: to implement the end of the turn
         Integer currentIndex = actionTokensOrder.get(currentActionTokenIndex);
@@ -134,7 +126,7 @@ public class SoloController extends Controller {
         // todo Note from Omer: I deleted the commented out methods in two line of code below, they are updated automatically now
 //        game.sendMarketAndDevCardMatrixTo(currentUserID);
         //
-        Integer currentUserID = TurnManager.getCurrentPlayerID();
+        Integer currentUserID = TurnManager.getInkwellUserID();
         CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
         userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
     }
