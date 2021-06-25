@@ -1,24 +1,27 @@
 package it.polimi.ingsw.model;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ShelfTest {
     private  Shelf[] warehouse= new Shelf[3];
 
-    @Test
-    void putResource() {
+
+    @BeforeEach
+    void setUp() {
         warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
         warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
         warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
+    }
+    @AfterEach
+    void tearDown() {
+        warehouse  = null;
+
+    }
+    @Test
+    void putResource() {
+
 
         assertEquals(0,warehouse[0].putResource(Resources.ResType.STONE,1));
         assertEquals(1,warehouse[0].putResource(Resources.ResType.STONE,1));
@@ -37,16 +40,10 @@ class ShelfTest {
         assertEquals(1,warehouse[2].putResource(Resources.ResType.SHIELD,1));
     }
 
-    @BeforeAll
-    void buildWarehouse(){
-        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
-        warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
-        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
-    }
+
 
     @Test
     void swapShelf() {
-        buildWarehouse();
 
         warehouse[1].putResource(Resources.ResType.SHIELD, 1);
         warehouse[2].putResource(Resources.ResType.COIN,1);
@@ -67,7 +64,6 @@ class ShelfTest {
 
     @Test
     void isEmpty() {
-        buildWarehouse();
 
         assertTrue(warehouse[0].isEmpty());
         assertTrue(warehouse[1].isEmpty());
@@ -86,7 +82,7 @@ class ShelfTest {
 
     @Test
     void isFull() {
-        buildWarehouse();
+
 
         assertFalse(warehouse[0].isFull());
         assertFalse(warehouse[1].isFull());
@@ -109,7 +105,7 @@ class ShelfTest {
 
     @Test
     void numberOfElements() {
-        buildWarehouse();
+
 
         warehouse[0].putResource(Resources.ResType.COIN,1);
         warehouse[1].putResource(Resources.ResType.STONE,1);
@@ -130,7 +126,7 @@ class ShelfTest {
 
     @Test
     void getShelfResType() {
-        buildWarehouse();
+
 
         warehouse[1].putResource(Resources.ResType.SERVANT,2);
         warehouse[2].putResource(Resources.ResType.SHIELD,3);

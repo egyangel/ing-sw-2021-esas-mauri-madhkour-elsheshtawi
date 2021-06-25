@@ -144,7 +144,7 @@ public class App {
                 j++;
 
             }
-    }else{
+            }else{
             System.out.println("you don't have cards" );
         }
 

@@ -9,10 +9,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class MarketTrayTest {
-    MarketTray marketTest = new MarketTray();
-    List<MarbleColor> resources = new ArrayList<>();
-    List<MarbleColor> marbleColors = new ArrayList<>(Arrays.asList( MarbleColor.WHITE, MarbleColor.BLUE, MarbleColor.GREY, MarbleColor.YELLOW, MarbleColor.PURPLE, MarbleColor.RED));;
+    MarketTray marketTest;
+    List<MarbleColor> resources;
+    List<MarbleColor> marbleColors;
+    @BeforeEach
+    void setUp() {
+        marketTest = new MarketTray();
+        resources = new ArrayList<>();
+        marbleColors = new ArrayList<>(Arrays.asList( MarbleColor.WHITE, MarbleColor.BLUE, MarbleColor.GREY, MarbleColor.YELLOW, MarbleColor.PURPLE, MarbleColor.RED));;
 
+    }
+    @AfterEach
+    void tearDown() {
+        marketTest =null;
+        resources.clear();
+        marbleColors.clear();
+
+    }
     @Test
     //@Disabled("Not implemented yet")
     @DisplayName("selects which row to choose from the market tray")

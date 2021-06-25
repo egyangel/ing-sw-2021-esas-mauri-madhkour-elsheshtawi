@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -8,10 +9,24 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ResourcesTest {
-    private Map<Resources.ResType, Integer> values = new HashMap<>();
-    private Resources res= new Resources();
-    private List<Resources.ResType> draw= new ArrayList<>(Arrays.asList(Resources.ResType.STONE,Resources.ResType.COIN,Resources.ResType.SHIELD,Resources.ResType.SERVANT));
+    private Map<Resources.ResType, Integer> values;
+    private Resources res;
+    private List<Resources.ResType> draw;
 
+    @BeforeEach
+    void setUp() {
+        values = new HashMap<>();
+        res= new Resources();
+        draw= new ArrayList<>(Arrays.asList(Resources.ResType.STONE,Resources.ResType.COIN,Resources.ResType.SHIELD,Resources.ResType.SERVANT));
+
+    }
+    @AfterEach
+    void tearDown() {
+       values.clear();
+       res.clear();
+       draw.clear();
+
+    }
     @Test
     void testAdd() {
         int res1 = res.getNumberOfType(draw.get(0));
@@ -30,20 +45,19 @@ class ResourcesTest {
 
     @Test
     void testSubtract() {
-        int resBefore1,resBefore2;
-        int resAfter1,resAfter2;
+        int resBefore1;
+        int resAfter1;
 
         res.add(draw.get(0),3);
         res.add(draw.get(1),5);
 
         resBefore1 = res.getNumberOfType(draw.get(0));
-        resBefore2 = res.getNumberOfType(draw.get(1));
 
         res.subtract(draw.get(0),2);
         res.subtract(draw.get(1),5);
 
         resAfter1=res.getNumberOfType(draw.get(0));
-        resAfter2=res.getNumberOfType(draw.get(1));
+
 
         assertNotEquals(resBefore1, resAfter1);
         assertFalse(res.isThereType(draw.get(1)));

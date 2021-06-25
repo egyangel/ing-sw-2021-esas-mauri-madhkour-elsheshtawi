@@ -1,19 +1,42 @@
 package it.polimi.ingsw.model;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DevSlotTest {
-    private DevSlot slotL = new DevSlot(DevSlot.slotPlace.LEFT);
-    Resources Lhs = new Resources(Resources.ResType.STONE,2);
-    Resources Rhs= new Resources(Resources.ResType.SERVANT,1);
-    Resources cost= new Resources(Resources.ResType.STONE,2);
+    private DevSlot slotL;
+    Resources Lhs;
+    Resources Rhs;
+    Resources cost;
 
-    DevCard testCard = new DevCard(1, DevCard.CardColor.BLUE,Lhs,Rhs, cost,10);
-    DevCard testCard2 = new DevCard(2, DevCard.CardColor.YELLOW,Lhs,Rhs, cost,5);
-    DevCard testCard3 = new DevCard(3, DevCard.CardColor.GREEN,Lhs,Rhs, cost,8);
+    DevCard testCard;
+    DevCard testCard2;
+    DevCard testCard3;
+    @BeforeEach
+    void setUp() {
+        slotL = new DevSlot(DevSlot.slotPlace.LEFT);
+        Lhs = new Resources(Resources.ResType.STONE,2);
+        Rhs= new Resources(Resources.ResType.SERVANT,1);
+        cost= new Resources(Resources.ResType.STONE,2);
+        testCard = new DevCard(1, DevCard.CardColor.BLUE,Lhs,Rhs, cost,10);
+        testCard2 = new DevCard(2, DevCard.CardColor.YELLOW,Lhs,Rhs, cost,5);
+        testCard3 = new DevCard(3, DevCard.CardColor.GREEN,Lhs,Rhs, cost,8);
 
+    }
+    @AfterEach
+    void tearDown() {
+        slotL.clear();
+        Lhs.clear();
+        Rhs.clear();
+        cost.clear();
+        testCard = null;
+        testCard2 =null;
+        testCard3 = null;
+
+    }
     @Test
     void putDevCard() {
         assertTrue(slotL.isEmpty());
@@ -43,8 +66,6 @@ class DevSlotTest {
 
 
     }
-
-
 
     @Test
     void getTopDevCard() {

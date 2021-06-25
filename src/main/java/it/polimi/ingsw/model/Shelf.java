@@ -1,8 +1,5 @@
 package it.polimi.ingsw.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class Shelf {
     public enum shelfPlace{
@@ -11,7 +8,7 @@ public class Shelf {
         public int getIndexInWarehouse(){
             return indexInWarehouse;
         }
-        private shelfPlace(int index){
+        shelfPlace(int index){
             this.indexInWarehouse = index;
         }
     }

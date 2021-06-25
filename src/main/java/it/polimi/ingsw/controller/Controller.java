@@ -738,11 +738,6 @@ public class Controller implements Listener<VCEvent> {
                 handleActivationLeaderChosen(userID, context);
                 context.setLastStep(END_LEADER_ACTION);
                 break;
-            case BOTH_ACTIONS:
-                handleDiscardLeaderChosen(userID, context);
-                handleActivationLeaderChosen(userID, context);
-                context.setLastStep(END_LEADER_ACTION);
-                break;
             case LEADER_CARD_NOT_ACTIVATED_CHOSEN:
                 context.setLastStep(END_LEADER_ACTION);
                 break;
@@ -760,12 +755,13 @@ public class Controller implements Listener<VCEvent> {
      * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
      */
     private void  handleDiscardLeaderChosen(Integer userID, LeaderActionContext context) {
-
+        int i=0;
         game.getPersonalBoard(userID).changePlayerCard(context.getDiscardedPlayerCard());
-
-        game.getPersonalBoard(userID).increaseFaitPoint(context.getDiscardedPlayerCard().size());
-
-
+        while(i<context.getDiscardedPlayerCard().size()) {
+            if(context.getDiscardedPlayerCard().get(i))
+                game.getPersonalBoard(userID).increaseFaitPoint(1);
+            i++;
+        }
     }
     /**
      * method that handle the activation of leader cards
@@ -774,10 +770,6 @@ public class Controller implements Listener<VCEvent> {
      */
     private void  handleActivationLeaderChosen(Integer userID, LeaderActionContext context){
        checkLeaderActivationAction(userID,context);
-
-       game.getPersonalBoard(userID).setActiveLeaderCards(context.getActiveLeaderCard());
-       //game.getPersonalBoard(userID).changePlayerCard(context.getActiveLeaderCard());
-
 
     }
     /**

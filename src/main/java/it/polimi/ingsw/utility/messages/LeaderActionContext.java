@@ -2,9 +2,8 @@ package it.polimi.ingsw.utility.messages;
 
 import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 public class LeaderActionContext {
 
@@ -13,7 +12,6 @@ public class LeaderActionContext {
         LEADER_CARD_ACTIVATED_CHOSEN,
         LEADER_CARD_NOT_ACTIVATED_CHOSEN,
         DISCARD_LEADER_CARD,
-        BOTH_ACTIONS,
 
         // from server to client
         CHOOSE_ACTION,

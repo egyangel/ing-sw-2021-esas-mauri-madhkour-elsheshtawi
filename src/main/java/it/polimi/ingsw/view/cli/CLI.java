@@ -846,14 +846,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         activateLeaderContext.setDiscardedPlayerCard(discardedLeaderCard);
         activateLeaderContext.changePlayerCard(discardedLeaderCard);
 
-        if(numOfActionChosen==3 && discardedLeaderCard.size()<2){
-            activateLeaderContext.setLastStep(BOTH_ACTIONS);
-            chooseLeaderActivationAction();
-        }else {
-            activateLeaderContext.setLastStep(DISCARD_LEADER_CARD);
-            VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_FILLED, activateLeaderContext);
-            publish(vcEvent);
-        }
+
+        activateLeaderContext.setLastStep(DISCARD_LEADER_CARD);
+        VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_CONTEXT_FILLED, activateLeaderContext);
+        publish(vcEvent);
+
 
     }
     /**
