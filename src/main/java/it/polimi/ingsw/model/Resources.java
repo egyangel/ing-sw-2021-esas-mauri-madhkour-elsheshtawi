@@ -1,8 +1,12 @@
 package it.polimi.ingsw.model;
 
-import javax.naming.spi.ResolveResult;
 import java.util.*;
 
+/**
+ * Resources  class , it is the abstraction of the resources inside the game
+ * slot on the personal board of the player
+ * @author
+ * */
 public class Resources {
     public enum ResType {
         STONE("\u001B[37m[", "⌬]\u001B[0m"),
@@ -49,24 +53,38 @@ public class Resources {
         }
     }
     private Map<ResType, Integer> values = new HashMap<>();
-
+    /**
+     * method that add to the current res the res that is passed as argument
+     * @param resourcesToBeAdded res that has to be added to the current resources
+     * */
     public void add(Resources resourcesToBeAdded){
         for(ResType type: resourcesToBeAdded.getResTypes()){
             this.add(type, resourcesToBeAdded.getNumberOfType(type));
         }
     }
-
+    /**
+     * method that sub to the current res the res that is passed as argument
+     * @param resourcesToBeSubtracted res that has to be deleted from the current resources
+     * */
     public void subtract(Resources resourcesToBeSubtracted){
         for(ResType type: resourcesToBeSubtracted.getResTypes()){
             this.subtract(type, resourcesToBeSubtracted.getNumberOfType(type));
         }
     }
-
+    /**
+     * Development Slot  , it is the class that handle the Development
+     * slot on the personal board of the player
+     * @author
+     * */
     public void add(ResType type,Integer val){
         if (val <= 0) return;
         this.values.put(type, this.getNumberOfType(type) + val); //replaces by default if type exists before
     }
-
+    /**
+     * method that add to the current res a single res type with the amount of that res
+     * @param type res type that has to be added to the current resources
+     * @param val amount of the res that has to be added
+     * */
     public void subtract(ResType type,Integer val){
         if (this.getNumberOfType(type) > val){
             values.put(type, this.getNumberOfType(type) - val);
@@ -74,6 +92,9 @@ public class Resources {
             values.remove(type);
         }
     }
+    /**
+     * compute the total number of res inside the object, without count the res type
+     * */
 
     public int sumOfValues(){
         int sum = 0;
@@ -82,6 +103,7 @@ public class Resources {
         }
         return sum;
     }
+
 
     public List<ResType> getResTypes(){
         return new ArrayList<>(values.keySet());
@@ -102,14 +124,20 @@ public class Resources {
     public boolean isEmpty(){
         return values.isEmpty();
     }
-
+    /**
+     * check if inside this object there is only the param passed
+     * @param type is the res type to check
+     * */
     public boolean isThisTypeOnly(ResType type){
         if (isThereType(type) && (sumOfValues() == getNumberOfType(type)) )
             return true;
         else
             return false;
     }
+    /**
+     * check if inside this object there is only one res type
 
+     * */
     public boolean isThisOneType(){
         if (values.keySet().size() == 1)
             return true;
@@ -136,7 +164,10 @@ public class Resources {
             return values.keySet().iterator().next();
         else return null;
     }
-
+    /**
+     * method that check if this is smaller or Equal to the other Resources
+     * @param otherRes the resources that has to be compared with this
+     * */
     // true if smallerOrEqual.compareTo(bigger), SUBSETOF
     public boolean smallerOrEqual(Resources otherRes){
         for(ResType resType: Resources.ResType.values()){
@@ -146,7 +177,6 @@ public class Resources {
         }
         return true;
     }
-
     public boolean includes(Resources otherRes){
         for(ResType resType: Resources.ResType.values()){
             if (otherRes.getNumberOfType(resType) > this.getNumberOfType(resType)){

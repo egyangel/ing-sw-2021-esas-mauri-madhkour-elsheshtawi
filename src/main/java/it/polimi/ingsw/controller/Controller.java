@@ -598,7 +598,11 @@ public class Controller implements Listener<VCEvent> {
         updateAboutDevSlotOfId(userID);
         context.setLastStep(COST_PAID_DEVCARD_PUT);
     }
-    //handle the activation of production
+    /**
+     * method that based on the choice of the player related to buying development action showing the updated leader cards of the player
+     * @param userID player id
+     * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleActivateDevCardAction(Integer userID, ActivateProdAlternativeContext context){
         switch (context.getLastStep()){
             case DEVLSLOTS_CHOOSEN_FOR_PROD:
@@ -624,7 +628,11 @@ public class Controller implements Listener<VCEvent> {
         }
         context.setSlotMap(slotMap);
     }
-
+    /**
+     * method that fill the context with leader card with ability additional production if there are any on personal board
+     * @param userID player id
+     * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void setAvailableAddProdLeaders(Integer userID, ActivateProdAlternativeContext context){
         List<LeaderCard> leaderCardList = new ArrayList<>();
         List<LeaderCard> addProdLeaderList = new ArrayList<>();
@@ -688,7 +696,11 @@ public class Controller implements Listener<VCEvent> {
             context.setLastStep(PRODUCTION_DONE);
         }
     }
-
+    /**
+     * method that remove the the total cost of activation production from player's personal-board for the activation prodction
+     * @param userID player id
+     * @param totalCost is the cost of activation production
+     */
     private void payCostFromPersonalBoard(Integer userID, Resources totalCost){
         // automatic payment from strongbox
         Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
@@ -721,6 +733,8 @@ public class Controller implements Listener<VCEvent> {
             //this means there was extra resources used in the extra slot
             game.getPersonalBoard(userID).subtractFromExtraSlot(totalCost);
         }
+        //Todo Omer it is enough to clear the total cost. but i think it is not needed because the previous
+        // method the one that call this one each time create a new object.
         // maybe assert total cost = 0 here
     }
     /**

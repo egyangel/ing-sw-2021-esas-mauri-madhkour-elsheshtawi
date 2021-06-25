@@ -2,8 +2,18 @@ package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Class that represent the requirement of the leader cards
+ * @author
+ * */
 public class Requirement {
+    /**
+     * enum that represent the type of requirement
+     *   TWOCARD: for discount leader card
+     *   RESOURCES: for extra leader card
+     *   THREECARD: for white converter leader card
+     *   LEVELTWOCARD: for additional production leader card
+     * */
     public enum reqType{
         TWOCARD, RESOURCES, THREECARD, LEVELTWOCARD
     }
@@ -11,18 +21,31 @@ public class Requirement {
     private reqType reqtype;
     private List<DevCard.CardColor> colorList = new ArrayList<>();
     private Resources resources;
-
+    /**
+     * Constructor -> initialize the leader card with ability discount and  white converter
+     * @param reqtype  type of requirement
+     * @param colorOne the color of left req
+     * @param colorTwo the color of right req
+     * */
     public Requirement(reqType reqtype, DevCard.CardColor colorOne, DevCard.CardColor colorTwo){
         this.reqtype = reqtype;
         this.colorList.add(colorOne);
         this.colorList.add(colorTwo);
     }
+    /**
+     * Constructor -> initialize the leader card with ability additional production
+     * @param color  color of the req
 
+     * */
     public Requirement(DevCard.CardColor color){
         this.reqtype = reqType.LEVELTWOCARD;
         this.colorList.add(color);
     }
+    /**
+     * Constructor -> initialize the leader card with ability exstra slot
+     * @param resources the type and number of resources
 
+     * */
     public Requirement(Resources resources){
         this.reqtype = reqType.RESOURCES;
         this.resources = resources;

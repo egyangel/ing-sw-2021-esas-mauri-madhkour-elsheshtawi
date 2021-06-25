@@ -44,22 +44,31 @@ public class DevSlot {
     public void clear(){
         this.devCards.clear();
     }
+    /**
+     * if the slot is not empty return the top card of the slot
 
+     * */
     public DevCard getTopDevCard(){
         if (this.devCards.isEmpty()) return null;
         else return this.devCards.getLast();
     }
-
+    /**
+     * if the slot is not empty return the level top card of the slot
+     * */
     public int getLevelOfTopCard(){
         DevCard devCard = getTopDevCard();
         if (devCard == null) return 0;
         else return devCard.getLevel() ;
     }
-
+    /**
+     * return which dev slot is this
+     * */
     public DevSlot.slotPlace getPlace(){
         return this.place;
     }
-
+    /**
+     * add on top of the other cards inside this slot
+     * */
     public void putDevCard(DevCard card) {
         devCards.add(card);
     }
