@@ -140,7 +140,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String username = "omer";
         out.println("Choose number of players you would like to play with:");
 //        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
-        Integer numberOfPlayers = 2;
+        Integer numberOfPlayers = 1;
         Map<String, String> firstLoginMap = new HashMap<>();
         firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
         firstLoginMap.put("username", username);

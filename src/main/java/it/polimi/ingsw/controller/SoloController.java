@@ -135,11 +135,15 @@ public class SoloController extends Controller {
         switch (actionToken.getType()){
             case DISCARD_DEV_CARD:
                 this.game.discardLowerCard(actionToken.getColor(), 2);
+
+                // TODO SHOW "2 color card has been discarded, then show card matrix"
                 break;
             case MOVE_CROSS_TOKEN_TWO:
+                //TODO SHOW CROSSTOKENPOINTS
                 crossTokenPoints = crossTokenPoints + 2;
                 break;
             case MOVE_CROSS_TOKEN_ONE_SHELF:
+                //TODO SHOW CROSSTOKENPOINTS
                 crossTokenPoints = crossTokenPoints + 1;
                 shuffleActionTokenArray();
                 break;

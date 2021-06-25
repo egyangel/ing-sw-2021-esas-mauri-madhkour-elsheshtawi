@@ -94,15 +94,15 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public DevCard peekTopDevCard(DevCard.CardColor color, int level) {
-        DevCard card = devCardMatrix[level-1][color.ordinal()].peekTopCard();
+        DevCard card = devCardMatrix[level - 1][color.ordinal()].peekTopCard();
         return card;
     }
 
     public void removeTopDevCard(DevCard.CardColor color, int level) {
-        devCardMatrix[level-1][color.ordinal()].removeTopCard();
+        devCardMatrix[level - 1][color.ordinal()].removeTopCard();
     }
 
-    public MVEvent createDevCardMVEvent(){
+    public MVEvent createDevCardMVEvent() {
         List<DevCard> topDevCards = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
@@ -189,15 +189,63 @@ public class Game implements Publisher<MVEvent> {
         return false;
     }
 
+    public boolean hasEmptySlot() {
+        // TODO to check, i don't understand if a complete column  like devCardMatrix[i] vs   devCardMatrix[i][j]
+
+
+        /*
+         * devCardMatrix[i]
+         */
+        /*
+        for (int i = 0; i < this.devCardMatrix.length; i++) {
+            boolean isEmpty = true;
+            for (int j = 0; j < this.devCardMatrix[i].length; j++) {
+                if (this.devCardMatrix[i][j].getStackLegnth() != 0) {
+                    isEmpty = false;
+                }
+                if (isEmpty)
+                    return true;
+            }
+        }*/
+
+
+        /*
+         * devCardMatrix[i][j]
+         */
+        for (int i = 0; i < this.devCardMatrix.length; i++) {
+
+            for (int j = 0; j < this.devCardMatrix[i].length; j++) {
+                if (this.devCardMatrix[i][j].getStackLegnth() == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
     public void setController(Controller controller) {
         this.controller = controller;
     }
 
-    public void triggerVaticanReport(PersonalBoard.PopeArea area){
-        if (!popeAreaMapTrigger.get(area)){
+    public void triggerVaticanReport(PersonalBoard.PopeArea area) {
+        if (!popeAreaMapTrigger.get(area)) {
             popeAreaMapTrigger.replace(area, true);
             this.controller.takeVaticanReports(area);
         }
+    }
+
+    public boolean IsEndTriggered(int userID) {
+        //TODO convert to original end criteria
+        boolean endByFaithPoints = (getPersonalBoard(userID).getFaithPoints() == 24);
+        boolean endByDevCard = (getPersonalBoard(userID).getOwnedCards().size() == 7);
+        if (soloMode && getPersonalBoard(userID).getBlackCrossToken() == 24 && hasEmptySlot()) {
+            return true;
+        }
+        if (endByDevCard || endByFaithPoints) {
+            return true;
+        }
+        return false;
     }
 
     // DEBUG METHODS

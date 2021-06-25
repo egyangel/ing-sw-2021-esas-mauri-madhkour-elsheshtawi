@@ -12,27 +12,27 @@ public class TurnManager {
     private static Game game;
     private static boolean endTriggeredAlready = false;
 
-    public static void putUserID(Integer userID){
+    public static void putUserID(Integer userID) {
         userIDtoCheck.put(userID, false);
     }
 
-    public static void registerResponse(Integer userID){
-        if (!userIDtoCheck.get(userID)){
+    public static void registerResponse(Integer userID) {
+        if (!userIDtoCheck.get(userID)) {
             userIDtoCheck.replace(userID, true);
         } else
             System.out.println("Turn related register problem occured!");
     }
 
-    public static void registerMajorActionDone(Integer userID){
+    public static void registerMajorActionDone(Integer userID) {
         userIDtoMajorAction.replace(userID, true);
     }
 
-    public static boolean isMajorActionDone(Integer userID){
+    public static boolean isMajorActionDone(Integer userID) {
         return userIDtoMajorAction.get(userID);
     }
 
-    public static boolean hasAllClientsResponded(){
-        for (Boolean hasEnded: userIDtoCheck.values()){
+    public static boolean hasAllClientsResponded() {
+        for (Boolean hasEnded : userIDtoCheck.values()) {
             if (!hasEnded) return false;
         }
         userIDtoCheck.replaceAll((key, value) -> false);
@@ -41,58 +41,55 @@ public class TurnManager {
 
     public static void assignTurnOrder() {
         turnOrderUserID = new ArrayList<>(userIDtoCheck.keySet());
-        for(Integer userID: turnOrderUserID){
+        for (Integer userID : turnOrderUserID) {
             userIDtoMajorAction.put(userID, false);
         }
         Collections.shuffle(turnOrderUserID);
     }
 
-    public static Integer getInkwellUserID() {return turnOrderUserID.get(0);
+    public static Integer getInkwellUserID() {
+        return turnOrderUserID.get(0);
     }
 
-    public static Integer getOrderOfUserID(Integer userID){
+    public static Integer getOrderOfUserID(Integer userID) {
         return turnOrderUserID.indexOf(userID) + 1;
     }
 
-    public static Integer goToNextTurn(){
+    public static Integer goToNextTurn() {
         int currentPlayerID = turnOrderUserID.get(currentPlayerIndex);
         userIDtoMajorAction.replace(currentPlayerID, false);
         currentPlayerIndex = (currentPlayerIndex + 1) % turnOrderUserID.size();
         return turnOrderUserID.get(currentPlayerIndex);
     }
 
-    public static void setGame(Game game1){
+    public static void setGame(Game game1) {
         game = game1;
     }
 
-    public static boolean checkIfEndTriggered(Integer userID){
-        //TODO convert to original end criteria
-        boolean endByDevCard = (game.getPersonalBoard(userID).getOwnedCards().size()== 7);
-        boolean endByFaithPoints = (game.getPersonalBoard(userID).getFaithPoints() == 24);
-        if(endByDevCard || endByFaithPoints) {
-            endTriggeredAlready = true;
-            return true;
-        }
-        return false;
+    public static boolean checkIfEndTriggered(Integer userID) {
+        return endTriggeredAlready = game.IsEndTriggered(userID);
+
     }
 
-    public static boolean checkIfEndOfGame(Integer userID){
+    public static boolean checkIfEndOfGame(Integer userID) {
         return endTriggeredAlready;
     }
 
-    public static int getRemainingNumberOfTurns(){
+    public static int getRemainingNumberOfTurns() {
         return turnOrderUserID.size() - currentPlayerIndex - 1;
     }
 
 
     // TODO CONTINUE
+
     /**
      * method that trigger the event of the end of the game
+     *
      * @param userID player id
      */
-    private static void  triggerTheEndGame(Integer userID) {
+    private static void triggerTheEndGame(Integer userID) {
         // if the end is triggered after the player with inkwell played
-        if(currentPlayerIndex == 0) {
+        if (currentPlayerIndex == 0) {
 
         }
     }

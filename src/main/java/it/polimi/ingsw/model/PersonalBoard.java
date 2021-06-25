@@ -4,6 +4,14 @@ import java.util.*;
 
 public class PersonalBoard {
 
+    public int getBlackCrossToken() {
+        return blackCrossToken;
+    }
+
+    public void setBlackCrossToken(int blackCrossToken) {
+        this.blackCrossToken = blackCrossToken;
+    }
+
     public enum PopeArea {
         FIRST,
         SECOND,
@@ -21,6 +29,7 @@ public class PersonalBoard {
     private List<LeaderCard> inactiveLeaderCards;
     private List<LeaderCard> activeLeaderCards;
     private Map<PopeArea, Boolean> popeAreaMap;
+    private int blackCrossToken;
 
     private List<DevCard> ownedDevCards = new ArrayList<>();
 
@@ -44,7 +53,8 @@ public class PersonalBoard {
     public PersonalBoard(Integer userID, boolean solo) {
         this(userID);
         if (solo) {
-            // TODO Place Black CROSS
+            this.blackCrossToken = 0;
+
 
         }
     }
