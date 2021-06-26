@@ -491,9 +491,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String rowColumnNumber = InputConsumer.getMarketRowColumnIndex(in, out);
         char firstLetter = rowColumnNumber.charAt(0);
         int index = Integer.parseInt(String.valueOf(rowColumnNumber.charAt(2)));
-        if (firstLetter == 'R') {
+        if (firstLetter == 'r') {
             takeResContext.chooseRow(true);
-        } else if (firstLetter == 'C') {
+        } else if (firstLetter == 'c') {
             takeResContext.chooseRow(false);
         } else takeResContext.setErrorTrue();
         takeResContext.setIndex(index);

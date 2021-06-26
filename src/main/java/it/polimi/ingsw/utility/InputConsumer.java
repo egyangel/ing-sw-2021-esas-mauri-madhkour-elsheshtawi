@@ -137,26 +137,26 @@ public class InputConsumer {
     }
 
     public static String getMarketRowColumnIndex(Scanner in, PrintWriter out) {
-        out.println("[C-1] [C-2] [C-3] [C-4] [R-1] [R-2] [R-3]");
+        out.println("[c-1] [c-2] [c-3] [c-4] [r-1] [r-2] [r-3]");
         out.println("Enter column/row and index as shown above, indexes start at left column and top row:");
         String input;
-        input = in.nextLine().toUpperCase();
+        input = in.nextLine();
         try {
             char firstLetter = input.charAt(0);
             char midLetter = input.charAt(1);
             int number = Integer.parseInt(String.valueOf(input.charAt(2)));
-            while (!((firstLetter == 'C' || firstLetter == 'R') && (midLetter == '-') && (number > 0 && number < 5) && (!input.equals("R-4")))) {
+            while (!((firstLetter == 'c' || firstLetter == 'r') && (midLetter == '-') && (number > 0 && number < 5) && (!input.equals("r-4")))) {
                 out.println("Invalid input.");
-                out.println("Enter one of the inputs as shown: [C-1] [C-2] [C-3] [C-4] [R-1] [R-2] [R-3]");
-                input = in.nextLine().toUpperCase();
+                out.println("Enter one of the inputs as shown: [c-1] [c-2] [c-3] [c-4] [r-1] [r-2] [r-3]");
+                input = in.nextLine();
                 firstLetter = input.charAt(0);
                 midLetter = input.charAt(1);
                 number = Integer.parseInt(String.valueOf(input.charAt(2)));
             }
             return input;
         } catch (Exception $e) {
-            out.println("Invalid input. (tip: showd be composer of 3 charecter C or R + '-' + the number of the column or the row. EX: C-1)");
-            out.println("Enter one of the inputs as shown: [C-1] [C-2] [C-3] [C-4] [R-1] [R-2] [R-3]");
+            out.println("Invalid input. (tip: showd be composer of 3 character C or R + '-' + the number of the column or the row. EX: C-1)");
+            out.println("Enter one of the inputs as shown: [c-1] [c-2] [c-3] [c-4] [r-1] [r-2] [r-3]");
             return getMarketRowColumnIndex(in, out);
         }
 
@@ -165,152 +165,30 @@ public class InputConsumer {
 
     public static boolean getYesOrNo(Scanner in, PrintWriter out) {
         out.println("Please enter 'yes' or 'no':");
-        String input = in.nextLine().toUpperCase();
-        while (!(input.equals("YES") || (input.equals("NO")))) {
+        String input = in.nextLine();
+        while (!(input.equals("yes") || (input.equals("no")))) {
             out.println("Invalid input.");
             out.println("Please enter 'yes' or 'no':");
-            input = in.nextLine().toUpperCase();
+            input = in.nextLine();
         }
-        if (input.equals("YES")) return true;
+        if (input.equals("yes")) return true;
         else return false;
     }
 
-    public static String getSwapDiscardNo(Scanner in, PrintWriter out) {
-        out.println("Please enter one of the options: [SWAP] [DISCARD] [NO]");
-        String input = in.nextLine().toUpperCase();
-        while (!(input.equals("SWAP") || (input.equals("DISCARD")) || (input.equals("NO")))) {
-            out.println("Invalid input.");
-            out.println("Please enter 'SWAP' or 'DISCARD' or 'NO':");
-            input = in.nextLine().toUpperCase();
-        }
-        return input;
-    }
-
     public static Shelf.shelfPlace getShelfPlace(Scanner in, PrintWriter out) {
-        out.println("Please enter one of the options: [TOP] [MIDDLE] [BOTTOM]");
-        String input = in.nextLine().toUpperCase();
-        while (!(input.equals("TOP") || (input.equals("MIDDLE")) || (input.equals("BOTTOM")))) {
+        out.println("Please enter one of the options: [top] [middle] [bottom]");
+        String input = in.nextLine();
+        while (!(input.equals("top") || (input.equals("middle")) || (input.equals("bottom")))) {
             out.println("Invalid input.");
-            out.println("Please enter 'TOP' or 'MIDDLE' or 'BOTTOM':");
-            input = in.nextLine().toUpperCase();
+            out.println("Please enter 'top' or 'middle' or 'bottom':");
+            input = in.nextLine();
         }
-        return Shelf.shelfPlace.valueOf(input);
-    }
-
-    public static String getShelfOrDiscard(Scanner in, PrintWriter out) {
-        out.println("Please enter one of the options: [SHELF] [DISCARD]");
-        String input = in.nextLine().toUpperCase();
-        while (!(input.equals("SHELF") || (input.equals("DISCARD")))) {
-            out.println("Invalid input.");
-            out.println("Please enter 'SHELF' or 'DISCARD':");
-            input = in.nextLine().toUpperCase();
-        }
-        return input;
-    }
-
-    public static List<DevSlot> getDevSlotIndexs(Scanner in, PrintWriter out, int numberOfSlotAvailable, List<DevSlot> slotAvailable) {
-        int i = 0, j = 0;
-        String input;
-        List<DevSlot> slotChoosen = new ArrayList<>();
-
-        List<DevSlot.slotPlace> placeList = new ArrayList<>(Arrays.asList(DevSlot.slotPlace.LEFT, DevSlot.slotPlace.CENTER, DevSlot.slotPlace.RIGHT));
-        String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
-
-        out.println("How many slots do you want to activate(you have " + numberOfSlotAvailable + "  :  ");
-        out.println("Example inputs: [1] [2] [3]");
-
-        int numberOfSlots = Integer.parseInt(in.nextLine());
-        while ((numberOfSlots > numberOfSlotAvailable || numberOfSlots < 1)) {
-            out.println("Invalid input.");
-            out.println("Please enter number between 1 and 3");
-            numberOfSlots = Integer.parseInt(in.nextLine());
-        }
-        out.println("Please enter the slot/s that you want to activate: ");
-        out.println("Activable slots : ");
-        while (j < slotAvailable.size()) {
-            out.println(slotAvailable.get(j).getPlace());
-        }
-
-        while (i < numberOfSlots) {
-            input = in.nextLine().toUpperCase();
-            if (placeList.contains(DevSlot.slotPlace.getByName(input)) && !slotChoosen.contains(DevSlot.slotPlace.getByName(input)) && slotAvailable.contains(DevSlot.slotPlace.getByName(input))) {
-                slotChoosen.add(new DevSlot(DevSlot.slotPlace.getByName(input)));
-                i++;
-            } else {
-                out.println("Invalid input.");
-                out.println("Please enter the options: " + placeString);
-            }
-        }
-        return slotChoosen;
-    }
-
-    public static Resources chooseRhsLeaderCard(Scanner in, PrintWriter out, int numberOfCards) {
-        int i = 0;
-        String input;
-        Resources RHS = new Resources();
-        Resources temp = new Resources();
-
-        List<Resources.ResType> placeList = new ArrayList<>(Arrays.asList(Resources.ResType.COIN, Resources.ResType.SERVANT, Resources.ResType.SHIELD, Resources.ResType.STONE));
-        String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
-
-        out.println("Choose the resource that you want : ");
-
-        while (i < numberOfCards) {
-            input = in.nextLine().toUpperCase();
-            if (placeList.contains(Resources.ResType.getByName(input))) {
-                temp.add(Resources.ResType.getByName(input), 1);
-                RHS.add(temp);
-                i++;
-            } else {
-                out.println("Invalid input.");
-                out.println("Please enter the options: " + placeString);
-            }
-            temp.clear();
-        }
-        return RHS;
-    }
-
-    public static DevCard chooseBaseProdRes(Scanner in, PrintWriter out) {
-        int i = 0;
-        boolean approved = false;
-        String input;
-        Resources LHS = new Resources();
-        Resources RHS = new Resources();
-
-        List<Resources.ResType> placeList = new ArrayList<>(Arrays.asList(Resources.ResType.COIN, Resources.ResType.SERVANT, Resources.ResType.SHIELD, Resources.ResType.STONE));
-        String placeString = placeList.stream().map(Object::toString).collect(Collectors.joining(" "));
-
-        out.println("Choose two resources from shelves to convert : ");
-
-        while (i < 2) {
-            input = in.nextLine().toUpperCase();
-            if (placeList.contains(Resources.ResType.getByName(input))) {
-                LHS.add(Resources.ResType.getByName(input), 1);
-                i++;
-            } else {
-                out.println("Invalid input.");
-                out.println("Please enter the options: " + placeString);
-            }
-        }
-        out.println("Choose the resource that you want : ");
-
-
-        while (!approved) {
-            input = in.nextLine().toUpperCase();
-            if (placeList.contains(Resources.ResType.getByName(input))) {
-                RHS.add(Resources.ResType.getByName(input), 1);
-                approved = true;
-            } else {
-                out.println("Invalid input.");
-                out.println("Please enter the options: " + placeString);
-            }
-        }
-        return new DevCard(LHS, RHS);
+        return Shelf.shelfPlace.valueOf(input.toUpperCase());
     }
 
     public static String getColorAndLevel(Scanner in, PrintWriter out) {
         out.println("Enter the color and level of the development card you want to buy:");
-        out.println("Example inputs: [BLUE-1] [GREEN-2] [YELLOW-3] [PURPLE-1]");
+        out.println("Example inputs: [blue-1] [green-2] [yellow-3] [purple-1]");
         String input;
         input = in.nextLine().toUpperCase();
         String[] parts = input.split("-");
@@ -319,7 +197,7 @@ public class InputConsumer {
         int number = Integer.parseInt(level);
         while (!(DevCard.CardColor.contains(color) && (number >= 1) && (number <= 3))) {
             out.println("Invalid input, please enter an input as shown in examples without brackets");
-            out.println("Example inputs: [BLUE-1] [GREEN-2] [YELLOW-3] [PURPLE-1]");
+            out.println("Example inputs: [blue-1] [green-2] [yellow-3] [purple-1]");
             input = in.nextLine().toUpperCase();
             parts = input.split("-");
             color = parts[0];

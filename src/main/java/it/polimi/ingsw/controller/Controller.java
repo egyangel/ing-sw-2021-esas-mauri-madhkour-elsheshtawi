@@ -108,12 +108,16 @@ public class Controller implements Listener<VCEvent> {
 
     private void debugAutoChooseTwoLeadersToAll(){
         List<LeaderCard> list1 = new ArrayList<>();
-        Requirement requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.YELLOW, DevCard.CardColor.GREEN);
-        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SERVANT);
-        list1.add(new LeaderCard(requirement, 2, ability));
-        requirement = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.YELLOW, DevCard.CardColor.BLUE);
-        ability = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE, Resources.ResType.SERVANT);
-        list1.add(new LeaderCard(requirement, 5, ability));
+        Resources resources1 = new Resources();
+        resources1.add(Resources.ResType.COIN, 15);
+        Requirement requirement = new Requirement(resources1);
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.ADDPROD, Resources.ResType.STONE);
+        list1.add(new LeaderCard(requirement, 4, ability));
+        Resources resources2 = new Resources(0,5,0,0);
+//        resources2.add(Resources.ResType.COIN, 5);
+        Requirement requirement2 = new Requirement(resources2);
+        ability = new SpecialAbility(SpecialAbility.AbilityType.ADDPROD, Resources.ResType.COIN);
+        list1.add(new LeaderCard(requirement2, 4, ability));
 
         List<LeaderCard> list2 = new ArrayList<>();
         requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.PURPLE);
@@ -155,28 +159,43 @@ public class Controller implements Listener<VCEvent> {
         int level2 = 1;
         DevCard card2 = new DevCard(level2, DevCard.CardColor.YELLOW, LHS2,RHS2,cost2, VP2);
 
-        DevSlot.slotPlace place3 = DevSlot.slotPlace.RIGHT;
+        DevSlot.slotPlace place3 = DevSlot.slotPlace.LEFT;
         Resources cost3 = new Resources(Resources.ResType.COIN,3);
         Resources LHS3 = new Resources(Resources.ResType.SHIELD, 1);
         LHS3.add(Resources.ResType.STONE, 2);
         Resources RHS3 = new Resources(Resources.ResType.SHIELD,1);
         RHS3.add(Resources.ResType.FAITH,1);
         int VP3 = 4;
-        int level3 = 1;
-        DevCard card3 = new DevCard(level3, DevCard.CardColor.PURPLE, LHS3,RHS3,cost3, VP3);
+        int level3 = 2;
+        DevCard card3 = new DevCard(level3, DevCard.CardColor.GREEN, LHS3,RHS3,cost3, VP3);
+
+        DevSlot.slotPlace place4 = DevSlot.slotPlace.CENTER;
+        Resources cost4 = new Resources(Resources.ResType.COIN,3);
+        Resources LHS4 = new Resources(Resources.ResType.SHIELD, 1);
+        LHS4.add(Resources.ResType.STONE, 2);
+        Resources RHS4 = new Resources(Resources.ResType.SHIELD,1);
+        RHS4.add(Resources.ResType.FAITH,1);
+        int VP4 = 4;
+        int level4 = 2;
+        DevCard card4 = new DevCard(level4, DevCard.CardColor.YELLOW, LHS4,RHS4,cost4,VP4);
 
         List<DevCard> devCardList = new ArrayList<>();
         devCardList.add(card);
         devCardList.add(card2);
         devCardList.add(card3);
+        devCardList.add(card4);
 
         List<DevSlot.slotPlace> placeList = new ArrayList<>();
         placeList.add(place);
         placeList.add(place2);
         placeList.add(place3);
+        placeList.add(place4);
+
 
         for (Integer userID: userIDs) {
             int calls = 0;
+            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
+            calls++;
             game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
             calls++;
             game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
@@ -784,12 +803,25 @@ public class Controller implements Listener<VCEvent> {
         // using indexes of cards instead of card objects, to use the correct hashcode of the leader card object during removal
         List<Integer> cardIndexToActivateList =  context.getSelectedInactiveCardIndexes();
         List<LeaderCard> inactiveLeaders = game.getPersonalBoard(userID).getInactiveLeaderCards();
-        for(int i = 0; i < cardIndexToActivateList.size(); i++){
-            LeaderCard card = inactiveLeaders.get(cardIndexToActivateList.get(i));
+        if (cardIndexToActivateList.size() == 1){
+            LeaderCard card = inactiveLeaders.get(cardIndexToActivateList.get(0));
             boolean okeyToActivate = RequirementChecker.check(game.getPersonalBoard(userID), card);
             if (okeyToActivate){
                 inactiveLeaders.remove(card);
                 game.getPersonalBoard(userID).getActiveLeaderCards().add(card);
+            }
+        } else if (cardIndexToActivateList.size() == 2){
+            LeaderCard cardOne = inactiveLeaders.get(0);
+            LeaderCard cardTwo = inactiveLeaders.get(1);
+            boolean okeyToActivateOne = RequirementChecker.check(game.getPersonalBoard(userID), cardOne);
+            boolean okeyToActivateTwo = RequirementChecker.check(game.getPersonalBoard(userID), cardTwo);
+            if (okeyToActivateOne){
+                inactiveLeaders.remove(cardOne);
+                game.getPersonalBoard(userID).getActiveLeaderCards().add(cardOne);
+            }
+            if (okeyToActivateTwo){
+                inactiveLeaders.remove(cardTwo);
+                game.getPersonalBoard(userID).getActiveLeaderCards().add(cardTwo);
             }
         }
     }
