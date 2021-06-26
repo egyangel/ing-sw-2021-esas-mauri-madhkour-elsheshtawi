@@ -12,6 +12,7 @@ public class DevCardDeck {
     private DevCard.CardColor color;
     private int level;
     private List<DevCard> stackOfDevCards = new ArrayList<>();
+
     /**
      * Constructor of the deck it set the color of that deck and the level
      * */
@@ -20,6 +21,9 @@ public class DevCardDeck {
         this.level = level;
     }
 
+    public int getStackLegnth(){
+        return this.stackOfDevCards.size();
+    }
     public void putCard(DevCard card) {
         stackOfDevCards.add(card);
     }

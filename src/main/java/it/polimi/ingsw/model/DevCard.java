@@ -153,6 +153,8 @@ public class DevCard {
         stringBuilder.append("Prod: " + LHS.describeResource() + " —> " + RHS.describeResource());
         stringBuilder.append(", ");
         stringBuilder.append("VP: " + victoryPoints);
+        stringBuilder.append(", ");
+        stringBuilder.append("Level:" + this.getLevel());
         return stringBuilder.toString();
     }
 

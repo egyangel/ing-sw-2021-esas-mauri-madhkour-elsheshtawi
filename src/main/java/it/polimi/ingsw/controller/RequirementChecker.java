@@ -1,9 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.DevCard;
-import it.polimi.ingsw.model.LeaderCard;
-import it.polimi.ingsw.model.PersonalBoard;
-import it.polimi.ingsw.model.Requirement;
+import it.polimi.ingsw.model.*;
 
 import java.util.*;
 
@@ -25,10 +22,17 @@ public class RequirementChecker {
                 result = checkForTwoColors();
                 break;
             case THREECARD:
+                setColorsOfReq(requirement);
+                setDevCardList(board);
+                setDevCardColorList();
+                result = checkForThreeColors();
                 break;
             case LEVELTWOCARD:
+                setDevCardList(board);
+                result = checkForLevelTwo(requirement);
                 break;
             case RESOURCES:
+                result = checkForResources(requirement, board);
                 break;
         }
         return result;
@@ -66,5 +70,43 @@ public class RequirementChecker {
         Set<Boolean> resultSet = new HashSet<>(colorToResult.values());
         if(resultSet.contains(false)) return false;
         else return true;
+    }
+
+    private static boolean checkForThreeColors(){
+        colorToResult = new HashMap<>();
+        colorToResult.put(colorOne, false);
+        colorToResult.put(colorTwo, false);
+        int calls = 0;
+        for(DevCard.CardColor color: colorList){
+            if (color == colorOne){
+                calls++;
+                if(calls == 2) {
+                    colorToResult.replace(colorOne, true);
+                }
+            }
+            if (color == colorTwo){
+                colorToResult.replace(colorTwo, true);
+            }
+        }
+        Set<Boolean> resultSet = new HashSet<>(colorToResult.values());
+        if(resultSet.contains(false)) return false;
+        else return true;
+    }
+
+    private static boolean checkForLevelTwo(Requirement req){
+        for(DevCard card: devCardList){
+            if((card.getColor() == req.getColor(0)) && (card.getLevel() == 2)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean checkForResources(Requirement req, PersonalBoard board){
+        Resources reqres = req.getResource();
+        Resources totalRes = board.getTotalResources();
+        if(totalRes.includes(reqres))
+            return true;
+        return false;
     }
 }
