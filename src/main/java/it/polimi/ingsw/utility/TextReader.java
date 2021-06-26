@@ -9,7 +9,7 @@ public class TextReader {
 
     public  String readMyText(String fname) {
 
-        InputStream is = null;
+        InputStream is;
         is = this.getClass().getClassLoader().getResourceAsStream(fname);
         BufferedReader buf = new BufferedReader(new InputStreamReader(is));
 

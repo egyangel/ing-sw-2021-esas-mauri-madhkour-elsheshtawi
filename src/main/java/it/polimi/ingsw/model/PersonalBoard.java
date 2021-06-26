@@ -135,17 +135,6 @@ public class PersonalBoard {
         popeAreaMap.replace(area, Boolean.TRUE);
         // create a MV message inside Game
     }
-    public int getTurnPopeFavorTile() {
-        int temp=0;
-
-        for (Map.Entry<PopeArea, Boolean> entry : popeAreaMap.entrySet()) {
-            if (entry.getKey() == PopeArea.FIRST && entry.getValue()) temp += 2;
-            if (entry.getKey() == PopeArea.SECOND && entry.getValue()) temp += 3;
-            if (entry.getKey() == PopeArea.THIRD && entry.getValue()) temp += 4;
-        }
-
-        return temp;
-    }
 
     public List<LeaderCard> getInactiveLeaderCards() {
         return this.inactiveLeaderCards;
@@ -201,12 +190,16 @@ public class PersonalBoard {
         }
         return res;
     }
-
+//todo Omer you have to check that the discount is on that res type,
+// i mean if the discount is related stone and the card doesn't need of coin you cannot apply a disconut,
+// there isn't a check either here and inside res class in the subtract method
     public boolean isThereEnoughRes(DevCard card) {
         Resources totalRes = getTotalResources();
         Resources cost = new Resources();
         cost.add(card.getCost());
         for(LeaderCard leaderCard: activeLeaderCards){
+           //this how should be
+            // if(leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT && card.getCost().isThereType(leaderCard.getAbility().getResType()))
             if(leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT){
                 Resources.ResType discountType = leaderCard.getAbility().getResType();
                 cost.subtract(discountType,1);

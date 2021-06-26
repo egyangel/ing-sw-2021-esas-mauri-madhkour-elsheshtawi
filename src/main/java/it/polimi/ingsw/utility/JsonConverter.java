@@ -26,7 +26,7 @@ public class JsonConverter {
     public static List<DevCard> deserializeDevCards(){
         TextReader textReader= new TextReader();
         System.out.println("deserializeDevCards");
-        List<DevCard> cards = null;
+        List<DevCard> cards;
 
         String fileAsString = textReader.readMyText("DevCards.json");
        // System.out.println(fileAsString);
@@ -50,7 +50,7 @@ public class JsonConverter {
     public static List<LeaderCard> deserializeLeaderCards(){
         TextReader textReader= new TextReader();
         System.out.println("deserializeLeaderCards");
-        List<LeaderCard> cards = null;
+        List<LeaderCard> cards;
 
         String fileAsString = textReader.readMyText("LeaderCards.json");
         //System.out.println(fileAsString);
