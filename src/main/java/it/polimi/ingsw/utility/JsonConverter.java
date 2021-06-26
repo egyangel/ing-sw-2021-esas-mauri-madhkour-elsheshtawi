@@ -11,9 +11,7 @@ import it.polimi.ingsw.model.SpecialAbility;
 import it.polimi.ingsw.utility.messages.Event;
 import it.polimi.ingsw.utility.messages.Message;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +20,22 @@ import java.lang.reflect.Type;
 public class JsonConverter {
     private static final Gson gson = new Gson();
 
+
+
+
     public static List<DevCard> deserializeDevCards(){
+        TextReader textReader= new TextReader();
+        System.out.println("deserializeDevCards");
         List<DevCard> cards = null;
+
+        String fileAsString = textReader.readMyText("DevCards.json");
+       // System.out.println(fileAsString);
+
+        cards = Arrays.asList(gson.fromJson( fileAsString, DevCard[].class));
+
+        System.out.println("DevCards length" + cards.size());
+        return cards;
+       /*
         try(JsonReader reader = new JsonReader(new FileReader("src/main/resources/DevCards.json"))) {
             cards = Arrays.asList(gson.fromJson(reader, DevCard[].class));
         } catch (FileNotFoundException e) {
@@ -31,11 +43,23 @@ public class JsonConverter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return cards;
+
+        return cards;*/
     }
 
     public static List<LeaderCard> deserializeLeaderCards(){
+        TextReader textReader= new TextReader();
+        System.out.println("deserializeLeaderCards");
         List<LeaderCard> cards = null;
+
+        String fileAsString = textReader.readMyText("LeaderCards.json");
+        //System.out.println(fileAsString);
+        cards = Arrays.asList(gson.fromJson( fileAsString, LeaderCard[].class));
+
+        System.out.println("Leader length" + cards.size());
+        return cards;
+        /*
+       // List<LeaderCard> cards = null;
         try(JsonReader reader = new JsonReader(new FileReader("src/main/resources/LeaderCards.json"))) {
             cards = Arrays.asList(gson.fromJson(reader, LeaderCard[].class));
         } catch (FileNotFoundException e) {
@@ -43,7 +67,7 @@ public class JsonConverter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return cards;
+        return cards;*/
     }
 
     private static String serializeDevCard(DevCard devcard) {

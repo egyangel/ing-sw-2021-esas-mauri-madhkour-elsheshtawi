@@ -114,34 +114,141 @@ class PersonalBoardTest {
 
     @Test
     void giveVaticanReport() {
+        personalBoard.setFaitPoint(7);
+        assertFalse(personalBoard.getPopeAreaMap().get(PersonalBoard.PopeArea.FIRST));
+        personalBoard.giveVaticanReport(PersonalBoard.PopeArea.FIRST);
+        assertTrue(personalBoard.getPopeAreaMap().get(PersonalBoard.PopeArea.FIRST));
+
     }
 
     @Test
     void getTurnPopeFavorTile() {
+        personalBoard.setFaitPoint(7);
+        assertEquals(0,personalBoard.getTurnPopeFavorTile());
+        personalBoard.giveVaticanReport(PersonalBoard.PopeArea.FIRST);
+        assertTrue(personalBoard.getPopeAreaMap().get(PersonalBoard.PopeArea.FIRST));
+        assertEquals(2,personalBoard.getTurnPopeFavorTile());
     }
+
 
     @Test
     void getInactiveLeaderCards() {
+        Requirement requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.YELLOW, DevCard.CardColor.GREEN);
+        int victoryPoint=5;
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT,Resources.ResType.SERVANT);
+        Requirement requirement1 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE );
+        int victoryPoint1=4;
+        SpecialAbility ability1 = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE,Resources.ResType.SERVANT);
+
+        LeaderCard card = new LeaderCard(requirement1,victoryPoint1,ability1);
+        LeaderCard card2 = new LeaderCard(requirement,victoryPoint,ability);
+        List<LeaderCard> list = new ArrayList<>();
+        list.add(card);
+        list.add(card2);
+        personalBoard.setInactiveLeaderCards(list);
+        assertFalse(personalBoard.getInactiveLeaderCards().isEmpty());
+        assertEquals(2,personalBoard.getInactiveLeaderCards().size());
+        assertEquals(card,personalBoard.getInactiveLeaderCards().get(0));
+
     }
 
     @Test
     void getActiveLeaderCards() {
+        Requirement requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.YELLOW, DevCard.CardColor.GREEN);
+        int victoryPoint=5;
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT,Resources.ResType.SERVANT);
+        Requirement requirement1 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE );
+        int victoryPoint1=4;
+        SpecialAbility ability1 = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE,Resources.ResType.SERVANT);
+
+        LeaderCard card = new LeaderCard(requirement1,victoryPoint1,ability1);
+        LeaderCard card2 = new LeaderCard(requirement,victoryPoint,ability);
+        List<LeaderCard> list = new ArrayList<>();
+        list.add(card);
+        list.add(card2);
+        personalBoard.setActiveLeaderCards(list);
+        assertFalse(personalBoard.getActiveLeaderCards().isEmpty());
+        assertEquals(2,personalBoard.getActiveLeaderCards().size());
+        assertEquals(card,personalBoard.getActiveLeaderCards().get(0));
+
     }
 
     @Test
     void setInactiveLeaderCards() {
+        Requirement requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.YELLOW, DevCard.CardColor.GREEN);
+        int victoryPoint=5;
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT,Resources.ResType.SERVANT);
+        Requirement requirement1 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE );
+        int victoryPoint1=4;
+        SpecialAbility ability1 = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE,Resources.ResType.SERVANT);
+
+        LeaderCard card = new LeaderCard(requirement1,victoryPoint1,ability1);
+        LeaderCard card2 = new LeaderCard(requirement,victoryPoint,ability);
+        List<LeaderCard> list = new ArrayList<>();
+        list.add(card);
+        list.add(card2);
+        assertTrue(personalBoard.getInactiveLeaderCards().isEmpty());
+        personalBoard.setInactiveLeaderCards(list);
+        assertFalse(personalBoard.getInactiveLeaderCards().isEmpty());
+        assertEquals(2,personalBoard.getInactiveLeaderCards().size());
+        assertEquals(card,personalBoard.getInactiveLeaderCards().get(0));
     }
 
     @Test
     void setActiveLeaderCards() {
+        Requirement requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.YELLOW, DevCard.CardColor.GREEN);
+        int victoryPoint=5;
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT,Resources.ResType.SERVANT);
+        Requirement requirement1 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE );
+        int victoryPoint1=4;
+        SpecialAbility ability1 = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE,Resources.ResType.SERVANT);
+
+        LeaderCard card = new LeaderCard(requirement1,victoryPoint1,ability1);
+        LeaderCard card2 = new LeaderCard(requirement,victoryPoint,ability);
+        List<LeaderCard> list = new ArrayList<>();
+        list.add(card);
+        list.add(card2);
+        assertTrue(personalBoard.getActiveLeaderCards().isEmpty());
+        personalBoard.setActiveLeaderCards(list);
+        assertFalse(personalBoard.getActiveLeaderCards().isEmpty());
+        assertEquals(2,personalBoard.getActiveLeaderCards().size());
+        assertEquals(card,personalBoard.getActiveLeaderCards().get(0));
     }
 
     @Test
     void getTotalResources() {
+        Resources  warehouse = new Resources(Resources.ResType.STONE,2);
+        Resources strong= new Resources(Resources.ResType.SERVANT,15);
+        assertTrue(personalBoard.getTotalResources().isEmpty());
+        personalBoard.setStrongbox(strong);
+        personalBoard.putToWarehouse(Shelf.shelfPlace.MIDDLE,warehouse);
+        Resources temp= new Resources();
+        temp.add(warehouse);
+        temp.add(strong);
+        assertFalse(personalBoard.getTotalResources().isEmpty());
+        assertEquals(temp.sumOfValues(),personalBoard.getTotalResources().sumOfValues());
+        assertEquals(temp.getResTypes(),personalBoard.getTotalResources().getResTypes());
     }
 
     @Test
     void getStrongboxResources() {
+
+        Resources strong= new Resources(Resources.ResType.SERVANT,15);
+        personalBoard.setStrongbox(strong);
+
+
+        List<Resources.ResType> temp= new ArrayList<>();
+        temp.add(Resources.ResType.STONE);
+        temp.add(Resources.ResType.SERVANT);
+
+        assertFalse(personalBoard.getTotalResources().isEmpty());
+        assertEquals(15,personalBoard.getTotalResources().sumOfValues());
+        assertEquals(Resources.ResType.SERVANT,personalBoard.getStrongboxResources().getResTypes().get(0));
+        strong.add(Resources.ResType.STONE,8);
+        personalBoard.setStrongbox(strong);
+        assertEquals(23,personalBoard.getTotalResources().sumOfValues());
+        assertEquals(temp,personalBoard.getStrongboxResources().getResTypes());
+
     }
 
     @Test

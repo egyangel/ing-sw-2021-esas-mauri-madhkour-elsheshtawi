@@ -108,6 +108,10 @@ public class PersonalBoard {
         }
         faithPoints += toAdd;
     }
+    //methods only for testing
+    public void setFaitPoint(int toAdd) {
+        faithPoints += toAdd;
+    }
 
     public Map<PopeArea, Boolean> getPopeAreaMap(){
         return popeAreaMap;
@@ -152,6 +156,8 @@ public class PersonalBoard {
         return this.activeLeaderCards;
     }
 
+
+//todo Omer why is this method never used?
     public void setInactiveLeaderCards(List<LeaderCard> inactiveLeaderCards) {
         this.inactiveLeaderCards = inactiveLeaderCards;
     }

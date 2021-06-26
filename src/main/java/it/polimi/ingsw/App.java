@@ -1,11 +1,11 @@
 package it.polimi.ingsw;
 
+import com.google.gson.Gson;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.enumclasses.CliColors;
 import it.polimi.ingsw.utility.messages.LeaderActionContext;
 
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,9 +15,14 @@ import java.util.stream.Collectors;
 
 public class App {
 
-    
+
 
     public static void main(String[] args) throws IOException {
+
+
+
+    }
+}
         /*int j=0;
         List<LeaderCard> prodLeaderCard = new ArrayList<>();
         List<DevCard> Card = new ArrayList<>();
@@ -189,9 +194,7 @@ public class App {
 //         this will be surrounded by proper exceptions
 //         theGameController.startGame();
 
-    }
 
-}
 
 
 
