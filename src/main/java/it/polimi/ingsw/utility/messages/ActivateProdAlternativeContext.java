@@ -18,8 +18,10 @@ public class ActivateProdAlternativeContext {
     }
     private ActivateProdAlternativeContext.ActionStep lastStep;
     private Map<DevSlot.slotPlace, DevCard> slotToCardMap = new HashMap<>();
-    private Map<LeaderCard, Resources.ResType> addProdLeaderResMap = new HashMap<>();
     private List<DevCard> selectedDevCards = new ArrayList<>();
+    private List<LeaderCard> addProdLeaderList = new ArrayList<>();
+    private Resources leaderCosts = null;
+    private Resources leaderProds = null;
     private boolean addProdOptionAvailable = false;
     private boolean addProdOptionSelected = false;
     private boolean basicProdOptionSelected = false;
@@ -61,13 +63,11 @@ public class ActivateProdAlternativeContext {
 
 
     public void setAddProdLeaders(List<LeaderCard> addProdLeaders) {
-        for(LeaderCard card: addProdLeaders){
-            addProdLeaderResMap.put(card, null);
-        }
+        this.addProdLeaderList = addProdLeaders;
     }
 
     public List<LeaderCard> getAddProdLeaderList(){
-        return new ArrayList<>(addProdLeaderResMap.keySet());
+        return this.addProdLeaderList;
     }
 
     public boolean getBasicProdOptionSelected() {
@@ -94,10 +94,6 @@ public class ActivateProdAlternativeContext {
         this.basicProdRHS = basicProdRHS;
     }
 
-    public void addLeaderToRes(LeaderCard card, Resources.ResType type){
-        this.addProdLeaderResMap.replace(card, type);
-    }
-
     public void setSelectedDevCards(List<DevCard> selectedCards){
         selectedDevCards.addAll(selectedCards);
     }
@@ -114,7 +110,30 @@ public class ActivateProdAlternativeContext {
         this.addProdOptionSelected = addProdOptionSelected;
     }
 
-    public Map<LeaderCard, Resources.ResType> getAddProdLeaderResMap() {
-        return addProdLeaderResMap;
+    public List<LeaderCard> getAddProdLeaderResMap() {
+        return addProdLeaderList;
+    }
+
+    public void addLeaderCost(Resources.ResType resType){
+        if(this.leaderCosts == null) {
+            this.leaderCosts = new Resources();
+        }
+        this.leaderCosts.add(resType,1);
+    }
+
+    public void addLeaderProd(Resources.ResType resType){
+        if(this.leaderProds == null) {
+            this.leaderProds = new Resources();
+        }
+        this.leaderProds.add(resType,1);
+        this.leaderProds.add(Resources.ResType.FAITH,1);
+    }
+
+    public Resources getLeaderCosts() {
+        return leaderCosts;
+    }
+
+    public Resources getLeaderProds() {
+        return leaderProds;
     }
 }

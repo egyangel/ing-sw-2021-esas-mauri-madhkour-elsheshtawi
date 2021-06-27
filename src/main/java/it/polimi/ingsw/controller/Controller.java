@@ -109,9 +109,9 @@ public class Controller implements Listener<VCEvent> {
     private void debugAutoChooseTwoLeadersToAll(){
         List<LeaderCard> list1 = new ArrayList<>();
         Resources resources1 = new Resources();
-        resources1.add(Resources.ResType.COIN, 15);
+        resources1.add(Resources.ResType.COIN, 5);
         Requirement requirement = new Requirement(resources1);
-        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.ADDPROD, Resources.ResType.STONE);
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.ADDPROD, Resources.ResType.SERVANT);
         list1.add(new LeaderCard(requirement, 4, ability));
         Resources resources2 = new Resources(0,5,0,0);
 //        resources2.add(Resources.ResType.COIN, 5);
@@ -733,13 +733,8 @@ public class Controller implements Listener<VCEvent> {
         }
         boolean addProdOption = context.getAddProdOptionSelected();
         if (addProdOption){
-            Map<LeaderCard,Resources.ResType> leaderToResMap = context.getAddProdLeaderResMap();
-            for (Map.Entry<LeaderCard, Resources.ResType> entry : leaderToResMap.entrySet()) {
-                Resources.ResType type = entry.getKey().getAbility().getResType();
-                totalCost.add(type, 1);
-                type = entry.getValue();
-                totalProduction.add(type,1);
-            }
+            totalCost.add(context.getLeaderCosts());
+            totalProduction.add(context.getLeaderProds());
         }
         Resources totalResources = game.getPersonalBoard(userID).getTotalResources();
         boolean enoughRes = totalResources.includes(totalCost);
