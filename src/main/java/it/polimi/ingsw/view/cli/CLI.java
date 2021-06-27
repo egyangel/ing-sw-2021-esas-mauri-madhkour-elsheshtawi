@@ -140,7 +140,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String username = "omer";
         out.println("Choose number of players you would like to play with:");
 //        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
-        Integer numberOfPlayers = 1;
+        Integer numberOfPlayers = 2;
         Map<String, String> firstLoginMap = new HashMap<>();
         firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
         firstLoginMap.put("username", username);
@@ -706,8 +706,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
      */
     public void chooseDevSlotsForProd() {
         Map<DevSlot.slotPlace, DevCard> slotToCardMap = activateProdContext.getSlotMap();
-        int numberOfAvailableSlots = slotToCardMap.size();
-        if(numberOfAvailableSlots == 0) {
+        List<DevSlot.slotPlace> slotList = new ArrayList<>(slotToCardMap.keySet());
+        if(slotList.isEmpty()) {
             out.println("You do not have development cards to activate");
             activateProdContext.setError(true);
             VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
@@ -718,14 +718,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         for (Map.Entry<DevSlot.slotPlace, DevCard> entry : slotToCardMap.entrySet()) {
             out.println(entry.getKey().name() + ": " + entry.getValue().describeDevCard());
         }
-        List<DevSlot.slotPlace> slotList = new ArrayList<>(slotToCardMap.keySet());
         List<DevCard> selectedCards = new ArrayList<>();
-        for(int i=0; i<numberOfAvailableSlots; i++){
-            out.println("Which slots do you want to activate?");
-            DevSlot.slotPlace place = InputConsumer.getSlotPlace(in, out, slotList);
-            selectedCards.add(slotToCardMap.get(place));
-            slotList.remove(place);
-            numberOfAvailableSlots--;
+        for(DevSlot.slotPlace place:slotList){
+            out.println("Do you want to activate " + place.name() + " slot?");
+            boolean answer = InputConsumer.getYesOrNo(in, out);
+            if (answer)
+                selectedCards.add(slotToCardMap.get(place));
         }
         activateProdContext.setSelectedDevCards(selectedCards);
         out.println("Do you want to use basic production?");
@@ -744,27 +742,30 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             type = InputConsumer.getResourceType(in, out);
             Resources outputres = new Resources();
             outputres.add(type, 1);
-            activateProdContext.setBasicProdRHS(basicProdCost);
+            activateProdContext.setBasicProdRHS(outputres);
         } else {
             activateProdContext.setBasicProdOptionSelected(false);
         }
         if (activateProdContext.getAddProdOptionAvailable()) {
             List<LeaderCard> cardList = activateProdContext.getAddProdLeaderList();
             out.println("You have the below options for additional production from active leader cards:");
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < cardList.size(); i++) {
-                sb.append(i + 1 + ") " + cardList.get(i).describeLeaderCard());
+            for (LeaderCard card: cardList){
+                out.println(card.describeLeaderCard());
             }
-            out.println(sb.toString());
             out.println("Do you want to use additional production from leader cards?");
             boolean addProdAnswer = InputConsumer.getYesOrNo(in, out);
             if (addProdAnswer) {
                 activateProdContext.setAddProdOptionSelected(true);
-                for (int i = 0; i < cardList.size(); i++) {
-                    out.println("Enter the index of the leader card and a resource type:");
-                    int index = InputConsumer.getANumberBetween(in, out, 1, cardList.size());
-                    Resources.ResType type = InputConsumer.getResourceType(in, out);
-                    activateProdContext.addLeaderToRes(cardList.get(index), type);
+                for(LeaderCard card: cardList){
+                    out.println(card.describeLeaderCard());
+                    out.println("Do you want to activate this card?");
+                    boolean answer = InputConsumer.getYesOrNo(in, out);
+                    if (answer) {
+                        out.println("Enter a resource type to convert to:");
+                        Resources.ResType resType1 = InputConsumer.getResourceType(in, out);
+                        activateProdContext.addLeaderCost(card.getAbility().getResType());
+                        activateProdContext.addLeaderProd(resType1);
+                    }
                 }
             } else {
                 activateProdContext.setAddProdOptionSelected(false);
