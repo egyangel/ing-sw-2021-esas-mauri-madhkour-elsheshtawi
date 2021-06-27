@@ -110,10 +110,6 @@ public class ActivateProdAlternativeContext {
         this.addProdOptionSelected = addProdOptionSelected;
     }
 
-    public List<LeaderCard> getAddProdLeaderResMap() {
-        return addProdLeaderList;
-    }
-
     public void addLeaderCost(Resources.ResType resType){
         if(this.leaderCosts == null) {
             this.leaderCosts = new Resources();

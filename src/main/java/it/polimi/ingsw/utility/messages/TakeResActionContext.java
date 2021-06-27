@@ -130,6 +130,7 @@ public class TakeResActionContext {
     }
 
     public void setShelftoResTypeMap(Map<Shelf.shelfPlace, Resources.ResType> map){
+        this.shelfPlaceResTypeMap.clear();
         for (Map.Entry<Shelf.shelfPlace, Resources.ResType> entry : map.entrySet()) {
             this.shelfPlaceResTypeMap.put(entry.getKey(), entry.getValue());
         }

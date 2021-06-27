@@ -578,14 +578,26 @@ public class Controller implements Listener<VCEvent> {
         Map<Shelf.shelfPlace, Boolean> shelfToResult = new HashMap<>();
         boolean result;
         for (Map.Entry<Shelf.shelfPlace, Resources.ResType> entry : map.entrySet()) {
-            Resources resToPut = new Resources();
-            resToPut.add(entry.getValue(), context.getResources().getNumberOfType(entry.getValue()));
-            int discardedSameTypeRes = game.getPersonalBoard(userID).putToWarehouse(entry.getKey(), resToPut);
-            result = (discardedSameTypeRes >= 0);
-            if (result) {
-                context.addDiscardedRes(discardedSameTypeRes);
+            Shelf.shelfPlace shelfPlaceToPut = entry.getKey();
+            Resources.ResType resTypeToPut = entry.getValue();
+            boolean isEmptyShelf = game.getPersonalBoard(userID).checkEmptyShelf(shelfPlaceToPut);
+            boolean isSameType = false;
+            if (!isEmptyShelf){
+                isSameType = game.getPersonalBoard(userID).checkSameType(shelfPlaceToPut, resTypeToPut);
             }
-            shelfToResult.put(entry.getKey(), result);
+            if (isEmptyShelf || isSameType){
+                Resources resToPut = new Resources();
+                resToPut.add(resTypeToPut, context.getResources().getNumberOfType(resTypeToPut));
+                int discardedSameTypeRes = game.getPersonalBoard(userID).putToWarehouse(shelfPlaceToPut, resToPut);
+                if(discardedSameTypeRes >= 0){
+                    context.addDiscardedRes(discardedSameTypeRes);
+                    shelfToResult.put(shelfPlaceToPut, true);
+                } else {
+                    shelfToResult.put(shelfPlaceToPut, false);
+                }
+            } else {
+                shelfToResult.put(shelfPlaceToPut, false);
+            }
         }
         context.setPutResultMap(shelfToResult);
         context.removeResourcesPutToShelf();

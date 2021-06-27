@@ -20,7 +20,7 @@ public class Shelf {
     private final int maxSize;
     private final shelfPlace place;
     private int numberOfElements;
-    private Resources.ResType resType;
+    private Resources.ResType resType = null;
 
     /**
      * constructor that initialize the shelf based on its position inside the warehouse

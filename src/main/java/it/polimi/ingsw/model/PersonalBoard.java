@@ -73,29 +73,38 @@ public class PersonalBoard {
     }
     //Todo what does this method do
     private boolean putFromTop(Resources.ResType resType, int size) {
-        if ((checkEnoughSize(0, size) && (checkSameType(0, resType)) || warehouse[0].isEmpty())) {
+        if (checkShelfBySizeAndType(Shelf.shelfPlace.TOP, size, resType)) {
             warehouse[0].putResource(resType, size);
-        } else if ((checkEnoughSize(1, size) && checkSameType(1, resType)) || warehouse[1].isEmpty()) {
+        } else if (checkShelfBySizeAndType(Shelf.shelfPlace.MIDDLE, size, resType)) {
             warehouse[1].putResource(resType, size);
-        } else if ((checkEnoughSize(2, size) && checkSameType(2, resType)) || warehouse[2].isEmpty()) {
+        } else if (checkShelfBySizeAndType(Shelf.shelfPlace.BOTTOM, size, resType)) {
             warehouse[2].putResource(resType, size);
         } else return false;
         return true;
     }
 
-    private boolean checkEnoughSize(int index, int size) {
+    private boolean checkShelfBySizeAndType(Shelf.shelfPlace place, int size, Resources.ResType type){
+        return (checkEnoughSize(place, size) && checkSameType(place, type));
+    }
+
+    private boolean checkEnoughSize(Shelf.shelfPlace place, int size) {
+        int index = place.getIndexInWarehouse();
         return ((warehouse[index].getNumberOfElements()) + size <= warehouse[index].getShelfSize());
     }
 
-    private boolean checkSameType(int index, Resources.ResType resType) {
+    public boolean checkSameType(Shelf.shelfPlace place, Resources.ResType type) {
+        int index = place.getIndexInWarehouse();
         try {
-            return (warehouse[index].getShelfResType() == resType);
+            return (warehouse[index].getShelfResType() == type);
         } catch (Exception e) {
             return true;
         }
-
-
     }
+
+    public boolean checkEmptyShelf(Shelf.shelfPlace place) {
+        return warehouse[place.getIndexInWarehouse()].isEmpty();
+    }
+
     public  List<DevCard> getOwnedCards() {
         return this.ownedDevCards;
     }
