@@ -161,10 +161,6 @@ public class PersonalBoard {
         this.inactiveLeaderCards = inactiveLeaderCards;
     }
 
-    //    public void setInactiveLeaderCards(List<LeaderCard> inactiveLeaderCards) {
-//        this.inactiveLeaderCards = inactiveLeaderCards;
-//    }
-
     public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
         this.activeLeaderCards = activeLeaderCards;
     }
@@ -276,10 +272,11 @@ public class PersonalBoard {
 
     public void subtractFromWarehouse(Resources res) {
         List<Resources.ResType> resTypeList = new ArrayList<>();
+
         resTypeList.addAll(res.getResTypes());
         for (int i = 0; i < 3; i++) {
             for (Resources.ResType resType : resTypeList) {
-                if (warehouse[i].getShelfResType().equals(resType)) {
+                if (warehouse[i].getShelfResType()!= null && warehouse[i].getShelfResType().equals(resType)) {
                     int number = res.getNumberOfType(resType);
                     warehouse[i].removeFromShelf(number);
                 }

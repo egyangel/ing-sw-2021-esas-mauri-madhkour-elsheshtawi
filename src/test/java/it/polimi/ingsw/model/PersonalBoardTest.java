@@ -34,9 +34,9 @@ class PersonalBoardTest {
         devSlots[0] = new DevSlot(DevSlot.slotPlace.LEFT);
         devSlots[1] = new DevSlot(DevSlot.slotPlace.CENTER);
         devSlots[2] = new DevSlot(DevSlot.slotPlace.RIGHT);
-        warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
+       /* warehouse[0] = new Shelf(Shelf.shelfPlace.TOP);
         warehouse[1] = new Shelf(Shelf.shelfPlace.MIDDLE);
-        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);
+        warehouse[2] = new Shelf(Shelf.shelfPlace.BOTTOM);*/
         strongbox = new Resources();
         ownedDevCards = new ArrayList<>();
         popeAreaMap = new HashMap<>();
@@ -283,58 +283,198 @@ class PersonalBoardTest {
 
     @Test
     void isCardSuitableForSlots() {
+        Resources Lhs = new Resources(Resources.ResType.STONE, 2);
+        Resources Rhs = new Resources(Resources.ResType.SERVANT, 1);
+        Resources cost = new Resources(Resources.ResType.STONE, 5);
+        DevCard d1 = new DevCard(1, DevCard.CardColor.BLUE, Lhs, Rhs, cost, 10);
+        DevCard d2 = new DevCard(1, DevCard.CardColor.GREEN, Lhs, Rhs, cost, 10);
+        DevCard d3 = new DevCard(2, DevCard.CardColor.BLUE, Lhs, Rhs, cost, 10);
+
+        assertTrue(personalBoard.isCardSuitableForSlots(d1));
+        personalBoard.putDevCardOnSlot(d1,DevSlot.slotPlace.LEFT);
+        personalBoard.putDevCardOnSlot(d1,DevSlot.slotPlace.CENTER);
+        personalBoard.putDevCardOnSlot(d1,DevSlot.slotPlace.RIGHT);
+        assertFalse(personalBoard.isCardSuitableForSlots(d2));
+        assertTrue(personalBoard.isCardSuitableForSlots(d3));
+
     }
 
     @Test
     void getSuitablePlaces() {
+        Resources Lhs = new Resources(Resources.ResType.STONE, 2);
+        Resources Rhs = new Resources(Resources.ResType.SERVANT, 1);
+        Resources cost = new Resources(Resources.ResType.STONE, 5);
+        DevCard d1 = new DevCard(1, DevCard.CardColor.BLUE, Lhs, Rhs, cost, 10);
+        List<DevSlot.slotPlace> places = new ArrayList<>();
+        places.add(DevSlot.slotPlace.LEFT);
+        places.add(DevSlot.slotPlace.CENTER);
+        places.add(DevSlot.slotPlace.RIGHT);
+        assertEquals(places,personalBoard.getSuitablePlaces(d1));
+        personalBoard.putDevCardOnSlot(d1,DevSlot.slotPlace.RIGHT);
+
+        assertNotEquals(places,personalBoard.getSuitablePlaces(d1));
+        places.remove(2);
+        assertEquals(places,personalBoard.getSuitablePlaces(d1));
     }
 
     @Test
     void putDevCardOnSlot() {
+        Resources Lhs = new Resources(Resources.ResType.STONE, 2);
+        Resources Rhs = new Resources(Resources.ResType.SERVANT, 1);
+        Resources cost = new Resources(Resources.ResType.STONE, 5);
+        DevCard d1 = new DevCard(1, DevCard.CardColor.BLUE, Lhs, Rhs, cost, 10);
+        assertNull(personalBoard.getDevCardOnSlot(DevSlot.slotPlace.LEFT));
+        personalBoard.putDevCardOnSlot(d1,DevSlot.slotPlace.LEFT);
+        assertEquals(d1,personalBoard.getDevCardOnSlot(DevSlot.slotPlace.LEFT));
     }
 
     @Test
     void getDevCardOnSlot() {
+        Resources Lhs = new Resources(Resources.ResType.STONE, 2);
+        Resources Rhs = new Resources(Resources.ResType.SERVANT, 1);
+        Resources cost = new Resources(Resources.ResType.STONE, 5);
+        DevCard d1 = new DevCard(1, DevCard.CardColor.BLUE, Lhs, Rhs, cost, 10);
+        assertNull(personalBoard.getDevCardOnSlot(DevSlot.slotPlace.LEFT));
+        personalBoard.putDevCardOnSlot(d1,DevSlot.slotPlace.LEFT);
+        assertEquals(d1,personalBoard.getDevCardOnSlot(DevSlot.slotPlace.LEFT));
     }
 
     @Test
     void clearShelf() {
+        Resources  warehouse = new Resources(Resources.ResType.STONE,2);
+        Resources  warehouse2 = new Resources(Resources.ResType.SERVANT,3);
+        personalBoard.putToWarehouse(Shelf.shelfPlace.MIDDLE,warehouse);
+        personalBoard.putToWarehouse(Shelf.shelfPlace.BOTTOM,warehouse2);
+        assertEquals(5,personalBoard.getWarehouseResources().sumOfValues());
+        personalBoard.clearShelf(Shelf.shelfPlace.MIDDLE);
+        assertEquals(3,personalBoard.getWarehouseResources().sumOfValues());
+
     }
 
     @Test
     void swapShelves() {
+        Shelf.shelfPlace[] places = new Shelf.shelfPlace[2];
+        places[0] = Shelf.shelfPlace.MIDDLE;
+        places[1] = Shelf.shelfPlace.BOTTOM;
+        Resources  warehouse = new Resources(Resources.ResType.STONE,2);
+        Resources  warehouse2 = new Resources(Resources.ResType.SERVANT,3);
+        assertEquals(0,personalBoard.swapShelves(places));
+
+        personalBoard.putToWarehouse(Shelf.shelfPlace.MIDDLE,warehouse);
+        personalBoard.putToWarehouse(Shelf.shelfPlace.BOTTOM,warehouse2);
+
+        
+        assertEquals(1,personalBoard.swapShelves(places));
     }
 
     @Test
     void getShelves() {
+        assertFalse(personalBoard.getShelves().isEmpty());
+        assertEquals(3, personalBoard.getShelves().size());
     }
 
     @Test
     void getDevSlots() {
+        assertFalse(personalBoard.getDevSlots().isEmpty());
+        assertEquals(3, personalBoard.getShelves().size());
+
     }
 
     @Test
     void subtractFromWarehouse() {
+        Resources resToSub = new Resources();
+        Resources  warehouse = new Resources(Resources.ResType.STONE,2);
+        Resources  warehouse2 = new Resources(Resources.ResType.SERVANT,3);
+        personalBoard.putToWarehouse(Shelf.shelfPlace.MIDDLE,warehouse);
+        personalBoard.putToWarehouse(Shelf.shelfPlace.BOTTOM,warehouse2);
+        assertEquals(5,personalBoard.getWarehouseResources().sumOfValues());
+        resToSub.add(Resources.ResType.SERVANT,1);
+        personalBoard.subtractFromWarehouse(resToSub);
+        assertEquals(4,personalBoard.getWarehouseResources().sumOfValues());
+        assertEquals(2,personalBoard.getWarehouseResources().getNumberOfType(Resources.ResType.SERVANT));
+        resToSub.clear();
+        resToSub.add(Resources.ResType.STONE,2);
+        personalBoard.subtractFromWarehouse(resToSub);
+        assertEquals(2,personalBoard.getWarehouseResources().sumOfValues());
+        assertEquals(0,personalBoard.getWarehouseResources().getNumberOfType(Resources.ResType.STONE));
+
     }
 
     @Test
     void addToStrongBox() {
+        Resources  strongb = new Resources(Resources.ResType.STONE,10);
+        Resources  strongb2 = new Resources(Resources.ResType.SERVANT,5);
+        personalBoard.addToStrongBox(strongb);
+
+        assertEquals(10,personalBoard.getStrongboxResources().sumOfValues());
+        personalBoard.addToStrongBox(strongb2);
+
+        assertEquals(15,personalBoard.getStrongboxResources().sumOfValues());
+        assertEquals(10,personalBoard.getStrongboxResources().getNumberOfType(Resources.ResType.STONE));
+        assertEquals(5,personalBoard.getStrongboxResources().getNumberOfType(Resources.ResType.SERVANT));
+
     }
 
     @Test
     void subtractFromStrongbox() {
+        Resources resToSub = new Resources();
+        Resources  strongb = new Resources(Resources.ResType.STONE,10);
+        Resources  strongb2 = new Resources(Resources.ResType.SERVANT,5);
+        personalBoard.addToStrongBox(strongb);
+        personalBoard.addToStrongBox(strongb2);
+
+        assertEquals(15,personalBoard.getStrongboxResources().sumOfValues());
+        resToSub.add(Resources.ResType.SERVANT,2);
+        resToSub.add(Resources.ResType.STONE,5);
+        personalBoard.subtractFromStrongbox(resToSub);
+
+        assertEquals(8,personalBoard.getStrongboxResources().sumOfValues());
+
+        assertEquals(3,personalBoard.getStrongboxResources().getNumberOfType(Resources.ResType.SERVANT));
+        assertEquals(5,personalBoard.getStrongboxResources().getNumberOfType(Resources.ResType.STONE));
     }
 
     @Test
     void subtractFromExtraSlot() {
+        Resources resAddHolder = new Resources(Resources.ResType.SERVANT,2);
+        Requirement requirement1 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE );
+        int victoryPoint1=4;
+        SpecialAbility ability1 = new SpecialAbility(SpecialAbility.AbilityType.EXTRASLOT,Resources.ResType.SERVANT);
+        ability1.addToHolder(resAddHolder);
+        LeaderCard card = new LeaderCard(requirement1,victoryPoint1,ability1);
+
+        List<LeaderCard> list = new ArrayList<>();
+        list.add(card);
+
+        personalBoard.setActiveLeaderCards(list);
+
+        Resources  resToSub = new Resources(Resources.ResType.STONE,2);
+
+        assertEquals(2,personalBoard.getExtraSlotResources().sumOfValues());
+
+        personalBoard.subtractFromExtraSlot(resToSub);
+
+        assertEquals(2,personalBoard.getExtraSlotResources().sumOfValues());
+        resToSub.add(Resources.ResType.SERVANT,2);
+
+        personalBoard.subtractFromExtraSlot(resToSub);
+        assertEquals(0,personalBoard.getExtraSlotResources().sumOfValues());
+
     }
 
     @Test
     void setStrongbox() {
-    }
 
-    @Test
-    void setGame() {
+        Resources  strongb = new Resources(Resources.ResType.STONE,10);
+
+        strongb.add(Resources.ResType.SERVANT,5);
+        assertEquals(0,personalBoard.getStrongboxResources().sumOfValues());
+
+        personalBoard.setStrongbox(strongb);
+
+        assertEquals(15,personalBoard.getStrongboxResources().sumOfValues());
+
+
     }
 
     @Test

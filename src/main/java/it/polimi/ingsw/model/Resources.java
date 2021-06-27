@@ -72,19 +72,20 @@ public class Resources {
         }
     }
     /**
-     * Development Slot  , it is the class that handle the Development
-     * slot on the personal board of the player
-     * @author
+     * method that add to the current res a single res type with the amount of that res
+     * @param type res type that has to be added to the current resources
+     * @param val amount of the res that has to be added
      * */
     public void add(ResType type,Integer val){
         if (val <= 0) return;
         this.values.put(type, this.getNumberOfType(type) + val); //replaces by default if type exists before
     }
     /**
-     * method that add to the current res a single res type with the amount of that res
-     * @param type res type that has to be added to the current resources
-     * @param val amount of the res that has to be added
+     * method that sub to the current res the res that is passed as argument
+     *  @param type res type that has to be subtracted to the current resources
+     *  @param val amount of the res that has to be subtracted
      * */
+
     public void subtract(ResType type,Integer val){
         if (this.getNumberOfType(type) > val){
             values.put(type, this.getNumberOfType(type) - val);
