@@ -770,6 +770,9 @@ public class Controller implements Listener<VCEvent> {
      * @param userID player id
      * @param totalCost is the cost of activation production
      */
+    //todo it is better to invert the order of payment. it is always better
+    // have the warehouse empty since each time you draw from tray you can
+    // only put res there, if it is full you gift points the other player
     private void payCostFromPersonalBoard(Integer userID, Resources totalCost){
         // automatic payment from strongbox
         Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
@@ -797,8 +800,11 @@ public class Controller implements Listener<VCEvent> {
                 totalCost.subtract(paidPartFromWarehouse);
             }
         }
-        // automatic payment from extraslot
+        // automatic payment from extra slot
         if (!totalCost.isEmpty()){
+            //todo if the res is not the same type of extra slot res type you did nothing
+            // I mean you automatically suppose without checking that the res is the same ,
+
             //this means there was extra resources used in the extra slot
             game.getPersonalBoard(userID).subtractFromExtraSlot(totalCost);
         }
