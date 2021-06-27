@@ -515,7 +515,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         Resources.ResType secondResOption = takeResContext.getWhiteConverters().get(1).getAbility().getResType();
         int whiteMarbles = takeResContext.getWhiteMarbleNumber();
         out.println("You have two active white marble converter leader cards, and received " + whiteMarbles + " white marble from market tray");
-        out.println("You can convert the white marbles into [1]" + firstResOption.toString() + " or [2]" + secondResOption.toString());
+        out.println("You can convert the white marbles into [1] " + firstResOption.toString() + " or [2] " + secondResOption.toString());
         while (whiteMarbles > 0) {
             out.println("Enter the index of resource type into which you want to convert one white marble");
             int index = InputConsumer.getANumberBetween(in, out, 1, 2);
@@ -542,15 +542,30 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String resourceString = " Nothing";
         if (resources != null)
             resourceString = resources.toString();
-
+        List<LeaderCard> extraSlotLeaders = takeResContext.getExtraSlotLeaderList();
         out.println("You have " + resourceString + " that you can put to your warehouse.");
         out.println("Extra resources that you don't put will be discarded automatically");
+        if(extraSlotLeaders.size() > 0){
+            out.println("You have active leader cards that provides extra slot to put resources");
+            for(LeaderCard card: extraSlotLeaders){
+                out.println(card.describeLeaderCard());
+            }
+        }
         out.println("Select one of the options below:");
         out.println("[1] Clear shelf");
         out.println("[2] Swap shelves");
         out.println("[3] Select resource type and shelf to put that kind of resources");
-        out.println("[4] End take resource action");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 4);
+        if(extraSlotLeaders.size() > 0){
+            out.println("[4] Select leader card to put onto slot");
+            out.println("[5] End take resource action");
+        } else {
+            out.println("[4] End take resource action");
+        }
+        int index;
+        if (extraSlotLeaders.size() > 0)
+            index = InputConsumer.getANumberBetween(in, out, 1, 5);
+        else
+            index = InputConsumer.getANumberBetween(in, out, 1, 4);
         if (index == 1) {
             out.println("Select a shelf that you want to remove all resources from:");
             Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
@@ -588,6 +603,21 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             }
             takeResContext.setShelftoResTypeMap(shelfToResMap);
             takeResContext.setLastStep(PUT_RESOURCES_CHOSEN);
+        } else if (index == 4 && extraSlotLeaders.size() > 0){
+            Map<Resources.ResType, Integer> resTypeIntegerMap = new HashMap<>();
+            for (LeaderCard card: extraSlotLeaders){
+                out.println(card.describeLeaderCard());
+                out.println("How many number of " + card.getAbility().getResType().name() + " do you want to put onto this card?");
+                int toAddToExtraSlot = InputConsumer.getANumberBetween(in, out, 0, 2);
+                if (toAddToExtraSlot > takeResContext.getResources().getNumberOfType(card.getAbility().getResType())){
+                    out.println("You don't have that much resources to put onto the leader card!");
+                    addNextDisplay("chooseShelvesToPut");
+                    return;
+                }
+                resTypeIntegerMap.put(card.getAbility().getResType(), toAddToExtraSlot);
+            }
+            takeResContext.setExtraSlotMap(resTypeIntegerMap);
+            takeResContext.setLastStep(EXTRA_SLOT_CHOSEN);
         } else {
             takeResContext.addDiscardedRes(takeResContext.getResources().sumOfValues());
             out.println("Ending take resource action...");
