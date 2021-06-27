@@ -126,6 +126,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 //        String ip = InputConsumer.getIP(in);
 //        out.println("Enter port number of the server:");
 //        int portNumber = InputConsumer.getPortNumber(in);
+        //TODO IMPORTANT, ADD IP PUBLIC ADDRESS OF SERVER AND PORT TO client main() arguments
         String ip = "localhost";
         int portNumber = 30000; //for debug
         out.println("Connecting to server...");

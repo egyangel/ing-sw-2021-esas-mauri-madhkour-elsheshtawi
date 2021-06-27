@@ -34,6 +34,7 @@ public class Server implements Runnable {
     private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 
     public static void main(String[] args) {
+        // todo remove comment later
        /* if(args.length>0 ) {
             String portString = args[0];
             port = Integer.parseInt(portString);

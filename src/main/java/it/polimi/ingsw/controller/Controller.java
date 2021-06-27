@@ -774,19 +774,6 @@ public class Controller implements Listener<VCEvent> {
     // have the warehouse empty since each time you draw from tray you can
     // only put res there, if it is full you gift points the other player
     private void payCostFromPersonalBoard(Integer userID, Resources totalCost){
-        // automatic payment from strongbox
-        Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
-        for(Resources.ResType type: totalCost.getResTypes()){
-            Resources oneTypeRes = totalCost.cloneThisType(type);
-            if(strongboxRes.includes(oneTypeRes)){
-                game.getPersonalBoard(userID).subtractFromStrongbox(oneTypeRes);
-                totalCost.subtract(oneTypeRes);
-            } else {
-                Resources paidPartFromStrongbox = strongboxRes.cloneThisType(type);
-                game.getPersonalBoard(userID).subtractFromStrongbox(paidPartFromStrongbox);
-                totalCost.subtract(paidPartFromStrongbox);
-            }
-        }
         // automatic payment from warehouse
         Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
         for(Resources.ResType type: totalCost.getResTypes()){
@@ -798,6 +785,19 @@ public class Controller implements Listener<VCEvent> {
                 Resources paidPartFromWarehouse = warehouseRes.cloneThisType(type);
                 game.getPersonalBoard(userID).subtractFromStrongbox(paidPartFromWarehouse);
                 totalCost.subtract(paidPartFromWarehouse);
+            }
+        }
+        // automatic payment from strongbox
+        Resources strongboxRes = game.getPersonalBoard(userID).getStrongboxResources();
+        for(Resources.ResType type: totalCost.getResTypes()){
+            Resources oneTypeRes = totalCost.cloneThisType(type);
+            if(strongboxRes.includes(oneTypeRes)){
+                game.getPersonalBoard(userID).subtractFromStrongbox(oneTypeRes);
+                totalCost.subtract(oneTypeRes);
+            } else {
+                Resources paidPartFromStrongbox = strongboxRes.cloneThisType(type);
+                game.getPersonalBoard(userID).subtractFromStrongbox(paidPartFromStrongbox);
+                totalCost.subtract(paidPartFromStrongbox);
             }
         }
         // automatic payment from extra slot
