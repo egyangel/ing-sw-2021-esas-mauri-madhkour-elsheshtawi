@@ -84,7 +84,11 @@ public class PersonalBoard {
     }
 
     private boolean checkShelfBySizeAndType(Shelf.shelfPlace place, int size, Resources.ResType type){
-        return (checkEnoughSize(place, size) && checkSameType(place, type));
+        if (!checkEnoughSize(place, size)) return false;
+        else {
+            if (checkEmptyShelf(place)) return true;
+            else return checkSameType(place, type);
+        }
     }
 
     private boolean checkEnoughSize(Shelf.shelfPlace place, int size) {

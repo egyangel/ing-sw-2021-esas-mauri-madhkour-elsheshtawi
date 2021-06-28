@@ -38,7 +38,8 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
             System.out.println("Can't connect to server at " + socket.getInetAddress());
             return;
         }
-        System.out.println("\nConnected to server at " + socket.getInetAddress());
+        //TODO DEBUG CONNECTION
+//        System.out.println("\nConnected to server at " + socket.getInetAddress());
         if (client.getView() instanceof CLI) {
             viewCLI = (CLI) client.getView();
             viewCLI.subscribe(this);
@@ -55,10 +56,10 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
             System.out.println("Server connection dropped at " + socket.getInetAddress());
         }
     }
-
+    //TODO MESSAGE PRINTER FOR DEBUG
     public void sendMessage(Message msg){
         msg.setUserID(userID);
-        MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.OUTGOINGfromCLIENT, msg);
+//        MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.OUTGOINGfromCLIENT, msg);
         try {
             oos.writeObject(msg);
             oos.flush();
@@ -73,7 +74,8 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
             try {
                 Message msg = (Message)ois.readObject();
                 Message.MsgType msgType = msg.getMsgtype();
-                MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);
+                //TODO MESSAGE PRINTER FOR DEBUG
+//                MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);
                 if(msgType == Message.MsgType.HEARTBEAT){
                     // do heartbeat thing
                 } else if(msgType == Message.MsgType.CV_EVENT){

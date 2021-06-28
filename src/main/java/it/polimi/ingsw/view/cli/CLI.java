@@ -117,13 +117,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
     @Override
     public void displaySetup() {
-//        out.println("Enter IP address of the server:");
-//        String ip = InputConsumer.getIP(in);
-//        out.println("Enter port number of the server:");
-//        int portNumber = InputConsumer.getPortNumber(in);
+        out.println("Enter IP address of the server:");
+        String ip = InputConsumer.getIP(in, out);
+        out.println("Enter port number of the server:");
+        int portNumber = InputConsumer.getPortNumber(in, out);
         //TODO IMPORTANT, ADD IP PUBLIC ADDRESS OF SERVER AND PORT TO client main() arguments
-        String ip = "localhost";
-        int portNumber = 30000; //for debug
+//        String ip = "localhost";
+//        int portNumber = 30000; //for debug
         out.println("Connecting to server...");
         client.connectToServer(ip, portNumber);
     }
@@ -132,11 +132,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayFirstLogin() {
         out.println("Choose a username:");
         // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
-//        String username = InputConsumer.getUserName(in, out);
-        String username = "omer";
+//        String username = "omer";
+        String username = InputConsumer.getUserName(in, out);
         out.println("Choose number of players you would like to play with:");
-//        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
-        Integer numberOfPlayers = 2;
+//        Integer numberOfPlayers = 2;
+        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
         Map<String, String> firstLoginMap = new HashMap<>();
         firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
         firstLoginMap.put("username", username);
@@ -148,8 +148,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayLogin() {
         out.println("Choose a username:");
         // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
-//        String username = InputConsumer.getUserName(in, out);
-        String username = "John";
+//        String username = "John";
+        String username = InputConsumer.getUserName(in, out);
         Message loginMsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
         client.sendToServer(loginMsg);
     }
@@ -182,11 +182,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         }
         out.println("Enter the index of first leader card to keep:");
         // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
-//        Integer firstIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
-        Integer firstIndex = 1;
+//        Integer firstIndex = 1;
+        Integer firstIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
         out.println("Enter the index of second leader card to keep:");
-//        Integer secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
-        Integer secondIndex = 2;
+//        Integer secondIndex = 2;
+        Integer secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
         while (firstIndex.equals(secondIndex)) {
             out.println("Please enter a different index than first selection:");
             secondIndex = InputConsumer.getANumberBetween(in, out, 1, 4);
@@ -213,14 +213,13 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case 1:
                 out.println("You are the first player.");
                 out.println("You have the inkwell but no initial resources or faith points.");
-                // displayIdle automatically called
                 break;
             case 2:
                 out.println("You are the second player.");
                 out.println("You will have one initial resource of your choosing in the warehouse.");
                 // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
-            // Resources.ResType initResType = InputConsumer.getResourceType(in, out);
-                Resources.ResType initResType = Resources.ResType.COIN;
+//                Resources.ResType initResType = Resources.ResType.COIN;
+                Resources.ResType initResType = InputConsumer.getResourceType(in, out);
                 Resources initResource = new Resources(initResType, 1);
                 VCEvent vcEvent = new VCEvent(INIT_RES_CHOOSEN, initResource);
                 publish(vcEvent);

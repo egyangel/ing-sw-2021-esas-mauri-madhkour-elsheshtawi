@@ -66,8 +66,8 @@ public class Controller implements Listener<VCEvent> {
         game.shuffleLeaderCards();
         updateAboutDevCardMatrix();
         //TODO DEBUG, SEND 4 LEADER CARDS IN NORMAL GAME
-        debugInitializeAll();
-//        sendFourLeaderCards();
+//        debugInitializeAll();
+        sendFourLeaderCards();
     }
 
     public void debugInitializeAll(){
