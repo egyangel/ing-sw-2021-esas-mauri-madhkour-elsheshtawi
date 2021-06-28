@@ -27,7 +27,6 @@ public class SoloController extends Controller {
 
         for (Integer userID : userIDtoUsernames.keySet()) {
             this.userID = userID;
-            game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
             virtualView.subscribe(this);
             game.subscribe(userID, virtualView);

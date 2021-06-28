@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.model.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -272,9 +273,10 @@ public class ObjectPrinter {
 
     public static String printDevCardMatrixAsList(List<DevCard> list){
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i<12; i++){
-            sb.append(i+1 + ") " + list.get(i).describeDevCard());
+        sb.append("1) " + list.get(0).describeDevCard());
+        for (int i = 2; i<13; i++){
             sb.append("\n");
+            sb.append(i + ") " + list.get(i-1).describeDevCard());
         }
         return sb.toString();
     }

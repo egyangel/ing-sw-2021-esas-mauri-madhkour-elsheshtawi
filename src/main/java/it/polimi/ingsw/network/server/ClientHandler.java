@@ -59,7 +59,8 @@ public class ClientHandler implements Runnable{
         while(true) {
             try {
                 Message msg = (Message)ois.readObject();
-                MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoSERVER, msg);
+                //TODO MESSAGE PRINTER FOR DEBUG
+//                MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoSERVER, msg);
                 if(msg.getMsgtype() == Message.MsgType.HEARTBEAT){
                     // do heartbeat thing
                 }else {
@@ -73,7 +74,8 @@ public class ClientHandler implements Runnable{
 
     public void sendMessage(Message msg){
         msg.setUserID(userID);
-        MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.OUTGOINGfromSERVER, msg);
+        //TODO MESSAGE PRINTER FOR DEBUG
+//        MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.OUTGOINGfromSERVER, msg);
         try {
             oos.writeObject((Object) msg);
         } catch (IOException e) {

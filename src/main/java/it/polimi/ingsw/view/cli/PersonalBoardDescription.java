@@ -10,7 +10,6 @@ public class PersonalBoardDescription {
     private String strongboxDescription;
     private String devSlotsDescription;
     private String faithTrackDescription;
-    private String leaderCardsDescription;
     private String activeLeaderCardsDescription;
     private String inactiveLeaderCardsDescription;
     private int faithPoints;
@@ -78,5 +77,16 @@ public class PersonalBoardDescription {
 
     public void setInactiveLeaderCardsDescription(String inactiveLeaderCardsDescription) {
         this.inactiveLeaderCardsDescription = inactiveLeaderCardsDescription;
+    }
+
+    public String describePersonalBoard(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Faith track: " + "\n" + faithTrackDescription + "\n");
+        sb.append("Warehouse: " + "\n" + warehouseDescription + "\n");
+        sb.append("Strongbox: " + "\n" + strongboxDescription + "\n\n");
+        sb.append("Development slots: " + "\n" + devSlotsDescription);
+        sb.append("\n" + activeLeaderCardsDescription);
+        sb.append("\n" + inactiveLeaderCardsDescription);
+        return  sb.toString();
     }
 }

@@ -67,6 +67,9 @@ public class TurnManager {
     }
 
     public static boolean checkIfEndTriggered(Integer userID) {
+        if (endTriggeredAlready) {
+            return false;
+        }
         return endTriggeredAlready = game.IsEndTriggered(userID);
 
     }
@@ -77,20 +80,5 @@ public class TurnManager {
 
     public static int getRemainingNumberOfTurns() {
         return turnOrderUserID.size() - currentPlayerIndex - 1;
-    }
-
-
-    // TODO CONTINUE
-
-    /**
-     * method that trigger the event of the end of the game
-     *
-     * @param userID player id
-     */
-    private static void triggerTheEndGame(Integer userID) {
-        // if the end is triggered after the player with inkwell played
-        if (currentPlayerIndex == 0) {
-
-        }
     }
 }

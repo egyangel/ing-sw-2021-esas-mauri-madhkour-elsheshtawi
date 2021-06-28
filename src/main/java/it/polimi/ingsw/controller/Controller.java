@@ -48,7 +48,6 @@ public class Controller implements Listener<VCEvent> {
         userIDtoUsernames.putAll(userIDtoNameMap);
         userIDs.addAll(userIDtoUsernames.keySet());
         for (Integer userID : userIDs) {
-            game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
             virtualView.subscribe(this);
             game.subscribe(userID, virtualView);
@@ -66,12 +65,16 @@ public class Controller implements Listener<VCEvent> {
         updateAboutMarketTray();
         game.shuffleLeaderCards();
         updateAboutDevCardMatrix();
-        //TODO FOR DEBUG, DONT FORGET TO REMOVE COMMENT FROM sendFourLeaderCards();
+        //TODO DEBUG, SEND 4 LEADER CARDS IN NORMAL GAME
+//        debugInitializeAll();
+        sendFourLeaderCards();
+    }
+
+    public void debugInitializeAll(){
         debugInitilizeWarehouse();
         debugInitializeStrongbox();
         debugAutoChooseTwoLeadersToAll();
         debugPutDevCardsOnSlots();
-//        sendFourLeaderCards();
     }
 
     /**
@@ -111,12 +114,12 @@ public class Controller implements Listener<VCEvent> {
         Resources resources1 = new Resources();
         resources1.add(Resources.ResType.COIN, 5);
         Requirement requirement = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE);
-        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE, Resources.ResType.SHIELD);
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.EXTRASLOT, Resources.ResType.SHIELD);
         list1.add(new LeaderCard(requirement, 5, ability));
         Resources resources2 = new Resources(5,0,0,0);
 //        resources2.add(Resources.ResType.COIN, 5);
         Requirement requirement2 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.YELLOW, DevCard.CardColor.BLUE);
-        ability = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE, Resources.ResType.SERVANT);
+        ability = new SpecialAbility(SpecialAbility.AbilityType.EXTRASLOT, Resources.ResType.SERVANT);
         list1.add(new LeaderCard(requirement2, 5, ability));
 
         List<LeaderCard> list2 = new ArrayList<>();
@@ -154,7 +157,7 @@ public class Controller implements Listener<VCEvent> {
         Resources LHS3 = new Resources(Resources.ResType.SHIELD, 1);
         LHS3.add(Resources.ResType.STONE, 2);
         Resources RHS3 = new Resources(Resources.ResType.SHIELD,1);
-        RHS3.add(Resources.ResType.FAITH,1);
+        RHS3.add(Resources.ResType.FAITH,5);
         int VP3 = 4;
         int level3 = 2;
         DevCard card3 = new DevCard(level3, DevCard.CardColor.BLUE, LHS3,RHS3,cost3, VP3);
@@ -162,7 +165,7 @@ public class Controller implements Listener<VCEvent> {
         DevSlot.slotPlace place2 = DevSlot.slotPlace.CENTER;
         Resources cost2 = new Resources(Resources.ResType.COIN,3);
         Resources LHS2 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS2.add(Resources.ResType.STONE, 2);
+//        LHS2.add(Resources.ResType.STONE, 2);
         Resources RHS2 = new Resources(Resources.ResType.SHIELD,1);
         RHS2.add(Resources.ResType.FAITH,1);
         int VP2 = 4;
@@ -171,10 +174,10 @@ public class Controller implements Listener<VCEvent> {
 
         DevSlot.slotPlace place4 = DevSlot.slotPlace.CENTER;
         Resources cost4 = new Resources(Resources.ResType.COIN,3);
-        Resources LHS4 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS4.add(Resources.ResType.STONE, 2);
+        Resources LHS4 = new Resources(Resources.ResType.SERVANT, 1);
+//        LHS4.add(Resources.ResType.STONE, 2);
         Resources RHS4 = new Resources(Resources.ResType.SHIELD,1);
-        RHS4.add(Resources.ResType.FAITH,1);
+        RHS4.add(Resources.ResType.FAITH,3);
         int VP4 = 4;
         int level4 = 2;
         DevCard card4 = new DevCard(level4, DevCard.CardColor.YELLOW, LHS4,RHS4,cost4,VP4);
@@ -182,7 +185,7 @@ public class Controller implements Listener<VCEvent> {
         DevSlot.slotPlace place5 = DevSlot.slotPlace.RIGHT;
         Resources cost5 = new Resources(Resources.ResType.COIN,3);
         Resources LHS5 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS5.add(Resources.ResType.STONE, 2);
+//        LHS5.add(Resources.ResType.STONE, 2);
         Resources RHS5 = new Resources(Resources.ResType.SHIELD,1);
         RHS5.add(Resources.ResType.FAITH,1);
         int VP5 = 4;
@@ -192,9 +195,9 @@ public class Controller implements Listener<VCEvent> {
         DevSlot.slotPlace place6 = DevSlot.slotPlace.RIGHT;
         Resources cost6 = new Resources(Resources.ResType.COIN,3);
         Resources LHS6 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS6.add(Resources.ResType.STONE, 2);
+//        LHS6.add(Resources.ResType.STONE, 1);
         Resources RHS6 = new Resources(Resources.ResType.SHIELD,1);
-        RHS6.add(Resources.ResType.FAITH,1);
+        RHS6.add(Resources.ResType.FAITH,2);
         int VP6 = 4;
         int level6 = 2;
         DevCard card6 = new DevCard(level6, DevCard.CardColor.PURPLE, LHS6,RHS6,cost6,VP6);
@@ -256,7 +259,6 @@ public class Controller implements Listener<VCEvent> {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }
     }
-    //todo ask to omer what actually this methods do
     /**
      * method that handle the begin of the game
      */
@@ -476,12 +478,11 @@ public class Controller implements Listener<VCEvent> {
                 sendMinorActionDisplay(userID);
                 break;
             case BUY_DEVCARD_ACTION_ENDED:
-                // there is nothing to do when buy dev card ended
                 TurnManager.registerMajorActionDone(userID);
                 sendMinorActionDisplay(userID);
                 break;
             case ACTIVATE_PROD_ACTION_ENDED:
-                CVEvent cvEventFive = new CVEvent(SELECT_MINOR_ACTION);
+                TurnManager.registerMajorActionDone(userID);
                 sendMinorActionDisplay(userID);
                 break;
             case END_TURN:
@@ -605,7 +606,6 @@ public class Controller implements Listener<VCEvent> {
      * @param context  is the context of take res action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handlePutResourcesChosen(Integer userID, TakeResActionContext context){
-        // todo omer do not put resources of same type to two different shelves, DONE
         Map<Shelf.shelfPlace, Resources.ResType> map = context.getShelfPlaceResTypeMap();
         Map<Shelf.shelfPlace, Boolean> shelfToResult = new HashMap<>();
         boolean result;
@@ -730,7 +730,7 @@ public class Controller implements Listener<VCEvent> {
         game.getPersonalBoard(userID).putDevCardOnSlot(selectedCard, selectedSlot);
         updateAboutWarehouseOfId(userID);
         updateAboutStrongboxOfId(userID);
-        updateAboutLeaderCardsOfId(userID); //todo add extra slot representation on CLI
+        updateAboutLeaderCardsOfId(userID);
         updateAboutDevSlotOfId(userID);
         context.setLastStep(COST_PAID_DEVCARD_PUT);
     }
@@ -823,7 +823,7 @@ public class Controller implements Listener<VCEvent> {
             updateAboutWarehouseOfId(userID);
             updateAboutStrongboxOfId(userID);
             updateAboutFaithPointOfId(userID);
-            updateAboutLeaderCardsOfId(userID); //todo add extra slot representation on CLI
+            updateAboutLeaderCardsOfId(userID);
             context.setLastStep(PRODUCTION_DONE);
         }
     }
@@ -832,9 +832,6 @@ public class Controller implements Listener<VCEvent> {
      * @param userID player id
      * @param totalCost is the cost of activation production
      */
-    //todo it is better to invert the order of payment. it is always better
-    // have the warehouse empty since each time you draw from tray you can
-    // only put res there, if it is full you gift points the other player
     private void payCostFromPersonalBoard(Integer userID, Resources totalCost){
         // automatic payment from warehouse
         Resources warehouseRes = game.getPersonalBoard(userID).getWarehouseResources();
@@ -845,8 +842,21 @@ public class Controller implements Listener<VCEvent> {
                 totalCost.subtract(oneTypeRes);
             } else {
                 Resources paidPartFromWarehouse = warehouseRes.cloneThisType(type);
-                game.getPersonalBoard(userID).subtractFromStrongbox(paidPartFromWarehouse);
+                game.getPersonalBoard(userID).subtractFromWarehouse(paidPartFromWarehouse);
                 totalCost.subtract(paidPartFromWarehouse);
+            }
+        }
+        // automatic payment from active extra slot leaders
+        Resources extraSlotRes = game.getPersonalBoard(userID).getExtraSlotResources();
+        for(Resources.ResType type: totalCost.getResTypes()){
+            Resources oneTypeRes = totalCost.cloneThisType(type);
+            if(extraSlotRes.includes(oneTypeRes)){
+                game.getPersonalBoard(userID).subtractFromExtraSlot(oneTypeRes);
+                totalCost.subtract(oneTypeRes);
+            } else {
+                Resources paidPartFromExtraSlot = extraSlotRes.cloneThisType(type);
+                game.getPersonalBoard(userID).subtractFromExtraSlot(paidPartFromExtraSlot);
+                totalCost.subtract(paidPartFromExtraSlot);
             }
         }
         // automatic payment from strongbox
@@ -862,17 +872,6 @@ public class Controller implements Listener<VCEvent> {
                 totalCost.subtract(paidPartFromStrongbox);
             }
         }
-        // automatic payment from extra slot
-        if (!totalCost.isEmpty()){
-            //todo if the res is not the same type of extra slot res type you did nothing
-            // I mean you automatically suppose without checking that the res is the same ,
-
-            //this means there was extra resources used in the extra slot
-            game.getPersonalBoard(userID).subtractFromExtraSlot(totalCost);
-        }
-        //Todo Omer it is enough to clear the total cost. but i think it is not needed because the previous
-        // method the one that call this one each time create a new object.
-        // maybe assert total cost = 0 here
     }
     /**
      * method that handle the leader cards action like discard or activation leader cards.
@@ -959,7 +958,6 @@ public class Controller implements Listener<VCEvent> {
                 }
                 updateAllAboutRanks(userIDtoVP);
                 updateAllAboutVictoryPoints(usernametoVP);
-                // TODO how to handle server - client connection end?
                 server.closeAllAndExit();
             }
         }
@@ -974,6 +972,7 @@ public class Controller implements Listener<VCEvent> {
         Map<PersonalBoard.PopeArea, Boolean> map;
         for(Integer userID: userIDs){
             game.getPersonalBoard(userID).giveVaticanReport(area);
+            updateAboutFaithPointOfId(userID);
             updateAboutFaithTrackofId(userID);
         }
     }
