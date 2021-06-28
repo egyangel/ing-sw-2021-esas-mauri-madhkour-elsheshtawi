@@ -4,13 +4,7 @@ import java.util.*;
 
 public class PersonalBoard {
 
-    public int getBlackCrossToken() {
-        return blackCrossToken;
-    }
 
-    public void setBlackCrossToken(int blackCrossToken) {
-        this.blackCrossToken = blackCrossToken;
-    }
 
     public enum PopeArea {
         FIRST,
@@ -57,6 +51,13 @@ public class PersonalBoard {
 
 
         }
+    }
+    public int getBlackCrossToken() {
+        return blackCrossToken;
+    }
+
+    public void setBlackCrossToken(int blackCrossToken) {
+        this.blackCrossToken = blackCrossToken;
     }
 
     //     for now, this considers strongbox only, the code will need to be improved.

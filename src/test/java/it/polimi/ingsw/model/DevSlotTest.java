@@ -38,7 +38,7 @@ class DevSlotTest {
 
     }
     @Test
-    void putDevCard() {
+    void testPutDevCard() {
         assertTrue(slotL.isEmpty());
         slotL.putDevCard(testCard);
         assertFalse(slotL.isEmpty());
@@ -47,7 +47,7 @@ class DevSlotTest {
     }
 
     @Test
-    void isEmpty() {
+    void testIsEmpty() {
         slotL.putDevCard(testCard);
         assertFalse(slotL.isEmpty());
         slotL.clear();
@@ -56,7 +56,7 @@ class DevSlotTest {
     }
 
     @Test
-    void isFull() {
+    void testIsFull() {
         slotL.putDevCard(testCard);
         assertFalse(slotL.isFull());
         slotL.putDevCard(testCard2);
@@ -68,13 +68,24 @@ class DevSlotTest {
     }
 
     @Test
-    void getTopDevCard() {
+    void testGetTopDevCard() {
         slotL.putDevCard(testCard);
         assertEquals(testCard,slotL.getTopDevCard());
         slotL.putDevCard(testCard2);
         assertNotEquals(testCard,slotL.getTopDevCard());
         slotL.putDevCard(testCard3);
         assertEquals(testCard3,slotL.getTopDevCard());
+
+
+    }
+    @Test
+    void testDescribeDevSlot(){
+
+        assertTrue(slotL.describeDevSlot().equals(slotL.getPlace()+" SLOT: Empty"));
+
+        slotL.putDevCard(testCard2);
+        slotL.putDevCard(testCard3);
+        assertFalse(slotL.describeDevSlot().equals(slotL.getPlace()+" SLOT: Empty"));
 
 
     }
