@@ -13,14 +13,11 @@ import java.net.Socket;
 import java.util.*;
 
 public class Server implements Runnable {
-    //todo ask why this attribute
-    public static final int SERVER_MIN_PORT = 3000;
-
-    public static final int SERVER_MAX_PORT = 5000;
+    public static final int SERVER_MIN_PORT = 30000;
+    public static final int SERVER_MAX_PORT = 50000;
 
     private static final int DEFAULT_PORT = 30000;
     private static int port;
-
 
     private static final int MAX_NUM_OF_PLAYERS = 4;
     private static int numberOfConnectedUsers = 0;

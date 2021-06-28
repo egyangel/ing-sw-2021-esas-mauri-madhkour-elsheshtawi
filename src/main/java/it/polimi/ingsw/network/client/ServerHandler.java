@@ -41,7 +41,7 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
         System.out.println("\nConnected to server at " + socket.getInetAddress());
         if (client.getView() instanceof CLI) {
             viewCLI = (CLI) client.getView();
-            viewCLI.subscribe(this); // TODO Mohamed: maybe to delete, Omer: correct fix thanks, can be done also for gui
+            viewCLI.subscribe(this);
             this.subscribe(viewCLI);
         } else if(client.getView() instanceof GUI){
             viewGUI = (GUI) client.getView();
@@ -71,7 +71,6 @@ public class ServerHandler implements Runnable, Listener<VCEvent>, Publisher<Eve
     private void handleConnection() throws IOException{
         while(true) {
             try {
-                // TODO: add refusing msg from server to client before closing socket so when socket closes it doesnt say unidentified message
                 Message msg = (Message)ois.readObject();
                 Message.MsgType msgType = msg.getMsgtype();
                 MsgPrinterToCLI.printMessage(MsgPrinterToCLI.MsgDirection.INCOMINGtoCLIENT, msg);

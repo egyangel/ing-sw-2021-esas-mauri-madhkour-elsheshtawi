@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import static it.polimi.ingsw.network.server.Server.SERVER_MIN_PORT;
 import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
 
-// TODO modify this class later as to be usable for both CLI and GUI (dont do println(), instead abstract into view.showError())
 public class InputConsumer {
 
     public static String getIP(Scanner scanner, PrintWriter out) {
@@ -138,7 +137,7 @@ public class InputConsumer {
         String string = "Please enter one of the options: ";
         for (Resources.ResType resType : resTypeList) {
             string += "[" + resType.toString() + "] ";
-            resTypeStringList.add(resType.toString()); // todo make sure restype.toString doesnt return something like RESTYPE.COIN
+            resTypeStringList.add(resType.toString());
         }
         out.println(string);
         String input = in.nextLine().toUpperCase();

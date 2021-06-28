@@ -273,19 +273,11 @@ public class ObjectPrinter {
 
     public static String printDevCardMatrixAsList(List<DevCard> list){
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i<12; i++){
-            sb.append(i+1 + ") " + list.get(i).describeDevCard());
+        sb.append("1) " + list.get(0).describeDevCard());
+        for (int i = 2; i<13; i++){
             sb.append("\n");
+            sb.append(i + ") " + list.get(i-1).describeDevCard());
         }
         return sb.toString();
     }
-//
-//    public static void main(String[] args){
-//        Map<PersonalBoard.PopeArea, Boolean> map = new HashMap<>();
-//        map.put(PersonalBoard.PopeArea.FIRST, true);
-//        map.put(PersonalBoard.PopeArea.SECOND, false);
-//        map.put(PersonalBoard.PopeArea.THIRD, true);
-//        String st = faithTrackDrawVaticanReport(map);
-//        System.out.println(st);
-//    }
 }

@@ -72,13 +72,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("chooseRowColumnNumber", this::chooseRowColumnNumber);
         displayNameMap.put("chooseShelvesToPut", this::chooseShelvesToPut);
         displayNameMap.put("chooseColorLevel", this::chooseColorLevel);
-        displayNameMap.put("displayWarehouse", this::displayWarehouse);
-        displayNameMap.put("displayMarketTray", this::displayMarketTray);
-        displayNameMap.put("displayDevCardMatrix", this::displayDevCardMatrix);
-        displayNameMap.put("displayStrongbox", this::displayStrongbox);
-        displayNameMap.put("displayDevSlots", this::displayDevSlots);
-        displayNameMap.put("displayFaithTrack", this::displayFaithTrack);
-        displayNameMap.put("displayLeaderCards", this::displayLeaderCards);
+        displayNameMap.put("displayOwnPersonalBoard", this::displayOwnPersonalBoard);
+        displayNameMap.put("displayMarketAndDevCards", this::displayMarketAndDevCards);
         displayNameMap.put("displayOtherPersonalBoards", this::displayOtherPersonalBoards);
         displayNameMap.put("displayEndTurn", this::displayEndTurn);
         displayNameMap.put("chooseDevSlotToPutDevCard", this::chooseDevSlotToPutDevCard);
@@ -265,19 +260,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         out.println("[1] Take resource from market");
         out.println("[2] Buy one development card");
         out.println("[3] Activate the production");
-        out.println("[4] View market tray");
-        out.println("[5] View development card matrix");
-        out.println("[6] View warehouse");
-        out.println("[7] View strongbox");
-        out.println("[8] View development slots");
-        out.println("[9] View faith track");
-        out.println("[10] View leader cards");
-        out.println("[11] Activate a leader card");
-        out.println("[12] Discard a leader card");
-        out.println("[13] View other personal boards");
-        out.println("[14] End turn");
+        out.println("[4] View your personal board");
+        out.println("[5] View market tray and development cards");
+        out.println("[6] Activate a leader card");
+        out.println("[7] Discard a leader card");
+        out.println("[8] View other personal boards");
+        out.println("[9] End turn");
         out.println("Enter the index of the action you want to take:");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 14);
+        int index = InputConsumer.getANumberBetween(in, out, 1, 9);
         switch (index) {
             case 1:
                 vcEvent = new VCEvent(TAKE_RES_ACTION_SELECTED);
@@ -292,46 +282,26 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 publish(vcEvent);
                 break;
             case 4:
-                addNextDisplay("displayMarketTray");
+                addNextDisplay("displayOwnPersonalBoard");
                 addNextDisplay("displayAllActionSelection");
                 break;
             case 5:
-                addNextDisplay("displayDevCardMatrix");
+                addNextDisplay("displayMarketAndDevCards");
                 addNextDisplay("displayAllActionSelection");
                 break;
             case 6:
-                addNextDisplay("displayWarehouse");
-                addNextDisplay("displayAllActionSelection");
-                break;
-            case 7:
-                addNextDisplay("displayStrongbox");
-                addNextDisplay("displayAllActionSelection");
-                break;
-            case 8:
-                addNextDisplay("displayDevSlots");
-                addNextDisplay("displayAllActionSelection");
-                break;
-            case 9:
-                addNextDisplay("displayFaithTrack");
-                addNextDisplay("displayAllActionSelection");
-                break;
-            case 10:
-                addNextDisplay("displayLeaderCards");
-                addNextDisplay("displayAllActionSelection");
-                break;
-            case 11:
                 vcEvent = new VCEvent(ACTIVATE_LEADER_SELECTED);
                 publish(vcEvent);
                 break;
-            case 12:
+            case 7:
                 vcEvent = new VCEvent(DISCARD_LEADER_SELECTED);
                 publish(vcEvent);
                 break;
-            case 13:
+            case 8:
                 addNextDisplay("displayOtherPersonalBoards");
                 addNextDisplay("displayAllActionSelection");
                 break;
-            case 14:
+            case 9:
                 addNextDisplay("displayEndTurn");
                 break;
         }
@@ -344,92 +314,51 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayMinorActionSelection() {
         out.println("\nDo you want to execute any other action?");
         out.println("Enter the index of the action you want to take:");
-        out.println("[1] View market tray");
-        out.println("[2] View development card matrix");
-        out.println("[3] View warehouse");
-        out.println("[4] View strongbox");
-        out.println("[5] View development slots");
-        out.println("[6] View faith track");
-        out.println("[7] View leader cards");
-        out.println("[8] Activate a leader card");
-        out.println("[9] Discard a leader card");
-        out.println("[10] View other personal boards");
-        out.println("[11] End Turn");
+        out.println("[1] View your personal board");
+        out.println("[2] View market tray and development cards");
+        out.println("[3] Activate a leader card");
+        out.println("[4] Discard a leader card");
+        out.println("[5] View other personal boards");
+        out.println("[6] End turn");
         int index = InputConsumer.getANumberBetween(in, out, 1, 11);
         switch (index) {
             case 1:
-                addNextDisplay("displayMarketTray");
+                addNextDisplay("displayOwnPersonalBoard");
                 addNextDisplay("displayMinorActionSelection");
                 break;
             case 2:
-                addNextDisplay("displayDevCardMatrix");
+                addNextDisplay("displayMarketAndDevCards");
                 addNextDisplay("displayAllActionSelection");
                 break;
             case 3:
-                addNextDisplay("displayWarehouse");
-                addNextDisplay("displayMinorActionSelection");
-                break;
-            case 4:
-                addNextDisplay("displayStrongbox");
-                addNextDisplay("displayMinorActionSelection");
-                break;
-            case 5:
-                addNextDisplay("displayDevSlots");
-                addNextDisplay("displayMinorActionSelection");
-                break;
-            case 6:
-                addNextDisplay("displayFaithTrack");
-                addNextDisplay("displayMinorActionSelection");
-                break;
-            case 7:
-                addNextDisplay("displayLeaderCards");
-                addNextDisplay("displayMinorActionSelection");
-                break;
-            case 8:
                 VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_SELECTED);
                 publish(vcEvent);
                 break;
-            case 9:
+            case 4:
                 VCEvent vcEventTwo = new VCEvent(DISCARD_LEADER_SELECTED);
                 publish(vcEventTwo);
                 break;
-            case 10:
+            case 5:
                 addNextDisplay("displayOtherPersonalBoards");
                 addNextDisplay("displayMinorActionSelection");
                 break;
-            case 11:
+            case 6:
                 addNextDisplay("displayEndTurn");
                 break;
         }
     }
 
-    public void displayMarketTray() {
-        out.println(marketTrayDescription);
+    public void displayOwnPersonalBoard(){
+        out.println(userIDtoBoardDescriptions.get(client.getUserID()).describePersonalBoard());
     }
 
-    public void displayDevCardMatrix() {
-        out.println(devCardMatrixDescription);
+    public void displayMarketAndDevCards(){
+        out.println("Market tray" + "\n" + marketTrayDescription + "\n");
+        out.println("Development cards" + "\n" + devCardMatrixDescription);
     }
 
     public void displayWarehouse() {
         out.println(userIDtoBoardDescriptions.get(client.getUserID()).getWarehouseDescription());
-    }
-
-    public void displayStrongbox() {
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getStrongboxDescription());
-    }
-
-    public void displayDevSlots() {
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getDevSlotsDescription());
-    }
-
-    public void displayFaithTrack() {
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getFaithTrackDescription());
-    }
-
-    public void displayLeaderCards() {
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getActiveLeaderCardsDescription());
-        out.println(userIDtoBoardDescriptions.get(client.getUserID()).getInactiveLeaderCardsDescription());
     }
 
     public void displayEndTurn(){
@@ -444,8 +373,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         userIDs.remove(client.getUserID());
         int index = 0;
         int numberOfOtherPlayers = userIDtoBoardDescriptions.keySet().size() - 1;
-        out.println("Enter [1] for next board, [2] for previous board, [3] to choose action:");
-        int input = InputConsumer.getANumberBetween(in, out, 1, 3);
+        int input = 1;
         while (input == 1 || input == 2) {
             if (input == 1) index = (index + 1) % numberOfOtherPlayers;
             if (input == 2) index = (index - 1 + numberOfOtherPlayers) % numberOfOtherPlayers;
@@ -453,7 +381,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             String usernameToDisplay = userIDtoUsernames.get(userIDtoDisplay);
             PersonalBoardDescription boardToDisplay = userIDtoBoardDescriptions.get(userIDtoDisplay);
             out.println(usernameToDisplay + "'s personal board:");
-            out.println(boardToDisplay);
+            out.println(boardToDisplay.describePersonalBoard());
             out.println("Enter [1] for next board, [2] for previous board, [3] to choose action:");
             input = InputConsumer.getANumberBetween(in, out, 1, 3);
         }

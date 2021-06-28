@@ -48,7 +48,6 @@ public class Controller implements Listener<VCEvent> {
         userIDtoUsernames.putAll(userIDtoNameMap);
         userIDs.addAll(userIDtoUsernames.keySet());
         for (Integer userID : userIDs) {
-            game.addPlayer(userID);
             VirtualView virtualView = new VirtualView(userID, server.getClientHandler(userID));
             virtualView.subscribe(this);
             game.subscribe(userID, virtualView);
@@ -66,12 +65,16 @@ public class Controller implements Listener<VCEvent> {
         updateAboutMarketTray();
         game.shuffleLeaderCards();
         updateAboutDevCardMatrix();
-        //TODO FOR DEBUG, DONT FORGET TO REMOVE COMMENT FROM sendFourLeaderCards();
+        //TODO DEBUG, SEND 4 LEADER CARDS IN NORMAL GAME
+        debugInitializeAll();
+//        sendFourLeaderCards();
+    }
+
+    public void debugInitializeAll(){
         debugInitilizeWarehouse();
         debugInitializeStrongbox();
         debugAutoChooseTwoLeadersToAll();
         debugPutDevCardsOnSlots();
-//        sendFourLeaderCards();
     }
 
     /**
@@ -256,7 +259,6 @@ public class Controller implements Listener<VCEvent> {
             game.getPersonalBoard(userID).increaseFaitPoint(1);
         }
     }
-    //todo ask to omer what actually this methods do
     /**
      * method that handle the begin of the game
      */
@@ -728,7 +730,7 @@ public class Controller implements Listener<VCEvent> {
         game.getPersonalBoard(userID).putDevCardOnSlot(selectedCard, selectedSlot);
         updateAboutWarehouseOfId(userID);
         updateAboutStrongboxOfId(userID);
-        updateAboutLeaderCardsOfId(userID); //todo add extra slot representation on CLI
+        updateAboutLeaderCardsOfId(userID);
         updateAboutDevSlotOfId(userID);
         context.setLastStep(COST_PAID_DEVCARD_PUT);
     }
@@ -821,7 +823,7 @@ public class Controller implements Listener<VCEvent> {
             updateAboutWarehouseOfId(userID);
             updateAboutStrongboxOfId(userID);
             updateAboutFaithPointOfId(userID);
-            updateAboutLeaderCardsOfId(userID); //todo add extra slot representation on CLI
+            updateAboutLeaderCardsOfId(userID);
             context.setLastStep(PRODUCTION_DONE);
         }
     }

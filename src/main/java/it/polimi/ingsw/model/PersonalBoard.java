@@ -71,7 +71,7 @@ public class PersonalBoard {
     public int putToWarehouse(Shelf.shelfPlace place, Resources res) {
         return warehouse[place.getIndexInWarehouse()].putResource(res);
     }
-    //Todo what does this method do
+
     private boolean putFromTop(Resources.ResType resType, int size) {
         if (checkShelfBySizeAndType(Shelf.shelfPlace.TOP, size, resType)) {
             warehouse[0].putResource(resType, size);
