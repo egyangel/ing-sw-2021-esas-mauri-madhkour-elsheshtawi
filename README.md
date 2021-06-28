@@ -4,7 +4,7 @@
 
 git clone https://github.com/egyangel/ing-sw-2021-esas-mauri-madhkour-elsheshtawi.git .
 
-# Prova Finale Ingegneria del Software 2020
+# Prova Finale Ingegneria del Software 2021
 
 **Table of Contents**
 
@@ -51,13 +51,10 @@ java -jar server.jar
 ```
 
 ## Client
-By default, the client jar loads the GUI, if you wanna use the command line interface please add `cli` as argument. Otherwise, you can also double-click the jar file
+
 ```bash
 java -jar client.jar
 ```
-### Compatibility notes for cli
-The command line version of the game is optimized for unix-like terminals.
-
 
 ## Documentation
 
