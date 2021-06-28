@@ -51,6 +51,8 @@ java -jar server.jar
 ```
 
 ## Client
+### Run your client
+If you want to run the client you can use the following command, this is the easiest way to run it
 
 ```bash
 java -jar client.jar
@@ -60,6 +62,7 @@ java -jar client.jar
 
 ### Javadoc 
 Javadoc is also in this repo [here](/deliveries/final/javadoc)
+
 ### UML diagrams
 UML diagrams are [here](/deliveries/final/uml)
 
