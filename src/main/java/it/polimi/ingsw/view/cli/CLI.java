@@ -515,7 +515,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         Resources.ResType secondResOption = takeResContext.getWhiteConverters().get(1).getAbility().getResType();
         int whiteMarbles = takeResContext.getWhiteMarbleNumber();
         out.println("You have two active white marble converter leader cards, and received " + whiteMarbles + " white marble from market tray");
-        out.println("You can convert the white marbles into [1] " + firstResOption.toString() + " or [2] " + secondResOption.toString());
+        out.println("You can convert the white marbles into [1]" + firstResOption.toString() + " or [2]" + secondResOption.toString());
         while (whiteMarbles > 0) {
             out.println("Enter the index of resource type into which you want to convert one white marble");
             int index = InputConsumer.getANumberBetween(in, out, 1, 2);
@@ -545,12 +545,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         List<LeaderCard> extraSlotLeaders = takeResContext.getExtraSlotLeaderList();
         out.println("You have " + resourceString + " that you can put to your warehouse.");
         out.println("Extra resources that you don't put will be discarded automatically");
-        if(extraSlotLeaders.size() > 0){
-            out.println("You have active leader cards that provides extra slot to put resources");
-            for(LeaderCard card: extraSlotLeaders){
-                out.println(card.describeLeaderCard());
-            }
-        }
         out.println("Select one of the options below:");
         out.println("[1] Clear shelf");
         out.println("[2] Swap shelves");

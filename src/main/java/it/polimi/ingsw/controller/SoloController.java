@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.enumclasses.SoloActionTokenType;
 import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.VirtualView;
 import it.polimi.ingsw.utility.messages.*;
@@ -47,17 +46,17 @@ public class SoloController extends Controller {
          */
 
         // TODO test with actual 6 actions
-        this.actionTokens.put(0,new ActionToken("Discard 2 Green Development Card", DevCard.CardColor.GREEN , SoloActionTokenType.DISCARD_DEV_CARD
+        this.actionTokens.put(0,new ActionToken("Discard 2 Green Development Card", DevCard.CardColor.GREEN , ActionToken.SoloActionTokenType.DISCARD_DEV_CARD
         ));
-        this.actionTokens.put(1,new ActionToken("Discard 2 Blue Development Card", DevCard.CardColor.BLUE, SoloActionTokenType.DISCARD_DEV_CARD
+        this.actionTokens.put(1,new ActionToken("Discard 2 Blue Development Card", DevCard.CardColor.BLUE, ActionToken.SoloActionTokenType.DISCARD_DEV_CARD
         ));
-        this.actionTokens.put(2,new ActionToken("Discard 2 Yello Development Card", DevCard.CardColor.YELLOW, SoloActionTokenType.DISCARD_DEV_CARD
+        this.actionTokens.put(2,new ActionToken("Discard 2 Yello Development Card", DevCard.CardColor.YELLOW, ActionToken.SoloActionTokenType.DISCARD_DEV_CARD
         ));
-        this.actionTokens.put(3,new ActionToken("Discard 2 Purple Development Card", DevCard.CardColor.PURPLE, SoloActionTokenType.DISCARD_DEV_CARD));
+        this.actionTokens.put(3,new ActionToken("Discard 2 Purple Development Card", DevCard.CardColor.PURPLE, ActionToken.SoloActionTokenType.DISCARD_DEV_CARD));
         this.actionTokens.put(4,
-                new ActionToken("Discard 2 Purple Development Card", null, SoloActionTokenType.MOVE_CROSS_TOKEN_TWO));
+                new ActionToken("Discard 2 Purple Development Card", null, ActionToken.SoloActionTokenType.MOVE_CROSS_TOKEN_TWO));
     this.actionTokens.put(5,
-                new ActionToken("Discard 2 Purple Development Card", null, SoloActionTokenType.MOVE_CROSS_TOKEN_ONE_SHELF));
+                new ActionToken("Discard 2 Purple Development Card", null, ActionToken.SoloActionTokenType.MOVE_CROSS_TOKEN_ONE_SHELF));
         actionTokensOrder = new ArrayList<Integer>(actionTokens.keySet());
         Collections.shuffle(actionTokensOrder);
     }

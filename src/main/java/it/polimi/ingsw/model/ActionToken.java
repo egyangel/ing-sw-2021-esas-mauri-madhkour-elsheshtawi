@@ -1,13 +1,15 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumclasses.SoloActionTokenType;
-
 public class ActionToken {
+    public enum SoloActionTokenType {
+        DISCARD_DEV_CARD, MOVE_CROSS_TOKEN_TWO, MOVE_CROSS_TOKEN_ONE_SHELF
+
+    }
     private String name;
     private DevCard.CardColor color;
-    private SoloActionTokenType Type;
+    private ActionToken.SoloActionTokenType Type;
 
-    public ActionToken(String name, DevCard.CardColor color, SoloActionTokenType type) {
+    public ActionToken(String name, DevCard.CardColor color, ActionToken.SoloActionTokenType type) {
         this.name = name;
         this.color = color;
         Type = type;
@@ -32,11 +34,11 @@ public class ActionToken {
         this.color = value;
     }
 
-    public SoloActionTokenType getType() {
+    public ActionToken.SoloActionTokenType getType() {
         return Type;
     }
 
-    public void setType(SoloActionTokenType type) {
+    public void setType(ActionToken.SoloActionTokenType type) {
         Type = type;
     }
 }
