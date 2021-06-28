@@ -165,10 +165,11 @@ public class PersonalBoard {
     }
 
 
-//todo Omer why is this method never used?
+//both methods are used in testing
     public void setInactiveLeaderCards(List<LeaderCard> inactiveLeaderCards) {
         this.inactiveLeaderCards = inactiveLeaderCards;
     }
+
 
     public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
         this.activeLeaderCards = activeLeaderCards;
@@ -205,16 +206,13 @@ public class PersonalBoard {
         }
         return res;
     }
-//todo Omer you have to check that the discount is on that res type,
-// i mean if the discount is related stone and the card doesn't need of coin you cannot apply a disconut,
-// there isn't a check either here and inside res class in the subtract method
+
     public boolean isThereEnoughRes(DevCard card) {
         Resources totalRes = getTotalResources();
         Resources cost = new Resources();
         cost.add(card.getCost());
         for(LeaderCard leaderCard: activeLeaderCards){
-           //this how should be
-            // if(leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT && card.getCost().isThereType(leaderCard.getAbility().getResType()))
+
             if(leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.DISCOUNT){
                 Resources.ResType discountType = leaderCard.getAbility().getResType();
                 cost.subtract(discountType,1);

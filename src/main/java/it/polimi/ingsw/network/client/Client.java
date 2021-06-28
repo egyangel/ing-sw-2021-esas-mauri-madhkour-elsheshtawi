@@ -21,13 +21,11 @@ public class Client implements Runnable {
 
     private ServerHandler serverHandler;
     private IView view;
-    public static final int MIN_PORT = SERVER_MIN_PORT;
-    public static final int MAX_PORT = SERVER_MAX_PORT;
     private Socket socket;
 
     private Integer userID;
     private Map<Integer, String> userIDtoUserNames;
-    private GUI gui;
+
 
     public Map<Integer, String> getUserIDtoUserNames() {
         return userIDtoUserNames;
@@ -35,7 +33,21 @@ public class Client implements Runnable {
 
     public static void main(String[] args) {
         Client client = new Client();
-//        checkIfCLI(args[0], client);
+        String ip;
+        int portNumber;
+
+        // checkIfCLI(args[0], client);
+
+        //todo omer you have to fix it
+
+       /* if(args.length == 2 ) {
+            String ipString = args[1];
+            String portString = args[0];
+            portNumber = Integer.parseInt(portString);
+        }else{
+            System.out.println("ip or number wrong");
+        }*/
+
         client.setView(new CLI(client));
         client.run();
     }
@@ -120,7 +132,5 @@ public class Client implements Runnable {
         else System.exit(0);
     }
 
-    public void setGui(GUI g) {
-        gui = g;
-    }
+
 }

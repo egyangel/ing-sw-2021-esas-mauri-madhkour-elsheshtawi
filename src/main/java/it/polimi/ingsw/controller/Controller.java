@@ -346,10 +346,7 @@ public class Controller implements Listener<VCEvent> {
                 }.getType();
                 List<LeaderCard> selectedCards = (List<LeaderCard>) vcEvent.getEventPayload(type1);
 
-               //TODO should be in this way  game.getPersonalBoard(userID).setInactiveLeaderCards(selectedCards)
-                //no sens as written below
                 game.getPersonalBoard(userID).getInactiveLeaderCards().addAll(selectedCards);
-
 
                 updateAboutLeaderCardsOfId(userID);
                 TurnManager.registerResponse(userID);
