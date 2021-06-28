@@ -35,13 +35,18 @@ public class SpecialAbility {
      * method that keep the resources in the leader card with extra slot ability
      * @param resourcesToBeAdded the res that has to be added on the card
      * */
-    public void addToHolder(Resources resourcesToBeAdded){
+    public int addToHolder(Resources resourcesToBeAdded){
         if (resourcesToBeAdded.isThisOneType() && oneResType == resourcesToBeAdded.getOnlyType()){
             int numberToAdd = resourcesToBeAdded.sumOfValues();
-            if (hasEnoughSpace(numberToAdd)){
-                resourceHolder.add(resourcesToBeAdded);
+            int discarded = numberToAdd + this.resourceHolder.sumOfValues() - 2;
+            resourceHolder.add(resourcesToBeAdded);
+            if(discarded > 0){
+                resourceHolder.subtract(this.oneResType, discarded);
             }
+            if(discarded < 0) return 0;
+            return discarded;
         }
+        return 0;
     }
 
     public Resources getResourcesAtSlot(){
@@ -53,13 +58,6 @@ public class SpecialAbility {
      * */
     public void subtractFromExtraSlot(Resources res){
         resourceHolder.subtract(res);
-    }
-    /**
-     * method that check if there is space in the leader card with extra slot power
-     * @param toBeAdded the res that has to be added on the card
-     * */
-    private boolean hasEnoughSpace(int toBeAdded){
-        return ((resourceHolder.sumOfValues() + toBeAdded) <= 2);
     }
 
     @Override
@@ -86,6 +84,7 @@ public class SpecialAbility {
                 break;
             case EXTRASLOT:
                 stringBuilder.append("extra slot for " + oneResType.getFirstAnsiPart() + "2 " + oneResType.getSecondAnsiPart());
+                stringBuilder.append(", currently put " + oneResType.getFirstAnsiPart() + resourceHolder.sumOfValues() + " " + oneResType.getSecondAnsiPart());
                 break;
             case CONVERTWHITE:
                 stringBuilder.append("\u26aa" + " = " + oneResType.getFirstAnsiPart() + "1 " + oneResType.getSecondAnsiPart());

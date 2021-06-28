@@ -126,7 +126,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 //        String ip = InputConsumer.getIP(in);
 //        out.println("Enter port number of the server:");
 //        int portNumber = InputConsumer.getPortNumber(in);
-
+        //TODO IMPORTANT, ADD IP PUBLIC ADDRESS OF SERVER AND PORT TO client main() arguments
         String ip = "localhost";
         int portNumber = 30000; //for debug
         out.println("Connecting to server...");
@@ -542,15 +542,24 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String resourceString = " Nothing";
         if (resources != null)
             resourceString = resources.toString();
-
+        List<LeaderCard> extraSlotLeaders = takeResContext.getExtraSlotLeaderList();
         out.println("You have " + resourceString + " that you can put to your warehouse.");
         out.println("Extra resources that you don't put will be discarded automatically");
         out.println("Select one of the options below:");
         out.println("[1] Clear shelf");
         out.println("[2] Swap shelves");
         out.println("[3] Select resource type and shelf to put that kind of resources");
-        out.println("[4] End take resource action");
-        int index = InputConsumer.getANumberBetween(in, out, 1, 4);
+        if(extraSlotLeaders.size() > 0){
+            out.println("[4] Select leader card to put onto slot");
+            out.println("[5] End take resource action");
+        } else {
+            out.println("[4] End take resource action");
+        }
+        int index;
+        if (extraSlotLeaders.size() > 0)
+            index = InputConsumer.getANumberBetween(in, out, 1, 5);
+        else
+            index = InputConsumer.getANumberBetween(in, out, 1, 4);
         if (index == 1) {
             out.println("Select a shelf that you want to remove all resources from:");
             Shelf.shelfPlace place = InputConsumer.getShelfPlace(in, out);
@@ -588,6 +597,21 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             }
             takeResContext.setShelftoResTypeMap(shelfToResMap);
             takeResContext.setLastStep(PUT_RESOURCES_CHOSEN);
+        } else if (index == 4 && extraSlotLeaders.size() > 0){
+            Map<Resources.ResType, Integer> resTypeIntegerMap = new HashMap<>();
+            for (LeaderCard card: extraSlotLeaders){
+                out.println(card.describeLeaderCard());
+                out.println("How many number of " + card.getAbility().getResType().name() + " do you want to put onto this card?");
+                int toAddToExtraSlot = InputConsumer.getANumberBetween(in, out, 0, 2);
+                if (toAddToExtraSlot > takeResContext.getResources().getNumberOfType(card.getAbility().getResType())){
+                    out.println("You don't have that much resources to put onto the leader card!");
+                    addNextDisplay("chooseShelvesToPut");
+                    return;
+                }
+                resTypeIntegerMap.put(card.getAbility().getResType(), toAddToExtraSlot);
+            }
+            takeResContext.setExtraSlotMap(resTypeIntegerMap);
+            takeResContext.setLastStep(EXTRA_SLOT_CHOSEN);
         } else {
             takeResContext.addDiscardedRes(takeResContext.getResources().sumOfValues());
             out.println("Ending take resource action...");
