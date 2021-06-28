@@ -47,13 +47,13 @@ If you want you can use the jars we already built for you, you can find them [he
 ### Run your server
 To run the server on your machine you can use the following command, this is the easiest way to run it
 ```bash
-java -jar server.jar
+java -jar Server.jar
 ```
 
 ## Client
 To run the client you can use the following command, this is the easiest way to run it
 ```bash
-java -jar client.jar
+java -jar Client.jar
 ```
 
 ## Documentation
