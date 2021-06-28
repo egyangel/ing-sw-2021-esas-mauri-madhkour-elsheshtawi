@@ -67,6 +67,9 @@ public class TurnManager {
     }
 
     public static boolean checkIfEndTriggered(Integer userID) {
+        if (endTriggeredAlready) {
+            return false;
+        }
         return endTriggeredAlready = game.IsEndTriggered(userID);
 
     }

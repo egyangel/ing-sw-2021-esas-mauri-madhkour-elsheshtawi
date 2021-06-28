@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.model.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -278,4 +279,13 @@ public class ObjectPrinter {
         }
         return sb.toString();
     }
+//
+//    public static void main(String[] args){
+//        Map<PersonalBoard.PopeArea, Boolean> map = new HashMap<>();
+//        map.put(PersonalBoard.PopeArea.FIRST, true);
+//        map.put(PersonalBoard.PopeArea.SECOND, false);
+//        map.put(PersonalBoard.PopeArea.THIRD, true);
+//        String st = faithTrackDrawVaticanReport(map);
+//        System.out.println(st);
+//    }
 }

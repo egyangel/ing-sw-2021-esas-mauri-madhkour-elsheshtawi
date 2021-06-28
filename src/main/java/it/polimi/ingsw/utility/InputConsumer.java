@@ -119,6 +119,20 @@ public class InputConsumer {
         return resType;
     }
 
+    public static Resources.ResType getAllResourceType(Scanner in, PrintWriter out) {
+        Resources.ResType resType;
+        String input;
+        out.println("Enter a resource type name: [COIN] [STONE] [SERVANT] [SHIELD] [FAITH]");
+        input = in.nextLine().toUpperCase();
+        while (!((input.equals("COIN")) || (input.equals("STONE")) || (input.equals("SERVANT")) || (input.equals("SHIELD")) || (input.equals("FAITH")))) {
+            out.println("Invalid input.");
+            out.println("Enter a resource type name: [COIN] [STONE] [SERVANT] [SHIELD] [FAITH]");
+            input = in.nextLine().toUpperCase();
+        }
+        resType = Resources.ResType.valueOf(input);
+        return resType;
+    }
+
     public static Resources.ResType getATypeAmongSet(Scanner in, PrintWriter out, List<Resources.ResType> resTypeList) {
         List<String> resTypeStringList = new ArrayList<>();
         String string = "Please enter one of the options: ";

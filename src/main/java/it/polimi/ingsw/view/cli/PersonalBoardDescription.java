@@ -10,7 +10,6 @@ public class PersonalBoardDescription {
     private String strongboxDescription;
     private String devSlotsDescription;
     private String faithTrackDescription;
-    private String leaderCardsDescription;
     private String activeLeaderCardsDescription;
     private String inactiveLeaderCardsDescription;
     private int faithPoints;

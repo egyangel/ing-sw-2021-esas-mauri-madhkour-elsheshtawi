@@ -236,7 +236,6 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public boolean IsEndTriggered(int userID) {
-        //TODO convert to original end criteria
         boolean endByFaithPoints = (getPersonalBoard(userID).getFaithPoints() == 24);
         boolean endByDevCard = (getPersonalBoard(userID).getOwnedCards().size() == 7);
         if (soloMode && getPersonalBoard(userID).getBlackCrossToken() == 24 && hasEmptySlot()) {

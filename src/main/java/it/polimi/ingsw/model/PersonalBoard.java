@@ -118,14 +118,16 @@ public class PersonalBoard {
     }
 
     public void increaseFaitPoint(int toAdd) {
-        if (faithPoints < 8 && (faithPoints+toAdd)>=8){
+        int oldFaithPoint = faithPoints;
+        faithPoints += toAdd;
+        if (faithPoints > 24) faithPoints = 24;
+        if (oldFaithPoint < 8 && faithPoints>=8){
             game.triggerVaticanReport(PopeArea.FIRST);
-        } else if (faithPoints < 16 && (faithPoints+toAdd)>=16){
+        } else if (oldFaithPoint < 16 && faithPoints>=16){
             game.triggerVaticanReport(PopeArea.SECOND);
-        } else if (faithPoints < 24 && (faithPoints+toAdd)>=24){
+        } else if (oldFaithPoint < 24 && faithPoints == 24){
             game.triggerVaticanReport(PopeArea.THIRD);
         }
-        faithPoints += toAdd;
     }
     //methods only for testing
     public void setFaitPoint(int toAdd) {
@@ -141,18 +143,17 @@ public class PersonalBoard {
     }
 
     public void giveVaticanReport(PopeArea area) {
-        if (area == PopeArea.FIRST && faithPoints >= 5 && faithPoints <= 8) {
+        if (area == PopeArea.FIRST && faithPoints >= 5) {
             turnPopeFavorTile(PopeArea.FIRST);
-        } else if (area == PopeArea.SECOND && faithPoints >= 12 && faithPoints <= 16) {
+        } else if (area == PopeArea.SECOND && faithPoints >= 12) {
             turnPopeFavorTile(PopeArea.SECOND);
-        } else if (area == PopeArea.THIRD && faithPoints >= 19 && faithPoints <= 24) {
+        } else if (area == PopeArea.THIRD && faithPoints >= 19) {
             turnPopeFavorTile(PopeArea.THIRD);
         }
     }
 
     private void turnPopeFavorTile(PopeArea area) {
         popeAreaMap.replace(area, Boolean.TRUE);
-        // create a MV message inside Game
     }
 
     public List<LeaderCard> getInactiveLeaderCards() {

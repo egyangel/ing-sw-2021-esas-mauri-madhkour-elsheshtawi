@@ -708,7 +708,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("chooseDevSlotsForProd");
                 break;
             case NOT_ENOUGH_RES_ON_PERSONAL_BOARD:
-                // todo Omer it goes on to all menu in middle of action, if it is good, use it for buy dev card too!
                 setGeneralMsg("You do not have enough resources on your personal board!");
                 addNextDisplay("displayGeneralMsg");
                 addNextDisplay("displayAllActionSelection");
@@ -770,7 +769,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             basicProdCost.add(type,1);
             activateProdContext.setBasicProdLHS(basicProdCost);
             out.println("Enter the resource type to convert to:");
-            type = InputConsumer.getResourceType(in, out);
+            type = InputConsumer.getAllResourceType(in, out);
             Resources outputres = new Resources();
             outputres.add(type, 1);
             activateProdContext.setBasicProdRHS(outputres);
@@ -849,7 +848,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         Map<String,Integer> scoreboard = (Map<String,Integer>) generalCVEvent.getEventPayload(type);
         out.println("The scoreboard is:");
         for(Map.Entry<String, Integer> entry: scoreboard.entrySet()){
-            out.println("Username: "+ entry.getKey() + " Victory Points: " + entry.getValue());
+            out.println("Username: "+ entry.getKey() + ", Victory Points: " + entry.getValue());
         }
         client.closeServerConnection();
     }
@@ -959,9 +958,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescription);
                 break;
             case FAITHTRACK_UPDATE:
-                Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {
-                }.getType();
+                Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {}.getType();
                 Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);
+                userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setTileMap(tileMapTwo);
                 int faithPointsTwo = userIDtoBoardDescriptions.get(userIDofUpdatedBoard).getFaithPoints();
                 String faithTrackDescriptionTwo = ObjectPrinter.faithTrackPrinter(tileMapTwo, faithPointsTwo);
                 userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescriptionTwo);

@@ -154,7 +154,7 @@ public class Controller implements Listener<VCEvent> {
         Resources LHS3 = new Resources(Resources.ResType.SHIELD, 1);
         LHS3.add(Resources.ResType.STONE, 2);
         Resources RHS3 = new Resources(Resources.ResType.SHIELD,1);
-        RHS3.add(Resources.ResType.FAITH,1);
+        RHS3.add(Resources.ResType.FAITH,5);
         int VP3 = 4;
         int level3 = 2;
         DevCard card3 = new DevCard(level3, DevCard.CardColor.BLUE, LHS3,RHS3,cost3, VP3);
@@ -162,7 +162,7 @@ public class Controller implements Listener<VCEvent> {
         DevSlot.slotPlace place2 = DevSlot.slotPlace.CENTER;
         Resources cost2 = new Resources(Resources.ResType.COIN,3);
         Resources LHS2 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS2.add(Resources.ResType.STONE, 2);
+//        LHS2.add(Resources.ResType.STONE, 2);
         Resources RHS2 = new Resources(Resources.ResType.SHIELD,1);
         RHS2.add(Resources.ResType.FAITH,1);
         int VP2 = 4;
@@ -171,10 +171,10 @@ public class Controller implements Listener<VCEvent> {
 
         DevSlot.slotPlace place4 = DevSlot.slotPlace.CENTER;
         Resources cost4 = new Resources(Resources.ResType.COIN,3);
-        Resources LHS4 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS4.add(Resources.ResType.STONE, 2);
+        Resources LHS4 = new Resources(Resources.ResType.SERVANT, 1);
+//        LHS4.add(Resources.ResType.STONE, 2);
         Resources RHS4 = new Resources(Resources.ResType.SHIELD,1);
-        RHS4.add(Resources.ResType.FAITH,1);
+        RHS4.add(Resources.ResType.FAITH,3);
         int VP4 = 4;
         int level4 = 2;
         DevCard card4 = new DevCard(level4, DevCard.CardColor.YELLOW, LHS4,RHS4,cost4,VP4);
@@ -182,7 +182,7 @@ public class Controller implements Listener<VCEvent> {
         DevSlot.slotPlace place5 = DevSlot.slotPlace.RIGHT;
         Resources cost5 = new Resources(Resources.ResType.COIN,3);
         Resources LHS5 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS5.add(Resources.ResType.STONE, 2);
+//        LHS5.add(Resources.ResType.STONE, 2);
         Resources RHS5 = new Resources(Resources.ResType.SHIELD,1);
         RHS5.add(Resources.ResType.FAITH,1);
         int VP5 = 4;
@@ -192,9 +192,9 @@ public class Controller implements Listener<VCEvent> {
         DevSlot.slotPlace place6 = DevSlot.slotPlace.RIGHT;
         Resources cost6 = new Resources(Resources.ResType.COIN,3);
         Resources LHS6 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS6.add(Resources.ResType.STONE, 2);
+//        LHS6.add(Resources.ResType.STONE, 1);
         Resources RHS6 = new Resources(Resources.ResType.SHIELD,1);
-        RHS6.add(Resources.ResType.FAITH,1);
+        RHS6.add(Resources.ResType.FAITH,2);
         int VP6 = 4;
         int level6 = 2;
         DevCard card6 = new DevCard(level6, DevCard.CardColor.PURPLE, LHS6,RHS6,cost6,VP6);
@@ -479,12 +479,11 @@ public class Controller implements Listener<VCEvent> {
                 sendMinorActionDisplay(userID);
                 break;
             case BUY_DEVCARD_ACTION_ENDED:
-                // there is nothing to do when buy dev card ended
                 TurnManager.registerMajorActionDone(userID);
                 sendMinorActionDisplay(userID);
                 break;
             case ACTIVATE_PROD_ACTION_ENDED:
-                CVEvent cvEventFive = new CVEvent(SELECT_MINOR_ACTION);
+                TurnManager.registerMajorActionDone(userID);
                 sendMinorActionDisplay(userID);
                 break;
             case END_TURN:
@@ -960,7 +959,6 @@ public class Controller implements Listener<VCEvent> {
                 }
                 updateAllAboutRanks(userIDtoVP);
                 updateAllAboutVictoryPoints(usernametoVP);
-                // TODO how to handle server - client connection end?
                 server.closeAllAndExit();
             }
         }
@@ -975,6 +973,7 @@ public class Controller implements Listener<VCEvent> {
         Map<PersonalBoard.PopeArea, Boolean> map;
         for(Integer userID: userIDs){
             game.getPersonalBoard(userID).giveVaticanReport(area);
+            updateAboutFaithPointOfId(userID);
             updateAboutFaithTrackofId(userID);
         }
     }
