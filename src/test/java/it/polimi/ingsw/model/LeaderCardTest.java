@@ -37,19 +37,24 @@ class LeaderCardTest {
     }
 
     @Test
-    void getAbility() {
+    void testGetAbility() {
         assertEquals(ability,card.getAbility());
     }
 
     @Test
-    void getVictoryPoints() {
+    void testGetVictoryPoints() {
         assertEquals(5,card.getVictoryPoints());
         assertNotEquals(-1,card.getVictoryPoints());
     }
 
     @Test
-    void getRequirement() {
+    void testGetRequirement() {
         assertEquals(requirement,card.getRequirement());
         assertNotEquals(card2.getRequirement(),card.getRequirement());
+    }
+    @Test
+    void testDescribeLeaderCard() {
+        card.describeLeaderCard();
+        assertFalse(card.describeLeaderCard().isEmpty());
     }
 }
