@@ -25,51 +25,25 @@ public class JsonConverter {
 
     public static List<DevCard> deserializeDevCards(){
         TextReader textReader= new TextReader();
-        System.out.println("deserializeDevCards");
+
         List<DevCard> cards;
-
         String fileAsString = textReader.readMyText("DevCards.json");
-       // System.out.println(fileAsString);
-
         cards = Arrays.asList(gson.fromJson( fileAsString, DevCard[].class));
-
-        System.out.println("DevCards length" + cards.size());
         return cards;
-       /*
-        try(JsonReader reader = new JsonReader(new FileReader("src/main/resources/DevCards.json"))) {
-            cards = Arrays.asList(gson.fromJson(reader, DevCard[].class));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return cards;*/
     }
 
     public static List<LeaderCard> deserializeLeaderCards(){
         TextReader textReader= new TextReader();
-        System.out.println("deserializeLeaderCards");
         List<LeaderCard> cards;
 
         String fileAsString = textReader.readMyText("LeaderCards.json");
-        //System.out.println(fileAsString);
+
         cards = Arrays.asList(gson.fromJson( fileAsString, LeaderCard[].class));
 
-        System.out.println("Leader length" + cards.size());
         return cards;
-        /*
-       // List<LeaderCard> cards = null;
-        try(JsonReader reader = new JsonReader(new FileReader("src/main/resources/LeaderCards.json"))) {
-            cards = Arrays.asList(gson.fromJson(reader, LeaderCard[].class));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return cards;*/
-    }
 
+    }
     private static String serializeDevCard(DevCard devcard) {
         return gson.toJson(devcard);
     }
