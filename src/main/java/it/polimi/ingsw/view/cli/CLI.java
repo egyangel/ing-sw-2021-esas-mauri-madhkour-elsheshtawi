@@ -60,7 +60,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         displayNameMap.put("displayGreet", this::displayGreet);
         displayNameMap.put("displaySetup", this::displaySetup);
         displayNameMap.put("displayIdle", this::displayIdle);
-        displayNameMap.put("displayFirstLogin", this::displayFirstLogin);
+        displayNameMap.put("displayCreateGame", this::displayCreateGame);
         displayNameMap.put("displayLogin", this::displayLogin);
         displayNameMap.put("displayGeneralMsg", this::displayGeneralMsg);
         displayNameMap.put("displayFourLeaderCard", this::displayFourLeaderCard);
@@ -134,14 +134,14 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     @Override
-    public void displayFirstLogin() {
+    public void displayCreateGame() {
         out.println("Choose a username:");
         // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
 //        String username = InputConsumer.getUserName(in, out);
         String username = "omer";
         out.println("Choose number of players you would like to play with:");
 //        Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
-        Integer numberOfPlayers = 2;
+        Integer numberOfPlayers = 1;
         Map<String, String> firstLoginMap = new HashMap<>();
         firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
         firstLoginMap.put("username", username);

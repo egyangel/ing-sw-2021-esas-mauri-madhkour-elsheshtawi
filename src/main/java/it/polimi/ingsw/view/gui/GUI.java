@@ -56,7 +56,7 @@ public class GUI implements IView, Listener<Event>{
 
     }
 
-    public void displayFirstLogin() {
+    public void displayCreateGame() {
 
     }
 

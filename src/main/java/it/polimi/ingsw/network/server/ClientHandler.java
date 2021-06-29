@@ -38,7 +38,7 @@ public class ClientHandler implements Runnable{
             if(server.isFirstPlayerSetupDone()){
                 sendMessage(new Message(Message.MsgType.DISPLAY_LOGIN));
             } else {
-                sendMessage(new Message(Message.MsgType.DISPLAY_FIRST_LOGIN));
+                sendMessage(new Message(Message.MsgType.DISPLAY_CREATE_GAME));
             }
 
             handleConnection();

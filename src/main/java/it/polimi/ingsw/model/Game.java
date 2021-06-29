@@ -166,26 +166,20 @@ public class Game implements Publisher<MVEvent> {
 
     public boolean discardLowerCard(DevCard.CardColor cardColor, Integer numberOfCardsToDiscard) {
         List<DevCard> devCards = new ArrayList<>();
-        HashMap<Integer, Integer> devCardsIndexes = new HashMap<>();
-        for (int i = 0; i < this.devCardMatrix.length || devCards.size() == numberOfCardsToDiscard; i++) {
 
-            for (int j = 0; j < this.devCardMatrix.length || devCards.size() == numberOfCardsToDiscard; j++) {
-                DevCard card = devCardMatrix[j][j].peekBottomCard();
-                if (card.getColor() == cardColor) {
-                    devCards.add(card);
-                    devCardsIndexes.put(i, j);
+        for (int i = 0; i < this.devCardMatrix.length && devCards.size() != numberOfCardsToDiscard; i++) {
 
-                }
+            for (int j = 0; j < this.devCardMatrix[i].length && devCards.size() != numberOfCardsToDiscard; j++) {
+                DevCard deletedDevCard = this.devCardMatrix[i][j].discardBottomCard();
+                if (deletedDevCard != null)
+                    devCards.add(deletedDevCard);
             }
         }
-        if (devCards.size() == numberOfCardsToDiscard) {
-            for (int i = 0; i < devCardsIndexes.size(); i++) {
-                Integer j = devCardsIndexes.get(i);
-                this.devCardMatrix[i][j].discardBottomCard();
-            }
+        if (devCards.size() == numberOfCardsToDiscard){
+            // TODO Show Discarded card ?
             return true;
-
         }
+        // TODO: Trigger the end of the game
         return false;
     }
 

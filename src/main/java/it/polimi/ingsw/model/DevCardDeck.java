@@ -37,14 +37,12 @@ public class DevCardDeck {
         else return stackOfDevCards.get(0);
     }
     //todo mohamed ask why this method
-    public DevCard peekBottomCard () {
-        if (stackOfDevCards.isEmpty()) return null;
-        else return stackOfDevCards.get(stackOfDevCards.size()-1);
-    }
-
+    // Mohamed>  To Delete the bottom card for soloMode
     public DevCard discardBottomCard() {
         if (stackOfDevCards.isEmpty()) return null;
-        else return stackOfDevCards.remove(stackOfDevCards.size()-1);
+        DevCard card = stackOfDevCards.get(stackOfDevCards.size() - 1);
+        stackOfDevCards.remove(stackOfDevCards.size() - 1);
+         return card;
     }
 
     public void removeTopCard(){
@@ -58,5 +56,6 @@ public class DevCardDeck {
     public int getLevel() {
         return level;
     }
+
 
 }

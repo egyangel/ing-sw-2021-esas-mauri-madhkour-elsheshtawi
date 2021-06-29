@@ -25,5 +25,5 @@ public interface IView {
 
     void addNextDisplay(String displayName);
 
-    void displayFirstLogin();
+    void displayCreateGame();
 }

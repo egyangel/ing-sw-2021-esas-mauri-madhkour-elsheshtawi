@@ -67,10 +67,10 @@ public class Client implements Runnable {
 
     public void handleSetUpMessage(Message msg) {
         switch (msg.getMsgtype()) {
-            case DISPLAY_FIRST_LOGIN:
+            case DISPLAY_CREATE_GAME:
                 userID = msg.getUserID();
                 serverHandler.setUserId(userID);
-                view.addNextDisplay("displayFirstLogin");
+                view.addNextDisplay("displayCreateGame");
                 break;
             case DISPLAY_LOGIN:
                 userID = msg.getUserID();

@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 // 4 kinds of messages in total
 public class Message implements Serializable {
     public enum MsgType {
-        DISPLAY_FIRST_LOGIN,
+        DISPLAY_CREATE_GAME,
         DISPLAY_LOGIN,
         REQUEST_FIRST_LOGIN,
         REQUEST_LOGIN,

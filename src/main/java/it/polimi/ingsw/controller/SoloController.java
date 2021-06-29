@@ -35,6 +35,7 @@ public class SoloController extends Controller {
             userIDtoVirtualViews.put(userID, virtualView);
             TurnManager.putUserID(userID);
         }
+        TurnManager.setGame(game);
         game.createGameObjects();
 
         //TODO INIT SOLO GAME
@@ -114,40 +115,41 @@ public class SoloController extends Controller {
 
     }
 
-//    @Override
-    protected void endTurn(Integer userId) {
+    @Override
+    protected void handleEndTurn(Integer userId) {
         // TODO: to implement the end of the turn
         Integer currentIndex = actionTokensOrder.get(currentActionTokenIndex);
         ActionToken actionToken = actionTokens.get(currentActionTokenIndex);
         performAction(actionToken);
         currentActionTokenIndex = (currentActionTokenIndex + 1) % actionTokens.size();
         TurnManager.registerResponse(userId);
-        TurnManager.goToNextTurn();
-        // todo Note from Omer: I deleted the commented out methods in two line of code below, they are updated automatically now
-//        game.sendMarketAndDevCardMatrixTo(currentUserID);
-        //
-        Integer currentUserID = TurnManager.getInkwellUserID();
-        CVEvent beginTurnEvent = new CVEvent(CVEvent.EventType.SELECT_ALL_ACTION);
-        userIDtoVirtualViews.get(currentUserID).update(beginTurnEvent);
+        super.handleEndTurn(userId);
     }
 
     private void performAction(ActionToken actionToken) {
         switch (actionToken.getType()){
             case DISCARD_DEV_CARD:
                 this.game.discardLowerCard(actionToken.getColor(), 2);
-
-                // TODO SHOW "2 color card has been discarded, then show card matrix"
+                super.updateAboutWarehouseOfId(userID);
+                // TODO: send mvevent super.updateaboutslotid
                 break;
             case MOVE_CROSS_TOKEN_TWO:
-                //TODO SHOW CROSSTOKENPOINTS
+
                 crossTokenPoints = crossTokenPoints + 2;
                 break;
             case MOVE_CROSS_TOKEN_ONE_SHELF:
-                //TODO SHOW CROSSTOKENPOINTS
+
                 crossTokenPoints = crossTokenPoints + 1;
                 shuffleActionTokenArray();
                 break;
         }
+    }
+
+
+    public void updateAboutBlackCrossFaithIncrese(Integer userID){
+
+
+
     }
 
 }
