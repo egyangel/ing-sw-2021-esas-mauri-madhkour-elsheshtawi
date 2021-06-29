@@ -266,12 +266,16 @@ public class Controller implements Listener<VCEvent> {
         Integer inkwellUserID = TurnManager.getInkwellUserID();
         sendAllActionDisplay(inkwellUserID);
     }
-
+    /**
+     * method that send to the player the main menu of the game
+     */
     protected void sendAllActionDisplay(Integer userID){
         CVEvent cvEvent = new CVEvent(SELECT_ALL_ACTION);
         userIDtoVirtualViews.get(userID).update(cvEvent);
     }
-
+    /**
+     * method that send to the player the menu to see the personal board
+     */
     protected void sendMinorActionDisplay(Integer userID){
         CVEvent cvEvent = new CVEvent(SELECT_MINOR_ACTION);
         userIDtoVirtualViews.get(userID).update(cvEvent);
@@ -363,7 +367,10 @@ public class Controller implements Listener<VCEvent> {
         MVEvent inActiveLeaderMVEvent = new MVEvent(userId, MVEvent.EventType.INACTIVE_LEADER_CARD_UPDATE, inActiveLeaders);
         game.updateAllAboutChange(inActiveLeaderMVEvent);
     }
-
+    /**
+     * method that based on vcEvent do the corresponding action
+     * @param vcEvent  event send from the view to the controller
+     */
     @Override
     public void update(VCEvent vcEvent) {
         Integer userID = vcEvent.getUserID();
@@ -478,9 +485,6 @@ public class Controller implements Listener<VCEvent> {
                 sendMinorActionDisplay(userID);
                 break;
             case BUY_DEVCARD_ACTION_ENDED:
-                TurnManager.registerMajorActionDone(userID);
-                sendMinorActionDisplay(userID);
-                break;
             case ACTIVATE_PROD_ACTION_ENDED:
                 TurnManager.registerMajorActionDone(userID);
                 sendMinorActionDisplay(userID);
@@ -608,7 +612,6 @@ public class Controller implements Listener<VCEvent> {
     private void handlePutResourcesChosen(Integer userID, TakeResActionContext context){
         Map<Shelf.shelfPlace, Resources.ResType> map = context.getShelfPlaceResTypeMap();
         Map<Shelf.shelfPlace, Boolean> shelfToResult = new HashMap<>();
-        boolean result;
         for (Map.Entry<Shelf.shelfPlace, Resources.ResType> entry : map.entrySet()) {
             Shelf.shelfPlace shelfPlaceToPut = entry.getKey();
             Resources.ResType resTypeToPut = entry.getValue();
@@ -636,7 +639,11 @@ public class Controller implements Listener<VCEvent> {
         context.setLastStep(CHOOSE_SHELVES); //choose shelves is correct, I did it this way intentionally
         updateAboutWarehouseOfId(userID);
     }
-
+    /**
+     * method that handle the insertion of resources on the  ExtraSlot
+     * @param userID player id
+     * @param context  is the context of take res action. it is filled in both view and controller side with info needed to complete the action
+     */
     private void handleExtraSlotChosen(Integer userID, TakeResActionContext context){
         List<LeaderCard> leaderCardList = game.getPersonalBoard(userID).getActiveLeaderCards();
         List<LeaderCard> extraSlotLeaders = new ArrayList<>();
@@ -874,7 +881,7 @@ public class Controller implements Listener<VCEvent> {
         }
     }
     /**
-     * method that handle the leader cards action like discard or activation leader cards.
+     * method that handle the activation of the player's leader cards
      * @param userID player id
      * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
      */
@@ -904,7 +911,11 @@ public class Controller implements Listener<VCEvent> {
             }
         }
     }
-
+    /**
+     * method that handle discard action of the leader cards
+     * @param userID player id
+     * @param context is the leader card context. it is filled in both view and controller side with info needed to complete the action
+     */
     protected void handleDiscardLeaderAction(Integer userID, LeaderActionContext context){
         // using indexes of cards instead of card objects, to use the correct hashcode of the leader card object during removal
         List<Integer> activeCardIndexToDiscardList =  context.getSelectedActiveCardIndexes();
@@ -934,7 +945,10 @@ public class Controller implements Listener<VCEvent> {
         }
 
     }
-
+    /**
+     * method that handle the end of the game
+     * @param userID player id
+     */
     protected void handleEndTurn(Integer userID){
         boolean isEndTriggeredBefore = TurnManager.checkIfEndOfGame(userID);
         boolean isEndTriggeredJustNow = TurnManager.checkIfEndTriggered(userID);
@@ -969,7 +983,6 @@ public class Controller implements Listener<VCEvent> {
     }
 
     public void takeVaticanReports(PersonalBoard.PopeArea area){
-        Map<PersonalBoard.PopeArea, Boolean> map;
         for(Integer userID: userIDs){
             game.getPersonalBoard(userID).giveVaticanReport(area);
             updateAboutFaithPointOfId(userID);
@@ -988,7 +1001,10 @@ public class Controller implements Listener<VCEvent> {
         }
         return userIDtoVP;
     }
+    /**
+     * method that handle compute the winner of the game
 
+     */
     protected void updateAllAboutRanks(Map<Integer,Integer> userIDtoVPMap){
         List<Integer> VPlist = new ArrayList<>(userIDtoVPMap.values());
         int maxVP = Collections.max(VPlist);

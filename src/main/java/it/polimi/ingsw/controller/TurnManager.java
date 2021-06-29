@@ -20,7 +20,7 @@ public class TurnManager {
         if (!userIDtoCheck.get(userID)) {
             userIDtoCheck.replace(userID, true);
         } else
-            System.out.println("Turn related register problem occured!");
+            System.out.println("Turn related register problem occurred!");
     }
 
     public static void registerMajorActionDone(Integer userID) {
