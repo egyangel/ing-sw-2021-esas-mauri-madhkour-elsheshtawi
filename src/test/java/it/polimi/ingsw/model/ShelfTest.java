@@ -125,7 +125,7 @@ class ShelfTest {
     }
 
     @Test
-    void getShelfResType() {
+    void testGetShelfResType() {
 
 
         warehouse[1].putResource(Resources.ResType.SERVANT,2);
@@ -133,6 +133,17 @@ class ShelfTest {
 
         assertEquals(Resources.ResType.SERVANT,warehouse[1].getShelfResType());
         assertEquals(Resources.ResType.SHIELD,warehouse[2].getShelfResType());
+    }
+    @Test
+    void testDescribeShelfFancy() {
+
+
+        warehouse[1].putResource(Resources.ResType.SERVANT,2);
+        warehouse[2].putResource(Resources.ResType.SHIELD,3);
+
+        assertFalse(warehouse[0].describeShelfFancy().isEmpty());
+        assertFalse(warehouse[1].describeShelfFancy().isEmpty());
+        assertFalse(warehouse[2].describeShelfFancy().isEmpty());
     }
 
 

@@ -14,12 +14,14 @@ class DevCardTest {
     private Resources Rhs;
     private Resources cost;
     private DevCard testCard;
+    private DevCard testDefaultProdCard;
     @BeforeEach
     void setUp() {
         Lhs = new Resources(Resources.ResType.STONE,2);
         Rhs= new Resources(Resources.ResType.SERVANT,1);
         cost= new Resources(Resources.ResType.STONE,2);
         testCard = new DevCard(1, DevCard.CardColor.BLUE,Lhs,Rhs, cost,10);
+        testDefaultProdCard = new DevCard(Lhs,Rhs);
 
     }
     @AfterEach
@@ -28,31 +30,32 @@ class DevCardTest {
         Rhs.clear();
         cost.clear();
         testCard = null;
+        testDefaultProdCard = null;
 
     }
     @Test
-    void getLevel() {
+    void testGetLevel() {
         assertEquals(1,testCard.getLevel());
         assertNotEquals(4,testCard.getLevel());
         assertNotEquals(0,testCard.getLevel());
     }
 
     @Test
-    void getVictoryPoints() {
+    void testGetVictoryPoints() {
         assertEquals(10,testCard.getVictoryPoints());
         assertNotEquals(-1,testCard.getVictoryPoints());
         assertNotEquals(0,testCard.getVictoryPoints());
     }
 
     @Test
-    void getColor() {
+    void testGetColor() {
         assertEquals(DevCard.CardColor.BLUE,testCard.getColor());
         assertNotEquals(testCard.getColor(), DevCard.CardColor.YELLOW);
 
     }
 
     @Test
-    void getLHS() {
+    void testLHS() {
         Resources test = new Resources(Resources.ResType.STONE,0);
         assertNotEquals(null,testCard.getLHS());
         assertEquals(test.getResTypes(),testCard.getLHS().getResTypes());
@@ -60,7 +63,7 @@ class DevCardTest {
     }
 
     @Test
-    void getRHS() {
+    void testGetRHS() {
         Resources test = new Resources(Resources.ResType.SERVANT,0);
         assertNotEquals(null,testCard.getRHS());
         assertEquals(test.getResTypes(),testCard.getRHS().getResTypes());
@@ -68,11 +71,26 @@ class DevCardTest {
     }
 
     @Test
-    void getCost() {
+    void testGetCost() {
         Resources test = new Resources(Resources.ResType.STONE,0);
 
         assertNotEquals(null,testCard.getCost());
         assertNotEquals(test.getResTypes(),testCard.getRHS().getResTypes());
+    }
+    @Test
+    void testDescribeDevCard() {
+
+        assertFalse(testCard.describeDevCard().isEmpty());
+    }
+    @Test
+    void testDescribeLevelAndColor() {
+        assertFalse(testCard.describeDevCard().isEmpty());
+        testCard = new DevCard(2, DevCard.CardColor.BLUE,Lhs,Rhs, cost,10);
+
+        assertFalse(testCard.describeDevCard().isEmpty());
+        testCard = new DevCard(3, DevCard.CardColor.BLUE,Lhs,Rhs, cost,10);
+
+        assertFalse(testCard.describeDevCard().isEmpty());
     }
 
 }

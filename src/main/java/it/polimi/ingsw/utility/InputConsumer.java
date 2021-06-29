@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import static it.polimi.ingsw.network.server.Server.SERVER_MIN_PORT;
 import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
 
-// TODO modify this class later as to be usable for both CLI and GUI (dont do println(), instead abstract into view.showError())
 public class InputConsumer {
 
     public static String getIP(Scanner scanner, PrintWriter out) {
@@ -31,10 +30,10 @@ public class InputConsumer {
 
     public static int getPortNumber(Scanner scanner, PrintWriter out) {
         int portNumber;
-        portNumber = scanner.nextInt();
+        portNumber = Integer.parseInt(scanner.nextLine());
         while (!isValidPort(portNumber)) {
             out.println("This is not a valid port number. Please try again:");
-            portNumber = scanner.nextInt();
+            portNumber = Integer.parseInt(scanner.nextLine());
         }
         return portNumber;
     }
@@ -54,28 +53,17 @@ public class InputConsumer {
         return (portNumber >= SERVER_MIN_PORT && portNumber <= SERVER_MAX_PORT);
     }
 
-    public static String getUserName(Scanner scanner, PrintWriter out) {
-        String username;
-        username = scanner.nextLine();
+    public static String getUserName(Scanner in, PrintWriter out) {
+        String username = in.nextLine();
         while (!isValidUsername(username)) {
             out.println("Username must begin with letter and can be max 10 characters. Please try again:");
-            username = scanner.nextLine();
+            username = in.nextLine();
         }
         return username;
     }
 
     private static boolean isValidUsername(String name) {
         return (Character.isLetter(name.charAt(0))) && (name.length() <= 10);
-    }
-
-    public static String getStartOrCancel(Scanner scanner, PrintWriter out) {
-        String input;
-        input = scanner.nextLine().toLowerCase();
-        while (!input.equals("start") && !input.equals("exit")) {
-            out.println("Invalid input, please enter 'start' or 'exit'");
-            input = scanner.nextLine().toLowerCase();
-        }
-        return input;
     }
 
     public static Integer getNumberOfPlayers(Scanner scanner, PrintWriter out) {
@@ -119,12 +107,26 @@ public class InputConsumer {
         return resType;
     }
 
+    public static Resources.ResType getAllResourceType(Scanner in, PrintWriter out) {
+        Resources.ResType resType;
+        String input;
+        out.println("Enter a resource type name: [COIN] [STONE] [SERVANT] [SHIELD] [FAITH]");
+        input = in.nextLine().toUpperCase();
+        while (!((input.equals("COIN")) || (input.equals("STONE")) || (input.equals("SERVANT")) || (input.equals("SHIELD")) || (input.equals("FAITH")))) {
+            out.println("Invalid input.");
+            out.println("Enter a resource type name: [COIN] [STONE] [SERVANT] [SHIELD] [FAITH]");
+            input = in.nextLine().toUpperCase();
+        }
+        resType = Resources.ResType.valueOf(input);
+        return resType;
+    }
+
     public static Resources.ResType getATypeAmongSet(Scanner in, PrintWriter out, List<Resources.ResType> resTypeList) {
         List<String> resTypeStringList = new ArrayList<>();
         String string = "Please enter one of the options: ";
         for (Resources.ResType resType : resTypeList) {
             string += "[" + resType.toString() + "] ";
-            resTypeStringList.add(resType.toString()); // todo make sure restype.toString doesnt return something like RESTYPE.COIN
+            resTypeStringList.add(resType.toString());
         }
         out.println(string);
         String input = in.nextLine().toUpperCase();

@@ -13,9 +13,7 @@ import java.util.*;
 // MODEL CLASS
 public class Game implements Publisher<MVEvent> {
 
-    private int playersNumber;
     private List<Listener<MVEvent>> listenerList = new ArrayList<>();
-    private Map<Integer, Player> userIDtoPlayers = new HashMap<>();
     private Map<Integer, PersonalBoard> userIDtoBoards = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
@@ -25,11 +23,6 @@ public class Game implements Publisher<MVEvent> {
     private Controller controller;
     private Map<PersonalBoard.PopeArea, Boolean> popeAreaMapTrigger = new HashMap<>();
     private boolean soloMode;
-
-    public void addPlayer(Integer userID) {
-        userIDtoPlayers.put(userID, new Player());
-        this.playersNumber++;
-    }
 
     public void createGameObjects() {
         createBoardForEachPlayer();
@@ -42,9 +35,8 @@ public class Game implements Publisher<MVEvent> {
     }
 
     private void createBoardForEachPlayer() {
-        // todo I changed solo mode cheking condition, it was (this.soloMode = userIDtoPlayers.size() > 1;)
-        this.soloMode = userIDtoPlayers.size() == 1;
-        for (Map.Entry<Integer, Player> entry : userIDtoPlayers.entrySet()) {
+        this.soloMode = userIDtoVirtualView.size() == 1;
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualView.entrySet()) {
             PersonalBoard pb = new PersonalBoard(entry.getKey(), soloMode);
             pb.setGame(this);
             userIDtoBoards.put(entry.getKey(), pb);
@@ -113,20 +105,6 @@ public class Game implements Publisher<MVEvent> {
         return devCardMatrixUpdate;
     }
 
-    public String describeDevCardMatrix() {
-        //Todo should show only the first card of each row ?
-        StringBuilder stringBuilder = new StringBuilder();
-        int order = 1;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
-                stringBuilder.append(order + ") " + devCardMatrix[i][j].peekTopCard().describeDevCard());
-                stringBuilder.append("\n");
-                order++;
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     @Override
     public void subscribe(Listener<MVEvent> listener) {
         listenerList.add(listener);
@@ -158,10 +136,6 @@ public class Game implements Publisher<MVEvent> {
         for (VirtualView virtualView : userIDtoVirtualView.values()) {
             virtualView.update(event);
         }
-    }
-
-    public int getPlayersNumber() {
-        return playersNumber;
     }
 
     public boolean discardLowerCard(DevCard.CardColor cardColor, Integer numberOfCardsToDiscard) {
@@ -230,7 +204,6 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public boolean IsEndTriggered(int userID) {
-        //TODO convert to original end criteria
         boolean endByFaithPoints = (getPersonalBoard(userID).getFaithPoints() == 24);
         boolean endByDevCard = (getPersonalBoard(userID).getOwnedCards().size() == 7);
         if (soloMode && getPersonalBoard(userID).getBlackCrossToken() == 24 && hasEmptySlot()) {

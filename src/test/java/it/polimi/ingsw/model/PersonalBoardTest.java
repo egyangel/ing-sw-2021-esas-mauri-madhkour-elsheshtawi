@@ -264,7 +264,7 @@ class PersonalBoardTest {
         LeaderCard card2 = new LeaderCard(requirement,victoryPoint,ability);
         List<LeaderCard> list = new ArrayList<>();
         list.add(card2);
-        personalBoard.setActiveLeaderCards(list);
+
         Resources  warehouse = new Resources(Resources.ResType.STONE,2);
         Resources strong= new Resources(Resources.ResType.SERVANT,15);
         personalBoard.setStrongbox(strong);
@@ -445,16 +445,11 @@ class PersonalBoardTest {
 
         List<LeaderCard> list = new ArrayList<>();
         list.add(card);
-
-        personalBoard.setActiveLeaderCards(list);
-
         Resources  resToSub = new Resources(Resources.ResType.STONE,2);
-
-        assertEquals(2,personalBoard.getExtraSlotResources().sumOfValues());
-
+        
         personalBoard.subtractFromExtraSlot(resToSub);
 
-        assertEquals(2,personalBoard.getExtraSlotResources().sumOfValues());
+        assertEquals(0,personalBoard.getExtraSlotResources().sumOfValues());
         resToSub.add(Resources.ResType.SERVANT,2);
 
         personalBoard.subtractFromExtraSlot(resToSub);
@@ -466,15 +461,11 @@ class PersonalBoardTest {
     void setStrongbox() {
 
         Resources  strongb = new Resources(Resources.ResType.STONE,10);
-
         strongb.add(Resources.ResType.SERVANT,5);
         assertEquals(0,personalBoard.getStrongboxResources().sumOfValues());
-
         personalBoard.setStrongbox(strongb);
 
         assertEquals(15,personalBoard.getStrongboxResources().sumOfValues());
-
-
     }
 
     @Test

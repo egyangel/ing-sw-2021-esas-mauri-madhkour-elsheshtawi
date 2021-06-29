@@ -17,6 +17,7 @@ public class TakeResActionContext {
         CLEAR_SHELF_CHOSEN,
         SWAP_SHELVES_CHOSEN,
         PUT_RESOURCES_CHOSEN,
+        EXTRA_SLOT_CHOSEN,
         END_TAKE_RES_ACTION_CHOSEN,
         // from server to client
         CHOOSE_ROW_COLUMN,
@@ -29,6 +30,7 @@ public class TakeResActionContext {
     private boolean hasError;
     private int whiteMarbleNumber;
     private List<LeaderCard> whiteConverters;
+    private List<LeaderCard> extraSlotLeaderList;
     private Resources resources;
     private int discardedRes = 0;
     private int faithPoints;
@@ -36,6 +38,7 @@ public class TakeResActionContext {
     private Shelf.shelfPlace[] places = new Shelf.shelfPlace[2];
     private Map<Shelf.shelfPlace, Resources.ResType> shelfPlaceResTypeMap = new HashMap<>();
     private Map<Shelf.shelfPlace, Boolean> shelfToResultMap = new HashMap<>();
+    private Map<Resources.ResType, Integer> extraSlotResToAddMap;
 
     public ActionStep getLastStep(){
         return lastStep;
@@ -153,5 +156,25 @@ public class TakeResActionContext {
                 this.resources.removeThisType(resType);
             }
         }
+    }
+
+    public void setExtraSlotLeaders(List<LeaderCard> extraSlotLeaders){
+        this.extraSlotLeaderList = extraSlotLeaders;
+    }
+
+    public List<LeaderCard> getExtraSlotLeaderList() {
+        return extraSlotLeaderList;
+    }
+
+    public void setExtraSlotMap(Map<Resources.ResType, Integer> resTypeIntegerMap) {
+        this.extraSlotResToAddMap = resTypeIntegerMap;
+    }
+
+    public Map<Resources.ResType, Integer> getExtraSlotResToAddMap() {
+        return extraSlotResToAddMap;
+    }
+
+    public void removeResourcePutToExtraSlot(Resources res){
+        this.resources.subtract(res);
     }
 }

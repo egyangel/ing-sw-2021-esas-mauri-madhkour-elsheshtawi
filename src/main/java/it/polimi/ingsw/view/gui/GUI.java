@@ -15,7 +15,7 @@ public class GUI implements IView, Listener<Event>{
 //the first gui have the role of greet and start dislay
     public void displayGreet() {
         client = new Client();
-        this.client.setGui(this);
+       // this.client.setGui(this);
         new FirstGui();
     }
 
