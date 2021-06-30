@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import java.util.*;
+
 /**
  * PersonalBoard  class , it is the abstraction of the Player PersonalBoard inside the game
  * It contains all the methods to interact with resources/card
@@ -52,6 +53,7 @@ public class PersonalBoard {
         popeAreaMap.put(PopeArea.SECOND, false);
         popeAreaMap.put(PopeArea.THIRD, false);
     }
+
     /**
      * Constructor that instantiate the solo mode game
      * @param userID the id of the player associated to the board
@@ -81,6 +83,7 @@ public class PersonalBoard {
             putFromTop(resType, res.getNumberOfType(resType));
         }
     }
+
     /**
      * method that put the resources that the player achieve in the action in the warehouse
      * @param place represent where the player put the res
@@ -108,6 +111,7 @@ public class PersonalBoard {
         } else return false;
         return true;
     }
+
     /**
      * method that check if you can put the res in the shelf
      * @param place represent where the player put the res
@@ -122,6 +126,7 @@ public class PersonalBoard {
             else return checkSameType(place, type);
         }
     }
+
     /**
      * method that check if you can put the res in the shelf
      * @param place represent where the player put the res
@@ -132,6 +137,7 @@ public class PersonalBoard {
         int index = place.getIndexInWarehouse();
         return ((warehouse[index].getNumberOfElements()) + size <= warehouse[index].getShelfSize());
     }
+
     /**
      * method that check if you can put the res in the shelf
      * @param place represent where the player put the res
@@ -146,6 +152,7 @@ public class PersonalBoard {
             return true;
         }
     }
+
     /**
      * method that check if the shelf is empty
      * @param place represent where the player put the res
@@ -154,12 +161,21 @@ public class PersonalBoard {
     public boolean checkEmptyShelf(Shelf.shelfPlace place) {
         return warehouse[place.getIndexInWarehouse()].isEmpty();
     }
+
     /**
      * method that get the list of Development card owned by the player
      * @return list of player's Development Card
      */
     public  List<DevCard> getOwnedCards() {
         return this.ownedDevCards;
+    }
+
+    public void countVictoryPoints(int victoryPoints) {
+        this.victoryPoints+=victoryPoints;
+    }
+
+    public  int getVictoryPoints() {
+        return this.victoryPoints;
     }
 
     /**
@@ -182,6 +198,7 @@ public class PersonalBoard {
     public void setFaitPoint(int toAdd) {
         faithPoints += toAdd;
     }
+
     /**
      * method that give the pope area
      * @return  a map of the pope area and if they are true or not
@@ -189,6 +206,7 @@ public class PersonalBoard {
     public Map<PopeArea, Boolean> getPopeAreaMap(){
         return popeAreaMap;
     }
+
     /**
      * method that give the player's faith point
      * @return  the position on faith tracka
@@ -196,6 +214,7 @@ public class PersonalBoard {
     public int getFaithPoints(){
         return faithPoints;
     }
+
     /**
      * method that check the position on the faith track and when a vatican report
      * is active and the player is inside the window of report it turn on Pope’s Favor tile
@@ -210,6 +229,7 @@ public class PersonalBoard {
             turnPopeFavorTile(PopeArea.THIRD);
         }
     }
+
     /**
      * method that set true the Pope’s Favor tile
      * @param area it is the current Pope area
@@ -226,6 +246,7 @@ public class PersonalBoard {
         return this.inactiveLeaderCards;
     }
 
+
     /**
      * method that get the list of active leaderCard owned by the player
      * @return list of player's active leaderCard
@@ -235,7 +256,7 @@ public class PersonalBoard {
     }
 
 
-//both methods are used in testing
+    //both methods are used in testing
     public void setInactiveLeaderCards(List<LeaderCard> inactiveLeaderCards) {
         this.inactiveLeaderCards = inactiveLeaderCards;
     }
@@ -244,6 +265,7 @@ public class PersonalBoard {
     public void setActiveLeaderCards(List<LeaderCard> activeLeaderCards) {
         this.activeLeaderCards = activeLeaderCards;
     }
+
     /**
      * method that compute the total resources owned by the player
      * @return  total player's resources
@@ -255,6 +277,7 @@ public class PersonalBoard {
         res.add(getExtraSlotResources());
         return res;
     }
+
     /**
      * method that compute the resources owned by the player on Strongbox
      * @return  player's resources on Strongbox
@@ -264,6 +287,7 @@ public class PersonalBoard {
         res.add(strongbox);
         return res;
     }
+
     /**
      * method that compute the resources owned by the player on Warehouse
      * @return  player's resources on Warehouse
@@ -275,6 +299,7 @@ public class PersonalBoard {
         }
         return res;
     }
+
     /**
      * method that compute the resources owned by the player on leader card with ability ExtraSlot
      * @return  player's resources  on leader card with ability ExtraSlot
@@ -288,6 +313,7 @@ public class PersonalBoard {
         }
         return res;
     }
+
     /**
      * method that check if there are enough resources to purchase the development card
      * @param card development card that have to be checked
@@ -307,6 +333,7 @@ public class PersonalBoard {
         if (cost.smallerOrEqual(totalRes)) return true;
         else return false;
     }
+
     /**
      * method that check if the card is suitable in one slot following the rule game
      * @param card development card that have to be inserted on top of one suitable slot
@@ -319,6 +346,7 @@ public class PersonalBoard {
         }
         return false;
     }
+
     /**
      * method that check if there are a slotPlace available
      * @param card development card that have to be inserted on top of one suitable slot
@@ -332,6 +360,7 @@ public class PersonalBoard {
         }
         return places;
     }
+
     /**
      * method that put a card on the slot
      * @param card development card that have to be inserted on top of one suitable slot
@@ -342,6 +371,7 @@ public class PersonalBoard {
         devSlots[index].putDevCard(card);
         this.ownedDevCards.add(card);
     }
+
     /**
      * method that give the top card on a the slot
      * @param place slot chooses from the player
@@ -354,6 +384,7 @@ public class PersonalBoard {
         }
         return devSlots[index].getTopDevCard();
     }
+
     /**
      * method that discard a chosen shelf
      * @param place shelf chooses by the player
@@ -362,6 +393,7 @@ public class PersonalBoard {
     public int clearShelf(Shelf.shelfPlace place) {
         return warehouse[place.getIndexInWarehouse()].clearShelf();
     }
+
     /**
      * method that swap the resources inside two shelf
      * @param places list of the two shelf chosen by the player to swap
@@ -370,6 +402,7 @@ public class PersonalBoard {
     public int swapShelves(Shelf.shelfPlace[] places) {
         return warehouse[places[0].getIndexInWarehouse()].swapShelf(warehouse[places[1].getIndexInWarehouse()]);
     }
+
     public List<Shelf> getShelves(){
         List<Shelf> shelves = new ArrayList<>();
         shelves.add(warehouse[0]);
@@ -385,6 +418,7 @@ public class PersonalBoard {
         slots.add(devSlots[2]);
         return slots;
     }
+
     /**
      * method that remove resources from warehouse
      * @param res resources that have to be removed
@@ -403,6 +437,7 @@ public class PersonalBoard {
             }
         }
     }
+
     /**
      * method that add resources into strongbox
      * @param res resources that have to be added in the strongbox
@@ -411,6 +446,7 @@ public class PersonalBoard {
     public void addToStrongBox(Resources res) {
         this.strongbox.add(res);
     }
+
     /**
      * method that remove resources from strongbox
      * @param res resources that have to be removed
@@ -419,6 +455,7 @@ public class PersonalBoard {
     public void subtractFromStrongbox(Resources res) {
         this.strongbox.subtract(res);
     }
+
     /**
      * method that remove resources from  leader card with ability exstra slot
      * @param res resources that have to be removed
@@ -438,6 +475,7 @@ public class PersonalBoard {
     public void setGame(Game game){
         this.game = game;
     }
+
     /**
      * method that compute the total victory point of the player
      * @return the Victory point
@@ -461,6 +499,7 @@ public class PersonalBoard {
         }
         return VP;
     }
+
     /**
      * method that compute the total victory point gained from  FaithTrack
      * @return the Victory point
@@ -492,6 +531,7 @@ public class PersonalBoard {
 
         return VP;
     }
+
     /**
      * method that compute the total victory point gained from  ActiveLeaders
      * @return the Victory point
@@ -503,6 +543,7 @@ public class PersonalBoard {
         }
         return VP;
     }
+
     /**
      * method that compute the total victory point gained from all Resources owned by the player
      * @return the Victory point
@@ -514,3 +555,4 @@ public class PersonalBoard {
         return VP;
     }
 }
+
