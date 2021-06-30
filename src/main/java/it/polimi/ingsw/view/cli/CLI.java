@@ -30,7 +30,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private Queue<Runnable> displayTransitionQueue = new ArrayDeque<>();
     private boolean shouldTerminateClient;
     private boolean stopIdle;
-    private String generalmsg;
+    private String generalMsg;
     private TakeResActionContext takeResContext;
     private BuyDevCardActionContext buyDevCardContext;
     private ActivateProdAlternativeContext activateProdContext;
@@ -39,8 +39,8 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     private List<Listener<VCEvent>> listenerList = new ArrayList<>();
     private String marketTrayDescription;
     private String devCardMatrixDescription;
-    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<Integer, PersonalBoardDescription>();
-    private Map<Integer, String> userIDtoUsernames = new HashMap<Integer, String>();
+    private Map<Integer, PersonalBoardDescription> userIDtoBoardDescriptions = new HashMap<>();
+    private Map<Integer, String> userIDtoUsernames = new HashMap<>();
 
     /**
      * Constructor of the class
@@ -327,7 +327,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 break;
             case 2:
                 addNextDisplay("displayMarketAndDevCards");
-                addNextDisplay("displayAllActionSelection");
+                addNextDisplay("displayMinorActionSelection");
                 break;
             case 3:
                 VCEvent vcEvent = new VCEvent(ACTIVATE_LEADER_SELECTED);
@@ -824,11 +824,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayTurnAssign");
                 break;
             case END_GAME_TRIGGERED:
-                generalmsg = "The end of the game is triggered, remaining players until the the player with inkwell will play their last turn!";
+                generalMsg = "The end of the game is triggered, remaining players until the the player with inkwell will play their last turn!";
                 addNextDisplay("displayGeneralMsg");
                 break;
             case END_RESULT:
-                generalmsg = (String) cvEvent.getEventPayload(String.class);
+                generalMsg = (String) cvEvent.getEventPayload(String.class);
                 addNextDisplay("displayGeneralMsg");
                 break;
             case END_VP_COUNTED:
@@ -981,12 +981,12 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
 
         @Override
         public synchronized void displayGeneralMsg () {
-            out.println(generalmsg);
+            out.println(generalMsg);
         }
 
         @Override
         public void setGeneralMsg (String msg){
-            generalmsg = msg;
+            generalMsg = msg;
         }
 
         public void setUserIDtoUsernames (Map < Integer, String > userIDtoUsernames){

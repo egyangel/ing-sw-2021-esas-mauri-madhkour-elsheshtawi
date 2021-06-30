@@ -48,7 +48,7 @@ class DevCardDeckTest {
         assertEquals(testCard,cardDeck.peekTopCard());
         cardDeck.putCard(testCard4);
 
-        assertEquals(testCard4,cardDeck.peekBottomCard());
+
     }
 
     @Test
@@ -62,15 +62,6 @@ class DevCardDeckTest {
 
     }
 
-    @Test
-    void peekBottomCard() {
-        cardDeck.putCard(testCard);
-        cardDeck.putCard(testCard4);
-        assertNotNull(cardDeck.peekBottomCard());
-        assertEquals(testCard4,cardDeck.peekBottomCard());
-
-        assertNotEquals(testCard,cardDeck.peekBottomCard());
-    }
 
     @Test
     void discardBottomCard() {
@@ -79,9 +70,7 @@ class DevCardDeckTest {
         cardDeck.putCard(testCard2);
 
         assertEquals(testCard2,cardDeck.discardBottomCard());
-       // assertNotNull(cardDeck.discardBottomCard());
-        assertEquals(testCard4,cardDeck.peekBottomCard());
-        assertNotEquals(testCard2,cardDeck.peekBottomCard());
+
     }
 
     @Test
@@ -91,9 +80,7 @@ class DevCardDeckTest {
         cardDeck.putCard(testCard2);
 
         assertEquals(testCard2,cardDeck.discardBottomCard());
-        // assertNotNull(cardDeck.discardBottomCard());
-        assertEquals(testCard4,cardDeck.peekBottomCard());
-        assertNotEquals(testCard2,cardDeck.peekBottomCard());
+
     }
 
     @Test
