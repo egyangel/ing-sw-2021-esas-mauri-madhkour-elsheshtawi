@@ -288,7 +288,7 @@ public class Controller implements Listener<VCEvent> {
             updateAboutWarehouseOfId(userId);
             updateAboutStrongboxOfId(userId);
             updateAboutFaithPointOfId(userId);
-            updateAboutFaithTrackofId(userId);
+            updateAboutFaithTrackOfId(userId);
             updateAboutLeaderCardsOfId(userId);
             updateAboutDevSlotOfId(userId);
         }
@@ -340,7 +340,7 @@ public class Controller implements Listener<VCEvent> {
      * method showing the updated faith point track
      * @param userId  player id
      */
-    protected void updateAboutFaithTrackofId(Integer userId){
+    protected void updateAboutFaithTrackOfId(Integer userId){
         Map<PersonalBoard.PopeArea, Boolean> map = game.getPersonalBoard(userId).getPopeAreaMap();
         MVEvent mvEvent = new MVEvent(userId, MVEvent.EventType.FAITHTRACK_UPDATE, map);
         game.updateAllAboutChange(mvEvent);
@@ -605,7 +605,7 @@ public class Controller implements Listener<VCEvent> {
         updateAboutWarehouseOfId(userID);
     }
     /**
-     * method that handle the insertion of resources inside the shelf and update the
+     * method that handle the insertion of resources inside the shelf and update the warehouse
      * @param userID player id
      * @param context  is the context of take res action. it is filled in both view and controller side with info needed to complete the action
      */
@@ -986,7 +986,7 @@ public class Controller implements Listener<VCEvent> {
         for(Integer userID: userIDs){
             game.getPersonalBoard(userID).giveVaticanReport(area);
             updateAboutFaithPointOfId(userID);
-            updateAboutFaithTrackofId(userID);
+            updateAboutFaithTrackOfId(userID);
         }
     }
 
@@ -1005,6 +1005,9 @@ public class Controller implements Listener<VCEvent> {
      * method that handle compute the winner of the game
 
      */
+
+
+
     protected void updateAllAboutRanks(Map<Integer,Integer> userIDtoVPMap){
         List<Integer> VPlist = new ArrayList<>(userIDtoVPMap.values());
         int maxVP = Collections.max(VPlist);

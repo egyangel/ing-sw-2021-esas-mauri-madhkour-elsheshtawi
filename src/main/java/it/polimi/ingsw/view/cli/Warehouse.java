@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-
+/**
+ * @deprecated
+ * */
 public class Warehouse {
 
     static ArrayList<Integer> Position=new ArrayList<Integer>();

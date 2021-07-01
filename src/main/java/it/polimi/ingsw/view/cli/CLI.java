@@ -18,8 +18,6 @@ import java.util.*;
 
 /**
  * Cli class , it is the client interface
- *
- * @author
  */
 
 public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
@@ -522,7 +520,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 resTypeList.remove(selectedType);
                 shelfToResMap.put(place, selectedType);
             }
-            takeResContext.setShelftoResTypeMap(shelfToResMap);
+            takeResContext.setShelfToResTypeMap(shelfToResMap);
             takeResContext.setLastStep(PUT_RESOURCES_CHOSEN);
         } else if (index == 4 && extraSlotLeaders.size() > 0){
             Map<Resources.ResType, Integer> resTypeIntegerMap = new HashMap<>();
