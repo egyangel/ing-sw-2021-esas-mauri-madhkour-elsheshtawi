@@ -86,7 +86,7 @@ public class DevSlot {
             sb.append("Top Card: " + card.describeDevCard());
             while(iterator.hasNext()){
                 card = iterator.next();
-                sb.append("\n\t\t\tBelow Card: " + card.describeDevCard());
+                sb.append("\n\t\tBelow Card: " + card.describeDevCard());
             }
         }
         return sb.toString();

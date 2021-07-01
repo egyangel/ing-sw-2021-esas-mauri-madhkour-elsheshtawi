@@ -708,7 +708,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 activateProdContext.setAddProdOptionSelected(false);
             };
         }
-        if (slotList.isEmpty() && !basicProd && !addProdAnswer){
+        if ((slotList.isEmpty() || selectedCards.isEmpty()) && !basicProd && !addProdAnswer){
             addNextDisplay("displayAllActionSelection");
             return;
         }
