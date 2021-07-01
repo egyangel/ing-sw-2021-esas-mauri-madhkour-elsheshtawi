@@ -554,5 +554,19 @@ public class PersonalBoard {
         VP += Integer.valueOf(res.sumOfValues()/5);
         return VP;
     }
+
+    public boolean isTypePutInAnotherShelf(Shelf.shelfPlace place, Resources.ResType resType){
+        Integer index = place.getIndexInWarehouse();
+        List<Integer> indexList = new ArrayList<>();
+        indexList.add(0);
+        indexList.add(1);
+        indexList.add(2);
+        indexList.remove(index);
+        List<Resources.ResType> resTypeList = new ArrayList<>();
+        for(Integer otherIndex: indexList){
+            if(!warehouse[otherIndex].isEmpty()) resTypeList.add(warehouse[otherIndex].getShelfResType());
+        }
+        return resTypeList.contains(resType);
+    }
 }
 

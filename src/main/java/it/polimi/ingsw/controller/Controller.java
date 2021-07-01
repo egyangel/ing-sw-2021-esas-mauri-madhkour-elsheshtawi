@@ -615,18 +615,23 @@ public class Controller implements Listener<VCEvent> {
         for (Map.Entry<Shelf.shelfPlace, Resources.ResType> entry : map.entrySet()) {
             Shelf.shelfPlace shelfPlaceToPut = entry.getKey();
             Resources.ResType resTypeToPut = entry.getValue();
-            boolean isEmptyShelf = game.getPersonalBoard(userID).checkEmptyShelf(shelfPlaceToPut);
-            boolean isSameType = false;
-            if (!isEmptyShelf){
-                isSameType = game.getPersonalBoard(userID).checkSameType(shelfPlaceToPut, resTypeToPut);
-            }
-            if (isEmptyShelf || isSameType){
-                Resources resToPut = new Resources();
-                resToPut.add(resTypeToPut, context.getResources().getNumberOfType(resTypeToPut));
-                int discardedSameTypeRes = game.getPersonalBoard(userID).putToWarehouse(shelfPlaceToPut, resToPut);
-                if(discardedSameTypeRes >= 0){
-                    context.addDiscardedRes(discardedSameTypeRes);
-                    shelfToResult.put(shelfPlaceToPut, true);
+            boolean alreadyExistInWarehouse = game.getPersonalBoard(userID).isTypePutInAnotherShelf(shelfPlaceToPut, resTypeToPut);
+            if(!alreadyExistInWarehouse){
+                boolean isEmptyShelf = game.getPersonalBoard(userID).checkEmptyShelf(shelfPlaceToPut);
+                boolean isSameType = false;
+                if (!isEmptyShelf){
+                    isSameType = game.getPersonalBoard(userID).checkSameType(shelfPlaceToPut, resTypeToPut);
+                }
+                if (isEmptyShelf || isSameType){
+                    Resources resToPut = new Resources();
+                    resToPut.add(resTypeToPut, context.getResources().getNumberOfType(resTypeToPut));
+                    int discardedSameTypeRes = game.getPersonalBoard(userID).putToWarehouse(shelfPlaceToPut, resToPut);
+                    if(discardedSameTypeRes >= 0){
+                        context.addDiscardedRes(discardedSameTypeRes);
+                        shelfToResult.put(shelfPlaceToPut, true);
+                    } else {
+                        shelfToResult.put(shelfPlaceToPut, false);
+                    }
                 } else {
                     shelfToResult.put(shelfPlaceToPut, false);
                 }
