@@ -632,12 +632,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 addNextDisplay("displayAllActionSelection");
                 break;
             case PRODUCTION_DONE:
-                setGeneralMsg("Your warehouse now looks like:");
-                addNextDisplay("displayGeneralMsg");
-                addNextDisplay("displayWarehouse");
-                setGeneralMsg("Your strongbox now looks like:");
-                addNextDisplay("displayGeneralMsg");
-                addNextDisplay("displayStrongbox");
+                setGeneralMsg("The production is done!");
                 VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_ACTION_ENDED);
                 publish(vcEvent);
                 break;
@@ -656,25 +651,20 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void chooseDevSlotsForProd() {
         Map<DevSlot.slotPlace, DevCard> slotToCardMap = activateProdContext.getSlotMap();
         List<DevSlot.slotPlace> slotList = new ArrayList<>(slotToCardMap.keySet());
-        if(slotList.isEmpty()) {
-            out.println("You do not have development cards to activate");
-            activateProdContext.setError(true);
-            VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
-            publish(vcEvent);
-            return;
-        }
-        out.println("You have the below options for development cards:");
-        for (Map.Entry<DevSlot.slotPlace, DevCard> entry : slotToCardMap.entrySet()) {
-            out.println(entry.getKey().name() + ": " + entry.getValue().describeDevCard());
-        }
         List<DevCard> selectedCards = new ArrayList<>();
-        for(DevSlot.slotPlace place:slotList){
-            out.println("Do you want to activate " + place.name() + " slot?");
-            boolean answer = InputConsumer.getYesOrNo(in, out);
-            if (answer)
-                selectedCards.add(slotToCardMap.get(place));
+        if(!slotList.isEmpty()) {
+            out.println("You have the below options for development cards:");
+            for (Map.Entry<DevSlot.slotPlace, DevCard> entry : slotToCardMap.entrySet()) {
+                out.println(entry.getKey().name() + ": " + entry.getValue().describeDevCard());
+            }
+            for(DevSlot.slotPlace place:slotList){
+                out.println("Do you want to activate " + place.name() + " slot?");
+                boolean answer = InputConsumer.getYesOrNo(in, out);
+                if (answer)
+                    selectedCards.add(slotToCardMap.get(place));
+            }
+            activateProdContext.setSelectedDevCards(selectedCards);
         }
-        activateProdContext.setSelectedDevCards(selectedCards);
         out.println("Do you want to use basic production?");
         boolean basicProd = InputConsumer.getYesOrNo(in, out);
         if(basicProd){
@@ -695,6 +685,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         } else {
             activateProdContext.setBasicProdOptionSelected(false);
         }
+        boolean addProdAnswer = false;
         if (activateProdContext.getAddProdOptionAvailable()) {
             List<LeaderCard> cardList = activateProdContext.getAddProdLeaderList();
             out.println("You have the below options for additional production from active leader cards:");
@@ -702,7 +693,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 out.println(card.describeLeaderCard());
             }
             out.println("Do you want to use additional production from leader cards?");
-            boolean addProdAnswer = InputConsumer.getYesOrNo(in, out);
+            addProdAnswer = InputConsumer.getYesOrNo(in, out);
             if (addProdAnswer) {
                 activateProdContext.setAddProdOptionSelected(true);
                 for(LeaderCard card: cardList){
@@ -719,6 +710,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             } else {
                 activateProdContext.setAddProdOptionSelected(false);
             };
+        }
+        if (slotList.isEmpty() && !basicProd && !addProdAnswer){
+            addNextDisplay("displayAllActionSelection");
+            return;
         }
         activateProdContext.setLastStep(DEVLSLOTS_CHOOSEN_FOR_PROD);
         VCEvent vcEvent = new VCEvent(ACTIVATE_PROD_CONTEXT_FILLED, activateProdContext);
