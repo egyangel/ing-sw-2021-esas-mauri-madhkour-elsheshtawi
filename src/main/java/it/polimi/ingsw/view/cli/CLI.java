@@ -579,7 +579,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case COST_PAID_DEVCARD_PUT:
                 setGeneralMsg("Your development slots now looks like:");
                 addNextDisplay("displayGeneralMsg");
-                addNextDisplay("displayDevSlots");
+                addNextDisplay("displayMinorActionSelection");
                 VCEvent vcEvent = new VCEvent(BUY_DEVCARD_ACTION_ENDED);
                 publish(vcEvent);
         }
