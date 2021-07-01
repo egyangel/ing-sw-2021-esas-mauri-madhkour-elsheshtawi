@@ -119,9 +119,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         String ip = InputConsumer.getIP(in, out);
         out.println("Enter port number of the server:");
         int portNumber = InputConsumer.getPortNumber(in, out);
-        //TODO IMPORTANT, ADD IP PUBLIC ADDRESS OF SERVER AND PORT TO client main() arguments
-       // String ip = "localhost";
-       // int portNumber = 30000; //for debug
+//        TODO IMPORTANT, ADD IP PUBLIC ADDRESS OF SERVER AND PORT TO client main() arguments
+//        String ip = "localhost";
+//        int portNumber = 30000; //for debug
         out.println("Connecting to server...");
         client.connectToServer(ip, portNumber);
     }
@@ -130,10 +130,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayCreateGame() {
         out.println("Choose a username:");
         // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
-       // String username = "omer";
+//        String username = "omer";
         String username = InputConsumer.getUserName(in, out);
         out.println("Choose number of players you would like to play with:");
-        //Integer numberOfPlayers = 2;
+//        Integer numberOfPlayers = 2;
         Integer numberOfPlayers = InputConsumer.getNumberOfPlayers(in, out);
         Map<String, String> firstLoginMap = new HashMap<>();
         firstLoginMap.put("numberOfPlayers", numberOfPlayers.toString());
@@ -146,7 +146,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     public void displayLogin() {
         out.println("Choose a username:");
         // TODO FOR DEBUG, DONT FORGET TO GO BACK TO MANUAL INPUT
-        //String username = "John";
+//        String username = "John";
         String username = InputConsumer.getUserName(in, out);
         Message loginMsg = new Message(Message.MsgType.REQUEST_LOGIN, username);
         client.sendToServer(loginMsg);
