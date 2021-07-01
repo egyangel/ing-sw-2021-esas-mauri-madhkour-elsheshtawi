@@ -123,7 +123,6 @@ public class Game implements Publisher<MVEvent> {
         listenerList.remove(listener);
     }
 
-    // this doesn't work, use publishToAll
     @Override
     public void publish(MVEvent event) {
         for (Listener<MVEvent> listener : listenerList) {
@@ -183,7 +182,7 @@ public class Game implements Publisher<MVEvent> {
         for (int i = 0; i < this.devCardMatrix.length; i++) {
 
             for (int j = 0; j < this.devCardMatrix[i].length; j++) {
-                if (this.devCardMatrix[i][j].getStackLegnth() == 0) {
+                if (this.devCardMatrix[i][j].getStackLength() == 0) {
                     return true;
                 }
             }
@@ -214,47 +213,4 @@ public class Game implements Publisher<MVEvent> {
         }
         return false;
     }
-
-    // DEBUG METHODS
-
-    /*
-    private List<Requirement> createRequirements(){
-        return JsonConverter.deserializeRequirements();
-    }
-
-    public void printDevCardMatrix(){
-        createDevCardDecks();
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 4; j++) {
-                System.out.println(devCardMatrix[i][j].peekTopCard());
-            }
-        }
-    }
-
-    public void printLeaderCards(){
-        createLeaderCards();
-        for(LeaderCard card: leaderCardList){
-            System.out.println(card);
-        }
-
-    }
-
-    public void printRequirements() {
-        List<Requirement> reqList = createRequirements();
-        for(Requirement req: reqList){
-            System.out.println(req);
-        }
-    }
-
-    public void printSpecialAbilities() {
-        List<SpecialAbility> abiList = createSpecialAbilities();
-        for(SpecialAbility abi: abiList){
-            System.out.println(abi);
-        }
-    }
-
-    private List<SpecialAbility> createSpecialAbilities() {
-        return JsonConverter.deserializeSpecialAbilities();
-    }
-     */
 }

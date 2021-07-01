@@ -375,6 +375,7 @@ public class PersonalBoard {
     /**
      * method that give the top card on a the slot
      * @param place slot chooses from the player
+     * @return DevCard top card on the slot
      * return the card that is on the top of that slotPlace
      * */
     public DevCard getDevCardOnSlot(DevSlot.slotPlace place) {
@@ -388,10 +389,14 @@ public class PersonalBoard {
     /**
      * method that discard a chosen shelf
      * @param place shelf chooses by the player
-     * return the number of discarded resources.
+     * return the discarded resources.
      * */
-    public int clearShelf(Shelf.shelfPlace place) {
-        return warehouse[place.getIndexInWarehouse()].clearShelf();
+    public Resources clearShelf(Shelf.shelfPlace place) {
+        Resources.ResType resType = warehouse[place.getIndexInWarehouse()].getShelfResType();
+        int numberOfElements = warehouse[place.getIndexInWarehouse()].getNumberOfElements();
+        Resources res = new Resources(resType,numberOfElements);
+        warehouse[place.getIndexInWarehouse()].clearShelf();
+        return res;
     }
 
     /**
@@ -554,7 +559,11 @@ public class PersonalBoard {
         VP += Integer.valueOf(res.sumOfValues()/5);
         return VP;
     }
-
+    /**
+     * method that checks if the resource type already put in another shelf
+     * @param place name of the shelf
+     * @param resType resource type to be checked
+     * */
     public boolean isTypePutInAnotherShelf(Shelf.shelfPlace place, Resources.ResType resType){
         Integer index = place.getIndexInWarehouse();
         List<Integer> indexList = new ArrayList<>();

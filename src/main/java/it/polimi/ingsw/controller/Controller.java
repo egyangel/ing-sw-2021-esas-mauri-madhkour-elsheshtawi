@@ -419,6 +419,8 @@ public class Controller implements Listener<VCEvent> {
                     updateAboutFaithPointOfId(userID);
                 }
                 int discardedRes = takeResContextTwo.getDiscardedRes();
+                Resources remaining = takeResContextTwo.getResources();
+                discardedRes += remaining.sumOfValues();
                 if (discardedRes > 0){
                     userIDs.remove(userID);
                     for(Integer anOtherUserId: userIDs){
@@ -533,8 +535,8 @@ public class Controller implements Listener<VCEvent> {
      */
     private void handleClearShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace place = context.getShelf();
-        int discarded = game.getPersonalBoard(userID).clearShelf(place);
-        context.addDiscardedRes(discarded);
+        Resources discarded = game.getPersonalBoard(userID).clearShelf(place);
+        context.addToRemainingResources(discarded);
         context.setLastStep(CHOOSE_SHELVES);
         updateAboutWarehouseOfId(userID);
     }

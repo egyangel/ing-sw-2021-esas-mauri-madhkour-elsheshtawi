@@ -23,15 +23,6 @@ public class LeaderCard {
     public int getVictoryPoints() { return victoryPoint; }
     public Requirement getRequirement() { return this.requirement; }
 
-//    @Override
-//    public String toString() {
-//        return "LeaderCard{" +
-//                "requirement=" + requirement +
-//                ", victoryPoint=" + victoryPoint +
-//                ", ability=" + ability +
-//                '}';
-//    }
-
     public String describeLeaderCard(){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(requirement.describeRequirement());

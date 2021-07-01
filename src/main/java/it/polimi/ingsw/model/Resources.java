@@ -96,7 +96,6 @@ public class Resources {
     /**
      * compute the total number of res inside the object, without count the res type
      * */
-
     public int sumOfValues(){
         int sum = 0;
         for (int i: values.values()){
@@ -105,15 +104,28 @@ public class Resources {
         return sum;
     }
 
-
+    /**
+     * method that returns resource types as keys inside the map
+     * @return list of ResType
+     * */
     public List<ResType> getResTypes(){
         return new ArrayList<>(values.keySet());
     }
 
+    /**
+     * method that returns the number of a particular resource in the map (the value)
+     * @param type Resource type of the query
+     * @return number of resources as int
+     * */
     public int getNumberOfType(ResType type){
         return values.getOrDefault(type, 0);
     }
 
+    /**
+     * method that checks in the map if the resource type exists as key
+     * @param type Resource type of the query
+     * @return boolean value of the result
+     * */
     public boolean isThereType(ResType type){
         return values.containsKey(type);
     }
@@ -178,6 +190,13 @@ public class Resources {
         }
         return true;
     }
+
+    /**
+     * method that checks if this resource encompasses the parameter
+     * eg, ((STONE, 2), (COIN, 1)).includes((COIN, 1)) returns true
+     * @param Resources resource the be compared to
+     * @return the result of the comparison
+     * */
     public boolean includes(Resources otherRes){
         for(ResType resType: Resources.ResType.values()){
             if (otherRes.getNumberOfType(resType) > this.getNumberOfType(resType)){
@@ -186,17 +205,6 @@ public class Resources {
         }
         return true;
     }
-
-//    public static void main(String[] args){
-//        Resources x = new Resources();
-//        x.add(ResType.STONE, 2);
-//        x.add(ResType.COIN, 2);
-//        Resources y = new Resources();
-//        y.add(ResType.STONE, 2);
-//        y.add(ResType.COIN, 1);
-//        y.add(ResType.SHIELD, 1);
-//        System.out.println(x.includes(y));
-//    }
 
     @Override
     public String toString() {
