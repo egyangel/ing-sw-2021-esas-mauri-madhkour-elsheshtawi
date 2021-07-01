@@ -8,7 +8,9 @@ import it.polimi.ingsw.model.enumclasses.CliColors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+/**
+ * @deprecated
+ * */
 public class GameObjectPrinter {
     //TODO FOR LORENZO
     List<DevCard> card= new ArrayList<>();
