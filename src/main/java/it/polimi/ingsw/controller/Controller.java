@@ -26,7 +26,6 @@ public class Controller implements Listener<VCEvent> {
     private List<Integer> userIDs = new ArrayList<>();
     /**
      * Constructor of the class
-     *
      *@param game game object, it is the the model
      *@param server server object for managing connections with clients
      */
@@ -37,7 +36,6 @@ public class Controller implements Listener<VCEvent> {
     /**
      * method that create the game
      *@param userIDtoNameMap it is the map of all user that are in the game
-
      */
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
         userIDtoUsernames.putAll(userIDtoNameMap);
@@ -60,16 +58,7 @@ public class Controller implements Listener<VCEvent> {
         updateAboutMarketTray();
         game.shuffleLeaderCards();
         updateAboutDevCardMatrix();
-        //TODO DEBUG, SEND 4 LEADER CARDS IN NORMAL GAME
-//        debugInitializeAll();
         sendFourLeaderCards();
-    }
-
-    public void debugInitializeAll(){
-        debugInitilizeWarehouse();
-        debugInitializeStrongbox();
-        debugAutoChooseTwoLeadersToAll();
-        debugPutDevCardsOnSlots();
     }
 
     /**
@@ -81,99 +70,6 @@ public class Controller implements Listener<VCEvent> {
             CVEvent leaderCardEvent = new CVEvent(CVEvent.EventType.CHOOSE_TWO_LEADER_CARD, game.getFourLeaderCard(calls));
             calls++;
             virtualView.update(leaderCardEvent);
-        }
-    }
-    private void debugInitilizeWarehouse(){
-//        Resources topres = new Resources(Resources.ResType.STONE,1 );
-        Resources midres = new Resources(Resources.ResType.SHIELD, 2);
-        Resources bottomres = new Resources(Resources.ResType.SERVANT, 2);
-        // initialize only with one-type res, zero values does not work
-        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-//            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.TOP, topres);
-            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.MIDDLE, midres);
-            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.BOTTOM, bottomres);
-            updateAboutWarehouseOfId(entry.getKey());
-        }
-    }
-
-    private void debugInitializeStrongbox(){
-        Resources strongBoxRes = new Resources(Resources.ResType.STONE,1);
-        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-            game.getPersonalBoard(entry.getKey()).addToStrongBox(strongBoxRes);
-            updateAboutStrongboxOfId(entry.getKey());
-        }
-    }
-
-    private void debugAutoChooseTwoLeadersToAll(){
-        List<LeaderCard> list1 = new ArrayList<>();
-        Resources resources1 = new Resources();
-        resources1.add(Resources.ResType.COIN, 5);
-        Requirement requirement = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE);
-        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.EXTRASLOT, Resources.ResType.SHIELD);
-        list1.add(new LeaderCard(requirement, 5, ability));
-        Resources resources2 = new Resources(5,0,0,0);
-//        resources2.add(Resources.ResType.COIN, 5);
-        Requirement requirement2 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.YELLOW, DevCard.CardColor.BLUE);
-        ability = new SpecialAbility(SpecialAbility.AbilityType.EXTRASLOT, Resources.ResType.SERVANT);
-        list1.add(new LeaderCard(requirement2, 5, ability));
-
-        List<LeaderCard> list2 = new ArrayList<>();
-        requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.PURPLE);
-        ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SHIELD);
-        list2.add(new LeaderCard(requirement, 2, ability));
-        requirement = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE);
-        ability = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE, Resources.ResType.SHIELD);
-        list2.add(new LeaderCard(requirement, 5, ability));
-
-        List<List<LeaderCard>> twoList = new ArrayList<>();
-        twoList.add(list1);
-        twoList.add(list2);
-        int calls = 0;
-        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-            CVEvent leaderCardEvent = new CVEvent(CVEvent.EventType.CHOOSE_TWO_LEADER_CARD, twoList.get(calls));
-            calls++;
-            entry.getValue().update(leaderCardEvent);
-        }
-    }
-
-    private void debugPutDevCardsOnSlots(){
-        DevSlot.slotPlace place = DevSlot.slotPlace.LEFT;
-        Resources cost = new Resources(Resources.ResType.SERVANT,1);
-        cost.add(Resources.ResType.COIN,1);
-        cost.add(Resources.ResType.STONE,1);
-        Resources LHS = new Resources(Resources.ResType.SERVANT, 1);
-//        LHS.add(Resources.ResType.STONE, 2);
-        Resources RHS = new Resources(Resources.ResType.STONE,1);
-//        RHS.add(Resources.ResType.FAITH,1);
-        int VP = 2;
-        int level = 1;
-        DevCard card = new DevCard(level, DevCard.CardColor.BLUE, LHS,RHS,cost, VP);
-
-        DevSlot.slotPlace place2 = DevSlot.slotPlace.CENTER;
-        Resources cost2 = new Resources(Resources.ResType.COIN,2);
-        cost2.add(Resources.ResType.SERVANT,2);
-        Resources LHS2 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS2.add(Resources.ResType.STONE, 1);
-        Resources RHS2 = new Resources(Resources.ResType.FAITH,1);
-        RHS2.add(Resources.ResType.SERVANT,2);
-        int VP2 = 4;
-        int level2 = 1;
-        DevCard card2 = new DevCard(level2, DevCard.CardColor.BLUE, LHS2,RHS2,cost2, VP2);
-
-        List<DevCard> devCardList = new ArrayList<>();
-        devCardList.add(card);
-        devCardList.add(card2);
-
-        List<DevSlot.slotPlace> placeList = new ArrayList<>();
-        placeList.add(place);
-        placeList.add(place2);
-
-        for (Integer userID: userIDs) {
-            int calls = 0;
-            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
-            calls++;
-            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
-            updateAboutDevSlotOfId(userID);
         }
     }
 
@@ -688,10 +584,8 @@ public class Controller implements Listener<VCEvent> {
      * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
      */
     private void handleActivateDevCardAction(Integer userID, ActivateProdAlternativeContext context){
-        switch (context.getLastStep()){
-            case DEVLSLOTS_CHOOSEN_FOR_PROD:
-                handleActivateDevSlotsProductionChosen(userID, context);
-                break;
+        if (context.getLastStep() == DEVLSLOTS_CHOOSEN_FOR_PROD) {
+            handleActivateDevSlotsProductionChosen(userID, context);
         }
         CVEvent cvEvent = new CVEvent(ACTIVATE_PROD_FILL_CONTEXT, context);
         userIDtoVirtualViews.get(userID).update(cvEvent);
@@ -971,3 +865,105 @@ public class Controller implements Listener<VCEvent> {
         }
     }
 }
+
+/*
+    public void debugInitializeAll(){
+        debugInitilizeWarehouse();
+        debugInitializeStrongbox();
+        debugAutoChooseTwoLeadersToAll();
+        debugPutDevCardsOnSlots();
+         private void debugInitilizeWarehouse(){
+//        Resources topres = new Resources(Resources.ResType.STONE,1 );
+        Resources midres = new Resources(Resources.ResType.SHIELD, 2);
+        Resources bottomres = new Resources(Resources.ResType.SERVANT, 2);
+        // initialize only with one-type res, zero values does not work
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+//            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.TOP, topres);
+            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.MIDDLE, midres);
+            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.BOTTOM, bottomres);
+            updateAboutWarehouseOfId(entry.getKey());
+        }
+    }
+
+    private void debugInitializeStrongbox(){
+        Resources strongBoxRes = new Resources(Resources.ResType.STONE,1);
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+            game.getPersonalBoard(entry.getKey()).addToStrongBox(strongBoxRes);
+            updateAboutStrongboxOfId(entry.getKey());
+        }
+    }
+
+    private void debugAutoChooseTwoLeadersToAll(){
+        List<LeaderCard> list1 = new ArrayList<>();
+        Resources resources1 = new Resources();
+        resources1.add(Resources.ResType.COIN, 5);
+        Requirement requirement = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE);
+        SpecialAbility ability = new SpecialAbility(SpecialAbility.AbilityType.EXTRASLOT, Resources.ResType.SHIELD);
+        list1.add(new LeaderCard(requirement, 5, ability));
+        Resources resources2 = new Resources(5,0,0,0);
+//        resources2.add(Resources.ResType.COIN, 5);
+        Requirement requirement2 = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.YELLOW, DevCard.CardColor.BLUE);
+        ability = new SpecialAbility(SpecialAbility.AbilityType.EXTRASLOT, Resources.ResType.SERVANT);
+        list1.add(new LeaderCard(requirement2, 5, ability));
+
+        List<LeaderCard> list2 = new ArrayList<>();
+        requirement = new Requirement(Requirement.reqType.TWOCARD, DevCard.CardColor.BLUE, DevCard.CardColor.PURPLE);
+        ability = new SpecialAbility(SpecialAbility.AbilityType.DISCOUNT, Resources.ResType.SHIELD);
+        list2.add(new LeaderCard(requirement, 2, ability));
+        requirement = new Requirement(Requirement.reqType.THREECARD, DevCard.CardColor.GREEN, DevCard.CardColor.PURPLE);
+        ability = new SpecialAbility(SpecialAbility.AbilityType.CONVERTWHITE, Resources.ResType.SHIELD);
+        list2.add(new LeaderCard(requirement, 5, ability));
+
+        List<List<LeaderCard>> twoList = new ArrayList<>();
+        twoList.add(list1);
+        twoList.add(list2);
+        int calls = 0;
+        for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
+            CVEvent leaderCardEvent = new CVEvent(CVEvent.EventType.CHOOSE_TWO_LEADER_CARD, twoList.get(calls));
+            calls++;
+            entry.getValue().update(leaderCardEvent);
+        }
+    }
+
+    private void debugPutDevCardsOnSlots(){
+        DevSlot.slotPlace place = DevSlot.slotPlace.LEFT;
+        Resources cost = new Resources(Resources.ResType.SERVANT,1);
+        cost.add(Resources.ResType.COIN,1);
+        cost.add(Resources.ResType.STONE,1);
+        Resources LHS = new Resources(Resources.ResType.SERVANT, 1);
+//        LHS.add(Resources.ResType.STONE, 2);
+        Resources RHS = new Resources(Resources.ResType.STONE,1);
+//        RHS.add(Resources.ResType.FAITH,1);
+        int VP = 2;
+        int level = 1;
+        DevCard card = new DevCard(level, DevCard.CardColor.BLUE, LHS,RHS,cost, VP);
+
+        DevSlot.slotPlace place2 = DevSlot.slotPlace.CENTER;
+        Resources cost2 = new Resources(Resources.ResType.COIN,2);
+        cost2.add(Resources.ResType.SERVANT,2);
+        Resources LHS2 = new Resources(Resources.ResType.SHIELD, 1);
+        LHS2.add(Resources.ResType.STONE, 1);
+        Resources RHS2 = new Resources(Resources.ResType.FAITH,1);
+        RHS2.add(Resources.ResType.SERVANT,2);
+        int VP2 = 4;
+        int level2 = 1;
+        DevCard card2 = new DevCard(level2, DevCard.CardColor.BLUE, LHS2,RHS2,cost2, VP2);
+
+        List<DevCard> devCardList = new ArrayList<>();
+        devCardList.add(card);
+        devCardList.add(card2);
+
+        List<DevSlot.slotPlace> placeList = new ArrayList<>();
+        placeList.add(place);
+        placeList.add(place2);
+
+        for (Integer userID: userIDs) {
+            int calls = 0;
+            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
+            calls++;
+            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
+            updateAboutDevSlotOfId(userID);
+        }
+    }
+
+ */
