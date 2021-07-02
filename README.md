@@ -46,9 +46,8 @@ git clone https://github.com/egyangel/ing-sw-2021-esas-mauri-madhkour-elsheshtaw
 
 
 5) Then the server send to the player 4 leader card and ask to choose two of them. After the choice the first player received the menu of the action while the second player choose a free resource w.r.t. game's rule   
-## Building
 
-If you want you can use the jars we already built for you, you can find them [here](/deliveries/final/Jar)
+## Building
 ### Using provided jars
 
 If you want you can use the jars we already built for you, you can find them [here](/deliveries/final/Jar)
