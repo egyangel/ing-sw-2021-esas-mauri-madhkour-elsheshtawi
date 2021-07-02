@@ -70,25 +70,29 @@ public class Shelf {
      * @param otherShelf  the shelf that has to be swapped with this
      * */
     // modification of below method that returns discarded res number
-    public int swapShelf(Shelf otherShelf){
+    public Resources swapShelf(Shelf otherShelf){
         int thisMaxSize = this.maxSize;
         int otherMaxSize = otherShelf.maxSize;
         int thisSize = this.numberOfElements;
         int otherSize = otherShelf.numberOfElements;
         int discarded;
+        Resources.ResType discardedType;
         if (thisSize > otherMaxSize){
             discarded = thisSize - otherSize;
+            discardedType = this.resType;
         } else if (otherSize > thisMaxSize){
             discarded = otherSize - thisMaxSize;
+            discardedType = otherShelf.resType;
         } else {
             discarded = 0;
+            discardedType = Resources.ResType.STONE;
         }
         Resources.ResType tempType = otherShelf.resType;
         otherShelf.resType = this.resType;
         this.resType = tempType;
         this.numberOfElements = otherSize;
         otherShelf.numberOfElements = thisSize;
-        return discarded;
+        return new Resources(discardedType, discarded);
     }
 
     public boolean isEmpty(){

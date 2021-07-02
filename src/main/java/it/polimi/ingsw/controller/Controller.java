@@ -542,8 +542,9 @@ public class Controller implements Listener<VCEvent> {
      */
     private void handleSwapShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace[] places = context.getShelves();
-        int discarded = game.getPersonalBoard(userID).swapShelves(places);
-        context.addDiscardedRes(discarded);
+        Resources discarded = game.getPersonalBoard(userID).swapShelves(places);
+        if (discarded.sumOfValues() > 0)
+            context.addToRemainingResources(discarded);
         context.setLastStep(CHOOSE_SHELVES);
         updateAboutWarehouseOfId(userID);
     }
