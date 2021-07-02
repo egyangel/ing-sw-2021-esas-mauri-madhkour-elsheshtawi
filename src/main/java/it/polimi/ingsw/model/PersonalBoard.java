@@ -404,7 +404,7 @@ public class PersonalBoard {
      * @param places list of the two shelf chosen by the player to swap
      * return the number of discarded resources.
      * */
-    public int swapShelves(Shelf.shelfPlace[] places) {
+    public Resources swapShelves(Shelf.shelfPlace[] places) {
         return warehouse[places[0].getIndexInWarehouse()].swapShelf(warehouse[places[1].getIndexInWarehouse()]);
     }
 

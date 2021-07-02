@@ -15,7 +15,10 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.network.server.Server.SERVER_MIN_PORT;
 import static it.polimi.ingsw.network.server.Server.SERVER_MAX_PORT;
-
+/**
+ * Class that deals with taking inputs from player as raw strings and integers
+ * and convert them to necessary game objects or enums
+ * */
 public class InputConsumer {
 
     public static String getIP(Scanner scanner, PrintWriter out) {

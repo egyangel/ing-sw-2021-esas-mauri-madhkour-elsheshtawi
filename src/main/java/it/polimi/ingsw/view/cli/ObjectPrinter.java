@@ -5,7 +5,9 @@ import it.polimi.ingsw.model.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Class that draws real boardgame-like images of personal board sections inside CLI
+ * */
 public class ObjectPrinter {
     public static String faithTrackPrinter(Map<PersonalBoard.PopeArea, Boolean> map, int faithPoints){
         StringBuilder sb = new StringBuilder();
