@@ -80,7 +80,7 @@ java -jar Client.jar
 UML diagrams are [here](/deliveries/final/UML)
 
 ### Sequence Diagrams
-The final report of the coverage is [here](/deliveries/final/UML/sequenceDiagram)
+The final sequence diagrams are [here](/deliveries/final/UML/sequenceDiagram)
 
 ## Gameplay screenshots
 Gameplay screenshots are in this folder [here](/deliveries/final/screenShotOfTheGame)
