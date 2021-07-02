@@ -16,12 +16,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.lang.reflect.Type;
-
+/**
+ * Class that converts game objects to JSON representation by google GSON
+ * and creates development and leader cards from .json texts
+ * */
 public class JsonConverter {
+
     private static final Gson gson = new Gson();
-
-
-
 
     public static List<DevCard> deserializeDevCards(){
         TextReader textReader= new TextReader();

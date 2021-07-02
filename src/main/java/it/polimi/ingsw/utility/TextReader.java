@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
+/**
+ * Class that read text files in json format and returns string for JsonConverter
+ * */
 public class TextReader {
 
     public  String readMyText(String fname) {
