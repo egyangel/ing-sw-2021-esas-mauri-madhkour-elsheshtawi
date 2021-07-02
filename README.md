@@ -30,7 +30,7 @@ git clone https://github.com/egyangel/ing-sw-2021-esas-mauri-madhkour-elsheshtaw
 | CLI                                   | 
 
 
-##How to play the game
+## How to play the game
 
 1) First step : run the server. The port number is 30000,and it is hardcoded in the server class.
 
