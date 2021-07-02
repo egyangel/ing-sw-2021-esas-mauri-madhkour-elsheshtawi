@@ -6,7 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * class that acts as a form between server and client for the activation of production action
+ * Between each step, server and client stores related headers (fields) of the class
+ * Server reads related fields and checks, and modifies model accordingly, then fills more headers and sends
+ * it back to client if necessary. Client reads this class, shows the information to user, and fill the related fields
+ * with user's choices before sending it back
+ * */
 public class ActivateProdAlternativeContext {
     public enum ActionStep{
         // from client to server
