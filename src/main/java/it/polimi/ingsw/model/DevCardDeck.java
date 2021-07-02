@@ -19,10 +19,10 @@ public class DevCardDeck {
         this.color = color;
         this.level = level;
     }
-
     public int getStackLength(){
         return this.stackOfDevCards.size();
     }
+
     public void putCard(DevCard card) {
         stackOfDevCards.add(card);
     }
@@ -44,8 +44,7 @@ public class DevCardDeck {
         if (stackOfDevCards.isEmpty()) return null;
         else return stackOfDevCards.get(0);
     }
-    //todo mohamed ask why this method
-    // Mohamed>  To Delete the bottom card for soloMode
+
     public DevCard discardBottomCard() {
         if (stackOfDevCards.isEmpty()) return null;
         DevCard card = stackOfDevCards.get(stackOfDevCards.size() - 1);

@@ -140,6 +140,7 @@ public class Game implements Publisher<MVEvent> {
         }
     }
 
+
     public boolean discardLowerCard(DevCard.CardColor cardColor, Integer numberOfCardsToDiscard) {
         List<DevCard> devCards = new ArrayList<>();
 
@@ -165,7 +166,7 @@ public class Game implements Publisher<MVEvent> {
         for (int i = 0; i < this.devCardMatrix.length; i++) {
 
             for (int j = 0; j < this.devCardMatrix[i].length; j++) {
-                if (this.devCardMatrix[i][j].getStackLegnth() == 0) {
+                if (this.devCardMatrix[i][j].getStackLength() == 0) {
                     return true;
                 }
             }
