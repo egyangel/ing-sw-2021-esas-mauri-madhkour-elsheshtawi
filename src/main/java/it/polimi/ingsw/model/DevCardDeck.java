@@ -55,7 +55,6 @@ public class DevCardDeck {
      * method that returns and removes top card in the deck
      * top is represented as the head of the list
      * cards in the list move by one as a result
-     * @return top DevCard in the deck
      * */
     public void removeTopCard(){
         stackOfDevCards.remove(0);
