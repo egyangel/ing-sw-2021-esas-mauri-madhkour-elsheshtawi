@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  * Class that represent the requirement of the leader cards
- * @author
  * */
 public class Requirement {
     /**

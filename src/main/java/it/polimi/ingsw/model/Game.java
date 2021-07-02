@@ -9,7 +9,9 @@ import it.polimi.ingsw.utility.messages.MVEvent;
 import it.polimi.ingsw.utility.messages.Publisher;
 
 import java.util.*;
-
+/**
+ * Game class, it is the model class, it is the class that handle all the game logic
+ * */
 // MODEL CLASS
 public class Game implements Publisher<MVEvent> {
 
@@ -17,7 +19,6 @@ public class Game implements Publisher<MVEvent> {
     private Map<Integer, PersonalBoard> userIDtoBoards = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
-    private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
     private DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
     private Controller controller;
@@ -114,10 +115,6 @@ public class Game implements Publisher<MVEvent> {
         userIDtoVirtualView.put(userID, virtualView);
     }
 
-    public void publish(Integer userID, MVEvent event) {
-        userIDtoVirtualView.get(userID).update(event);
-    }
-
     @Override
     public void unsubscribe(Listener<MVEvent> listener) {
         listenerList.remove(listener);
@@ -160,26 +157,6 @@ public class Game implements Publisher<MVEvent> {
     public boolean hasEmptySlot() {
         // TODO to check, i don't understand if a complete column  like devCardMatrix[i] vs   devCardMatrix[i][j]
 
-
-        /*
-         * devCardMatrix[i]
-         */
-        /*
-        for (int i = 0; i < this.devCardMatrix.length; i++) {
-            boolean isEmpty = true;
-            for (int j = 0; j < this.devCardMatrix[i].length; j++) {
-                if (this.devCardMatrix[i][j].getStackLegnth() != 0) {
-                    isEmpty = false;
-                }
-                if (isEmpty)
-                    return true;
-            }
-        }*/
-
-
-        /*
-         * devCardMatrix[i][j]
-         */
         for (int i = 0; i < this.devCardMatrix.length; i++) {
 
             for (int j = 0; j < this.devCardMatrix[i].length; j++) {
@@ -215,46 +192,4 @@ public class Game implements Publisher<MVEvent> {
         return false;
     }
 
-    // DEBUG METHODS
-
-    /*
-    private List<Requirement> createRequirements(){
-        return JsonConverter.deserializeRequirements();
-    }
-
-    public void printDevCardMatrix(){
-        createDevCardDecks();
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 4; j++) {
-                System.out.println(devCardMatrix[i][j].peekTopCard());
-            }
-        }
-    }
-
-    public void printLeaderCards(){
-        createLeaderCards();
-        for(LeaderCard card: leaderCardList){
-            System.out.println(card);
-        }
-
-    }
-
-    public void printRequirements() {
-        List<Requirement> reqList = createRequirements();
-        for(Requirement req: reqList){
-            System.out.println(req);
-        }
-    }
-
-    public void printSpecialAbilities() {
-        List<SpecialAbility> abiList = createSpecialAbilities();
-        for(SpecialAbility abi: abiList){
-            System.out.println(abi);
-        }
-    }
-
-    private List<SpecialAbility> createSpecialAbilities() {
-        return JsonConverter.deserializeSpecialAbilities();
-    }
-     */
 }

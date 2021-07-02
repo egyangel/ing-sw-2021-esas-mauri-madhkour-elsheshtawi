@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 /**
- * Leader Card class  ,it is the the representation of the leader card with
- * @author
+ * Leader Card class  ,it is the the representation of the leader card
  * */
 public class LeaderCard {
     private Requirement requirement;
@@ -23,14 +22,6 @@ public class LeaderCard {
     public int getVictoryPoints() { return victoryPoint; }
     public Requirement getRequirement() { return this.requirement; }
 
-//    @Override
-//    public String toString() {
-//        return "LeaderCard{" +
-//                "requirement=" + requirement +
-//                ", victoryPoint=" + victoryPoint +
-//                ", ability=" + ability +
-//                '}';
-//    }
 
     public String describeLeaderCard(){
         StringBuilder stringBuilder = new StringBuilder();

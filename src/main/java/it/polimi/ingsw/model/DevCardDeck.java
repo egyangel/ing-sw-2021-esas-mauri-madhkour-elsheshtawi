@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 /**
  * Development Deck card class , it is the class that handle the Development deck
- * @author
  *
  * */
 public class DevCardDeck {

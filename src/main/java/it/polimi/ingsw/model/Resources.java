@@ -4,8 +4,7 @@ import java.util.*;
 
 /**
  * Resources  class , it is the abstraction of the resources inside the game
- * slot on the personal board of the player
- * @author
+ * on the personal board of the player
  * */
 public class Resources {
     public enum ResType {

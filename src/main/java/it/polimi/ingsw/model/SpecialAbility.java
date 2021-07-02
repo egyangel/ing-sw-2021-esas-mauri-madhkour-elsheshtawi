@@ -1,12 +1,13 @@
 package it.polimi.ingsw.model;
 /**
  * Class that represent the ability of the leader cards
- * @author
  * */
 
 public class SpecialAbility {
 
-
+    /**
+     * Class that represent the ability type of the leader cards
+     * */
     public enum AbilityType {
         DISCOUNT,ADDPROD,EXTRASLOT,CONVERTWHITE
     }

@@ -1,11 +1,14 @@
 package it.polimi.ingsw.model;
 /**
  * class that represent the shelf
- * @author
  *
  * */
 
 public class Shelf {
+    /**
+     * enumeration class that represent the the position of the shelf inside the warehouse
+     *
+     * */
     public enum shelfPlace{
         TOP(0), MIDDLE(1), BOTTOM(2);
         private int indexInWarehouse;

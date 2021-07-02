@@ -61,7 +61,10 @@ java -jar Client.jar
 ### Javadoc 
 Javadoc is also in this repo [here](/deliveries/final/javadoc)
 ### UML diagrams
-UML diagrams are [here](/deliveries/final/uml)
+UML diagrams are [here](/deliveries/final/UML)
+
+### Sequence Diagrams
+The final report of the coverage is [here](/deliveries/final/sequenceDiagram)
 
 ### Coverage report
 The final report of the coverage is [here](/deliveries/final/report)

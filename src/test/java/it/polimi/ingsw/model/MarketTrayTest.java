@@ -8,7 +8,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class MarketTrayTest {
+ class MarketTrayTest {
     MarketTray marketTest;
     List<MarbleColor> resources;
     List<MarbleColor> marbleColors;
@@ -27,9 +27,7 @@ public class MarketTrayTest {
 
     }
     @Test
-    //@Disabled("Not implemented yet")
-    @DisplayName("selects which row to choose from the market tray")
-    public void selectRow() {
+    void selectRow() {
 
 
         for(int i=1;i<4;i++) {
@@ -50,7 +48,7 @@ public class MarketTrayTest {
     }
 
     @Test
-    public void selectColumn() {
+     void selectColumn() {
         for(int i=1;i<5;i++) {
             resources = marketTest.selectColumn(i);
             assertNotNull(resources);

@@ -5,6 +5,11 @@ import it.polimi.ingsw.model.PersonalBoard;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * class that represent the Description of the personal board
+ * it show the player's  personal board
+ * */
 public class PersonalBoardDescription {
     private String warehouseDescription;
     private String strongboxDescription;

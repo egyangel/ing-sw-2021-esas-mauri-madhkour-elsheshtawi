@@ -15,10 +15,6 @@ import static it.polimi.ingsw.utility.messages.BuyDevCardActionContext.ActionSte
 import static it.polimi.ingsw.utility.messages.CVEvent.EventType.*;
 /**
  *  Controller class , Accepts input and converts it to commands for the model or view.
- *
- *   @author
-
- *
  * */
 // ALSO IMPLEMENTS Publisher<CVEvent> but ABSTRACT OUT LATER
 public class Controller implements Listener<VCEvent> {
@@ -40,7 +36,6 @@ public class Controller implements Listener<VCEvent> {
     }
     /**
      * method that create the game
-     *
      *@param userIDtoNameMap it is the map of all user that are in the game
 
      */

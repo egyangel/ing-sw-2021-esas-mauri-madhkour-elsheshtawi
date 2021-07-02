@@ -640,7 +640,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     /**
-     * methods that handle that fill the activateProdContext context.
+     * methods that fill the activateProdContext context.
      * The player chooses:
      * -the dev cards slots,
      * -choose if activate the leader card production a if the player owned a card with that ability choose resources get
@@ -720,6 +720,9 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
+    /**
+     *  methods that handle the activation action of a leader card
+     */
     public void chooseLeaderToActivate(){
         List<LeaderCard> cardList = leaderActionContext.getInactiveCards();
         List<Integer> cardIndexToActivateList = new ArrayList<>();
@@ -734,6 +737,10 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
         publish(vcEvent);
     }
 
+    /**
+     * methods that handle the discard action of a leader card
+     *
+     */
     public void chooseLeaderToDiscard(){
         List<LeaderCard> activeCardList = leaderActionContext.getActiveCards();
         List<LeaderCard> inactiveCardList = leaderActionContext.getInactiveCards();

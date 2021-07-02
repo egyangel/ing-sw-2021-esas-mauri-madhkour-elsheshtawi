@@ -4,7 +4,12 @@ import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * class that represent the leader action context. It the object that is sent between view and controller.
+ * The player fill the context with the action
+ * related to leader card action and send it to the controller that check and activate/discard leader card
+ *
+ * */
 public class LeaderActionContext {
     private List<LeaderCard> inactiveCards = new ArrayList<>();
     private List<LeaderCard> activeCards = new ArrayList<>();

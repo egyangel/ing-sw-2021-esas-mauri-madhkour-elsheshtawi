@@ -11,15 +11,17 @@ import java.lang.reflect.Type;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-
+/**
+ * class that represent the server
+ * wait for connection,manage the login phase of the player  and create handler for the player
+ *
+ * */
 public class Server implements Runnable {
     public static final int SERVER_MIN_PORT = 30000;
     public static final int SERVER_MAX_PORT = 50000;
 
     private static final int DEFAULT_PORT = 30000;
-    private static int port;
 
-    private static final int MAX_NUM_OF_PLAYERS = 4;
     private static int numberOfConnectedUsers = 0;
     private static int numberOfUsers = 0;
     private Map<Integer, String> userIDtoUserNames = new HashMap<>();
@@ -28,16 +30,8 @@ public class Server implements Runnable {
     private ServerSocket serverSocket;
     private Controller controller;
     private Game game;
-    private Map<Integer, VirtualView> userIDtoVirtualViews = new HashMap<>();
 
     public static void main(String[] args) {
-        // todo remove comment later
-       /* if(args.length>0 ) {
-            String portString = args[0];
-            port = Integer.parseInt(portString);
-        }else{
-            port = DEFAULT_PORT;
-        }*/
         Server server = new Server();
         server.run();
     }
@@ -49,7 +43,7 @@ public class Server implements Runnable {
         //Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter server port number:");
 //        int portNumber = InputConsumer.getPortNumber(scanner);
-        int portNumber = 30000; //for debug
+        int portNumber = DEFAULT_PORT; //for debug
         System.out.println("Start on port : "+portNumber);
         try {
             serverSocket = new ServerSocket(portNumber);
@@ -103,7 +97,7 @@ public class Server implements Runnable {
     }
 
     private void handleSetUpMessage(Integer userID, Message incomingmsg) {
-        Message respondmsg = null;
+        Message respondMsg = null;
         ClientHandler senderHandler = userIDtoHandlers.get(userID);
         List<ClientHandler> otherHandlers = new ArrayList<>(userIDtoHandlers.values());
         otherHandlers.remove(senderHandler);
@@ -125,15 +119,15 @@ public class Server implements Runnable {
                 } else {
                     controller = new Controller(game, this);
                     game.setController(controller);
-                    respondmsg = new Message(Message.MsgType.FIRST_LOGIN_ACCEPTED, numberOfUsers);
-                    senderHandler.sendMessage(respondmsg);
+                    respondMsg = new Message(Message.MsgType.FIRST_LOGIN_ACCEPTED, numberOfUsers);
+                    senderHandler.sendMessage(respondMsg);
                 }
                 break;
             case REQUEST_LOGIN:
                 String username = incomingmsg.getJsonContent();
                 userIDtoUserNames.put(userID, username);
-                respondmsg = new Message(Message.MsgType.LOGIN_ACCEPTED);
-                senderHandler.sendMessage(respondmsg);
+                respondMsg = new Message(Message.MsgType.LOGIN_ACCEPTED);
+                senderHandler.sendMessage(respondMsg);
                 if (numberOfConnectedUsers == numberOfUsers) {
                     controller.createMatch(userIDtoUserNames);
                     for (ClientHandler handler : userIDtoHandlers.values()) {

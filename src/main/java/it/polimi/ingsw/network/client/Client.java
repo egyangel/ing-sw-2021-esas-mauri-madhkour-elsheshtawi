@@ -15,14 +15,14 @@ import java.lang.reflect.Type;
 import java.net.Socket;
 
 import java.util.Map;
-
+/**
+ * class that represent the Client/Player
+ * it handle the connection with server, the login phase of the match and the start of the game
+ * */
 public class Client implements Runnable {
-    private String username;
-
     private ServerHandler serverHandler;
     private IView view;
     private Socket socket;
-
     private Integer userID;
     private Map<Integer, String> userIDtoUserNames;
 
@@ -33,20 +33,6 @@ public class Client implements Runnable {
 
     public static void main(String[] args) {
         Client client = new Client();
-        String ip;
-        int portNumber;
-
-        // checkIfCLI(args[0], client);
-
-        //todo omer you have to fix it
-
-       /* if(args.length == 2 ) {
-            String ipString = args[1];
-            String portString = args[0];
-            portNumber = Integer.parseInt(portString);
-        }else{
-            System.out.println("ip or number wrong");
-        }*/
 
         client.setView(new CLI(client));
         client.run();
@@ -121,16 +107,4 @@ public class Client implements Runnable {
         }
         System.exit(0);
     }
-
-    // METHODS THAT WON'T BE USED
-
-    private static void checkIfCLI(String arg, Client client) {
-        if (arg.equals("--CLI"))
-            client.setView(new CLI(client));
-        else if (arg.equals("--GUI"))
-            client.setView(new GUI(client));
-        else System.exit(0);
-    }
-
-
 }
