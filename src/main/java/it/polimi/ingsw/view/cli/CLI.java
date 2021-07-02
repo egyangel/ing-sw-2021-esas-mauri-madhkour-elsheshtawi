@@ -874,6 +874,11 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 String faithTrackDescription = ObjectPrinter.faithTrackPrinter(tileMap, faithpoints);
                 userIDtoBoardDescriptions.get(userIDofUpdatedBoard).setFaithTrackDescription(faithTrackDescription);
                 break;
+            case BLACKCROSS_FAITHPOINT_UPDATE:
+                Integer blackCrossFaithpoints = (Integer) mvEvent.getEventPayload(Integer.class);
+                out.println("the black cross Faith point is in position: " + blackCrossFaithpoints);
+
+             break;
             case FAITHTRACK_UPDATE:
                 Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {}.getType();
                 Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);

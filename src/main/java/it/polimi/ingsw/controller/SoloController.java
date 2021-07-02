@@ -8,6 +8,10 @@ import it.polimi.ingsw.utility.messages.*;
 import java.util.*;
 
 
+
+/**
+ *  SoloController class , Extend solo controller and implement solo mode logic.
+ * */
 public class SoloController extends Controller {
     private HashMap<String, String> crossToken; // CROSSTOKEN,Position
     private Integer crossTokenPoints = 0;
@@ -20,6 +24,13 @@ public class SoloController extends Controller {
     public SoloController(Game game, Server server) {
         super(game, server);
     }
+
+
+    /**
+     * method that create the game in soloMode
+     *@param userIDtoNameMap it is the map of all user that are in the game
+
+     */
 
     @Override
     public void createMatch(Map<Integer, String> userIDtoNameMap) {
@@ -36,16 +47,7 @@ public class SoloController extends Controller {
         TurnManager.setGame(game);
         game.createGameObjects();
 
-        //TODO INIT SOLO GAME
-        /*
 
-       -- Place the Black Cross token on the first space of your
-       -- Faith Track (together with your Faith Marker).
-       -- Shuffle the Solo Action tokens, create a stack and
-       -- place it face-down on the table
-         */
-
-        // TODO test with actual 6 actions
         this.actionTokens.put(0,new ActionToken("Discard 2 Green Development Card", DevCard.CardColor.GREEN , ActionToken.SoloActionTokenType.DISCARD_DEV_CARD
         ));
         this.actionTokens.put(1,new ActionToken("Discard 2 Blue Development Card", DevCard.CardColor.BLUE, ActionToken.SoloActionTokenType.DISCARD_DEV_CARD
@@ -63,8 +65,9 @@ public class SoloController extends Controller {
 
 
 
-
-
+    /**
+     * Suffle the solo action tokens
+     */
     private void shuffleActionTokenArray() {
         Collections.shuffle(actionTokensOrder);
         currentActionTokenIndex = 0;
@@ -77,10 +80,9 @@ public class SoloController extends Controller {
     protected void InitFatihPoints(Integer userID, Integer userTurn) {
         game.getPersonalBoard(userID).increaseFaitPoint(1);
     }
-
-
-
-
+    /**
+     * increase faith points after eachTurn
+     */
     @Override
     protected void sendTurnOrderAssign() {
         TurnManager.assignTurnOrder();
@@ -88,11 +90,6 @@ public class SoloController extends Controller {
             Integer userTurn = TurnManager.getOrderOfUserID(entry.getKey());
 
             TurnManager.registerResponse(entry.getKey());   // first player doesnt choose init res, its lack of response counts as a response
-
-            // TODO for momo check if in solo mode the player get resources and faith points
-            /*
-            InitFatihPoints(entry.getKey(), userTurn);
-            */
 
             CVEvent turnAssignEvent = new CVEvent(CVEvent.EventType.ASSIGN_TURN_ORDER, userTurn);
             entry.getValue().update(turnAssignEvent);
@@ -113,9 +110,13 @@ public class SoloController extends Controller {
 
     }
 
+    /**
+     * handle the end of the turn of soloMode and do the soloTokenAcrions
+     * @param userId
+     */
     @Override
     protected void handleEndTurn(Integer userId) {
-        // TODO: to implement the end of the turn
+
         Integer currentIndex = actionTokensOrder.get(currentActionTokenIndex);
         ActionToken actionToken = actionTokens.get(currentActionTokenIndex);
         performAction(actionToken);
@@ -129,25 +130,25 @@ public class SoloController extends Controller {
             case DISCARD_DEV_CARD:
                 this.game.discardLowerCard(actionToken.getColor(), 2);
                 super.updateAboutWarehouseOfId(userID);
-                // TODO: send mvevent super.updateaboutslotid
                 break;
             case MOVE_CROSS_TOKEN_TWO:
-
                 crossTokenPoints = crossTokenPoints + 2;
+                updateCrossTokenPoints();
                 break;
             case MOVE_CROSS_TOKEN_ONE_SHELF:
-
                 crossTokenPoints = crossTokenPoints + 1;
+                updateCrossTokenPoints();
                 shuffleActionTokenArray();
                 break;
         }
     }
 
-
-    public void updateAboutBlackCrossFaithIncrese(Integer userID){
-
-
-
+    /**
+     * send black cross faithpoint to the player on change
+     */
+    public void updateCrossTokenPoints(){
+        MVEvent crossTokenUpdate = new MVEvent(this.userID, MVEvent.EventType.BLACKCROSS_FAITHPOINT_UPDATE, crossTokenPoints);
+        game.updateAllAboutChange(crossTokenUpdate);
     }
 
 }

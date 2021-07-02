@@ -13,7 +13,8 @@ public class MVEvent extends Event{
         FAITHPOINT_UPDATE,
         FAITHTRACK_UPDATE,
         ACTIVE_LEADER_CARD_UPDATE,
-        INACTIVE_LEADER_CARD_UPDATE
+        INACTIVE_LEADER_CARD_UPDATE,
+        BLACKCROSS_FAITHPOINT_UPDATE;
     }
     private EventType eventType;
 
