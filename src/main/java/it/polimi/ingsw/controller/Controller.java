@@ -84,12 +84,12 @@ public class Controller implements Listener<VCEvent> {
         }
     }
     private void debugInitilizeWarehouse(){
-        Resources topres = new Resources(Resources.ResType.STONE,1 );
-        Resources midres = new Resources(Resources.ResType.SHIELD, 1);
-        Resources bottomres = new Resources(Resources.ResType.COIN, 1);
+//        Resources topres = new Resources(Resources.ResType.STONE,1 );
+        Resources midres = new Resources(Resources.ResType.SHIELD, 2);
+        Resources bottomres = new Resources(Resources.ResType.SERVANT, 2);
         // initialize only with one-type res, zero values does not work
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
-            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.TOP, topres);
+//            game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.TOP, topres);
             game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.MIDDLE, midres);
             game.getPersonalBoard(entry.getKey()).putToWarehouse(Shelf.shelfPlace.BOTTOM, bottomres);
             updateAboutWarehouseOfId(entry.getKey());
@@ -97,7 +97,7 @@ public class Controller implements Listener<VCEvent> {
     }
 
     private void debugInitializeStrongbox(){
-        Resources strongBoxRes = new Resources(10,10,10,10);
+        Resources strongBoxRes = new Resources(Resources.ResType.STONE,1);
         for (Map.Entry<Integer, VirtualView> entry : userIDtoVirtualViews.entrySet()) {
             game.getPersonalBoard(entry.getKey()).addToStrongBox(strongBoxRes);
             updateAboutStrongboxOfId(entry.getKey());
@@ -138,92 +138,38 @@ public class Controller implements Listener<VCEvent> {
 
     private void debugPutDevCardsOnSlots(){
         DevSlot.slotPlace place = DevSlot.slotPlace.LEFT;
-        Resources cost = new Resources(Resources.ResType.SHIELD,2);
-        Resources LHS = new Resources(Resources.ResType.COIN, 1);
+        Resources cost = new Resources(Resources.ResType.SERVANT,1);
+        cost.add(Resources.ResType.COIN,1);
+        cost.add(Resources.ResType.STONE,1);
+        Resources LHS = new Resources(Resources.ResType.SERVANT, 1);
 //        LHS.add(Resources.ResType.STONE, 2);
-        Resources RHS = new Resources(Resources.ResType.FAITH,1);
+        Resources RHS = new Resources(Resources.ResType.STONE,1);
 //        RHS.add(Resources.ResType.FAITH,1);
-        int VP = 1;
+        int VP = 2;
         int level = 1;
-        DevCard card = new DevCard(level, DevCard.CardColor.GREEN, LHS,RHS,cost, VP);
-
-        DevSlot.slotPlace place3 = DevSlot.slotPlace.LEFT;
-        Resources cost3 = new Resources(Resources.ResType.COIN,3);
-        Resources LHS3 = new Resources(Resources.ResType.SHIELD, 1);
-        LHS3.add(Resources.ResType.STONE, 2);
-        Resources RHS3 = new Resources(Resources.ResType.SHIELD,1);
-        RHS3.add(Resources.ResType.FAITH,5);
-        int VP3 = 4;
-        int level3 = 2;
-        DevCard card3 = new DevCard(level3, DevCard.CardColor.BLUE, LHS3,RHS3,cost3, VP3);
+        DevCard card = new DevCard(level, DevCard.CardColor.BLUE, LHS,RHS,cost, VP);
 
         DevSlot.slotPlace place2 = DevSlot.slotPlace.CENTER;
-        Resources cost2 = new Resources(Resources.ResType.COIN,3);
+        Resources cost2 = new Resources(Resources.ResType.COIN,2);
+        cost2.add(Resources.ResType.SERVANT,2);
         Resources LHS2 = new Resources(Resources.ResType.SHIELD, 1);
-//        LHS2.add(Resources.ResType.STONE, 2);
-        Resources RHS2 = new Resources(Resources.ResType.SHIELD,1);
-        RHS2.add(Resources.ResType.FAITH,1);
+        LHS2.add(Resources.ResType.STONE, 1);
+        Resources RHS2 = new Resources(Resources.ResType.FAITH,1);
+        RHS2.add(Resources.ResType.SERVANT,2);
         int VP2 = 4;
         int level2 = 1;
-        DevCard card2 = new DevCard(level2, DevCard.CardColor.YELLOW, LHS2,RHS2,cost2, VP2);
-
-        DevSlot.slotPlace place4 = DevSlot.slotPlace.CENTER;
-        Resources cost4 = new Resources(Resources.ResType.COIN,3);
-        Resources LHS4 = new Resources(Resources.ResType.SERVANT, 1);
-//        LHS4.add(Resources.ResType.STONE, 2);
-        Resources RHS4 = new Resources(Resources.ResType.SHIELD,1);
-        RHS4.add(Resources.ResType.FAITH,3);
-        int VP4 = 4;
-        int level4 = 2;
-        DevCard card4 = new DevCard(level4, DevCard.CardColor.YELLOW, LHS4,RHS4,cost4,VP4);
-
-        DevSlot.slotPlace place5 = DevSlot.slotPlace.RIGHT;
-        Resources cost5 = new Resources(Resources.ResType.COIN,3);
-        Resources LHS5 = new Resources(Resources.ResType.SHIELD, 1);
-//        LHS5.add(Resources.ResType.STONE, 2);
-        Resources RHS5 = new Resources(Resources.ResType.SHIELD,1);
-        RHS5.add(Resources.ResType.FAITH,1);
-        int VP5 = 4;
-        int level5 = 1;
-        DevCard card5 = new DevCard(level5, DevCard.CardColor.GREEN, LHS5,RHS5,cost5,VP5);
-
-        DevSlot.slotPlace place6 = DevSlot.slotPlace.RIGHT;
-        Resources cost6 = new Resources(Resources.ResType.COIN,3);
-        Resources LHS6 = new Resources(Resources.ResType.SHIELD, 1);
-//        LHS6.add(Resources.ResType.STONE, 1);
-        Resources RHS6 = new Resources(Resources.ResType.SHIELD,1);
-        RHS6.add(Resources.ResType.FAITH,2);
-        int VP6 = 4;
-        int level6 = 2;
-        DevCard card6 = new DevCard(level6, DevCard.CardColor.PURPLE, LHS6,RHS6,cost6,VP6);
+        DevCard card2 = new DevCard(level2, DevCard.CardColor.BLUE, LHS2,RHS2,cost2, VP2);
 
         List<DevCard> devCardList = new ArrayList<>();
         devCardList.add(card);
         devCardList.add(card2);
-        devCardList.add(card3);
-        devCardList.add(card4);
-        devCardList.add(card5);
-        devCardList.add(card6);
 
         List<DevSlot.slotPlace> placeList = new ArrayList<>();
         placeList.add(place);
         placeList.add(place2);
-        placeList.add(place3);
-        placeList.add(place4);
-        placeList.add(place5);
-        placeList.add(place6);
-
 
         for (Integer userID: userIDs) {
             int calls = 0;
-            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
-            calls++;
-            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
-            calls++;
-            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
-            calls++;
-            game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
-            calls++;
             game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
             calls++;
             game.getPersonalBoard(userID).putDevCardOnSlot(devCardList.get(calls), placeList.get(calls));
@@ -468,6 +414,8 @@ public class Controller implements Listener<VCEvent> {
                     updateAboutFaithPointOfId(userID);
                 }
                 int discardedRes = takeResContextTwo.getDiscardedRes();
+                Resources remaining = takeResContextTwo.getResources();
+                discardedRes += remaining.sumOfValues();
                 if (discardedRes > 0){
                     userIDs.remove(userID);
                     for(Integer anOtherUserId: userIDs){
@@ -582,8 +530,8 @@ public class Controller implements Listener<VCEvent> {
      */
     private void handleClearShelf(Integer userID, TakeResActionContext context){
         Shelf.shelfPlace place = context.getShelf();
-        int discarded = game.getPersonalBoard(userID).clearShelf(place);
-        context.addDiscardedRes(discarded);
+        Resources discarded = game.getPersonalBoard(userID).clearShelf(place);
+        context.addToRemainingResources(discarded);
         context.setLastStep(CHOOSE_SHELVES);
         updateAboutWarehouseOfId(userID);
     }

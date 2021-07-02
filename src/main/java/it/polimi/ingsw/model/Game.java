@@ -19,6 +19,7 @@ public class Game implements Publisher<MVEvent> {
     private Map<Integer, PersonalBoard> userIDtoBoards = new HashMap<>();
     private Map<Integer, VirtualView> userIDtoVirtualView = new HashMap<>();
     private MarketTray market;
+    private Resources resourceSupply;
     private List<LeaderCard> leaderCardList = new ArrayList<>();
     private DevCardDeck[][] devCardMatrix = new DevCardDeck[3][4];
     private Controller controller;
@@ -113,6 +114,10 @@ public class Game implements Publisher<MVEvent> {
 
     public void subscribe(Integer userID, VirtualView virtualView) {
         userIDtoVirtualView.put(userID, virtualView);
+    }
+
+    public void publish(Integer userID, MVEvent event) {
+        userIDtoVirtualView.get(userID).update(event);
     }
 
     @Override

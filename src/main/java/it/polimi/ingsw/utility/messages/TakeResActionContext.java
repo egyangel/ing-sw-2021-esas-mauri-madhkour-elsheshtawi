@@ -177,4 +177,8 @@ public class TakeResActionContext {
     public void removeResourcePutToExtraSlot(Resources res){
         this.resources.subtract(res);
     }
+
+    public void addToRemainingResources(Resources res){
+        this.resources.add(res);
+    }
 }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 /**
- * Leader Card class  ,it is the the representation of the leader card
+ * Leader Card class  ,it is the the representation of the leader card with
+ * @author
  * */
 public class LeaderCard {
     private Requirement requirement;

@@ -122,7 +122,7 @@ public class MarketTray {
             }
             sb.append("\u2190" + "\n");
         }
-        sb.append("   \u2191   \u2191   \u2191   \u2191");
+        sb.append("  \u2191  \u2191  \u2191  \u2191");
         return sb.toString();
     }
 }
