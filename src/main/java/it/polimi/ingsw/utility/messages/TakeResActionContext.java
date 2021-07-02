@@ -27,7 +27,6 @@ public class TakeResActionContext {
     private ActionStep lastStep;
     private boolean isRow;
     private int index;
-    private boolean hasError;
     private int whiteMarbleNumber;
     private List<LeaderCard> whiteConverters;
     private List<LeaderCard> extraSlotLeaderList;
@@ -37,7 +36,6 @@ public class TakeResActionContext {
     private Shelf.shelfPlace place;
     private Shelf.shelfPlace[] places = new Shelf.shelfPlace[2];
     private Map<Shelf.shelfPlace, Resources.ResType> shelfPlaceResTypeMap = new HashMap<>();
-    private Map<Shelf.shelfPlace, Boolean> shelfToResultMap = new HashMap<>();
     private Map<Resources.ResType, Integer> extraSlotResToAddMap;
 
     public ActionStep getLastStep(){
@@ -54,10 +52,6 @@ public class TakeResActionContext {
 
     public boolean isRow(){
         return isRow;
-    }
-
-    public void setErrorTrue(){
-        this.hasError = true;
     }
 
     public void setIndex(int index){
@@ -143,21 +137,6 @@ public class TakeResActionContext {
         return shelfPlaceResTypeMap;
     }
 
-    public void setPutResultMap(Map<Shelf.shelfPlace, Boolean> map){
-        for (Map.Entry<Shelf.shelfPlace, Boolean> entry : map.entrySet()) {
-            this.shelfToResultMap.put(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public void removeResourcesPutToShelf(){
-        for (Map.Entry<Shelf.shelfPlace, Boolean> entry : shelfToResultMap.entrySet()) {
-            if (entry.getValue()){
-                Resources.ResType resType = shelfPlaceResTypeMap.get(entry.getKey());
-                this.resources.removeThisType(resType);
-            }
-        }
-    }
-
     public void setExtraSlotLeaders(List<LeaderCard> extraSlotLeaders){
         this.extraSlotLeaderList = extraSlotLeaders;
     }
@@ -180,5 +159,9 @@ public class TakeResActionContext {
 
     public void addToRemainingResources(Resources res){
         this.resources.add(res);
+    }
+
+    public void subtractFromResources(Resources res){
+        this.resources.subtract(res);
     }
 }

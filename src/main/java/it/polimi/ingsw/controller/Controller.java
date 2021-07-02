@@ -560,31 +560,23 @@ public class Controller implements Listener<VCEvent> {
             Shelf.shelfPlace shelfPlaceToPut = entry.getKey();
             Resources.ResType resTypeToPut = entry.getValue();
             boolean alreadyExistInWarehouse = game.getPersonalBoard(userID).isTypePutInAnotherShelf(shelfPlaceToPut, resTypeToPut);
-            if(!alreadyExistInWarehouse){
+            if (!alreadyExistInWarehouse) {
                 boolean isEmptyShelf = game.getPersonalBoard(userID).checkEmptyShelf(shelfPlaceToPut);
                 boolean isSameType = false;
-                if (!isEmptyShelf){
+                if (!isEmptyShelf) {
                     isSameType = game.getPersonalBoard(userID).checkSameType(shelfPlaceToPut, resTypeToPut);
                 }
-                if (isEmptyShelf || isSameType){
-                    Resources resToPut = new Resources();
-                    resToPut.add(resTypeToPut, context.getResources().getNumberOfType(resTypeToPut));
+                if (isEmptyShelf || isSameType) {
+                    Resources resToPut = new Resources(resTypeToPut, context.getResources().getNumberOfType(resTypeToPut));
                     int discardedSameTypeRes = game.getPersonalBoard(userID).putToWarehouse(shelfPlaceToPut, resToPut);
-                    if(discardedSameTypeRes >= 0){
-                        context.addDiscardedRes(discardedSameTypeRes);
-                        shelfToResult.put(shelfPlaceToPut, true);
-                    } else {
-                        shelfToResult.put(shelfPlaceToPut, false);
-                    }
-                } else {
-                    shelfToResult.put(shelfPlaceToPut, false);
+                    Resources discardedRes = new Resources(resTypeToPut, discardedSameTypeRes);
+                    Resources successPut = new Resources();
+                    successPut.add(resToPut);
+                    successPut.subtract(discardedRes);
+                    context.subtractFromResources(successPut);
                 }
-            } else {
-                shelfToResult.put(shelfPlaceToPut, false);
             }
         }
-        context.setPutResultMap(shelfToResult);
-        context.removeResourcesPutToShelf();
         context.setLastStep(CHOOSE_SHELVES); //choose shelves is correct, I did it this way intentionally
         updateAboutWarehouseOfId(userID);
     }

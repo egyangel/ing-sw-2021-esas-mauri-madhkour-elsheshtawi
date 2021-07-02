@@ -421,7 +421,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             takeResContext.chooseRow(true);
         } else if (firstLetter == 'c') {
             takeResContext.chooseRow(false);
-        } else takeResContext.setErrorTrue();
+        }
         takeResContext.setIndex(index);
         takeResContext.setLastStep(ROW_COLUMN_CHOSEN);
         VCEvent vcEvent = new VCEvent(TAKE_RES_CONTEXT_FILLED, takeResContext);
