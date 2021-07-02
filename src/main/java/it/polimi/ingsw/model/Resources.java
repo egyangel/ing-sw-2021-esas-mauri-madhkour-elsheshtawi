@@ -193,7 +193,7 @@ public class Resources {
     /**
      * method that checks if this resource encompasses the parameter
      * eg, ((STONE, 2), (COIN, 1)).includes((COIN, 1)) returns true
-     * @param Resources resource the be compared to
+     * @param otherRes resource the be compared to
      * @return the result of the comparison
      * */
     public boolean includes(Resources otherRes){

@@ -45,10 +45,6 @@ public class Warehouse {
 
         char sym=' ';
 
-
-        //Resources sym.add(warehouse);
-        //adding a resource in warehouse..don't know how to do the proper binding from Resources.java
-
         switch (position){
             case 1:
                 warehouse[0][4]=sym;
