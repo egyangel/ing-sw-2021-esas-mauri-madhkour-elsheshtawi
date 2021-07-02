@@ -358,13 +358,13 @@ class PersonalBoardTest {
         places[1] = Shelf.shelfPlace.BOTTOM;
         Resources  warehouse = new Resources(Resources.ResType.STONE,2);
         Resources  warehouse2 = new Resources(Resources.ResType.SERVANT,3);
-        assertEquals(0,personalBoard.swapShelves(places));
+        assertEquals(0,personalBoard.swapShelves(places).sumOfValues());
 
         personalBoard.putToWarehouse(Shelf.shelfPlace.MIDDLE,warehouse);
         personalBoard.putToWarehouse(Shelf.shelfPlace.BOTTOM,warehouse2);
 
         
-        assertEquals(1,personalBoard.swapShelves(places));
+        assertEquals(1,personalBoard.swapShelves(places).sumOfValues());
     }
 
     @Test

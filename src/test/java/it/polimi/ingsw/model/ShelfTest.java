@@ -48,16 +48,16 @@ class ShelfTest {
         warehouse[1].putResource(Resources.ResType.SHIELD, 1);
         warehouse[2].putResource(Resources.ResType.COIN,1);
 
-        assertEquals(0,warehouse[1].swapShelf(warehouse[2]));
+        assertEquals(0,warehouse[1].swapShelf(warehouse[2]).sumOfValues());
         assertEquals(Resources.ResType.COIN, warehouse[1].getShelfResType());
         assertEquals(Resources.ResType.SHIELD, warehouse[2].getShelfResType());
-        assertEquals(0,warehouse[1].swapShelf(warehouse[2]));
+        assertEquals(0,warehouse[1].swapShelf(warehouse[2]).sumOfValues());
 
         warehouse[2].clearShelf();
         warehouse[2].putResource(Resources.ResType.STONE,3);
 
-        assertEquals(2,warehouse[2].swapShelf(warehouse[1]));
-        assertEquals(0,warehouse[1].swapShelf(warehouse[2]));
+        assertEquals(2,warehouse[2].swapShelf(warehouse[1]).sumOfValues());
+        assertEquals(0,warehouse[1].swapShelf(warehouse[2]).sumOfValues());
 
 
     }
