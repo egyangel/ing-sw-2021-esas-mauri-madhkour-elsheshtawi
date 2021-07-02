@@ -10,6 +10,7 @@ git clone https://github.com/egyangel/ing-sw-2021-esas-mauri-madhkour-elsheshtaw
 
 - [Features implemented](#features-implemented)
 - [How to play the game](#how-to-play-the-game)
+    - [Set up of the shell and information about color](#Set-up-of-the-shell-and-information-about-color)
 - [Building](#building)
     - [Using provided jars](#using-provided-jars)
 - [Server](#server)
@@ -30,7 +31,7 @@ git clone https://github.com/egyangel/ing-sw-2021-esas-mauri-madhkour-elsheshtaw
 | CLI                                   | 
 
 
-##How to play the game
+## How to play the game
 
 1) First step : run the server. The port number is 30000,and it is hardcoded in the server class.
 
@@ -48,6 +49,10 @@ git clone https://github.com/egyangel/ing-sw-2021-esas-mauri-madhkour-elsheshtaw
 
 
 5) Then the server send to the player 4 leader card and ask to choose two of them. After the choice the first player received the menu of the action while the second player choose a free resource w.r.t. game's rule   
+
+### Set up of the shell and information about color
+To have a better visualization of the personal board faith track you should scale down the shell's zoom.
+The stone color inside the market tray is black while inside all the other stuff of the game the stone color is white
 
 ## Building
 ### Using provided jars
