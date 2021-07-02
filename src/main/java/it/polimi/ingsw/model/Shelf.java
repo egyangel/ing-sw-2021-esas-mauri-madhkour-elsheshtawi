@@ -80,18 +80,22 @@ public class Shelf {
         if (thisSize > otherMaxSize){
             discarded = thisSize - otherSize;
             discardedType = this.resType;
+            this.numberOfElements = otherSize;
+            otherShelf.numberOfElements = otherMaxSize;
         } else if (otherSize > thisMaxSize){
             discarded = otherSize - thisMaxSize;
             discardedType = otherShelf.resType;
+            this.numberOfElements = thisMaxSize;
+            otherShelf.numberOfElements = thisSize;
         } else {
             discarded = 0;
             discardedType = Resources.ResType.STONE;
+            this.numberOfElements = otherSize;
+            otherShelf.numberOfElements = thisSize;
         }
         Resources.ResType tempType = otherShelf.resType;
         otherShelf.resType = this.resType;
         this.resType = tempType;
-        this.numberOfElements = otherSize;
-        otherShelf.numberOfElements = thisSize;
         return new Resources(discardedType, discarded);
     }
 
