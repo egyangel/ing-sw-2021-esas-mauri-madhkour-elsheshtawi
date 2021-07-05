@@ -365,8 +365,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
     }
 
     public void displayOtherPersonalBoards() {
-        LinkedList<Integer> userIDs = new LinkedList<>();
-        userIDs.addAll(userIDtoBoardDescriptions.keySet());
+        LinkedList<Integer> userIDs = new LinkedList<>(userIDtoBoardDescriptions.keySet());
         userIDs.remove(client.getUserID());
         int index = 0;
         int numberOfOtherPlayers = userIDtoBoardDescriptions.keySet().size() - 1;
@@ -705,7 +704,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 }
             } else {
                 activateProdContext.setAddProdOptionSelected(false);
-            };
+            }
         }
         if ((slotList.isEmpty() || selectedCards.isEmpty()) && !basicProd && !addProdAnswer){
             addNextDisplay("displayAllActionSelection");
@@ -846,7 +845,6 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 }.getType();
                 List<DevCard> topDevCards = (List<DevCard>) mvEvent.getEventPayload(devCardListType);
                 devCardMatrixDescription = ObjectPrinter.printDevCardMatrixAsList(topDevCards);
-                ;
                 break;
             case WAREHOUSE_UPDATE:
                 Type shelfListType = new TypeToken<List<Shelf>>() {
@@ -877,8 +875,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             case BLACKCROSS_FAITHPOINT_UPDATE:
                 Integer blackCrossFaithpoints = (Integer) mvEvent.getEventPayload(Integer.class);
                 out.println("the black cross Faith point is in position: " + blackCrossFaithpoints);
-
-             break;
+                break;
             case FAITHTRACK_UPDATE:
                 Type mapType = new TypeToken<Map<PersonalBoard.PopeArea, Boolean>>() {}.getType();
                 Map<PersonalBoard.PopeArea, Boolean> tileMapTwo = (Map<PersonalBoard.PopeArea, Boolean>) mvEvent.getEventPayload(mapType);
@@ -925,6 +922,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
             try {
             this.wait(2000);
             } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             String idleSymbols = "✞⨎⌬☺⌺";
             String backSpace = "\b";
@@ -943,6 +941,7 @@ public class CLI implements IView, Publisher<VCEvent>, Listener<Event> {
                 try {
                     this.wait(400);
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
                 if (appendtoRight) {
                     idleSymbolBar.append(idleSymbols.charAt(symbolIndex));

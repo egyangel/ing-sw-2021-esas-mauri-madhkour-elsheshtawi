@@ -7,15 +7,12 @@ import it.polimi.ingsw.utility.messages.*;
 
 import java.util.*;
 
-
-
 /**
- *  SoloController class , Extend solo controller and implement solo mode logic.
+ *  SoloController class , Extend controller and implement solo mode logic.
  * */
 public class SoloController extends Controller {
-    private HashMap<String, String> crossToken; // CROSSTOKEN,Position
     private Integer crossTokenPoints = 0;
-    private Map<Integer, ActionToken> actionTokens = new HashMap<Integer,ActionToken>();
+    private Map<Integer, ActionToken> actionTokens = new HashMap<>();
     private Integer userID = 0;
     private Boolean alreadyStarted = false;
     private List<Integer> actionTokensOrder;
@@ -52,36 +49,32 @@ public class SoloController extends Controller {
         ));
         this.actionTokens.put(1,new ActionToken("Discard 2 Blue Development Card", DevCard.CardColor.BLUE, ActionToken.SoloActionTokenType.DISCARD_DEV_CARD
         ));
-        this.actionTokens.put(2,new ActionToken("Discard 2 Yello Development Card", DevCard.CardColor.YELLOW, ActionToken.SoloActionTokenType.DISCARD_DEV_CARD
+        this.actionTokens.put(2,new ActionToken("Discard 2 Yellow Development Card", DevCard.CardColor.YELLOW, ActionToken.SoloActionTokenType.DISCARD_DEV_CARD
         ));
         this.actionTokens.put(3,new ActionToken("Discard 2 Purple Development Card", DevCard.CardColor.PURPLE, ActionToken.SoloActionTokenType.DISCARD_DEV_CARD));
         this.actionTokens.put(4,
-                new ActionToken("Discard 2 Purple Development Card", null, ActionToken.SoloActionTokenType.MOVE_CROSS_TOKEN_TWO));
+                new ActionToken("Move Black Cross forward by 2", null, ActionToken.SoloActionTokenType.MOVE_CROSS_TOKEN_TWO));
     this.actionTokens.put(5,
-                new ActionToken("Discard 2 Purple Development Card", null, ActionToken.SoloActionTokenType.MOVE_CROSS_TOKEN_ONE_SHELF));
-        actionTokensOrder = new ArrayList<Integer>(actionTokens.keySet());
+                new ActionToken("Move the Black Cross forward by 1 ,shuffle all Solo Action tokens and create new stack.", null, ActionToken.SoloActionTokenType.MOVE_CROSS_TOKEN_ONE_SHELF));
+        actionTokensOrder = new ArrayList<>(actionTokens.keySet());
         Collections.shuffle(actionTokensOrder);
     }
-
-
-
     /**
-     * Suffle the solo action tokens
+     * Shuffle the solo action tokens
      */
     private void shuffleActionTokenArray() {
         Collections.shuffle(actionTokensOrder);
         currentActionTokenIndex = 0;
     }
-
     /**
      * increase faith points after eachTurn
      */
-    @Override
-    protected void InitFatihPoints(Integer userID, Integer userTurn) {
+    /*@Override
+    /*protected void InitFatihPoints(Integer userID, Integer userTurn) {
         game.getPersonalBoard(userID).increaseFaitPoint(1);
-    }
+    }*/
     /**
-     * increase faith points after eachTurn
+     * send turn order
      */
     @Override
     protected void sendTurnOrderAssign() {
@@ -97,8 +90,6 @@ public class SoloController extends Controller {
         //todo Omer: I updated mv event about warehouse
         updateAboutWarehouseOfId(userID);
         beginMatch();
-
-
     }
 
     @Override
@@ -109,15 +100,14 @@ public class SoloController extends Controller {
         super.beginMatch();
 
     }
-
     /**
-     * handle the end of the turn of soloMode and do the soloTokenAcrions
-     * @param userId
+     * handle the end of the turn of soloMode and do the soloTokenActions
+     * @param userId id of the user
      */
     @Override
     protected void handleEndTurn(Integer userId) {
 
-        Integer currentIndex = actionTokensOrder.get(currentActionTokenIndex);
+
         ActionToken actionToken = actionTokens.get(currentActionTokenIndex);
         performAction(actionToken);
         currentActionTokenIndex = (currentActionTokenIndex + 1) % actionTokens.size();
@@ -128,7 +118,7 @@ public class SoloController extends Controller {
     private void performAction(ActionToken actionToken) {
         switch (actionToken.getType()){
             case DISCARD_DEV_CARD:
-                this.game.discardLowerCard(actionToken.getColor(), 2);
+                this.game.discardLowerCard(2);
                 super.updateAboutWarehouseOfId(userID);
                 break;
             case MOVE_CROSS_TOKEN_TWO:
@@ -144,7 +134,7 @@ public class SoloController extends Controller {
     }
 
     /**
-     * send black cross faithpoint to the player on change
+     * send black cross faith point to the player on change
      */
     public void updateCrossTokenPoints(){
         MVEvent crossTokenUpdate = new MVEvent(this.userID, MVEvent.EventType.BLACKCROSS_FAITHPOINT_UPDATE, crossTokenPoints);

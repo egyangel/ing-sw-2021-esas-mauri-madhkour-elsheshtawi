@@ -26,7 +26,7 @@ public class BuyDevCardActionContext {
         NOT_ENOUGH_RES_FOR_DEVCARD_ERROR,
         UNSUITABLE_FOR_DEVSLOTS_ERROR,
         CHOOSE_DEV_SLOT,
-        COST_PAID_DEVCARD_PUT;
+        COST_PAID_DEVCARD_PUT
     }
     private ActionStep lastStep;
     private int level;
@@ -35,9 +35,6 @@ public class BuyDevCardActionContext {
     private DevCard selectedCard;
     private List<DevSlot.slotPlace> suitableSlots = new ArrayList<>();
     private DevSlot.slotPlace selectedSlot;
-    private Resources remainingCost;
-    private Resources payFromWarehouse;
-    private Resources payFromStrongbox;
     private boolean isApplied = false;
     private Resources discountApplied;
 
@@ -89,52 +86,12 @@ public class BuyDevCardActionContext {
         this.selectedCard = selectedCard;
     }
 
-    public Resources getRemainingCost() {
-        return remainingCost;
-    }
-
-    public void setRemainingCost(Resources costOfCard) {
-        this.remainingCost = new Resources();
-        this.remainingCost.add(costOfCard);
-    }
-
-    public Resources getPayFromWarehouse() {
-        return payFromWarehouse;
-    }
-
-    public void setPayFromWarehouse(Resources payFromWarehouse) {
-        // not sure directly assigning will work for JSON, but it should
-        this.payFromWarehouse = payFromWarehouse;
-    }
-
-    public Resources getPayFromStrongbox() {
-        return payFromStrongbox;
-    }
-
-    public void setPayFromStrongbox(Resources payFromStrongbox) {
-        this.payFromStrongbox = payFromStrongbox;
-    }
-
-    public boolean isError(){
-        Set<ActionStep> errorSteps = EnumSet.of(ActionStep.EMPTY_DEVCARD_DECK_ERROR,
-                                                ActionStep.NOT_ENOUGH_RES_FOR_DEVCARD_ERROR,
-                                                ActionStep.UNSUITABLE_FOR_DEVSLOTS_ERROR);
-        if (errorSteps.contains(lastStep)) return true;
-        else return false;
-    }
-
-    public boolean isDiscountApplied(){
-        return isApplied;
-    }
 
     public void setTotalDiscount(Resources res){
         isApplied = true;
         discountApplied = res;
     }
 
-    public Resources getTotalDiscount(){
-        return discountApplied;
-    }
 }
 
 

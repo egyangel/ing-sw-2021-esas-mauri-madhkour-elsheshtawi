@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * Development Slot  , it is the class that handle the Development
  * slot on the personal board of the player
- * @author
+
  * */
 public class DevSlot {
     public enum slotPlace{
@@ -15,14 +15,6 @@ public class DevSlot {
         }
         slotPlace(int index){
             this.indexInBoard = index;
-        }
-        public static slotPlace getByName(String input){
-            for (slotPlace st : slotPlace.values()) {
-                if (st.toString().equals(input)){
-                    return st;
-                }
-            }
-            return null;
         }
     }
     private Deque<DevCard> devCards;

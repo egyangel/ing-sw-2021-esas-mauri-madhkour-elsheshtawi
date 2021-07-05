@@ -33,7 +33,6 @@ public class TextReader {
         }
 
         String fileAsString = sb.toString();
-        //System.out.println("Contents of: "  + fname +  "\n" + fileAsString);
 
         return fileAsString;
     }

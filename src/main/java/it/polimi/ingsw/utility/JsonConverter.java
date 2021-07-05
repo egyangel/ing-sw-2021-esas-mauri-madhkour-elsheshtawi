@@ -45,9 +45,6 @@ public class JsonConverter {
         return cards;
 
     }
-    private static String serializeDevCard(DevCard devcard) {
-        return gson.toJson(devcard);
-    }
 
     public static String toJson(Object object){
         return gson.toJson(object);
@@ -70,61 +67,4 @@ public class JsonConverter {
         return gson.fromJson(event.getJsonContent(), type);
     }
 
-    // DEBUG METHODS
-
-    /*
-    public static List<Requirement> deserializeRequirements(){
-        List<Requirement> reqs = new ArrayList<>();
-        try(JsonReader reader = new JsonReader(new FileReader("src/main/resources/RequirementList.json"))) {
-            reqs = Arrays.asList(gson.fromJson(reader, Requirement[].class));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return reqs;
-    }
-
-    public static List<SpecialAbility> deserializeSpecialAbilities() {
-        List<SpecialAbility> abis = new ArrayList<>();
-        try(JsonReader reader = new JsonReader(new FileReader("src/main/resources/AbilityList.json"))) {
-            abis = Arrays.asList(gson.fromJson(reader, SpecialAbility[].class));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return abis;
-    }
-     */
-
-    /*
-    public static List<LeaderCard> deserializeLeaderCardsOldVersion() {
-        List<LeaderCard> listOfCards = new ArrayList<>();
-        LeaderCard[] extractedJson;
-
-        try (FileReader reader = new FileReader("src/main/resources/LeaderCards.json")) {
-            Gson g = (new GsonBuilder()).registerTypeAdapterFactory(
-                    RuntimeTypeAdapterFactory
-                            .of(SpecialAbility.class, "type")
-                            .registerSubtype(Discount.class, "Discount")
-                            .registerSubtype(AdditionalProduction.class, "AdditionalProduction")
-                            .registerSubtype(ConvertWhiteMarble.class, "ConvertWhiteMarble")
-                            .registerSubtype(ExstraSlot.class, "ExstraSlot")
-            ).create();
-
-            extractedJson = g.fromJson(reader, LeaderCard[].class);
-
-            for (int i = 0; i < extractedJson.length; i++){
-                // System.out.println(extractedJson[i].getAbility().getType());
-                listOfCards.add(new LeaderCard(extractedJson[i].getRequirement(), extractedJson[i].getVictoryPoints(), extractedJson[i].getAbility()));
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-        return listOfCards;
-    }
-    */
 }

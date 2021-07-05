@@ -40,10 +40,7 @@ public class Server implements Runnable {
     public void run() {
 
         userIDtoHandlers = new HashMap<>();
-        //Scanner scanner = new Scanner(System.in);
-//        System.out.println("Enter server port number:");
-//        int portNumber = InputConsumer.getPortNumber(scanner);
-        int portNumber = DEFAULT_PORT; //for debug
+        int portNumber = DEFAULT_PORT;
         System.out.println("Start on port : "+portNumber);
         try {
             serverSocket = new ServerSocket(portNumber);
@@ -52,7 +49,6 @@ public class Server implements Runnable {
             System.exit(1);
             return;
         }
-
         Socket socket;
         while (true) {
             try {
@@ -97,7 +93,7 @@ public class Server implements Runnable {
     }
 
     private void handleSetUpMessage(Integer userID, Message incomingmsg) {
-        Message respondMsg = null;
+        Message respondMsg;
         ClientHandler senderHandler = userIDtoHandlers.get(userID);
         List<ClientHandler> otherHandlers = new ArrayList<>(userIDtoHandlers.values());
         otherHandlers.remove(senderHandler);
@@ -140,8 +136,7 @@ public class Server implements Runnable {
     }
 
     public boolean isFirstPlayerSetupDone() {
-        if (numberOfUsers > 0) return true;
-        else return false;
+        return numberOfUsers > 0;
     }
 
     public ClientHandler getClientHandler(Integer userID) {

@@ -44,10 +44,6 @@ public class ActionToken {
         return color;
     }
 
-    public void setValue(DevCard.CardColor value) {
-        this.color = value;
-    }
-
     public ActionToken.SoloActionTokenType getType() {
         return Type;
     }

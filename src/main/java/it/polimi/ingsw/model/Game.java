@@ -82,14 +82,12 @@ public class Game implements Publisher<MVEvent> {
     }
 
     public List<LeaderCard> getFourLeaderCard(int counterOfCalls) {
-        List<LeaderCard> list = new ArrayList<>();
-        list.addAll(leaderCardList.subList(counterOfCalls * 4, (counterOfCalls * 4) + 4));
+        List<LeaderCard> list = new ArrayList<>(leaderCardList.subList(counterOfCalls * 4, (counterOfCalls * 4) + 4));
         return list;
     }
 
     public DevCard peekTopDevCard(DevCard.CardColor color, int level) {
-        DevCard card = devCardMatrix[level - 1][color.ordinal()].peekTopCard();
-        return card;
+        return devCardMatrix[level - 1][color.ordinal()].peekTopCard();
     }
 
     public void removeTopDevCard(DevCard.CardColor color, int level) {
@@ -103,8 +101,7 @@ public class Game implements Publisher<MVEvent> {
                 topDevCards.add(devCardMatrix[i][j].peekTopCard());
             }
         }
-        MVEvent devCardMatrixUpdate = new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, topDevCards);
-        return devCardMatrixUpdate;
+        return new MVEvent(MVEvent.EventType.DEVCARD_MATRIX_UPDATE, topDevCards);
     }
 
     @Override
@@ -114,10 +111,6 @@ public class Game implements Publisher<MVEvent> {
 
     public void subscribe(Integer userID, VirtualView virtualView) {
         userIDtoVirtualView.put(userID, virtualView);
-    }
-
-    public void publish(Integer userID, MVEvent event) {
-        userIDtoVirtualView.get(userID).update(event);
     }
 
     @Override
@@ -141,7 +134,7 @@ public class Game implements Publisher<MVEvent> {
     }
 
 
-    public boolean discardLowerCard(DevCard.CardColor cardColor, Integer numberOfCardsToDiscard) {
+    public boolean discardLowerCard(Integer numberOfCardsToDiscard) {
         List<DevCard> devCards = new ArrayList<>();
 
         for (int i = 0; i < this.devCardMatrix.length && devCards.size() != numberOfCardsToDiscard; i++) {
@@ -192,10 +185,7 @@ public class Game implements Publisher<MVEvent> {
         if (soloMode && getPersonalBoard(userID).getBlackCrossToken() == 24 && hasEmptySlot()) {
             return true;
         }
-        if (endByDevCard || endByFaithPoints) {
-            return true;
-        }
-        return false;
+        return endByDevCard || endByFaithPoints;
     }
 
 }

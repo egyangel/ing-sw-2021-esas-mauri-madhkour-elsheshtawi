@@ -51,13 +51,6 @@ public class ActivateProdAlternativeContext {
         return slotToCardMap;
     }
 
-    public void setError(boolean error){
-        this.error = error;
-    }
-
-    public boolean isError() {
-        return error;
-    }
 
     public boolean getAddProdOptionAvailable() {
         return addProdOptionAvailable;

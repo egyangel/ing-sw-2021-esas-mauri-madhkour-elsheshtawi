@@ -72,7 +72,6 @@ public class Controller implements Listener<VCEvent> {
             virtualView.update(leaderCardEvent);
         }
     }
-
     /**
      * method that manages the assignment of the order of the players
      */
@@ -219,9 +218,7 @@ public class Controller implements Listener<VCEvent> {
                 Type type1 = new TypeToken<List<LeaderCard>>() {
                 }.getType();
                 List<LeaderCard> selectedCards = (List<LeaderCard>) vcEvent.getEventPayload(type1);
-
                 game.getPersonalBoard(userID).getInactiveLeaderCards().addAll(selectedCards);
-
                 updateAboutLeaderCardsOfId(userID);
                 TurnManager.registerResponse(userID);
                 if (TurnManager.hasAllClientsResponded()) {
@@ -286,7 +283,7 @@ public class Controller implements Listener<VCEvent> {
                 LeaderActionContext leaderActionContext = (LeaderActionContext) vcEvent.getEventPayload(LeaderActionContext.class);
                 handleActivateLeaderAction(userID, leaderActionContext);
                 updateAboutLeaderCardsOfId(userID);
-                if (!TurnManager.isMajorActionDone(userID)){
+                if (TurnManager.isMajorActionDone(userID)){
                     sendAllActionDisplay(userID);
                 } else {
                     sendMinorActionDisplay(userID);
@@ -296,7 +293,7 @@ public class Controller implements Listener<VCEvent> {
                 LeaderActionContext leaderActionContextTwo = (LeaderActionContext) vcEvent.getEventPayload(LeaderActionContext.class);
                 handleDiscardLeaderAction(userID, leaderActionContextTwo);
                 updateAboutLeaderCardsOfId(userID);
-                if (!TurnManager.isMajorActionDone(userID)){
+                if (TurnManager.isMajorActionDone(userID)){
                     sendAllActionDisplay(userID);
                 } else {
                     sendMinorActionDisplay(userID);
@@ -490,8 +487,7 @@ public class Controller implements Listener<VCEvent> {
             }
         }
         Map<Resources.ResType, Integer> map = context.getExtraSlotResToAddMap();
-        List<Resources.ResType> resTypesToPut = new ArrayList<>();
-        resTypesToPut.addAll(map.keySet());
+        List<Resources.ResType> resTypesToPut = new ArrayList<>(map.keySet());
         for(Resources.ResType resType: resTypesToPut){
             int howManyToPut = map.getOrDefault(resType, 0);
             if (howManyToPut > 0){
@@ -612,9 +608,8 @@ public class Controller implements Listener<VCEvent> {
      * @param context is the context of activation production action. it is filled in both view and controller side with info needed to complete the action
      */
     private void setAvailableAddProdLeaders(Integer userID, ActivateProdAlternativeContext context){
-        List<LeaderCard> leaderCardList = new ArrayList<>();
         List<LeaderCard> addProdLeaderList = new ArrayList<>();
-        leaderCardList.addAll(game.getPersonalBoard(userID).getActiveLeaderCards());
+        List<LeaderCard> leaderCardList = new ArrayList<>(game.getPersonalBoard(userID).getActiveLeaderCards());
         for(LeaderCard leaderCard : leaderCardList){
             if (leaderCard.getAbility().getAbilityType() == SpecialAbility.AbilityType.ADDPROD){
                 addProdLeaderList.add(leaderCard);
@@ -622,7 +617,6 @@ public class Controller implements Listener<VCEvent> {
         }
         if (addProdLeaderList.isEmpty()){
             context.setAddProdOptionAvailable(false);
-            return;
         } else {
             context.setAddProdOptionAvailable(true);
             context.setAddProdLeaders(addProdLeaderList);
@@ -656,7 +650,6 @@ public class Controller implements Listener<VCEvent> {
         boolean enoughRes = totalResources.includes(totalCost);
         if(!enoughRes){
             context.setLastStep(NOT_ENOUGH_RES_ON_PERSONAL_BOARD);
-            return;
         } else {
             payCostFromPersonalBoard(userID, totalCost);
             Resources faithRes = totalProduction.splitThisType(Resources.ResType.FAITH);

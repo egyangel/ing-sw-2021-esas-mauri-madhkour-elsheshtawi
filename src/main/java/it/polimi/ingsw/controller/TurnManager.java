@@ -4,7 +4,7 @@ import it.polimi.ingsw.model.Game;
 
 import java.util.*;
 
-public class TurnManager {
+public class   TurnManager {
     private static Integer currentPlayerIndex = 0;
     private static List<Integer> turnOrderUserID;
     private static Map<Integer, Boolean> userIDtoCheck = new HashMap<>();
