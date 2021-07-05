@@ -663,7 +663,7 @@ public class Controller implements Listener<VCEvent> {
         }
     }
     /**
-     * method that remove the the total cost of activation production from player's personal-board for the activation prodction
+     * method that remove the the total cost of activation production from player's personal-board for the activation production
      * @param userID player id
      * @param totalCost is the cost of activation production
      */
