@@ -293,7 +293,7 @@ public class Controller implements Listener<VCEvent> {
                 LeaderActionContext leaderActionContextTwo = (LeaderActionContext) vcEvent.getEventPayload(LeaderActionContext.class);
                 handleDiscardLeaderAction(userID, leaderActionContextTwo);
                 updateAboutLeaderCardsOfId(userID);
-                if (TurnManager.isMajorActionDone(userID)){
+                if (!TurnManager.isMajorActionDone(userID)){
                     sendAllActionDisplay(userID);
                 } else {
                     sendMinorActionDisplay(userID);

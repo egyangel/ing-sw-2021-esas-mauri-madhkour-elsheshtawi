@@ -106,8 +106,6 @@ public class SoloController extends Controller {
      */
     @Override
     protected void handleEndTurn(Integer userId) {
-
-
         ActionToken actionToken = actionTokens.get(currentActionTokenIndex);
         performAction(actionToken);
         currentActionTokenIndex = (currentActionTokenIndex + 1) % actionTokens.size();
